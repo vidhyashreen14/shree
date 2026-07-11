@@ -61,23 +61,26 @@ const initialOrders: PurchaseOrderHistory[] = Array.from({ length: 8 }).map((_, 
 const tone = { draft: "neutral", placed: "info", shipped: "warning", received: "success" } as const;
 
 function PharmacyOrders() {
-  const [isCreating, setIsCreating] = useState(true); // Default to Create form as in user mockup
+  const [isCreating, setIsCreating] = useState(true);
   const [orderHistory, setOrderHistory] = useState<PurchaseOrderHistory[]>(initialOrders);
 
   // Form states
   const [stockist, setStockist] = useState("");
   const [orderDate, setOrderDate] = useState("");
-  
-  // Current item row states
   const [selectedMed, setSelectedMed] = useState("");
   const [unitsPerStrip, setUnitsPerStrip] = useState<number | "">("");
   const [noOfStrips, setNoOfStrips] = useState<number | "">("");
-
-  // Added items table state
   const [addedItems, setAddedItems] = useState<AddedItem[]>([]);
 
-  // Add Item to table
   const handleAddItem = () => {
+    if (!stockist) {
+      toast.error("Please select a stockist.");
+      return;
+    }
+    if (!orderDate) {
+      toast.error("Please select an order date.");
+      return;
+    }
     if (!selectedMed) {
       toast.error("Please select a medicine.");
       return;
@@ -94,7 +97,6 @@ function PharmacyOrders() {
     const medInfo = medicines.find((m) => m.id === selectedMed);
     if (!medInfo) return;
 
-    // Check if already exists, aggregate or warn
     const existingIndex = addedItems.findIndex((item) => item.id === selectedMed);
     if (existingIndex > -1) {
       const updated = [...addedItems];
@@ -115,27 +117,23 @@ function PharmacyOrders() {
       ]);
     }
 
-    // Reset item inputs
     setSelectedMed("");
     setUnitsPerStrip("");
     setNoOfStrips("");
     toast.success("Medicine added to order.");
   };
 
-  // Remove item from table
   const handleRemoveItem = (id: string) => {
     setAddedItems(addedItems.filter((item) => item.id !== id));
     toast.info("Item removed.");
   };
 
-  // Reset form
   const handleClearItemRow = () => {
     setSelectedMed("");
     setUnitsPerStrip("");
     setNoOfStrips("");
   };
 
-  // Save full purchase order
   const handleSaveOrder = () => {
     if (!stockist) {
       toast.error("Please select a stockist.");
@@ -150,13 +148,11 @@ function PharmacyOrders() {
       return;
     }
 
-    // Mock save to state
     const newOrder: PurchaseOrderHistory = {
       id: `PO-${5000 + orderHistory.length}`,
       supplier: stockist,
       items: addedItems.reduce((acc, curr) => acc + curr.noOfStrips, 0),
       total: addedItems.reduce((acc, curr) => {
-        // Calculate mock total based on average med cost
         const price = medicines.find((m) => m.id === curr.id)?.pricePerUnit || 10;
         return acc + curr.totalUnits * price;
       }, 0),
@@ -166,12 +162,11 @@ function PharmacyOrders() {
 
     setOrderHistory([newOrder, ...orderHistory]);
     toast.success(`Purchase Order ${newOrder.id} saved successfully!`);
-    
-    // Reset full form
+
     setStockist("");
     setOrderDate("");
     setAddedItems([]);
-    setIsCreating(false); // Go to history view
+    setIsCreating(false);
   };
 
   const handlePrint = () => {
@@ -222,21 +217,22 @@ function PharmacyOrders() {
 
       {isCreating ? (
         <div className="flex flex-col gap-6">
-          {/* Mockup Card 1: Stockist and Date */}
+          {/* Single Card with all fields */}
           <div className="surface-elevated p-6 rounded-2xl flex flex-col gap-4">
             <div className="flex items-center gap-2 border-b border-border pb-3">
               <ShoppingCart className="h-5 w-5 text-primary" />
               <h2 className="font-display text-lg font-bold text-foreground">Create Purchase Order</h2>
             </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            {/* All fields in one grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <Label htmlFor="stockist" className="flex items-center gap-1">
                   Stockist Name <span className="text-destructive">*</span>
                 </Label>
                 <Select value={stockist} onValueChange={setStockist}>
                   <SelectTrigger id="stockist" className="mt-1.5 bg-background">
-                    <SelectValue placeholder="Select" />
+                    <SelectValue placeholder="Select Stockist" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="MedPlus Distributors">MedPlus Distributors</SelectItem>
@@ -261,29 +257,14 @@ function PharmacyOrders() {
                   />
                 </div>
               </div>
-            </div>
 
-            <div className="flex justify-start">
-              <Button
-                type="button"
-                onClick={() => toast.success("Feature to register custom stockist medicine is coming soon")}
-                className="bg-success text-success-foreground hover:bg-success/90 rounded-full px-5"
-              >
-                <Plus className="mr-1.5 h-4 w-4" /> Add New Medicine
-              </Button>
-            </div>
-          </div>
-
-          {/* Mockup Card 2: Medicine selection row */}
-          <div className="surface-elevated p-6 rounded-2xl flex flex-col gap-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
               <div>
                 <Label htmlFor="medicine" className="flex items-center gap-1">
                   Medicine <span className="text-destructive">*</span>
                 </Label>
                 <Select value={selectedMed} onValueChange={setSelectedMed}>
                   <SelectTrigger id="medicine" className="mt-1.5 bg-background">
-                    <SelectValue placeholder="Medicine" />
+                    <SelectValue placeholder="Select Medicine" />
                   </SelectTrigger>
                   <SelectContent>
                     {medicines.map((m) => (
@@ -294,7 +275,10 @@ function PharmacyOrders() {
                   </SelectContent>
                 </Select>
               </div>
+            </div>
 
+            {/* Second row for Units/Strip and No. of Strips */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="unitsPerStrip" className="flex items-center gap-1">
                   Units/Strip <span className="text-destructive">*</span>
@@ -302,7 +286,7 @@ function PharmacyOrders() {
                 <Input
                   id="unitsPerStrip"
                   type="number"
-                  placeholder="0"
+                  placeholder="Enter units per strip"
                   value={unitsPerStrip}
                   onChange={(e) => setUnitsPerStrip(e.target.value ? Number(e.target.value) : "")}
                   className="mt-1.5 bg-background"
@@ -317,7 +301,7 @@ function PharmacyOrders() {
                 <Input
                   id="noOfStrips"
                   type="number"
-                  placeholder="0"
+                  placeholder="Enter number of strips"
                   value={noOfStrips}
                   onChange={(e) => setNoOfStrips(e.target.value ? Number(e.target.value) : "")}
                   className="mt-1.5 bg-background"
@@ -326,6 +310,7 @@ function PharmacyOrders() {
               </div>
             </div>
 
+            {/* Action Buttons for Add/Clear */}
             <div className="flex gap-2 justify-start mt-2">
               <Button
                 type="button"
@@ -345,7 +330,7 @@ function PharmacyOrders() {
             </div>
           </div>
 
-          {/* Mockup Card 3: Added Items Table */}
+          {/* Added Items Table */}
           <div className="surface-elevated overflow-hidden rounded-2xl">
             <div className="overflow-x-auto">
               <table className="min-w-full text-sm">
@@ -355,7 +340,7 @@ function PharmacyOrders() {
                     <th className="px-4 py-3.5 text-left font-semibold uppercase text-xs">Units/Strip</th>
                     <th className="px-4 py-3.5 text-left font-semibold uppercase text-xs">No. Of Strips</th>
                     <th className="px-4 py-3.5 text-left font-semibold uppercase text-xs">Total Units</th>
-                    <th className="px-4 py-3.5 text-center font-semibold uppercase text-xs w-28">Edit/Delete</th>
+                    <th className="px-4 py-3.5 text-center font-semibold uppercase text-xs w-28">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
@@ -393,7 +378,7 @@ function PharmacyOrders() {
             </div>
           </div>
 
-          {/* Action buttons matching colors of mockup */}
+          {/* Action buttons */}
           <div className="flex flex-wrap gap-3 justify-start mt-2">
             <Button
               type="button"

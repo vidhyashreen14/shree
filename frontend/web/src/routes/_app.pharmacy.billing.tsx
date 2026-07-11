@@ -2,8 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { medicines } from "@/lib/mock/data";
-import { useState, useEffect } from "react";
+import { medicines, patients, doctors } from "@/lib/mock/data";
+import { useState, useEffect, useRef } from "react";
 import { Plus, Trash2, Receipt, Calendar, RefreshCw, Layers } from "lucide-react";
 import {
   Select,
@@ -35,10 +35,105 @@ function PharmacyBilling() {
   });
 
   const [patientName, setPatientName] = useState("");
-  const [gender, setGender] = useState("Male");
+  const [patientId, setPatientId] = useState("");
   const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
   const [referredDoctor, setReferredDoctor] = useState("");
+
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(-1);
+  const suggestionsContainerRef = useRef<HTMLDivElement>(null);
+
+  // Click outside handler for autocomplete suggestions dropdown
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        suggestionsContainerRef.current &&
+        !suggestionsContainerRef.current.contains(event.target as Node)
+      ) {
+        setShowSuggestions(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const filteredPatients = patientName.trim() === ""
+    ? []
+    : patients.filter(
+      (p) =>
+        p.name.toLowerCase().includes(patientName.toLowerCase()) ||
+        p.id.toLowerCase().includes(patientName.toLowerCase()) ||
+        p.phone.toLowerCase().includes(patientName.toLowerCase())
+    );
+
+  const selectPatient = (p: typeof patients[0]) => {
+    setPatientName(p.name);
+    setPatientId(p.id);
+    setPhone(p.phone);
+
+    // Find doctor name
+    const doc = doctors.find((d) => d.id === p.assignedDoctorId);
+    setReferredDoctor(doc ? doc.name : "Not Assigned");
+
+    setShowSuggestions(false);
+    setActiveIndex(-1);
+  };
+
+  // Validate patient name - only characters (letters, spaces, dots, hyphens)
+  const validatePatientName = (value: string) => {
+    // Allow only letters, spaces, dots, hyphens, and apostrophes
+    const nameRegex = /^[A-Za-z\s\.\-']*$/;
+    return nameRegex.test(value);
+  };
+
+  // Validate phone number - exactly 10 digits
+  const validatePhone = (value: string) => {
+    const phoneRegex = /^\d{0,10}$/;
+    return phoneRegex.test(value);
+  };
+
+  const handleNameChange = (val: string) => {
+    // Only allow characters (letters, spaces, dots, hyphens, apostrophes)
+    if (validatePatientName(val) || val === "") {
+      setPatientName(val);
+      setPatientId(""); // Clear Patient ID to handle manual entry if name is edited
+      setShowSuggestions(true);
+      setActiveIndex(-1);
+    } else {
+      toast.error("Patient name can only contain letters, spaces, dots, hyphens, and apostrophes.");
+    }
+  };
+
+  const handlePhoneChange = (val: string) => {
+    // Only allow digits and max 10 digits
+    if (validatePhone(val) || val === "") {
+      setPhone(val);
+    } else {
+      toast.error("Phone number must be exactly 10 digits.");
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!showSuggestions || filteredPatients.length === 0) return;
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setActiveIndex((prev) => (prev < filteredPatients.length - 1 ? prev + 1 : 0));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setActiveIndex((prev) => (prev > 0 ? prev - 1 : filteredPatients.length - 1));
+    } else if (e.key === "Enter") {
+      if (activeIndex >= 0 && activeIndex < filteredPatients.length) {
+        e.preventDefault();
+        selectPatient(filteredPatients[activeIndex]!);
+      }
+    } else if (e.key === "Escape") {
+      setShowSuggestions(false);
+      setActiveIndex(-1);
+    }
+  };
 
   // Medicine select row states
   const [selectedMedId, setSelectedMedId] = useState("");
@@ -75,7 +170,7 @@ function PharmacyBilling() {
 
   // Calculate totals
   const rawSubtotal = billingItems.reduce((acc, curr) => acc + curr.price * curr.qty, 0);
-  
+
   // Calculate total discount from table
   const itemDiscounts = billingItems.reduce((acc, curr) => {
     const lineVal = curr.price * curr.qty;
@@ -126,7 +221,7 @@ function PharmacyBilling() {
     };
 
     setBillingItems([...billingItems, newItem]);
-    
+
     // Reset selection inputs
     setSelectedMedId("");
     setQty("");
@@ -160,8 +255,8 @@ function PharmacyBilling() {
   // Reset entire bill form
   const handleClearBill = () => {
     setPatientName("");
+    setPatientId("");
     setPhone("");
-    setEmail("");
     setReferredDoctor("");
     setBillingItems([]);
     setSelectedMedId("");
@@ -183,7 +278,7 @@ function PharmacyBilling() {
     }
 
     toast.success(`Invoice for ${patientName} generated successfully!`);
-    
+
     // Trigger standard browser print
     setTimeout(() => {
       window.print();
@@ -220,7 +315,7 @@ function PharmacyBilling() {
               />
             </div>
           </div>
-          
+
           <Button
             type="button"
             variant="outline"
@@ -243,70 +338,102 @@ function PharmacyBilling() {
 
       {/* Main Billing Workspace Grid */}
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_360px] gap-6 items-start">
-        
+
         {/* Left Column: Form & Item Table */}
         <div className="flex flex-col gap-6">
-          
+
           {/* Patient Details Card */}
           <div className="surface-elevated p-5 rounded-2xl flex flex-col gap-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3.5">
-              
-              <div className="md:col-span-2">
+
+              <div className="md:col-span-1">
+                <Label htmlFor="patId" className="text-xs font-semibold">
+                  Patient ID
+                </Label>
+                <Input
+                  id="patId"
+                  placeholder="New Patient"
+                  value={patientId}
+                  readOnly
+                  className="mt-1 bg-muted h-10 text-sm font-mono text-muted-foreground cursor-not-allowed select-none"
+                />
+              </div>
+
+              <div className="md:col-span-2 relative" ref={suggestionsContainerRef}>
                 <Label htmlFor="patName" className="text-xs font-semibold">
-                  Patient Name *
+                  Patient Name * <span className="text-xs text-muted-foreground">(Letters only)</span>
                 </Label>
                 <Input
                   id="patName"
-                  placeholder="Patient Name"
+                  placeholder="Type to search patients..."
                   value={patientName}
-                  onChange={(e) => setPatientName(e.target.value)}
+                  onChange={(e) => handleNameChange(e.target.value)}
+                  onFocus={() => setShowSuggestions(true)}
+                  onKeyDown={handleKeyDown}
+                  autoComplete="off"
+                  role="combobox"
+                  aria-expanded={showSuggestions && filteredPatients.length > 0}
+                  aria-autocomplete="list"
+                  aria-controls="patient-suggestions"
+                  aria-activedescendant={
+                    activeIndex >= 0 ? `suggestion-item-${activeIndex}` : undefined
+                  }
                   className="mt-1 bg-background h-10 text-sm"
                 />
+                {showSuggestions && filteredPatients.length > 0 && (
+                  <div
+                    id="patient-suggestions"
+                    role="listbox"
+                    className="absolute left-0 right-0 mt-1 max-h-60 overflow-y-auto rounded-md border border-border bg-popover py-1 text-sm shadow-md z-50 divide-y divide-border"
+                  >
+                    {filteredPatients.map((p, idx) => {
+                      const isActive = idx === activeIndex;
+                      return (
+                        <div
+                          key={p.id}
+                          id={`suggestion-item-${idx}`}
+                          role="option"
+                          aria-selected={isActive}
+                          onClick={() => selectPatient(p)}
+                          className={`flex flex-col px-3 py-2 cursor-pointer transition-colors ${isActive
+                            ? "bg-accent text-accent-foreground font-medium"
+                            : "text-foreground hover:bg-accent hover:text-accent-foreground"
+                            }`}
+                        >
+                          <div className="flex justify-between items-center">
+                            <span className="font-semibold">{p.name}</span>
+                            <span className="text-xs text-muted-foreground font-mono bg-muted px-1.5 py-0.5 rounded">
+                              {p.id}
+                            </span>
+                          </div>
+                          <div className="flex justify-between items-center text-xs text-muted-foreground mt-0.5">
+                            <span>{p.phone}</span>
+                            <span>{p.email}</span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
 
-              <div>
-                <Label htmlFor="genderSelect" className="text-xs font-semibold">
-                  Gender
-                </Label>
-                <Select value={gender} onValueChange={setGender}>
-                  <SelectTrigger id="genderSelect" className="mt-1 bg-background h-10 text-sm">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Male">Male</SelectItem>
-                    <SelectItem value="Female">Female</SelectItem>
-                    <SelectItem value="Other">Other</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
+              <div className="md:col-span-1">
                 <Label htmlFor="patPhone" className="text-xs font-semibold">
-                  Phone
+                  Patient Phone no <span className="text-xs text-muted-foreground">(10 digits)</span>
                 </Label>
                 <Input
                   id="patPhone"
-                  placeholder="Phone"
+                  placeholder="Enter 10 digits"
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
+                  onChange={(e) => handlePhoneChange(e.target.value)}
+                  maxLength={10}
                   className="mt-1 bg-background h-10 text-sm"
+                  pattern="\d{10}"
+                  title="Please enter exactly 10 digits"
                 />
               </div>
 
-              <div>
-                <Label htmlFor="patEmail" className="text-xs font-semibold">
-                  Email
-                </Label>
-                <Input
-                  id="patEmail"
-                  placeholder="Email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="mt-1 bg-background h-10 text-sm"
-                />
-              </div>
-
-              <div className="md:col-span-2">
+              <div className="md:col-span-1">
                 <Label htmlFor="refDoctor" className="text-xs font-semibold">
                   Referred Doctor
                 </Label>
@@ -324,7 +451,7 @@ function PharmacyBilling() {
           {/* Medicine Entry Row Card */}
           <div className="surface-elevated p-5 rounded-2xl flex flex-col gap-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-3 items-end">
-              
+
               <div className="md:col-span-5">
                 <Label htmlFor="medSelect" className="text-xs font-semibold">
                   Medicine Name

@@ -61,7 +61,6 @@ import { medicines as seedMedicines } from "@/lib/mock/data";
 import type { Medicine } from "@/lib/types";
 import {
   Plus,
-  Barcode,
   AlertTriangle,
   PackageX,
   PackagePlus,
@@ -83,6 +82,7 @@ import {
   SlidersHorizontal,
   RotateCcw,
   Gauge,
+  Factory,
 } from "lucide-react";
 import { format, formatDistanceToNow, differenceInDays } from "date-fns";
 import { toast } from "sonner";
@@ -131,8 +131,8 @@ interface StockHistoryEntry {
 const THRESHOLD_KEY = "hms.pharmacy.thresholds.v1";
 
 interface ThresholdConfig {
-  categories: Record<string, number>; // category → min stock
-  overrides: Record<string, number>; // medicineId → min stock
+  categories: Record<string, number>;
+  overrides: Record<string, number>;
 }
 
 const loadThresholds = (): ThresholdConfig => {
@@ -206,7 +206,6 @@ function PharmacyInventory() {
   const [history, setHistory] = useState<StockHistoryEntry[]>(() => seedHistory());
   const [thresholds, setThresholds] = useState<ThresholdConfig>(() => loadThresholds());
 
-  // Persist thresholds on every change
   useEffect(() => {
     try {
       window.localStorage.setItem(THRESHOLD_KEY, JSON.stringify(thresholds));
@@ -215,7 +214,6 @@ function PharmacyInventory() {
     }
   }, [thresholds]);
 
-  // ----- URL ↔ local state bridge -----
   type SearchParams = z.infer<typeof searchSchema>;
   const updateSearch = (patch: Partial<SearchParams>) => {
     navigate({
@@ -240,10 +238,8 @@ function PharmacyInventory() {
     });
   };
 
-  // Debounced search box → local input drives URL after 250ms.
   const [searchInput, setSearchInput] = useState(search.q);
   useEffect(() => {
-    // Re-sync if URL changes from elsewhere (back/forward)
     setSearchInput(search.q);
   }, [search.q]);
   useEffect(() => {
@@ -280,13 +276,13 @@ function PharmacyInventory() {
   const [thresholdsOpen, setThresholdsOpen] = useState(false);
   const [thresholdEditing, setThresholdEditing] = useState<Medicine | null>(null);
   const [thresholdInput, setThresholdInput] = useState<string>("");
+  const [manufactureMasterOpen, setManufactureMasterOpen] = useState(false);
 
   const categories = useMemo(
     () => Array.from(new Set(items.map((m) => m.category))).sort(),
     [items],
   );
 
-  // Effective min stock per medicine = override → category threshold → seed minStock
   const effectiveMin = (m: Medicine): number => {
     if (thresholds.overrides[m.id] != null) return thresholds.overrides[m.id]!;
     if (thresholds.categories[m.category] != null)
@@ -294,7 +290,6 @@ function PharmacyInventory() {
     return m.minStock;
   };
 
-  // ----- Filter + sort + paginate (server-style) -----
   const filtered = useMemo(() => {
     const q = search.q.trim().toLowerCase();
     return items.filter((m) => {
@@ -429,7 +424,6 @@ function PharmacyInventory() {
     setThresholdEditing(null);
     setThresholdInput("");
   };
-
 
   const columns = useMemo<ColumnDef<Medicine>[]>(
     () => [
@@ -762,17 +756,26 @@ function PharmacyInventory() {
         description="All medicines, batches, GST and live stock levels."
         actions={
           <>
-            <Button variant="outline" onClick={() => setThresholdsOpen(true)}>
+            <Button
+              variant="default"
+              onClick={() => setThresholdsOpen(true)}
+              className="bg-emerald-700 hover:bg-emerald-800 text-white"
+            >
               <SlidersHorizontal className="mr-2 h-4 w-4" /> Thresholds
             </Button>
-            <Button variant="outline" onClick={exportCsv}>
+            <Button
+              variant="default"
+              onClick={exportCsv}
+              className="bg-emerald-700 hover:bg-emerald-800 text-white"
+            >
               <Download className="mr-2 h-4 w-4" /> Export CSV
             </Button>
-            <Button variant="outline">
-              <Barcode className="mr-2 h-4 w-4" /> Scan barcode
-            </Button>
-            <Button>
-              <Plus className="mr-2 h-4 w-4" /> Add medicine
+            <Button
+              variant="default"
+              onClick={() => setManufactureMasterOpen(true)}
+              className="bg-emerald-700 hover:bg-emerald-800 text-white"
+            >
+              <Factory className="mr-2 h-4 w-4" /> Manufacture Master
             </Button>
           </>
         }
@@ -831,8 +834,8 @@ function PharmacyInventory() {
             </div>
             <Button
               size="sm"
-              variant="outline"
               onClick={() => updateSearch({ stock: "low", page: 1 })}
+              className="bg-emerald-700 hover:bg-emerald-800 text-white"
             >
               <PackageX className="mr-2 h-4 w-4" /> Review low stock
             </Button>
@@ -944,9 +947,8 @@ function PharmacyInventory() {
                     return (
                       <th
                         key={h.id}
-                        className={`px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground ${
-                          canSort ? "cursor-pointer select-none hover:text-foreground" : ""
-                        }`}
+                        className={`px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground ${canSort ? "cursor-pointer select-none hover:text-foreground" : ""
+                          }`}
                         onClick={canSort ? h.column.getToggleSortingHandler() : undefined}
                       >
                         <span className="inline-flex items-center gap-1">
@@ -973,8 +975,7 @@ function PharmacyInventory() {
               {table.getRowModel().rows.length === 0 ? (
                 <tr>
                   <td colSpan={columns.length} className="px-4 py-10">
-                    <EmptyState
-                      icon={Boxes}
+                    <EmptyState icon={Boxes}
                       title="No medicines match"
                       description="Adjust your filters or clear the search."
                     />
@@ -1182,11 +1183,10 @@ function PharmacyInventory() {
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-start gap-3">
                       <div
-                        className={`rounded-full p-2 ${
-                          positive
-                            ? "bg-success/15 text-success-foreground"
-                            : "bg-destructive/10 text-destructive"
-                        }`}
+                        className={`rounded-full p-2 ${positive
+                          ? "bg-success/15 text-success-foreground"
+                          : "bg-destructive/10 text-destructive"
+                          }`}
                       >
                         {h.action === "bulk-undo" ? (
                           <Undo2 className="h-4 w-4" />
@@ -1200,9 +1200,8 @@ function PharmacyInventory() {
                         <p className="text-sm font-medium capitalize">
                           {h.action.replace("-", " ")}
                           <span
-                            className={`ml-2 text-xs font-bold ${
-                              positive ? "text-success-foreground" : "text-destructive"
-                            }`}
+                            className={`ml-2 text-xs font-bold ${positive ? "text-success-foreground" : "text-destructive"
+                              }`}
                           >
                             {positive ? "+" : ""}
                             {h.delta}
@@ -1240,6 +1239,13 @@ function PharmacyInventory() {
         thresholds={thresholds}
         setThresholds={setThresholds}
         effectiveMin={effectiveMin}
+      />
+
+      {/* Manufacture Master Drawer */}
+      <ManufactureMasterDrawer
+        open={manufactureMasterOpen}
+        onOpenChange={setManufactureMasterOpen}
+        items={items}
       />
 
       {/* Per-medicine threshold override dialog */}
@@ -1379,7 +1385,6 @@ function ThresholdsDrawer({
     );
     setBulkTarget(null);
   };
-
 
   const setCategory = (cat: string, valueRaw: string) => {
     const trimmed = valueRaw.trim();
@@ -1649,6 +1654,197 @@ function ThresholdsDrawer({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+    </Sheet>
+  );
+}
+
+// Manufacture Master Drawer Component
+interface ManufactureMasterDrawerProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  items: Medicine[];
+}
+
+function ManufactureMasterDrawer({ open, onOpenChange, items }: ManufactureMasterDrawerProps) {
+  const [manufacturers, setManufacturers] = useState<string[]>(() => {
+    const unique = new Set(items.map((m) => m.manufacturer));
+    return Array.from(unique).sort();
+  });
+
+  const [newManufacturer, setNewManufacturer] = useState("");
+  const [editingManufacturer, setEditingManufacturer] = useState<string | null>(null);
+  const [editValue, setEditValue] = useState("");
+
+  const handleAddManufacturer = () => {
+    const trimmed = newManufacturer.trim();
+    if (!trimmed) {
+      toast.error("Please enter a manufacturer name");
+      return;
+    }
+    if (manufacturers.includes(trimmed)) {
+      toast.error("Manufacturer already exists");
+      return;
+    }
+    setManufacturers((prev) => [...prev, trimmed].sort());
+    setNewManufacturer("");
+    toast.success(`Added "${trimmed}" to manufacturers`);
+  };
+
+  const handleDeleteManufacturer = (name: string) => {
+    const medCount = items.filter((m) => m.manufacturer === name).length;
+    if (medCount > 0) {
+      toast.warning(`Cannot delete "${name}" - ${medCount} medicine(s) use this manufacturer`);
+      return;
+    }
+    if (window.confirm(`Delete manufacturer "${name}"?`)) {
+      setManufacturers((prev) => prev.filter((m) => m !== name));
+      toast.success(`Removed "${name}" from manufacturers`);
+    }
+  };
+
+  const handleStartEdit = (name: string) => {
+    setEditingManufacturer(name);
+    setEditValue(name);
+  };
+
+  const handleSaveEdit = () => {
+    const trimmed = editValue.trim();
+    if (!trimmed) {
+      toast.error("Manufacturer name cannot be empty");
+      return;
+    }
+    if (trimmed !== editingManufacturer && manufacturers.includes(trimmed)) {
+      toast.error("Manufacturer already exists");
+      return;
+    }
+    setManufacturers((prev) =>
+      prev.map((m) => (m === editingManufacturer ? trimmed : m)).sort()
+    );
+    setEditingManufacturer(null);
+    setEditValue("");
+    toast.success(`Updated manufacturer to "${trimmed}"`);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingManufacturer(null);
+    setEditValue("");
+  };
+
+  return (
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent className="w-full overflow-y-auto sm:max-w-lg">
+        <SheetHeader>
+          <SheetTitle className="flex items-center gap-2">
+            <Factory className="h-5 w-5 text-primary" />
+            Manufacture Master
+          </SheetTitle>
+          <SheetDescription>
+            Manage all medicine manufacturers in the system. {manufacturers.length} manufacturer(s) total.
+          </SheetDescription>
+        </SheetHeader>
+
+        <div className="mt-6 space-y-4">
+          {/* Add New Manufacturer */}
+          <div className="space-y-2">
+            <Label htmlFor="newManufacturer">Add New Manufacturer</Label>
+            <div className="flex gap-2">
+              <Input
+                id="newManufacturer"
+                value={newManufacturer}
+                onChange={(e) => setNewManufacturer(e.target.value)}
+                placeholder="Enter manufacturer name"
+                onKeyPress={(e) => e.key === "Enter" && handleAddManufacturer()}
+                className="flex-1"
+              />
+              <Button onClick={handleAddManufacturer}>
+                <Plus className="mr-2 h-4 w-4" /> Add
+              </Button>
+            </div>
+          </div>
+
+          {/* Manufacturer List */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <h4 className="text-sm font-semibold text-muted-foreground">Manufacturer List</h4>
+              <span className="text-xs text-muted-foreground">
+                {manufacturers.length} total
+              </span>
+            </div>
+            <div className="max-h-[55vh] space-y-1.5 overflow-y-auto pr-1">
+              {manufacturers.length === 0 ? (
+                <EmptyState
+                  icon={Factory}
+                  title="No manufacturers"
+                  description="Add your first manufacturer above."
+                />
+              ) : (
+                manufacturers.map((name) => {
+                  const medCount = items.filter((m) => m.manufacturer === name).length;
+                  return (
+                    <div
+                      key={name}
+                      className="flex items-center justify-between gap-3 rounded-md border border-border bg-muted/30 px-3 py-2.5"
+                    >
+                      {editingManufacturer === name ? (
+                        <div className="flex flex-1 items-center gap-2">
+                          <Input
+                            value={editValue}
+                            onChange={(e) => setEditValue(e.target.value)}
+                            className="flex-1 h-8 text-sm"
+                            autoFocus
+                            onKeyPress={(e) => e.key === "Enter" && handleSaveEdit()}
+                          />
+                          <Button size="sm" onClick={handleSaveEdit}>Save</Button>
+                          <Button size="sm" variant="ghost" onClick={handleCancelEdit}>Cancel</Button>
+                        </div>
+                      ) : (
+                        <>
+                          <div className="min-w-0 flex-1">
+                            <p className="text-sm font-medium truncate">{name}</p>
+                            <p className="text-[11px] text-muted-foreground">
+                              {medCount} medicine{medCount !== 1 ? "s" : ""} in inventory
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className="h-8 w-8"
+                              onClick={() => handleStartEdit(name)}
+                              title="Edit manufacturer"
+                            >
+                              <Pencil className="h-3.5 w-3.5" />
+                            </Button>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                              onClick={() => handleDeleteManufacturer(name)}
+                              title="Delete manufacturer"
+                              disabled={medCount > 0}
+                            >
+                              <PackageMinus className="h-3.5 w-3.5" />
+                            </Button>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-6 flex items-center justify-between border-t border-border pt-4">
+          <p className="text-xs text-muted-foreground">
+            {manufacturers.length} manufacturer(s) · {items.length} medicine(s)
+          </p>
+          <Button size="sm" onClick={() => onOpenChange(false)}>
+            Done
+          </Button>
+        </div>
+      </SheetContent>
     </Sheet>
   );
 }
