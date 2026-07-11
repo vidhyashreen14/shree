@@ -148,3 +148,50 @@ export interface Notification {
   kind: "info" | "success" | "warning" | "error";
   read: boolean;
 }
+
+export interface NurseVitals {
+  height: string;
+  weight: string;
+  bmi: string;
+  bp: string;
+  pulse: string;
+  tempF: string;
+  spo2: string;
+  sugar?: string;
+  chiefComplaint: string;
+}
+
+export interface NurseQueueEntry {
+  id: string;
+  patientId: string;
+  uhid: string;
+  patientName: string;
+  age: number;
+  gender: string;
+  doctorId: string;
+  doctorName: string;
+  department: string;
+  isNewPatient: boolean;
+  paymentMethod: string;
+  totalPaid: number;
+  arrivedAt: string;
+  vitalsStatus: "pending" | "in-progress" | "done";
+  vitals?: NurseVitals;
+  consultStatus?: "waiting" | "in-consultation" | "completed" | "cancelled";
+}
+
+
+export interface VisitRecord {
+  id: string;
+  patientId: string;
+  uhid: string;
+  isNewPatient: boolean;
+  doctorId: string;
+  department: string;
+  paymentMethod: string;
+  registrationFee: number;
+  consultationFee: number;
+  totalPaid: number;
+  receiptNo: string;
+  visitedAt: string;
+}

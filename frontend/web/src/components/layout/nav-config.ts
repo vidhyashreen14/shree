@@ -4,9 +4,10 @@ import {
   Pill, ClipboardList, Building2, Shield, Settings, Bell, FileText, UserCog,
   ScrollText, BadgeCheck, ListChecks, Search, Receipt, Truck, AlertTriangle,
   HeartPulse, Inbox, PackageSearch, FilePlus2, FileCheck2, ClipboardPlus, Beaker,
-  Calendar, UserPlus, Hourglass,
+  Calendar, UserPlus, Hourglass, KeyRound, Monitor, IndianRupee,
 } from "lucide-react";
 import type { ComponentType } from "react";
+
 
 export interface NavItem {
   to: string;
@@ -23,7 +24,10 @@ export const NAV: Record<Role, NavItem[]> = {
     { to: "/admin/doctors", label: "Doctors", icon: Stethoscope, group: "Hospital" },
     { to: "/admin/departments", label: "Departments", icon: Building2, group: "Hospital" },
     { to: "/admin/roles", label: "Roles & permissions", icon: Shield, group: "Hospital" },
+    { to: "/admin/access", label: "Access Management", icon: KeyRound, group: "Access" },
+    { to: "/admin/monitor", label: "Monitor Dashboards", icon: Monitor, group: "Access" },
     { to: "/admin/audit", label: "Audit logs", icon: ScrollText, group: "System" },
+    { to: "/admin/billing", label: "Billing Configuration", icon: IndianRupee, group: "System" },
     { to: "/admin/settings", label: "Hospital settings", icon: Settings, group: "System" },
   ],
   doctor: [
@@ -39,6 +43,7 @@ export const NAV: Record<Role, NavItem[]> = {
   frontdesk: [
     { to: "/frontdesk", label: "Overview", icon: LayoutDashboard },
     { to: "/frontdesk/register", label: "Register patient", icon: UserPlus },
+    { to: "/frontdesk/billing", label: "Optional Billing", icon: IndianRupee },
     { to: "/frontdesk/appointments", label: "Appointments", icon: CalendarDays },
     { to: "/frontdesk/queue", label: "Queue", icon: ListChecks },
   ],
@@ -68,4 +73,4 @@ export const SHARED_NAV: NavItem[] = [
 ];
 
 // silence unused symbol warnings from re-exports
-export const _icons = { AlertTriangle, BadgeCheck, FileText, Inbox, Pill, Search };
+export const _icons = { AlertTriangle, BadgeCheck, FileText, Inbox, Pill, Search, ClipboardList };

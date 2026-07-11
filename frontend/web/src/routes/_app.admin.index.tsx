@@ -1,14 +1,17 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHeader } from "@/components/common/PageHeader";
 import { StatCard } from "@/components/common/StatCard";
 import {
   Activity, Users, CalendarDays, Stethoscope, Pill, FlaskConical, TrendingUp, BedDouble,
+  HeartPulse, Monitor, ArrowRight,
 } from "lucide-react";
 import {
   ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
   BarChart, Bar, PieChart, Pie, Cell, Legend, LineChart, Line,
 } from "recharts";
 import { monthlyRevenue, dailyVisits, departmentLoad, departments, doctors, patients, appointments, medicines } from "@/lib/mock/data";
+import { cn } from "@/lib/utils";
+
 
 export const Route = createFileRoute("/_app/admin/")({
   component: AdminOverview,
@@ -144,6 +147,54 @@ function AdminOverview() {
               </LineChart>
             </ResponsiveContainer>
           </div>
+        </div>
+      </div>
+
+      {/* Quick Monitor strip */}
+      <div className="mt-6">
+        <div className="mb-3 flex items-center justify-between">
+          <div>
+            <h3 className="font-display font-semibold flex items-center gap-2">
+              <Monitor className="h-4 w-4 text-primary" />
+              Quick Monitor
+            </h3>
+            <p className="text-xs text-muted-foreground">Open any staff dashboard for real-time monitoring</p>
+          </div>
+          <Link
+            to="/admin/access"
+            className="flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+          >
+            Manage access <ArrowRight className="h-3 w-3" />
+          </Link>
+        </div>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+          {[
+            { role: "frontdesk", label: "Front Desk", icon: Users, color: "from-blue-500 to-blue-700", stat: "47 check-ins" },
+            { role: "doctor", label: "Doctor", icon: Stethoscope, color: "from-emerald-500 to-emerald-700", stat: "8 in queue" },
+            { role: "nurse", label: "Nurse", icon: HeartPulse, color: "from-pink-500 to-pink-700", stat: "31 vitals" },
+            { role: "pharmacy", label: "Pharmacy", icon: Pill, color: "from-amber-500 to-amber-700", stat: "64 orders" },
+            { role: "lab", label: "Laboratory", icon: FlaskConical, color: "from-violet-500 to-violet-700", stat: "14 pending" },
+          ].map((d) => {
+            const Icon = d.icon;
+            return (
+              <Link
+                key={d.role}
+                to="/admin/access"
+                id={`quick-monitor-${d.role}`}
+                className="group relative overflow-hidden rounded-xl border bg-card p-4 shadow-sm transition-all hover:shadow-md hover:border-primary/30 hover:-translate-y-0.5"
+              >
+                <div className={cn("absolute inset-x-0 top-0 h-1 bg-gradient-to-r", d.color)} />
+                <div className={cn("grid h-9 w-9 place-items-center rounded-lg bg-gradient-to-br text-white mb-3", d.color)}>
+                  <Icon className="h-4 w-4" />
+                </div>
+                <p className="font-semibold text-sm">{d.label}</p>
+                <p className="text-xs text-muted-foreground">{d.stat} today</p>
+                <div className="mt-2 flex items-center text-xs font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                  Monitor <ArrowRight className="ml-1 h-3 w-3" />
+                </div>
+              </Link>
+            );
+          })}
         </div>
       </div>
     </>

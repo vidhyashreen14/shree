@@ -1,6 +1,9 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { Activity, Eye, EyeOff, Loader2, ShieldCheck, Stethoscope, Users, Pill, FlaskConical, HeartPulse, Shield } from "lucide-react";
-import { useState } from "react";
+import {
+  Eye, EyeOff, Loader2, ShieldCheck,
+  Stethoscope, Users, Pill, FlaskConical, HeartPulse, Shield, ChevronDown,
+} from "lucide-react";
+import { useState, useRef, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -8,10 +11,11 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useAuth } from "@/lib/store/auth";
-import { ROLE_HOME, ROLES } from "@/lib/rbac";
+import { useAuth, splashState } from "@/lib/store/auth";
+import { ROLE_HOME } from "@/lib/rbac";
 import type { Role } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { SplashScreen } from "@/components/common/SplashScreen";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
@@ -30,39 +34,96 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>;
 
-const roleIcons: Record<Role, typeof Shield> = {
-  admin: Shield,
-  doctor: Stethoscope,
-  frontdesk: Users,
-  nurse: HeartPulse,
-  pharmacy: Pill,
-  lab: FlaskConical,
-};
+// ── Role order: Administrator first, then staff roles ──
+const roleConfig: { value: Role; label: string; description: string; icon: typeof Shield; color: string }[] = [
+  { value: "admin",     label: "Administrator", description: "Full hospital access",         icon: Shield,       color: "text-primary bg-primary/5 border-primary/20" },
+  { value: "doctor",    label: "Doctor",         description: "Patient care & prescriptions", icon: Stethoscope,  color: "text-emerald-600 bg-emerald-50 border-emerald-200" },
+  { value: "frontdesk", label: "Front Desk",     description: "Registration & appointments",  icon: Users,        color: "text-blue-600 bg-blue-50 border-blue-200" },
+  { value: "nurse",     label: "Nurse",          description: "Vitals & observations",        icon: HeartPulse,   color: "text-pink-600 bg-pink-50 border-pink-200" },
+  { value: "pharmacy",  label: "Pharmacy",       description: "Inventory & dispensing",       icon: Pill,         color: "text-amber-600 bg-amber-50 border-amber-200" },
+  { value: "lab",       label: "Laboratory",     description: "Test orders & reports",        icon: FlaskConical, color: "text-violet-600 bg-violet-50 border-violet-200" },
+];
 
 function LoginPage() {
   const navigate = useNavigate();
   const signIn = useAuth((s) => s.signIn);
-  const [role, setRole] = useState<Role>("doctor");
+
+  // Start with no role selected — shows "Sign in as…" placeholder
+  const [role, setRole] = useState<Role | null>(null);
   const [showPwd, setShowPwd] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [showSplash, setShowSplash] = useState(false);
+  const [initialSplashDone, setInitialSplashDone] = useState(splashState.shown);
+  const [pendingNav, setPendingNav] = useState<string | null>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
-    defaultValues: { email: "doctor@medicore.io", password: "demo1234" },
+    defaultValues: { email: "", password: "demo1234" },
   });
 
-  const onSubmit = async (values: FormValues) => {
-    const u = await signIn(values.email, values.password, role);
-    toast.success(`Welcome, ${u.name.split(" ")[0]}`);
-    navigate({ to: ROLE_HOME[u.role] });
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleOutside(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleOutside);
+    return () => document.removeEventListener("mousedown", handleOutside);
+  }, []);
+
+  const selectedRole = role ? roleConfig.find((r) => r.value === role) ?? null : null;
+
+  const handleRoleSelect = (r: typeof roleConfig[0]) => {
+    setRole(r.value);
+    form.setValue("email", `${r.value}@medicore.io`);
+    setDropdownOpen(false);
   };
 
+  const onSubmit = async (values: FormValues) => {
+    if (!role) {
+      toast.error("Please select a role first");
+      return;
+    }
+    const u = await signIn(values.email, values.password, role);
+    toast.success(`Welcome, ${u.name.split(" ")[0]}`);
+    // Show branded splash before navigating
+    setPendingNav(ROLE_HOME[u.role]);
+    setShowSplash(true);
+  };
+
+  // Show branded splash on initial site load if not shown yet
+  if (!initialSplashDone) {
+    return (
+      <SplashScreen
+        onDone={() => {
+          splashState.shown = true;
+          setInitialSplashDone(true);
+        }}
+      />
+    );
+  }
+
   return (
-    <div className="grid min-h-screen lg:grid-cols-[1.05fr_1fr]">
-      {/* Form */}
+    <>
+      {/* Branded splash screen shown after login */}
+      {showSplash && (
+        <SplashScreen
+          onDone={() => {
+            splashState.shown = true;
+            if (pendingNav) navigate({ to: pendingNav as "/" });
+          }}
+        />
+      )}
+
+      <div className="relative z-10 grid min-h-screen lg:grid-cols-[1.05fr_1fr]">
+
+      {/* ── Left: Form ── */}
       <div className="flex flex-col px-6 py-10 sm:px-12 lg:px-16">
         <Link to="/" className="flex items-center gap-2">
-          <span className="grid h-9 w-9 place-items-center rounded-xl bg-primary text-primary-foreground">
-            <Activity className="h-5 w-5" />
+          <span className="grid h-9 w-9 place-items-center rounded-xl bg-primary overflow-hidden">
+            <img src="/logo.svg" alt="MediCore" className="h-6 w-6 object-contain" style={{ filter: "invert(1)" }} />
           </span>
           <span className="font-display text-lg font-bold tracking-tight">MediCore</span>
         </Link>
@@ -73,53 +134,119 @@ function LoginPage() {
             Sign in to your workspace
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Pick the role you want to demo and continue. All data is mocked.
+            Select your role and sign in with your credentials.
           </p>
 
+          {/* ── Role Dropdown ── */}
           <div className="mt-6">
-            <p className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+            <Label htmlFor="role-dropdown" className="text-sm font-medium">
               Sign in as
-            </p>
-            <div className="grid grid-cols-3 gap-2">
-              {ROLES.map((r) => {
-                const Icon = roleIcons[r.value];
-                const active = role === r.value;
-                return (
-                  <button
-                    key={r.value}
-                    type="button"
-                    onClick={() => {
-                      setRole(r.value);
-                      form.setValue("email", `${r.value}@medicore.io`);
-                    }}
-                    className={cn(
-                      "group flex flex-col items-start gap-1.5 rounded-xl border p-3 text-left transition-all",
-                      active
-                        ? "border-primary bg-primary/5 ring-1 ring-primary/40"
-                        : "border-border bg-background hover:border-primary/50 hover:bg-accent/40",
-                    )}
-                  >
+            </Label>
+
+            <div ref={dropdownRef} className="relative mt-1.5">
+              {/* Trigger */}
+              <button
+                id="role-dropdown"
+                type="button"
+                onClick={() => setDropdownOpen((o) => !o)}
+                className={cn(
+                  "flex w-full items-center gap-3 rounded-xl border px-4 py-3 text-left transition-all",
+                  "focus:outline-none focus:ring-2 focus:ring-primary/40",
+                  dropdownOpen
+                    ? "border-primary bg-background ring-1 ring-primary/30"
+                    : "border-border bg-background hover:border-primary/50"
+                )}
+                aria-haspopup="listbox"
+                aria-expanded={dropdownOpen}
+              >
+                {selectedRole ? (
+                  <>
+                    {/* Selected role icon */}
                     <span className={cn(
-                      "grid h-7 w-7 place-items-center rounded-lg",
-                      active ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground",
+                      "grid h-8 w-8 shrink-0 place-items-center rounded-lg border",
+                      selectedRole.color
                     )}>
-                      <Icon className="h-3.5 w-3.5" />
+                      <selectedRole.icon className="h-4 w-4" />
                     </span>
-                    <span className="text-xs font-semibold leading-tight">{r.label}</span>
-                  </button>
-                );
-              })}
+                    {/* Selected role text */}
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-sm leading-none">{selectedRole.label}</p>
+                      <p className="mt-0.5 text-xs text-muted-foreground truncate">{selectedRole.description}</p>
+                    </div>
+                  </>
+                ) : (
+                  /* Placeholder */
+                  <span className="flex-1 text-sm text-muted-foreground">Sign in as…</span>
+                )}
+
+                <ChevronDown className={cn(
+                  "h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200",
+                  dropdownOpen && "rotate-180"
+                )} />
+              </button>
+
+              {/* Dropdown panel */}
+              {dropdownOpen && (
+                <div
+                  role="listbox"
+                  aria-label="Select your role"
+                  className="absolute left-0 right-0 z-50 mt-1.5 overflow-hidden rounded-xl border border-border bg-popover shadow-xl"
+                >
+                  {roleConfig.map((r) => {
+                    const Icon = r.icon;
+                    const active = role === r.value;
+                    return (
+                      <button
+                        key={r.value}
+                        type="button"
+                        role="option"
+                        aria-selected={active}
+                        id={`role-option-${r.value}`}
+                        onClick={() => handleRoleSelect(r)}
+                        className={cn(
+                          "flex w-full items-center gap-3 px-4 py-3 text-left transition-colors",
+                          active
+                            ? "bg-primary/5 text-foreground"
+                            : "text-foreground hover:bg-accent"
+                        )}
+                      >
+                        <span className={cn(
+                          "grid h-8 w-8 shrink-0 place-items-center rounded-lg border",
+                          r.color
+                        )}>
+                          <Icon className="h-4 w-4" />
+                        </span>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold leading-none">{r.label}</p>
+                          <p className="mt-0.5 text-xs text-muted-foreground">{r.description}</p>
+                        </div>
+                        {active && (
+                          <span className="ml-auto h-2 w-2 shrink-0 rounded-full bg-primary" />
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
 
-          <form onSubmit={form.handleSubmit(onSubmit)} className="mt-6 space-y-4">
+          {/* ── Form ── */}
+          <form onSubmit={form.handleSubmit(onSubmit)} className="mt-5 space-y-4">
             <div>
               <Label htmlFor="email">Work email</Label>
-              <Input id="email" type="email" autoComplete="email" {...form.register("email")} className="mt-1.5" />
+              <Input
+                id="email"
+                type="email"
+                autoComplete="email"
+                {...form.register("email")}
+                className="mt-1.5"
+              />
               {form.formState.errors.email && (
                 <p className="mt-1 text-xs text-destructive">{form.formState.errors.email.message}</p>
               )}
             </div>
+
             <div>
               <div className="flex items-center justify-between">
                 <Label htmlFor="password">Password</Label>
@@ -148,11 +275,18 @@ function LoginPage() {
               )}
             </div>
 
-            <Button type="submit" className="w-full" size="lg" disabled={form.formState.isSubmitting}>
+            <Button
+              type="submit"
+              className="w-full"
+              size="lg"
+              disabled={form.formState.isSubmitting || !role}
+            >
               {form.formState.isSubmitting ? (
                 <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Signing in…</>
+              ) : selectedRole ? (
+                <>Continue as {selectedRole.label}</>
               ) : (
-                <>Continue as {ROLES.find((r) => r.value === role)?.label}</>
+                <>Select a role to continue</>
               )}
             </Button>
 
@@ -165,7 +299,7 @@ function LoginPage() {
         <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} MediCore Health Systems</p>
       </div>
 
-      {/* Hero panel */}
+      {/* ── Right: Hero ── */}
       <div className="relative hidden flex-col justify-between overflow-hidden bg-linear-to-br from-primary via-primary/90 to-info p-12 text-primary-foreground lg:flex">
         <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_20%_20%,white_0,transparent_40%),radial-gradient(circle_at_80%_70%,white_0,transparent_45%)]" />
         <div className="relative">
@@ -183,9 +317,9 @@ function LoginPage() {
         <div className="relative grid grid-cols-2 gap-3">
           {[
             { k: "12,480", v: "Active patients" },
-            { k: "94%", v: "On-time consults" },
-            { k: "320", v: "Clinicians" },
-            { k: "4.9★", v: "Staff rating" },
+            { k: "94%",    v: "On-time consults" },
+            { k: "320",    v: "Clinicians" },
+            { k: "4.9★",  v: "Staff rating" },
           ].map((s) => (
             <div key={s.v} className="rounded-2xl bg-white/10 p-4 backdrop-blur-sm ring-1 ring-white/15">
               <p className="font-display text-2xl font-bold">{s.k}</p>
@@ -194,6 +328,8 @@ function LoginPage() {
           ))}
         </div>
       </div>
-    </div>
+
+      </div>
+    </>
   );
 }

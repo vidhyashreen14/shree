@@ -4,7 +4,9 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { PageHeader } from "@/components/common/PageHeader";
 import { DataTable } from "@/components/common/DataTable";
 import { Button } from "@/components/ui/button";
-import { prescriptions, patients, doctors } from "@/lib/mock/data";
+import { doctors } from "@/lib/mock/data";
+import { usePatients } from "@/lib/store/patients";
+import { useClinicalStore } from "@/lib/store/clinical";
 import type { Prescription } from "@/lib/types";
 import { format } from "date-fns";
 import { useAuth } from "@/lib/store/auth";
@@ -17,6 +19,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
+import { PrescriptionPrintModal, doctorCredentials, type PrescriptionPrintData } from "./_app.doctor.patients.$id";
 
 export const Route = createFileRoute("/_app/doctor/prescriptions")({
   component: DoctorRx,
@@ -24,10 +27,14 @@ export const Route = createFileRoute("/_app/doctor/prescriptions")({
 
 function DoctorRx() {
   const user = useAuth((s) => s.user);
+  const patients = usePatients((s) => s.patients);
+  const prescriptions = useClinicalStore((s) => s.prescriptions);
+
   const doctorId = user?.role === "doctor" ? user.id : doctors[0]!.id;
   const myRx = prescriptions.filter((r) => r.doctorId === doctorId);
   const [open, setOpen] = useState(false);
   const [meds, setMeds] = useState([{ name: "", dose: "", frequency: "OD", duration: "" }]);
+  const [printData, setPrintData] = useState<PrescriptionPrintData | null>(null);
 
   const columns = useMemo<ColumnDef<Prescription>[]>(() => [
     { header: "ID", accessorKey: "id", cell: ({ getValue }) => <code className="font-mono text-xs">{String(getValue())}</code> },
@@ -45,11 +52,44 @@ function DoctorRx() {
     {
       header: "",
       id: "a",
-      cell: () => (
-        <Button size="sm" variant="ghost"><Printer className="h-3.5 w-3.5" /></Button>
-      ),
+      cell: ({ row }) => {
+        const r = row.original;
+        const p = patients.find((x) => x.id === r.patientId);
+        const dr = doctors.find((d) => d.id === r.doctorId) || doctors[0]!;
+        const creds = doctorCredentials[dr.id] || { qualification: "MBBS, MD", kmc: "KMC-99999" };
+        
+        return (
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => {
+              if (!p) { toast.error("Patient details not found"); return; }
+              setPrintData({
+                rxNo: `RX-${r.id.slice(-6)}`,
+                date: format(new Date(r.date), "dd MMM yyyy, hh:mm a"),
+                patientName: p.name,
+                uhid: p.mrn,
+                age: p.age,
+                gender: p.gender,
+                doctorName: dr.name,
+                specialization: dr.specialization,
+                qualification: creds.qualification,
+                kmcNo: creds.kmc,
+                diagnosis: r.diagnosis,
+                medicines: r.medicines,
+                labTests: [],
+                followUp: r.advice.includes("Follow up: ") ? r.advice.replace("Follow up: ", "").replace(".", "") : undefined,
+                patientPhone: p.phone,
+                patientEmail: p.email,
+              });
+            }}
+          >
+            <Printer className="h-3.5 w-3.5" />
+          </Button>
+        );
+      },
     },
-  ], []);
+  ], [patients]);
 
   return (
     <>
@@ -117,6 +157,9 @@ function DoctorRx() {
         }
       />
       <DataTable columns={columns} data={myRx} searchPlaceholder="Search by diagnosis…" />
+      {printData && (
+        <PrescriptionPrintModal data={printData} onClose={() => setPrintData(null)} />
+      )}
     </>
   );
 }

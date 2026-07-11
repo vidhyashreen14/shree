@@ -168,8 +168,8 @@ export const medicines: Medicine[] = medNames.map((name, i) => ({
 
 export const auditLogs: AuditLog[] = Array.from({ length: 24 }).map((_, i) => ({
   id: `al-${i}`,
-  user: ["Dr. Anika Rao", "Priya Menon", "Sister Joan", "Rahul Verma", "Mei Chen"][i % 5]!,
-  role: (["admin", "frontdesk", "nurse", "pharmacy", "lab"] as const)[i % 5]!,
+  user: ["Dr. Anika Rao", "Priya Menon", "Sister Joan", "Rahul Verma", "Mei Chen", "Dr. Vikram Shah"][i % 6]!,
+  role: (["doctor", "frontdesk", "nurse", "pharmacy", "lab", "admin"] as const)[i % 6]!,
   action: ["Updated patient", "Created appointment", "Dispensed medicine", "Uploaded lab report", "Changed permissions", "Logged in"][i % 6]!,
   target: ["MRN-10231", "a-2034", "Amoxicillin 500mg", "lo-4002", "Role: Nurse", "—"][i % 6]!,
   at: daysAgo(i / 3),
