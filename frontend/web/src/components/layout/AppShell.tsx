@@ -25,7 +25,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                             alt=""
                             className="w-[520px] max-w-[72vw] select-none"
                             style={{
-                                opacity: 0.4,
+                                opacity: 0.2,
                                 filter: "var(--watermark-filter, grayscale(1) brightness(0))",
                             }}
                         />
