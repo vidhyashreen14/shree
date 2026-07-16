@@ -15,15 +15,22 @@ export function Sidebar({ open, onClose, desktopOpen = true }: Props) {
     const user = useAuth((s) => s.user);
     const logout = useAuth((s) => s.logout);
     const navigate = useNavigate();
-    const pathname = useRouterState({ select: (r) => r.location.pathname });
+    const location = useRouterState({ select: (r) => r.location });
     const { logoUrl, name } = useHospitalSettings();
     
     if (!user) return null;
     const items = NAV[user.role];
     const groups = Array.from(new Set(items.map((i) => i.group ?? "Menu")));
 
-    const isActive = (to: string) =>
-        pathname === to || (to !== "/" && pathname.startsWith(to + "/"));
+    const isActive = (to: string) => {
+        const href = decodeURIComponent(location.href);
+        const target = decodeURIComponent(to);
+        if (href === target) return true;
+        if (!target.includes("?")) {
+            return location.pathname === target || (target !== "/" && location.pathname.startsWith(target + "/"));
+        }
+        return false;
+    };
 
     const displayLogo = logoUrl || "/logo.svg";
     const isCustomLogo = !!logoUrl;

@@ -4,7 +4,8 @@ import {
   Pill, ClipboardList, Building2, Shield, Settings, Bell, FileText, UserCog,
   ScrollText, BadgeCheck, ListChecks, Search, Receipt, Truck, AlertTriangle,
   HeartPulse, Inbox, PackageSearch, FilePlus2, FileCheck2, ClipboardPlus, Beaker,
-  Calendar, UserPlus, Hourglass, KeyRound, Monitor, IndianRupee,
+  Calendar, UserPlus, Hourglass, KeyRound, Monitor, IndianRupee, ClipboardPen,
+  FileSpreadsheet, TrendingUp,
 } from "lucide-react";
 import type { ComponentType } from "react";
 
@@ -63,7 +64,6 @@ export const NAV: Record<Role, NavItem[]> = {
     { to: "/lab/pending", label: "Pending tests", icon: Beaker },
     { to: "/lab/reports", label: "Reports", icon: FileCheck2 },
     { to: "/lab/upload", label: "Upload report", icon: FilePlus2 },
-
   ],
 };
 
