@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { PageHeader } from "@/components/common/PageHeader";
 import { StatusChip } from "@/components/common/StatusChip";
 import { Button } from "@/components/ui/button";
@@ -63,6 +63,7 @@ const tone = { draft: "neutral", placed: "info", shipped: "warning", received: "
 function PharmacyOrders() {
   const [isCreating, setIsCreating] = useState(true);
   const [orderHistory, setOrderHistory] = useState<PurchaseOrderHistory[]>(initialOrders);
+  const printContentRef = useRef<HTMLDivElement>(null);
 
   // Form states
   const [stockist, setStockist] = useState("");
@@ -174,8 +175,297 @@ function PharmacyOrders() {
       toast.error("No items in order to print.");
       return;
     }
-    toast.success("Sending Purchase Order to printer...");
-    window.print();
+
+    // Generate the print content
+    const printWindow = window.open('', '_blank', 'width=1200,height=800');
+    if (!printWindow) {
+      toast.error("Please allow popups to print.");
+      return;
+    }
+
+    const poNumber = `PO-${Date.now().toString().slice(-6)}`;
+    const formattedDate = new Date(orderDate).toLocaleDateString('en-IN', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+    const expectedDelivery = new Date(new Date(orderDate).setDate(new Date(orderDate).getDate() + 7))
+      .toLocaleDateString('en-IN', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      });
+
+    // Calculate totals
+    let subtotal = 0;
+    const itemsWithPrices = addedItems.map(item => {
+      const medInfo = medicines.find(m => m.id === item.id);
+      const unitPrice = medInfo?.pricePerUnit || 10;
+      const total = item.totalUnits * unitPrice;
+      subtotal += total;
+      return { ...item, unitPrice, total };
+    });
+
+    const discount = 0.05; // 5% bulk discount
+    const discountAmount = subtotal * discount;
+    const taxRate = 0.05; // 5% GST
+    const taxAmount = (subtotal - discountAmount) * taxRate;
+    const grandTotal = subtotal - discountAmount + taxAmount;
+
+    // Build the HTML content - Removed all footer, signature, and extra sections
+    const printHTML = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="UTF-8">
+          <title>Purchase Order - ${poNumber}</title>
+          <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body {
+              background: white;
+              padding: 0.4in;
+              font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            }
+            .invoice-wrapper {
+              max-width: 100%;
+              margin: 0 auto;
+            }
+            .hospital-header {
+              display: flex;
+              flex-wrap: wrap;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: 28px;
+              border-bottom: 2px solid #1f2937;
+              padding-bottom: 20px;
+            }
+            .logo-area {
+              display: flex;
+              align-items: center;
+              gap: 14px;
+            }
+            .logo-placeholder {
+              background: #0b3b5c;
+              color: white;
+              font-weight: 700;
+              font-size: 1.2rem;
+              width: 52px;
+              height: 52px;
+              border-radius: 40px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              letter-spacing: 0.5px;
+            }
+            .hospital-name {
+              font-size: 1.6rem;
+              font-weight: 700;
+              letter-spacing: -0.5px;
+              color: #0b2a3c;
+            }
+            .hospital-detail {
+              text-align: right;
+              line-height: 1.5;
+            }
+            .hospital-detail p {
+              font-size: 0.9rem;
+              color: #1f2a3f;
+            }
+            .invoice-meta {
+              display: flex;
+              flex-wrap: wrap;
+              justify-content: space-between;
+              background: #f8fafc;
+              padding: 16px 18px;
+              border-radius: 14px;
+              margin-bottom: 28px;
+            }
+            .meta-block {
+              display: flex;
+              flex-direction: column;
+            }
+            .meta-block .label {
+              font-size: 0.7rem;
+              text-transform: uppercase;
+              letter-spacing: 0.3px;
+              color: #4b5563;
+            }
+            .meta-block .value {
+              font-weight: 600;
+              font-size: 1rem;
+              color: #0b1e2e;
+            }
+            .info-grid {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 24px 40px;
+              margin-bottom: 30px;
+              padding: 6px 0 12px;
+              border-bottom: 1px solid #e2e8f0;
+            }
+            .info-item {
+              flex: 1 0 180px;
+            }
+            .info-item .label {
+              font-size: 0.7rem;
+              text-transform: uppercase;
+              color: #4b5563;
+              letter-spacing: 0.2px;
+            }
+            .info-item .value {
+              font-weight: 500;
+              font-size: 1rem;
+              margin-top: 3px;
+            }
+            .items-table {
+              width: 100%;
+              border-collapse: collapse;
+              font-size: 0.9rem;
+              margin: 14px 0 20px;
+            }
+            .items-table th {
+              text-align: left;
+              background: #f1f5f9;
+              padding: 10px 8px;
+              font-weight: 600;
+              color: #1e293b;
+              border-bottom: 2px solid #cbd5e1;
+            }
+            .items-table td {
+              padding: 10px 8px;
+              border-bottom: 1px solid #e9edf2;
+              vertical-align: middle;
+            }
+            .items-table .text-right {
+              text-align: right;
+            }
+            .items-table .text-center {
+              text-align: center;
+            }
+            .items-table tfoot tr:first-child td {
+              border-top: 2px solid #94a3b8;
+              padding-top: 14px;
+            }
+            .items-table tfoot td {
+              padding: 6px 8px;
+              font-weight: 500;
+            }
+            .grand-total {
+              font-size: 1.1rem;
+              font-weight: 700;
+              color: #0b2a3c;
+            }
+            .fw-600 { font-weight: 600; }
+          </style>
+        </head>
+        <body>
+          <div class="invoice-wrapper">
+            <!-- HEADER -->
+            <div class="hospital-header">
+              <div class="logo-area">
+                <div class="logo-placeholder">🏥</div>
+                <div>
+                  <div class="hospital-name">Palm Health</div>
+                  <div style="font-size:0.8rem; color:#2c3e50;">Multispecialty Hospital</div>
+                </div>
+              </div>
+              <div class="hospital-detail">
+                <p>📍 12, Health Avenue, Metro City · 560001</p>
+                <p>📞 +91 80 4123 4567 · ✉ pharmacy@palmhealth.in</p>
+                <p><span style="font-weight:500;">GST: 22AABCP1234D1Z5</span></p>
+              </div>
+            </div>
+
+            <!-- PO META -->
+            <div class="invoice-meta">
+              <div class="meta-block">
+                <span class="label">Purchase Order #</span>
+                <span class="value">${poNumber}</span>
+              </div>
+              <div class="meta-block">
+                <span class="label">Order Date</span>
+                <span class="value">${formattedDate}</span>
+              </div>
+              <div class="meta-block">
+                <span class="label">Expected Delivery</span>
+                <span class="value">${expectedDelivery}</span>
+              </div>
+            </div>
+
+            <!-- SUPPLIER INFO -->
+            <div class="info-grid">
+              <div class="info-item">
+                <div class="label">Stockist / Supplier</div>
+                <div class="value">${stockist}</div>
+              </div>
+              <div class="info-item">
+                <div class="label">Order Type</div>
+                <div class="value">Pharmacy Restock</div>
+              </div>
+              <div class="info-item">
+                <div class="label">Prepared By</div>
+                <div class="value">Pharmacy Dept.</div>
+              </div>
+            </div>
+
+            <!-- ITEMS TABLE -->
+            <table class="items-table">
+              <thead>
+                <tr>
+                  <th style="width:40%;">Medicine / Item</th>
+                  <th style="width:12%;" class="text-center">Units/Strip</th>
+                  <th style="width:12%;" class="text-center">No. of Strips</th>
+                  <th style="width:18%;" class="text-right">Unit Price (₹)</th>
+                  <th style="width:18%;" class="text-right">Total (₹)</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${itemsWithPrices.map(item => `
+                  <tr>
+                    <td><span class="fw-600">${item.medicineName}</span> – strip</td>
+                    <td class="text-center">${item.unitsPerStrip}</td>
+                    <td class="text-center">${item.noOfStrips}</td>
+                    <td class="text-right">₹${item.unitPrice.toFixed(2)}</td>
+                    <td class="text-right">₹${item.total.toFixed(2)}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="4" class="text-right fw-600">Subtotal</td>
+                  <td class="text-right">₹${subtotal.toFixed(2)}</td>
+                </tr>
+                <tr>
+                  <td colspan="4" class="text-right">Discount (5% bulk)</td>
+                  <td class="text-right">- ₹${discountAmount.toFixed(2)}</td>
+                </tr>
+                <tr>
+                  <td colspan="4" class="text-right">Tax (GST 5%)</td>
+                  <td class="text-right">₹${taxAmount.toFixed(2)}</td>
+                </tr>
+                <tr>
+                  <td colspan="4" class="text-right grand-total" style="font-size:1.2rem;">Grand Total</td>
+                  <td class="text-right grand-total" style="font-size:1.2rem;">₹${grandTotal.toFixed(2)}</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+          <script>
+            window.onload = function() {
+              window.print();
+              window.onafterprint = function() {
+                window.close();
+              };
+            };
+          <\/script>
+        </body>
+      </html>
+    `;
+
+    printWindow.document.write(printHTML);
+    printWindow.document.close();
+
+    toast.success("Purchase Order sent to printer.");
   };
 
   const handleDownload = () => {
@@ -204,7 +494,7 @@ function PharmacyOrders() {
         }
         actions={
           isCreating ? (
-            <Button variant="outline" onClick={() => setIsCreating(false)}>
+            <Button onClick={() => setIsCreating(false)}>
               <History className="mr-2 h-4 w-4" /> View History
             </Button>
           ) : (
@@ -315,15 +605,14 @@ function PharmacyOrders() {
               <Button
                 type="button"
                 onClick={handleAddItem}
-                className="bg-success text-success-foreground hover:bg-success/90 px-5"
+                className="px-5"
               >
                 <Plus className="mr-1 h-4 w-4" /> Add
               </Button>
               <Button
                 type="button"
-                variant="destructive"
                 onClick={handleClearItemRow}
-                className="bg-destructive text-destructive-foreground hover:bg-destructive/90 px-5"
+                className="px-5"
               >
                 <X className="mr-1 h-4 w-4" /> Clear
               </Button>
@@ -378,33 +667,33 @@ function PharmacyOrders() {
             </div>
           </div>
 
-          {/* Action buttons */}
+          {/* Action buttons — consistent with theme */}
           <div className="flex flex-wrap gap-3 justify-start mt-2">
             <Button
               type="button"
               onClick={handleSaveOrder}
-              className="bg-success text-success-foreground hover:bg-success/90 px-6 font-semibold"
+              className="px-6 font-semibold"
             >
               <Save className="mr-2 h-4 w-4" /> Save Order
             </Button>
             <Button
               type="button"
               onClick={handlePrint}
-              className="bg-info text-info-foreground hover:bg-info/90 px-6 font-semibold"
+              className="px-6 font-semibold"
             >
               <Printer className="mr-2 h-4 w-4" /> Print
             </Button>
             <Button
               type="button"
               onClick={handleDownload}
-              className="bg-primary text-primary-foreground hover:bg-primary/90 px-6 font-semibold"
+              className="px-6 font-semibold"
             >
               <Download className="mr-2 h-4 w-4" /> Download
             </Button>
             <Button
               type="button"
               onClick={handleCancel}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 px-6 font-semibold"
+              className="px-6 font-semibold"
             >
               <X className="mr-2 h-4 w-4" /> Cancel
             </Button>
@@ -449,4 +738,4 @@ function PharmacyOrders() {
       )}
     </div>
   );
-}
+} 

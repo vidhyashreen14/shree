@@ -1171,7 +1171,7 @@ function PharmacyReports() {
                       type="date"
                       value={startDate}
                       onChange={(e) => setStartDate(e.target.value)}
-                      className="px-3 py-1.5 border border-border rounded-lg text-sm bg-background focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
+                      className="px-3 py-1.5 border border-primary rounded-lg text-sm bg-background focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
                     />
                   </div>
                   <div className="flex flex-col gap-1.5">
@@ -1182,7 +1182,7 @@ function PharmacyReports() {
                       type="date"
                       value={endDate}
                       onChange={(e) => setEndDate(e.target.value)}
-                      className="px-3 py-1.5 border border-border rounded-lg text-sm bg-background focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
+                      className="px-3 py-1.5 border border-primary rounded-lg text-sm bg-background focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
                     />
                   </div>
                 </div>
@@ -1302,7 +1302,7 @@ function PharmacyReports() {
                 {reportGenerated && (
                   <button
                     onClick={() => setReportGenerated(false)}
-                    className="px-4 py-2 text-xs font-bold text-primary hover:bg-primary/5 rounded-lg transition-colors border border-primary/20 cursor-pointer"
+                    className="px-4 py-2 text-xs font-bold bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg transition-colors border border-primary/20 cursor-pointer"
                   >
                     Adjust Date Range
                   </button>
@@ -1319,7 +1319,7 @@ function PharmacyReports() {
                     </button>
                     <button
                       onClick={printReportContent}
-                      className="px-4 py-2 bg-secondary text-secondary-foreground text-xs font-semibold rounded-lg hover:shadow-sm border border-border transition-all flex items-center gap-1.5 cursor-pointer active:scale-98 select-none"
+                      className="px-4 py-2 bg-primary text-primary-foreground text-xs font-semibold rounded-lg hover:bg-primary/95 transition-all flex items-center gap-1.5 cursor-pointer active:scale-98 select-none"
                     >
                       <Printer className="h-4 w-4" /> Print
                     </button>
@@ -1327,7 +1327,7 @@ function PharmacyReports() {
                 )}
                 <button
                   onClick={handleCloseGenerator}
-                  className="px-4 py-2 bg-muted text-muted-foreground text-xs font-semibold rounded-lg hover:bg-muted/80 transition-colors cursor-pointer border border-border"
+                  className="px-4 py-2 bg-primary text-primary-foreground text-xs font-semibold rounded-lg hover:bg-primary/90 transition-colors cursor-pointer border border-primary/20"
                 >
                   Close
                 </button>

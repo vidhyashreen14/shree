@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { FilePlus, Plus, X, Save, Printer, Download, Trash2, Edit2, Eye, ChevronDown, ChevronUp, Pill, PackageOpen } from "lucide-react";
 import { patients } from "@/lib/mock/data";
 import { useState, ChangeEvent } from "react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/pharmacy/invoices")({
   component: PharmacyInvoices,
@@ -101,7 +102,7 @@ function PharmacyInvoices() {
 
   const handleAddMedicine = () => {
     if (!medicineFields.medicine || !medicineFields.batch || !medicineFields.batchExpiry) {
-      alert("⚠️ Please fill in Medicine, Batch, and Expiry!");
+      toast.warning("Please fill in Medicine, Batch, and Expiry!");
       return;
     }
 
@@ -115,7 +116,7 @@ function PharmacyInvoices() {
       netPrice
     }]);
 
-    alert("✅ Medicine Added!");
+    toast.success("Medicine added successfully!");
     setMedicineFields({
       medicine: "", batch: "", batchExpiry: "", unitsPerStrip: "", noOfStrips: "",
       freeStrips: "", gstTotal: "", mrpPerStrip: "", discount: "", hsnCode: "",
@@ -125,13 +126,25 @@ function PharmacyInvoices() {
   };
 
   const handleDeleteMedicine = (id: number) => {
-    if (window.confirm("Delete this medicine?")) {
-      setMedicineList(prev => prev.filter(item => item.id !== id));
-      if (editingMedicineId === id) {
-        setEditingMedicineId(null);
-        setEditFormData({});
-      }
-    }
+    const item = medicineList.find(i => i.id === id);
+    toast("Delete medicine?", {
+      description: item?.medicine ? `"${item.medicine}" will be removed from the list.` : "This medicine will be removed.",
+      action: {
+        label: "Delete",
+        onClick: () => {
+          setMedicineList(prev => prev.filter(m => m.id !== id));
+          if (editingMedicineId === id) {
+            setEditingMedicineId(null);
+            setEditFormData({});
+          }
+          toast.success("Medicine removed.");
+        },
+      },
+      cancel: {
+        label: "Cancel",
+        onClick: () => {},
+      },
+    });
   };
 
   const handleEditMedicine = (id: number) => {
@@ -144,7 +157,7 @@ function PharmacyInvoices() {
 
   const handleSaveEditMedicine = () => {
     if (!editFormData.medicine || !editFormData.batch || !editFormData.batchExpiry) {
-      alert("⚠️ Fill in all required fields!");
+      toast.warning("Please fill in all required fields!");
       return;
     }
     setMedicineList(prev => prev.map(item =>
@@ -152,7 +165,7 @@ function PharmacyInvoices() {
     ));
     setEditingMedicineId(null);
     setEditFormData({});
-    alert("✅ Updated!");
+    toast.success("Medicine updated successfully!");
   };
 
   const handleCancelEditMedicine = () => {
@@ -170,19 +183,19 @@ function PharmacyInvoices() {
 
   const handleSaveInvoice = () => {
     if (!invoiceNumber) {
-      alert("⚠️ Please enter Invoice Number!");
+      toast.warning("Please enter Invoice Number!");
       return;
     }
     if (!selectedStockist || selectedStockist === "-- Select Pharmacy Stockist --") {
-      alert("⚠️ Please select a Pharmacy Stockist!");
+      toast.warning("Please select a Pharmacy Stockist!");
       return;
     }
     if (!invoiceDate) {
-      alert("⚠️ Please select a Date!");
+      toast.warning("Please select a Date!");
       return;
     }
     if (medicineList.length === 0) {
-      alert("⚠️ Please add at least one medicine!");
+      toast.warning("Please add at least one medicine!");
       return;
     }
 
@@ -206,7 +219,9 @@ function PharmacyInvoices() {
     };
 
     setSavedInvoices(prev => [newInvoice, ...prev]);
-    alert("✅ Invoice Saved Successfully!");
+    toast.success("Invoice saved successfully!", {
+      description: `Invoice #${invoiceNumber} · Grand Total ₹${grandTotal.toFixed(2)}`,
+    });
 
     // Reset form
     setInvoiceNumber("");
@@ -217,15 +232,293 @@ function PharmacyInvoices() {
 
   const handlePrintInvoice = () => {
     if (medicineList.length === 0) {
-      alert("No items to print!");
+      toast.error("No items to print. Add at least one medicine first.");
       return;
     }
-    window.print();
+
+    // Generate the print content
+    const printWindow = window.open('', '_blank', 'width=1200,height=800');
+    if (!printWindow) {
+      toast.error("Please allow popups to print.");
+      return;
+    }
+
+    const formattedDate = new Date(invoiceDate).toLocaleDateString('en-IN', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+
+    // Calculate totals
+    let subtotal = 0;
+    const itemsWithPrices = medicineList.map(item => {
+      const total = item.netPrice || 0;
+      subtotal += total;
+      return { ...item, total };
+    });
+
+    const totalGST = medicineList.reduce((sum, item) => sum + (parseFloat(item.gstTotal) || 0), 0);
+    const grandTotal = subtotal + totalGST;
+
+    // Build the HTML content - Removed all footer, signature, and extra sections
+    const printHTML = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="UTF-8">
+          <title>Invoice - ${invoiceNumber}</title>
+          <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body {
+              background: white;
+              padding: 0.4in;
+              font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            }
+            .invoice-wrapper {
+              max-width: 100%;
+              margin: 0 auto;
+            }
+            .hospital-header {
+              display: flex;
+              flex-wrap: wrap;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: 28px;
+              border-bottom: 2px solid #1f2937;
+              padding-bottom: 20px;
+            }
+            .logo-area {
+              display: flex;
+              align-items: center;
+              gap: 14px;
+            }
+            .logo-placeholder {
+              background: #0b3b5c;
+              color: white;
+              font-weight: 700;
+              font-size: 1.2rem;
+              width: 52px;
+              height: 52px;
+              border-radius: 40px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              letter-spacing: 0.5px;
+            }
+            .hospital-name {
+              font-size: 1.6rem;
+              font-weight: 700;
+              letter-spacing: -0.5px;
+              color: #0b2a3c;
+            }
+            .hospital-detail {
+              text-align: right;
+              line-height: 1.5;
+            }
+            .hospital-detail p {
+              font-size: 0.9rem;
+              color: #1f2a3f;
+            }
+            .invoice-meta {
+              display: flex;
+              flex-wrap: wrap;
+              justify-content: space-between;
+              background: #f8fafc;
+              padding: 16px 18px;
+              border-radius: 14px;
+              margin-bottom: 28px;
+            }
+            .meta-block {
+              display: flex;
+              flex-direction: column;
+            }
+            .meta-block .label {
+              font-size: 0.7rem;
+              text-transform: uppercase;
+              letter-spacing: 0.3px;
+              color: #4b5563;
+            }
+            .meta-block .value {
+              font-weight: 600;
+              font-size: 1rem;
+              color: #0b1e2e;
+            }
+            .info-grid {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 24px 40px;
+              margin-bottom: 30px;
+              padding: 6px 0 12px;
+              border-bottom: 1px solid #e2e8f0;
+            }
+            .info-item {
+              flex: 1 0 180px;
+            }
+            .info-item .label {
+              font-size: 0.7rem;
+              text-transform: uppercase;
+              color: #4b5563;
+              letter-spacing: 0.2px;
+            }
+            .info-item .value {
+              font-weight: 500;
+              font-size: 1rem;
+              margin-top: 3px;
+            }
+            .items-table {
+              width: 100%;
+              border-collapse: collapse;
+              font-size: 0.9rem;
+              margin: 14px 0 20px;
+            }
+            .items-table th {
+              text-align: left;
+              background: #f1f5f9;
+              padding: 10px 8px;
+              font-weight: 600;
+              color: #1e293b;
+              border-bottom: 2px solid #cbd5e1;
+            }
+            .items-table td {
+              padding: 10px 8px;
+              border-bottom: 1px solid #e9edf2;
+              vertical-align: middle;
+            }
+            .items-table .text-right {
+              text-align: right;
+            }
+            .items-table .text-center {
+              text-align: center;
+            }
+            .items-table tfoot tr:first-child td {
+              border-top: 2px solid #94a3b8;
+              padding-top: 14px;
+            }
+            .items-table tfoot td {
+              padding: 6px 8px;
+              font-weight: 500;
+            }
+            .grand-total {
+              font-size: 1.1rem;
+              font-weight: 700;
+              color: #0b2a3c;
+            }
+            .fw-600 { font-weight: 600; }
+          </style>
+        </head>
+        <body>
+          <div class="invoice-wrapper">
+            <!-- HEADER -->
+            <div class="hospital-header">
+              <div class="logo-area">
+                <div class="logo-placeholder">🏥</div>
+                <div>
+                  <div class="hospital-name">Palm Health</div>
+                  <div style="font-size:0.8rem; color:#2c3e50;">Multispecialty Hospital</div>
+                </div>
+              </div>
+              <div class="hospital-detail">
+                <p>📍 12, Health Avenue, Metro City · 560001</p>
+                <p>📞 +91 80 4123 4567 · ✉ billing@palmhealth.in</p>
+                <p><span style="font-weight:500;">GST: 22AABCP1234D1Z5</span></p>
+              </div>
+            </div>
+
+            <!-- INVOICE META -->
+            <div class="invoice-meta">
+              <div class="meta-block">
+                <span class="label">Invoice Number</span>
+                <span class="value">#${invoiceNumber}</span>
+              </div>
+              <div class="meta-block">
+                <span class="label">Billing Date</span>
+                <span class="value">${formattedDate}</span>
+              </div>
+              <div class="meta-block">
+                <span class="label">Due Date</span>
+                <span class="value">${new Date(new Date(invoiceDate).setDate(new Date(invoiceDate).getDate() + 15)).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+              </div>
+            </div>
+
+            <!-- STOCKIST INFO -->
+            <div class="info-grid">
+              <div class="info-item">
+                <div class="label">Stockist</div>
+                <div class="value">${selectedStockist}</div>
+              </div>
+              <div class="info-item">
+                <div class="label">Invoice Type</div>
+                <div class="value">Pharmacy Invoice</div>
+              </div>
+              <div class="info-item">
+                <div class="label">Prepared By</div>
+                <div class="value">Pharmacy Dept.</div>
+              </div>
+            </div>
+
+            <!-- ITEMS TABLE -->
+            <table class="items-table">
+              <thead>
+                <tr>
+                  <th style="width:30%;">Medicine</th>
+                  <th style="width:10%;" class="text-center">Batch</th>
+                  <th style="width:12%;" class="text-center">Expiry</th>
+                  <th style="width:10%;" class="text-center">Qty</th>
+                  <th style="width:15%;" class="text-right">MRP (₹)</th>
+                  <th style="width:10%;" class="text-right">GST%</th>
+                  <th style="width:13%;" class="text-right">Amount (₹)</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${itemsWithPrices.map(item => `
+                  <tr>
+                    <td><span class="fw-600">${item.medicine}</span></td>
+                    <td class="text-center">${item.batch}</td>
+                    <td class="text-center">${item.batchExpiry}</td>
+                    <td class="text-center">${item.totalUnits || 0}</td>
+                    <td class="text-right">₹${parseFloat(item.mrpPerStrip || '0').toFixed(2)}</td>
+                    <td class="text-right">${item.gstTotal || 0}%</td>
+                    <td class="text-right">₹${(item.netPrice || 0).toFixed(2)}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="6" class="text-right fw-600">Subtotal</td>
+                  <td class="text-right">₹${subtotal.toFixed(2)}</td>
+                </tr>
+                <tr>
+                  <td colspan="6" class="text-right">Tax (GST)</td>
+                  <td class="text-right">₹${totalGST.toFixed(2)}</td>
+                </tr>
+                <tr>
+                  <td colspan="6" class="text-right grand-total" style="font-size:1.2rem;">Grand Total</td>
+                  <td class="text-right grand-total" style="font-size:1.2rem;">₹${grandTotal.toFixed(2)}</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+          <script>
+            window.onload = function() {
+              window.print();
+              window.onafterprint = function() {
+                window.close();
+              };
+            };
+          <\/script>
+        </body>
+      </html>
+    `;
+
+    printWindow.document.write(printHTML);
+    printWindow.document.close();
+
+    toast.success("Invoice sent to printer.");
   };
 
   const handleDownloadInvoice = () => {
     if (medicineList.length === 0) {
-      alert("No items to download!");
+      toast.error("No items to download. Add at least one medicine first.");
       return;
     }
     let csv = "Invoice Details\n";
@@ -243,7 +536,7 @@ function PharmacyInvoices() {
     a.download = `Invoice_${invoiceNumber || 'New'}_${new Date().toISOString().split('T')[0]}.csv`;
     a.click();
     URL.revokeObjectURL(url);
-    alert("✅ Downloaded!");
+    toast.success("Invoice downloaded as CSV!");
   };
 
   const handleViewInvoice = (invoice: SavedInvoice) => {
@@ -556,15 +849,15 @@ function PharmacyInvoices() {
                 </button>
                 <button
                   onClick={handleClearFields}
-                  className="px-6 py-2.5 bg-muted text-muted-foreground rounded-lg font-semibold hover:bg-muted/80 transition-all text-sm"
+                  className="px-6 py-2.5 bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg font-semibold hover:shadow-lg transition-all flex items-center gap-2 text-sm shadow-md"
                 >
-                  Clear Fields
+                  <X className="h-4 w-4" /> Clear Fields
                 </button>
                 <button
                   onClick={() => setShowMedicineForm(false)}
-                  className="px-6 py-2.5 bg-muted text-muted-foreground rounded-lg font-semibold hover:bg-muted/80 transition-all text-sm"
+                  className="px-6 py-2.5 bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg font-semibold hover:shadow-lg transition-all flex items-center gap-2 text-sm shadow-md"
                 >
-                  Cancel
+                  <X className="h-4 w-4" /> Cancel
                 </button>
               </div>
             </div>
@@ -738,13 +1031,13 @@ function PharmacyInvoices() {
             </button>
             <button
               onClick={handlePrintInvoice}
-              className="px-6 py-2.5 bg-secondary text-secondary-foreground rounded-lg font-semibold hover:shadow-lg transition-all flex items-center gap-2 text-sm border border-border"
+              className="px-6 py-2.5 bg-primary text-primary-foreground rounded-lg font-semibold hover:shadow-lg transition-all flex items-center gap-2 text-sm hover:bg-primary/90"
             >
               <Printer className="h-4 w-4" /> Print
             </button>
             <button
               onClick={handleDownloadInvoice}
-              className="px-6 py-2.5 bg-secondary text-secondary-foreground rounded-lg font-semibold hover:shadow-lg transition-all flex items-center gap-2 text-sm border border-border"
+              className="px-6 py-2.5 bg-primary text-primary-foreground rounded-lg font-semibold hover:shadow-lg transition-all flex items-center gap-2 text-sm hover:bg-primary/90"
             >
               <Download className="h-4 w-4" /> Download
             </button>

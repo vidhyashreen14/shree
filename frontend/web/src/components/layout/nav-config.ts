@@ -63,6 +63,7 @@ export const NAV: Record<Role, NavItem[]> = {
     { to: "/lab/pending", label: "Pending tests", icon: Beaker },
     { to: "/lab/reports", label: "Reports", icon: FileCheck2 },
     { to: "/lab/upload", label: "Upload report", icon: FilePlus2 },
+
   ],
 };
 

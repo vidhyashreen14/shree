@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { medicines as seedMedicines } from "@/lib/mock/data";
-import type { Medicine } from "@/lib/types";
 import {
     Plus,
     Pencil,
@@ -23,20 +22,50 @@ import {
     Package,
 } from "lucide-react";
 import { toast } from "sonner";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/_app/pharmacy/manufacturemaster")({
     component: ManufactureMaster,
 });
 
+interface Manufacturer {
+    name: string;
+    phone: string;
+    email: string;
+    address: string;
+}
+
 function ManufactureMaster() {
-    const [manufacturers, setManufacturers] = useState<string[]>(() => {
-        const unique = new Set(seedMedicines.map((m) => m.manufacturer));
-        return Array.from(unique).sort();
+    const [manufacturers, setManufacturers] = useState<Manufacturer[]>(() => {
+        const unique = Array.from(new Set(seedMedicines.map((m) => m.manufacturer)));
+        const mocks: Record<string, { phone: string; address: string; email: string }> = {
+            "Cipla": { phone: "+91 98765 43210", address: "Mumbai, Maharashtra", email: "contact@cipla.com" },
+            "Dr. Reddy's": { phone: "+91 87654 32109", address: "Hyderabad, Telangana", email: "info@drreddys.com" },
+            "GSK": { phone: "+44 20 8990 9000", address: "London, United Kingdom", email: "gsk.support@gsk.com" },
+            "Pfizer": { phone: "+1 212-733-2323", address: "New York, USA", email: "corporate.affairs@pfizer.com" },
+        };
+        return unique.map((name) => ({
+            name,
+            phone: mocks[name]?.phone ?? "+91 99999 88888",
+            address: mocks[name]?.address ?? "Industrial Area, Phase 1",
+            email: mocks[name]?.email ?? `contact@${name.toLowerCase().replace(/[^a-z0-9]/g, "")}.com`,
+        })).sort((a, b) => a.name.localeCompare(b.name));
     });
 
-    const [newManufacturer, setNewManufacturer] = useState("");
-    const [editingManufacturer, setEditingManufacturer] = useState<string | null>(null);
-    const [editValue, setEditValue] = useState("");
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [editingMfg, setEditingMfg] = useState<Manufacturer | null>(null);
+    const [mfgName, setMfgName] = useState("");
+    const [mfgPhone, setMfgPhone] = useState("");
+    const [mfgEmail, setMfgEmail] = useState("");
+    const [mfgAddress, setMfgAddress] = useState("");
+
     const [searchQuery, setSearchQuery] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
@@ -44,22 +73,63 @@ function ManufactureMaster() {
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
 
-    const handleAddManufacturer = () => {
-        const trimmed = newManufacturer.trim();
-        if (!trimmed) {
+    const handleOpenAdd = () => {
+        setEditingMfg(null);
+        setMfgName("");
+        setMfgPhone("");
+        setMfgEmail("");
+        setMfgAddress("");
+        setIsDialogOpen(true);
+    };
+
+    const handleOpenEdit = (mfg: Manufacturer) => {
+        setEditingMfg(mfg);
+        setMfgName(mfg.name);
+        setMfgPhone(mfg.phone);
+        setMfgEmail(mfg.email);
+        setMfgAddress(mfg.address);
+        setIsDialogOpen(true);
+    };
+
+    const handleSaveManufacturer = () => {
+        const name = mfgName.trim();
+        const phone = mfgPhone.trim();
+        const email = mfgEmail.trim();
+        const address = mfgAddress.trim();
+
+        if (!name) {
             toast.error("Please enter a manufacturer name");
             return;
         }
-        if (manufacturers.includes(trimmed)) {
-            toast.error("Manufacturer already exists");
-            return;
-        }
+
         setIsLoading(true);
         setTimeout(() => {
-            setManufacturers((prev) => [...prev, trimmed].sort());
-            setNewManufacturer("");
+            if (editingMfg) {
+                // Editing existing
+                if (name.toLowerCase() !== editingMfg.name.toLowerCase() && manufacturers.some((m) => m.name.toLowerCase() === name.toLowerCase())) {
+                    toast.error("Manufacturer name already exists");
+                    setIsLoading(false);
+                    return;
+                }
+                setManufacturers((prev) =>
+                    prev.map((m) =>
+                        m.name === editingMfg.name ? { name, phone, email, address } : m
+                    ).sort((a, b) => a.name.localeCompare(b.name))
+                );
+                toast.success(`Updated manufacturer "${name}"`);
+            } else {
+                // Adding new
+                if (manufacturers.some((m) => m.name.toLowerCase() === name.toLowerCase())) {
+                    toast.error("Manufacturer name already exists");
+                    setIsLoading(false);
+                    return;
+                }
+                const newMfg: Manufacturer = { name, phone, email, address };
+                setManufacturers((prev) => [...prev, newMfg].sort((a, b) => a.name.localeCompare(b.name)));
+                toast.success(`Added "${name}" to manufacturers`);
+            }
+            setIsDialogOpen(false);
             setIsLoading(false);
-            toast.success(`Added "${trimmed}" to manufacturers`);
         }, 500);
     };
 
@@ -72,48 +142,19 @@ function ManufactureMaster() {
         if (window.confirm(`Delete manufacturer "${name}"?`)) {
             setIsLoading(true);
             setTimeout(() => {
-                setManufacturers((prev) => prev.filter((m) => m !== name));
+                setManufacturers((prev) => prev.filter((m) => m.name !== name));
                 setIsLoading(false);
                 toast.success(`Removed "${name}" from manufacturers`);
             }, 500);
         }
     };
 
-    const handleStartEdit = (name: string) => {
-        setEditingManufacturer(name);
-        setEditValue(name);
-    };
-
-    const handleSaveEdit = () => {
-        const trimmed = editValue.trim();
-        if (!trimmed) {
-            toast.error("Manufacturer name cannot be empty");
-            return;
-        }
-        if (trimmed !== editingManufacturer && manufacturers.includes(trimmed)) {
-            toast.error("Manufacturer already exists");
-            return;
-        }
-        setIsLoading(true);
-        setTimeout(() => {
-            setManufacturers((prev) =>
-                prev.map((m) => (m === editingManufacturer ? trimmed : m)).sort()
-            );
-            setEditingManufacturer(null);
-            setEditValue("");
-            setIsLoading(false);
-            toast.success(`Updated manufacturer to "${trimmed}"`);
-        }, 500);
-    };
-
-    const handleCancelEdit = () => {
-        setEditingManufacturer(null);
-        setEditValue("");
-    };
-
     const filteredManufacturers = searchQuery
         ? manufacturers.filter((m) =>
-            m.toLowerCase().includes(searchQuery.toLowerCase())
+            m.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            m.phone.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            m.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            m.address.toLowerCase().includes(searchQuery.toLowerCase())
         )
         : manufacturers;
 
@@ -141,8 +182,8 @@ function ManufactureMaster() {
             toast.info("No manufacturers to export");
             return;
         }
-        const csv = "Manufacturer Name,Medicine Count\n" +
-            manufacturers.map(m => `${m},${getMedicineCount(m)}`).join("\n");
+        const csv = "Manufacturer Name,Phone No,Email,Address,Medicine Count\n" +
+            manufacturers.map(m => `"${m.name}","${m.phone}","${m.email}","${m.address}",${getMedicineCount(m.name)}`).join("\n");
         const blob = new Blob([csv], { type: "text/csv" });
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
@@ -161,13 +202,13 @@ function ManufactureMaster() {
                 actions={
                     <div className="flex items-center gap-2">
                         <Button
-                            variant="outline"
+                            variant="default"
                             onClick={exportToCSV}
-                            className="border-emerald-600 text-emerald-700 hover:bg-emerald-50 hover:text-emerald-800 hover:border-emerald-700"
+                            className="text-white"
                         >
                             <Download className="mr-2 h-4 w-4" /> Export CSV
                         </Button>
-                        <span className="text-sm bg-emerald-600 text-white px-3 py-1 rounded-full font-semibold">
+                        <span className="text-sm bg-primary text-primary-foreground px-3 py-1 rounded-full font-semibold">
                             {manufacturers.length} Total
                         </span>
                     </div>
@@ -176,38 +217,9 @@ function ManufactureMaster() {
 
             <div className="surface-elevated rounded-2xl overflow-hidden border border-border">
                 <div className="p-6 border-b border-border bg-muted/20">
-                    <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-end">
-                        <div className="flex-1 w-full">
-                            <Label htmlFor="newManufacturer" className="text-sm font-semibold">
-                                Add New Manufacturer
-                            </Label>
-                            <div className="flex gap-2 mt-1.5">
-                                <Input
-                                    id="newManufacturer"
-                                    value={newManufacturer}
-                                    onChange={(e) => setNewManufacturer(e.target.value)}
-                                    placeholder="Enter manufacturer name"
-                                    onKeyPress={(e) => e.key === "Enter" && handleAddManufacturer()}
-                                    className="flex-1"
-                                    disabled={isLoading}
-                                />
-                                <Button
-                                    onClick={handleAddManufacturer}
-                                    disabled={isLoading || !newManufacturer.trim()}
-                                    className="bg-emerald-600 hover:bg-emerald-700 text-white"
-                                >
-                                    {isLoading ? (
-                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                    ) : (
-                                        <Plus className="mr-2 h-4 w-4" />
-                                    )}
-                                    Add
-                                </Button>
-                            </div>
-                        </div>
-                        <div className="w-full sm:w-64">
-                            <Label className="text-sm font-semibold">Search</Label>
-                            <div className="relative mt-1.5">
+                    <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
+                        <div className="w-full sm:w-80">
+                            <div className="relative">
                                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                                 <Input
                                     value={searchQuery}
@@ -218,6 +230,14 @@ function ManufactureMaster() {
                                 />
                             </div>
                         </div>
+                        <Button
+                            onClick={handleOpenAdd}
+                            disabled={isLoading}
+                            variant="default"
+                            className="text-white w-full sm:w-auto"
+                        >
+                            <Plus className="mr-2 h-4 w-4" /> Add Manufacturer
+                        </Button>
                     </div>
                 </div>
 
@@ -270,7 +290,7 @@ function ManufactureMaster() {
                         </span>
                     </div>
 
-                    <div className="space-y-2 max-h-[50vh] overflow-y-auto pr-1">
+                    <div className="overflow-x-auto rounded-lg border border-border">
                         {currentItems.length === 0 ? (
                             <EmptyState
                                 icon={Factory}
@@ -282,83 +302,70 @@ function ManufactureMaster() {
                                 }
                             />
                         ) : (
-                            currentItems.map((name) => {
-                                const medCount = getMedicineCount(name);
-                                return (
-                                    <div
-                                        key={name}
-                                        className="flex items-center justify-between gap-3 rounded-lg border border-border bg-muted/20 px-4 py-3 hover:bg-muted/40 transition-all hover:border-emerald-200"
-                                    >
-                                        {editingManufacturer === name ? (
-                                            <div className="flex flex-1 items-center gap-2">
-                                                <Input
-                                                    value={editValue}
-                                                    onChange={(e) => setEditValue(e.target.value)}
-                                                    className="flex-1 h-9 text-sm border-emerald-300 focus:border-emerald-500"
-                                                    autoFocus
-                                                    onKeyPress={(e) => e.key === "Enter" && handleSaveEdit()}
-                                                    disabled={isLoading}
-                                                />
-                                                <Button
-                                                    size="sm"
-                                                    onClick={handleSaveEdit}
-                                                    disabled={isLoading || !editValue.trim()}
-                                                    className="bg-emerald-600 hover:bg-emerald-700 text-white"
-                                                >
-                                                    {isLoading ? (
-                                                        <Loader2 className="h-4 w-4 animate-spin" />
-                                                    ) : (
-                                                        "Save"
-                                                    )}
-                                                </Button>
-                                                <Button
-                                                    size="sm"
-                                                    variant="ghost"
-                                                    onClick={handleCancelEdit}
-                                                    disabled={isLoading}
-                                                    className="text-muted-foreground hover:text-foreground"
-                                                >
-                                                    Cancel
-                                                </Button>
-                                            </div>
-                                        ) : (
-                                            <>
-                                                <div className="min-w-0 flex-1">
+                            <table className="w-full border-collapse text-left text-sm text-muted-foreground">
+                                <thead className="bg-muted/40 text-xs font-semibold uppercase tracking-wider text-muted-foreground border-b border-border">
+                                    <tr>
+                                        <th className="px-6 py-3">Manufacturer</th>
+                                        <th className="px-6 py-3">Phone No</th>
+                                        <th className="px-6 py-3">Email</th>
+                                        <th className="px-6 py-3">Address</th>
+                                        <th className="px-6 py-3 text-center">Medicines</th>
+                                        <th className="px-6 py-3 text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-border">
+                                    {currentItems.map((mfg) => {
+                                        const medCount = getMedicineCount(mfg.name);
+                                        return (
+                                            <tr
+                                                key={mfg.name}
+                                                className="hover:bg-muted/10 transition-colors group"
+                                            >
+                                                <td className="px-6 py-4 font-semibold text-foreground">
                                                     <div className="flex items-center gap-2">
                                                         <Building2 className="h-4 w-4 text-emerald-600" />
-                                                        <p className="text-sm font-medium truncate">{name}</p>
+                                                        <span>{mfg.name}</span>
                                                     </div>
-                                                    <p className="text-[11px] text-muted-foreground mt-0.5">
-                                                        {medCount} medicine{medCount !== 1 ? "s" : ""} in inventory
-                                                    </p>
-                                                </div>
-                                                <div className="flex items-center gap-1.5">
-                                                    <Button
-                                                        size="icon"
-                                                        variant="ghost"
-                                                        className="h-8 w-8 hover:bg-emerald-50 hover:text-emerald-600"
-                                                        onClick={() => handleStartEdit(name)}
-                                                        title="Edit manufacturer"
-                                                        disabled={isLoading}
-                                                    >
-                                                        <Pencil className="h-3.5 w-3.5" />
-                                                    </Button>
-                                                    <Button
-                                                        size="icon"
-                                                        variant="ghost"
-                                                        className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
-                                                        onClick={() => handleDeleteManufacturer(name)}
-                                                        title="Delete manufacturer"
-                                                        disabled={medCount > 0 || isLoading}
-                                                    >
-                                                        <PackageMinus className="h-3.5 w-3.5" />
-                                                    </Button>
-                                                </div>
-                                            </>
-                                        )}
-                                    </div>
-                                );
-                            })
+                                                </td>
+                                                <td className="px-6 py-4 text-foreground/80">{mfg.phone || "—"}</td>
+                                                <td className="px-6 py-4 text-foreground/80">{mfg.email || "—"}</td>
+                                                <td className="px-6 py-4 text-foreground/80 max-w-[200px] truncate" title={mfg.address}>
+                                                    {mfg.address || "—"}
+                                                </td>
+                                                <td className="px-6 py-4 text-center">
+                                                    <span className="inline-block bg-primary/10 text-primary px-2.5 py-0.5 rounded text-xs font-semibold">
+                                                        {medCount}
+                                                    </span>
+                                                </td>
+                                                <td className="px-6 py-4 text-right">
+                                                    <div className="flex items-center justify-end gap-1">
+                                                        <Button
+                                                            size="icon"
+                                                            variant="ghost"
+                                                            className="h-8 w-8 hover:bg-primary/10 hover:text-primary"
+                                                            onClick={() => handleOpenEdit(mfg)}
+                                                            title="Edit manufacturer"
+                                                            disabled={isLoading}
+                                                        >
+                                                            <Pencil className="h-3.5 w-3.5" />
+                                                        </Button>
+                                                        <Button
+                                                            size="icon"
+                                                            variant="ghost"
+                                                            className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                                                            onClick={() => handleDeleteManufacturer(mfg.name)}
+                                                            title="Delete manufacturer"
+                                                            disabled={medCount > 0 || isLoading}
+                                                        >
+                                                            <PackageMinus className="h-3.5 w-3.5" />
+                                                        </Button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
                         )}
                     </div>
 
@@ -376,7 +383,7 @@ function ManufactureMaster() {
                                 <select
                                     value={itemsPerPage}
                                     onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
-                                    className="h-7 rounded-md border border-border bg-background px-2 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                    className="h-7 rounded-md border border-border bg-background px-2 text-xs focus:outline-none focus:ring-2 focus:ring-primary"
                                 >
                                     {[5, 10, 20, 50].map((size) => (
                                         <option key={size} value={size}>
@@ -389,7 +396,7 @@ function ManufactureMaster() {
                                 <Button
                                     variant="outline"
                                     size="icon"
-                                    className="h-7 w-7 hover:bg-emerald-50 hover:text-emerald-600"
+                                    className="h-7 w-7 hover:bg-primary/10 hover:text-primary"
                                     onClick={() => goToPage(1)}
                                     disabled={currentPage === 1}
                                 >
@@ -398,7 +405,7 @@ function ManufactureMaster() {
                                 <Button
                                     variant="outline"
                                     size="icon"
-                                    className="h-7 w-7 hover:bg-emerald-50 hover:text-emerald-600"
+                                    className="h-7 w-7 hover:bg-primary/10 hover:text-primary"
                                     onClick={() => goToPage(currentPage - 1)}
                                     disabled={currentPage === 1}
                                 >
@@ -410,7 +417,7 @@ function ManufactureMaster() {
                                 <Button
                                     variant="outline"
                                     size="icon"
-                                    className="h-7 w-7 hover:bg-emerald-50 hover:text-emerald-600"
+                                    className="h-7 w-7 hover:bg-primary/10 hover:text-primary"
                                     onClick={() => goToPage(currentPage + 1)}
                                     disabled={currentPage === totalPages || totalPages === 0}
                                 >
@@ -419,7 +426,7 @@ function ManufactureMaster() {
                                 <Button
                                     variant="outline"
                                     size="icon"
-                                    className="h-7 w-7 hover:bg-emerald-50 hover:text-emerald-600"
+                                    className="h-7 w-7 hover:bg-primary/10 hover:text-primary"
                                     onClick={() => goToPage(totalPages)}
                                     disabled={currentPage === totalPages || totalPages === 0}
                                 >
@@ -443,7 +450,7 @@ function ManufactureMaster() {
                                     setSearchQuery("");
                                     setCurrentPage(1);
                                 }}
-                                className="border-emerald-600 text-emerald-700 hover:bg-emerald-50 hover:text-emerald-800 hover:border-emerald-700"
+                                className="border-primary text-primary hover:bg-primary/10 hover:text-primary"
                             >
                                 Clear Search
                             </Button>
@@ -457,13 +464,106 @@ function ManufactureMaster() {
                                 setSearchQuery("");
                                 toast.info("Reset to default view");
                             }}
-                            className="border-emerald-600 text-emerald-700 hover:bg-emerald-50 hover:text-emerald-800 hover:border-emerald-700"
+                            className="border-primary text-primary hover:bg-primary/10 hover:text-primary"
                         >
                             Reset View
                         </Button>
                     </div>
                 </div>
             </div>
+
+            {/* Dialog modal for Add/Edit */}
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogContent className="sm:max-w-[480px]">
+                    <DialogHeader>
+                        <DialogTitle>
+                            {editingMfg ? "Edit Manufacturer" : "Add New Manufacturer"}
+                        </DialogTitle>
+                        <DialogDescription>
+                            {editingMfg
+                                ? "Update the manufacturer's details below."
+                                : "Fill in the details to register a new medicine manufacturer."}
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    <div className="grid gap-4 py-4">
+                        <div className="grid gap-2">
+                            <Label htmlFor="mfg-name" className="text-sm font-semibold">
+                                Manufacturer Name <span className="text-destructive">*</span>
+                            </Label>
+                            <Input
+                                id="mfg-name"
+                                value={mfgName}
+                                onChange={(e) => setMfgName(e.target.value)}
+                                placeholder="e.g. Cipla, Pfizer"
+                                disabled={isLoading}
+                            />
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label htmlFor="mfg-phone" className="text-sm font-semibold">
+                                Phone Number
+                            </Label>
+                            <Input
+                                id="mfg-phone"
+                                value={mfgPhone}
+                                onChange={(e) => setMfgPhone(e.target.value)}
+                                placeholder="e.g. +91 98765 43210"
+                                disabled={isLoading}
+                            />
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label htmlFor="mfg-email" className="text-sm font-semibold">
+                                Email Address
+                            </Label>
+                            <Input
+                                id="mfg-email"
+                                type="email"
+                                value={mfgEmail}
+                                onChange={(e) => setMfgEmail(e.target.value)}
+                                placeholder="e.g. contact@cipla.com"
+                                disabled={isLoading}
+                            />
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label htmlFor="mfg-address" className="text-sm font-semibold">
+                                Address
+                            </Label>
+                            <Input
+                                id="mfg-address"
+                                value={mfgAddress}
+                                onChange={(e) => setMfgAddress(e.target.value)}
+                                placeholder="e.g. Mumbai, Maharashtra"
+                                disabled={isLoading}
+                            />
+                        </div>
+                    </div>
+
+                    <DialogFooter>
+                        <Button
+                            variant="outline"
+                            onClick={() => setIsDialogOpen(false)}
+                            disabled={isLoading}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            onClick={handleSaveManufacturer}
+                            disabled={isLoading || !mfgName.trim()}
+                            variant="default"
+                            className="text-white"
+                        >
+                            {isLoading ? (
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            ) : (
+                                "Save Changes"
+                            )}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }
