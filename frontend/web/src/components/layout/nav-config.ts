@@ -4,7 +4,8 @@ import {
   Pill, ClipboardList, Building2, Shield, Settings, Bell, FileText, UserCog,
   ScrollText, BadgeCheck, ListChecks, Search, Receipt, Truck, AlertTriangle,
   HeartPulse, Inbox, PackageSearch, FilePlus2, FileCheck2, ClipboardPlus, Beaker,
-  Calendar, UserPlus, Hourglass, KeyRound, Monitor, IndianRupee,
+  Calendar, UserPlus, Hourglass, KeyRound, Monitor, IndianRupee, ClipboardPen,
+  FileSpreadsheet, TrendingUp,
 } from "lucide-react";
 import type { ComponentType } from "react";
 
@@ -59,10 +60,14 @@ export const NAV: Record<Role, NavItem[]> = {
     { to: "/pharmacy/billing", label: "Billing", icon: Receipt },
   ],
   lab: [
-    { to: "/lab", label: "Overview", icon: LayoutDashboard },
-    { to: "/lab/pending", label: "Pending tests", icon: Beaker },
-    { to: "/lab/reports", label: "Reports", icon: FileCheck2 },
-    { to: "/lab/upload", label: "Upload report", icon: FilePlus2 },
+    { to: "/lab", label: "Overview", icon: LayoutDashboard, group: "Main" },
+    { to: "/lab/visits", label: "Visit List", icon: ClipboardList, group: "Main" },
+    // { to: "/lab/pending", label: "Pending tests", icon: Beaker, group: "Main" },
+    { to: "/lab/reports", label: "Reports", icon: FileCheck2, group: "Main" },
+    { to: "/lab/upload", label: "Generate report", icon: FilePlus2, group: "Main" },
+    { to: "/lab/quotations", label: "Quotations", icon: ClipboardPen, group: "Transaction" },
+    { to: "/lab/analytics?tab=sales", label: "Branch Daily Sales Report", icon: FileSpreadsheet, group: "Analytics" },
+    { to: "/lab/analytics?tab=registrations", label: "Monthly Registrations", icon: TrendingUp, group: "Analytics" },
   ],
 };
 

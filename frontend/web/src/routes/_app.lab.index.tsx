@@ -4,6 +4,7 @@ import { PageHeader } from "@/components/common/PageHeader";
 import { Button } from "@/components/ui/button";
 import { labOrders, patients } from "@/lib/mock/data";
 import {
+
   FilePlus2,
   FlaskConical,
   CheckCircle2,
@@ -209,8 +210,8 @@ function SampleAnalytics() {
 
   const data =
     gran === "day" ? dayWiseData :
-    gran === "week" ? weekWiseData :
-    monthWiseData;
+      gran === "week" ? weekWiseData :
+        monthWiseData;
 
   const peak = Math.max(...data.map((d) => d.samples));
   const avg = data[0]!.avg;
@@ -234,11 +235,10 @@ function SampleAnalytics() {
             <button
               key={g}
               onClick={() => setGran(g)}
-              className={`rounded-md px-3 py-1.5 text-xs font-semibold capitalize transition-all ${
-                gran === g
+              className={`rounded-md px-3 py-1.5 text-xs font-semibold capitalize transition-all ${gran === g
                   ? "bg-primary text-primary-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground"
-              }`}
+                }`}
               id={`btn-gran-${g}`}
             >
               {g === "day" ? "Day" : g === "week" ? "Week" : "Month"}
@@ -364,7 +364,7 @@ function LabOverview() {
           <Link to="/lab/upload">
             <Button id="btn-upload-report">
               <FilePlus2 className="mr-2 h-4 w-4" />
-              Upload report
+              Generate report
             </Button>
           </Link>
         }
