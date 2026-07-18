@@ -212,15 +212,3 @@
   background-clip: text;
   color: transparent;
 }
-
-@media print {
-  @page {
-    margin: 0;
-  }
-  body {
-    margin: 2cm;
-  }
-  #root {
-    display: none !important;
-  }
-}

@@ -18,9 +18,16 @@ import {
   Beaker,
   CalendarDays,
   Stethoscope,
+  ChevronDown,
+  ChevronUp,
+  Download,
+  Trash2,
+  Eye,
+  RefreshCw,
+  AlertCircle,
 } from "lucide-react";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 
 export const Route = createFileRoute("/_app/lab/upload")({
@@ -106,6 +113,155 @@ function getInterpretation(tests: string[]) {
     .join(" ") || "Results reviewed. No critical values detected. Please correlate clinically.";
 }
 
+function getDynamicInterpretation(tests: string[], results: Record<number, string>, allRows: any[]) {
+  // Check if any results are entered
+  const hasAnyInput = Object.values(results).some((val) => val.trim() !== "");
+  if (!hasAnyInput) {
+    return getInterpretation(tests);
+  }
+
+  // Let's gather all entered parameters
+  const enteredParams = allRows
+    .map((row, idx) => ({
+      ...row,
+      value: parseFloat(results[idx] || "") || null,
+      stringValue: results[idx]?.trim() || "",
+    }))
+    .filter((item) => item.stringValue !== "");
+
+  // Generate interpretation based on the test type and entered values
+  const interpretations: string[] = [];
+
+  // Group by test name
+  const testsIncluded = Array.from(new Set(enteredParams.map((p) => p.test)));
+
+  for (const test of testsIncluded) {
+    const params = enteredParams.filter((p) => p.test === test);
+
+    if (test === "Lipid panel") {
+      const tc = params.find((p) => p.parameter === "Total Cholesterol");
+      const ldl = params.find((p) => p.parameter === "LDL Cholesterol");
+      const hdl = params.find((p) => p.parameter === "HDL Cholesterol");
+      const tg = params.find((p) => p.parameter === "Triglycerides");
+      const vldl = params.find((p) => p.parameter === "VLDL");
+      const nonHdl = params.find((p) => p.parameter === "Non-HDL");
+
+      const highs: string[] = [];
+      const lows: string[] = [];
+
+      if (tc && tc.value !== null && tc.value >= 200) highs.push("Total Cholesterol");
+      if (ldl && ldl.value !== null && ldl.value >= 100) highs.push("LDL Cholesterol");
+      if (hdl && hdl.value !== null && hdl.value <= 40) lows.push("HDL Cholesterol");
+      if (tg && tg.value !== null && tg.value >= 150) highs.push("Triglycerides");
+      if (vldl && vldl.value !== null && vldl.value >= 30) highs.push("VLDL");
+      if (nonHdl && nonHdl.value !== null && nonHdl.value >= 130) highs.push("Non-HDL");
+
+      if (highs.length > 0 || lows.length > 0) {
+        let sentence = "Dyslipidaemia detected.";
+        if (highs.length > 0) {
+          sentence += ` ${highs.join(" and ")} ${highs.length > 1 ? "are" : "is"} above optimal levels.`;
+        }
+        if (lows.length > 0) {
+          sentence += ` ${lows.join(" and ")} ${lows.length > 1 ? "are" : "is"} below optimal levels.`;
+        }
+        sentence += " Lifestyle modification (diet, exercise) and lipid-lowering therapy review recommended.";
+        interpretations.push(sentence);
+      } else {
+        interpretations.push("Lipid profile is within normal range. Maintain healthy diet and active lifestyle.");
+      }
+    } else if (test === "CBC") {
+      const hb = params.find((p) => p.parameter === "Haemoglobin");
+      const wbc = params.find((p) => p.parameter === "WBC");
+      const plt = params.find((p) => p.parameter === "Platelets");
+      const esr = params.find((p) => p.parameter === "ESR");
+
+      const issues: string[] = [];
+
+      if (hb && hb.value !== null) {
+        if (hb.value < 12.0) issues.push(`mild anaemia (Hb: ${hb.stringValue} g/dL)`);
+        else if (hb.value > 17.5) issues.push(`erythrocytosis (Hb: ${hb.stringValue} g/dL)`);
+      }
+      if (wbc && wbc.value !== null) {
+        if (wbc.value < 4000) issues.push(`leukopenia (WBC: ${wbc.stringValue})`);
+        else if (wbc.value > 11000) issues.push(`leukocytosis (WBC: ${wbc.stringValue})`);
+      }
+      if (plt && plt.value !== null) {
+        if (plt.value < 150000) issues.push(`thrombocytopenia (Platelets: ${plt.stringValue})`);
+        else if (plt.value > 400000) issues.push(`thrombocytosis (Platelets: ${plt.stringValue})`);
+      }
+      if (esr && esr.value !== null && esr.value >= 20) {
+        issues.push(`elevated ESR (${esr.stringValue} mm/hr), suggesting possible inflammatory response`);
+      }
+
+      if (issues.length > 0) {
+        interpretations.push(`CBC findings indicate: ${issues.join(", ")}. Clinical correlation advised.`);
+      } else {
+        interpretations.push("Complete Blood Count (CBC) parameters are within reference range.");
+      }
+    } else if (test === "HbA1c") {
+      const hba1c = params.find((p) => p.parameter === "HbA1c");
+      if (hba1c && hba1c.value !== null) {
+        if (hba1c.value >= 6.5) {
+          interpretations.push(`Elevated HbA1c (${hba1c.stringValue}%) indicates poor glycaemic control, consistent with diabetes mellitus. Intensification of treatment recommended.`);
+        } else if (hba1c.value >= 5.7) {
+          interpretations.push(`HbA1c value (${hba1c.stringValue}%) is in the pre-diabetic range. Dietary modifications and regular physical activity are advised.`);
+        } else {
+          interpretations.push(`HbA1c level (${hba1c.stringValue}%) is within the normal reference range, indicating adequate glycaemic control.`);
+        }
+      }
+    } else if (test === "TSH") {
+      const tsh = params.find((p) => p.parameter === "TSH");
+      if (tsh && tsh.value !== null) {
+        if (tsh.value > 4.0) {
+          interpretations.push(`Elevated TSH level (${tsh.stringValue} mIU/L) suggests subclinical or clinical hypothyroidism. Thyroid hormone levels should be correlated.`);
+        } else if (tsh.value < 0.4) {
+          interpretations.push(`Low TSH level (${tsh.stringValue} mIU/L) suggests hyperthyroidism. Further clinical investigation is recommended.`);
+        } else {
+          interpretations.push(`Thyroid Stimulating Hormone (TSH) level (${tsh.stringValue} mIU/L) is within normal limits.`);
+        }
+      }
+    } else if (test === "Urinalysis") {
+      const protein = params.find((p) => p.parameter === "Protein");
+      const glucose = params.find((p) => p.parameter === "Glucose");
+      const rbc = params.find((p) => p.parameter === "RBCs");
+
+      const urineIssues: string[] = [];
+      if (protein && protein.stringValue.toLowerCase() !== "negative" && protein.stringValue.toLowerCase() !== "nil") {
+        urineIssues.push(`proteinuria (${protein.stringValue})`);
+      }
+      if (glucose && glucose.stringValue.toLowerCase() !== "negative" && glucose.stringValue.toLowerCase() !== "nil") {
+        urineIssues.push(`glucosuria (${glucose.stringValue})`);
+      }
+      if (rbc && rbc.stringValue.toLowerCase() !== "negative" && rbc.stringValue.toLowerCase() !== "nil" && rbc.stringValue.toLowerCase() !== "0-2") {
+        urineIssues.push(`haematuria (${rbc.stringValue} RBCs/HPF)`);
+      }
+
+      if (urineIssues.length > 0) {
+        interpretations.push(`Urinalysis shows ${urineIssues.join(" and ")}. Further evaluation for renal function or urinary tract pathology is recommended.`);
+      } else {
+        interpretations.push("Urinalysis parameters are within normal reference range.");
+      }
+    } else if (test === "Blood Sugar") {
+      const fbs = params.find((p) => p.parameter === "Fasting Blood Sugar");
+      const pp = params.find((p) => p.parameter === "Post-Prandial");
+      const rbs = params.find((p) => p.parameter === "Random Blood Sugar");
+
+      const sugarHighs: string[] = [];
+      if (fbs && fbs.value !== null && fbs.value >= 100) sugarHighs.push(`Fasting Blood Sugar (${fbs.stringValue} mg/dL)`);
+      if (pp && pp.value !== null && pp.value >= 140) sugarHighs.push(`Post-Prandial Sugar (${pp.stringValue} mg/dL)`);
+      if (rbs && rbs.value !== null && rbs.value >= 140) sugarHighs.push(`Random Blood Sugar (${rbs.stringValue} mg/dL)`);
+
+      if (sugarHighs.length > 0) {
+        interpretations.push(`Elevated blood glucose levels noted: ${sugarHighs.join(", ")}. Consistent with impaired glucose tolerance or diabetes mellitus.`);
+      } else {
+        interpretations.push("Blood glucose levels are within normal limits.");
+      }
+    }
+  }
+
+  return interpretations.join(" ") || "Results reviewed. No critical abnormalities detected.";
+}
+
 // ── All orders (mix of collected + pending for demo) ─────────────────────────
 const allOrders = [
   ...labOrders,
@@ -126,11 +282,15 @@ type Order = (typeof allOrders)[number];
 // ─────────────────────────────────────────────────────────────────────────────
 function ReportModal({
   order,
+  initialResults,
+  initialInterpretation,
   onConfirm,
   onClose,
 }: {
   order: Order;
-  onConfirm: () => void;
+  initialResults?: Record<number, string>;
+  initialInterpretation?: string;
+  onConfirm: (results: Record<number, string>, interpretation: string) => void;
   onClose: () => void;
 }) {
   const patient = patients.find((p) => p.id === order.patientId);
@@ -152,7 +312,11 @@ function ReportModal({
 
   // ── Editable result values (one per row, starts empty for manual entry) ──
   const [results, setResults] = useState<Record<number, string>>(
-    () => Object.fromEntries(allRows.map((_, i) => [i, ""]))
+    () => initialResults ?? Object.fromEntries(allRows.map((_, i) => [i, ""]))
+  );
+
+  const [interpretationText, setInterpretationText] = useState(
+    () => initialInterpretation ?? ""
   );
 
   function setResult(idx: number, val: string) {
@@ -280,9 +444,12 @@ function ReportModal({
             <p className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-blue-600">
               Clinical Interpretation
             </p>
-            <p className="text-sm leading-relaxed text-foreground">
-              {getInterpretation(order.tests)}
-            </p>
+            <textarea
+              value={interpretationText}
+              onChange={(e) => setInterpretationText(e.target.value)}
+              className="w-full mt-2 rounded-lg border border-border bg-background px-3 py-2.5 text-sm leading-relaxed text-foreground placeholder:text-muted-foreground/40 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none resize-none min-h-[5rem]"
+              placeholder="Enter clinical interpretation here..."
+            />
           </div>
         </div>
 
@@ -298,7 +465,7 @@ function ReportModal({
             <Button variant="outline" size="sm" onClick={onClose}>
               Cancel
             </Button>
-            <Button size="sm" className="gap-1.5" onClick={onConfirm}>
+            <Button size="sm" className="gap-1.5" onClick={() => onConfirm(results, interpretationText)}>
               <CheckCircle2 className="h-3.5 w-3.5" />
               Confirm &amp; Save Report
             </Button>

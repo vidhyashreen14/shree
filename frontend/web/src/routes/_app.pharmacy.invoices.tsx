@@ -15,7 +15,7 @@ export interface InvoiceMedicineItem {
   id: number;
   medicine: string;
   batch: string;
-  batchExpiry: string; 6
+  batchExpiry: string;
   unitsPerStrip: string;
   noOfStrips: string;
   freeStrips: string;

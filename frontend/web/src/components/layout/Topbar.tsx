@@ -19,6 +19,12 @@ export function Topbar({ onMenu }: { onMenu: () => void }) {
     const unread = useNotifications((s) => s.notifications.filter((n: any) => !n.read).length);
     const { logoUrl, name } = useHospitalSettings();
     const [openPalette, setOpenPalette] = useState(false);
+    const [searchQuery, setSearchQuery] = useState("");
+
+    const handleSearchSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        setOpenPalette(true);
+    };
 
     if (!user) return null;
 
@@ -49,17 +55,19 @@ export function Topbar({ onMenu }: { onMenu: () => void }) {
             <div className="flex-1" />
 
             <div className="flex items-center gap-3">
-                <button
-                    type="button"
-                    onClick={() => setOpenPalette(true)}
-                    className="hidden h-10 w-64 md:w-80 lg:w-96 items-center gap-2 rounded-lg border border-input bg-muted/40 px-3 text-sm text-muted-foreground transition-colors hover:bg-muted sm:flex"
-                >
-                    <Search className="h-4 w-4 shrink-0" />
-                    <span className="truncate text-left">Search patients, doctors, medicines…</span>
-                    <kbd className="ml-auto rounded border border-border bg-background px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground shrink-0">
-                        ⌘K
-                    </kbd>
-                </button>
+                <form onSubmit={handleSearchSubmit} className="morph-search-wrapper hidden sm:flex">
+                    <button type="submit" className="morph-search-icon">
+                        <Search className="h-4 w-4 shrink-0" />
+                    </button>
+                    <input
+                        placeholder="Search workspace…"
+                        className="morph-search-input"
+                        name="text"
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                </form>
 
                 <button
                     type="button"
