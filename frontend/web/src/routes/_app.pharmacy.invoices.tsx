@@ -413,14 +413,12 @@ function PharmacyInvoices() {
               <div class="logo-area">
                 <div class="logo-placeholder">🏥</div>
                 <div>
-                  <div class="hospital-name">Palm Health</div>
-                  <div style="font-size:0.8rem; color:#2c3e50;">Multispecialty Hospital</div>
+                  <div class="hospital-name">SRI MANJUNATHA HOSPITAL</div>
+                  <div style="font-size:0.8rem; color:#2c3e50;">C.K.PURA, KELAGOTE, BESIDE SBI BANK, CHITRADURGA</div>
                 </div>
               </div>
               <div class="hospital-detail">
-                <p>📍 12, Health Avenue, Metro City · 560001</p>
-                <p>📞 +91 80 4123 4567 · ✉ billing@palmhealth.in</p>
-                <p><span style="font-weight:500;">GST: 22AABCP1234D1Z5</span></p>
+                <p>PH NO: 9108453470</p>
               </div>
             </div>
 

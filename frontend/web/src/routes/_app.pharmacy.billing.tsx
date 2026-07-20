@@ -297,8 +297,15 @@ function PharmacyBilling() {
 
   return (
     <div className="flex flex-col gap-6">
+      {/* Print-only Hospital Header */}
+      <div className="hidden print:block text-center border-b-2 border-gray-800 pb-3 pt-2 mb-2">
+        <h1 className="text-2xl font-extrabold tracking-widest text-gray-900 uppercase">SRI MANJUNATHA HOSPITAL</h1>
+        <p className="text-sm text-gray-700 mt-0.5">C.K.PURA, KELAGOTE, BESIDE SBI BANK, CHITRADURGA</p>
+        <p className="text-sm text-gray-700">PH NO : 9108453470</p>
+      </div>
+
       {/* Pharmacy Billing Main Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border pb-4">
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border pb-4 print:hidden">
         <div>
           <h1 className="font-display text-2xl font-bold text-foreground">Pharmacy Billing</h1>
         </div>

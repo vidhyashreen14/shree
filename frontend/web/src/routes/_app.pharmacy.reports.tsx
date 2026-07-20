@@ -1082,6 +1082,13 @@ function PharmacyReports() {
 
   return (
     <div className="flex flex-col gap-6">
+      {/* Print-only Hospital Header */}
+      <div className="hidden print:block text-center border-b-2 border-gray-800 pb-3 pt-2 mb-2">
+        <h1 className="text-2xl font-extrabold tracking-widest text-gray-900 uppercase">SRI MANJUNATHA HOSPITAL</h1>
+        <p className="text-sm text-gray-700 mt-0.5">C.K.PURA, KELAGOTE, BESIDE SBI BANK, CHITRADURGA</p>
+        <p className="text-sm text-gray-700">PH NO : 9108453470</p>
+      </div>
+
       <PageHeader
         title="Reports Dashboard"
         description="Comprehensive dynamic pharmacy reporting suite"
