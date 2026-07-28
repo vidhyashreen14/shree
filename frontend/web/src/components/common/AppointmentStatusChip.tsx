@@ -75,10 +75,7 @@ interface AppointmentStatusChipProps {
   size?: "sm" | "md";
 }
 
-export function AppointmentStatusChip({
-  status,
-  size = "sm",
-}: AppointmentStatusChipProps) {
+export function AppointmentStatusChip({ status, size = "sm" }: AppointmentStatusChipProps) {
   const config = map[status] ?? map["cancelled"];
   const Icon = config.icon;
 
@@ -87,10 +84,7 @@ export function AppointmentStatusChip({
       className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 font-medium ${config.bgClass} ${config.textClass} ${size === "sm" ? "text-[11px]" : "text-xs"}`}
     >
       {/* Accessible dot indicator */}
-      <span
-        className={`h-1.5 w-1.5 shrink-0 rounded-full ${config.dotClass}`}
-        aria-hidden="true"
-      />
+      <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${config.dotClass}`} aria-hidden="true" />
       <Icon className="h-3 w-3 shrink-0" aria-hidden="true" />
       {config.label}
     </span>

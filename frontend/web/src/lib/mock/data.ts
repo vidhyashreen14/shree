@@ -32,31 +32,141 @@ export const departments: Department[] = [
   { id: "d-card", name: "Cardiology", head: "Dr. Vikram Shah", doctorCount: 6, patientsToday: 42 },
   { id: "d-neu", name: "Neurology", head: "Dr. Lin Park", doctorCount: 4, patientsToday: 28 },
   { id: "d-ped", name: "Pediatrics", head: "Dr. Sara Iqbal", doctorCount: 5, patientsToday: 51 },
-  { id: "d-ortho", name: "Orthopedics", head: "Dr. Marco Bellini", doctorCount: 7, patientsToday: 33 },
+  {
+    id: "d-ortho",
+    name: "Orthopedics",
+    head: "Dr. Marco Bellini",
+    doctorCount: 7,
+    patientsToday: 33,
+  },
   { id: "d-gyn", name: "Gynecology", head: "Dr. Hannah Cole", doctorCount: 5, patientsToday: 37 },
   { id: "d-derm", name: "Dermatology", head: "Dr. Aman Gill", doctorCount: 3, patientsToday: 22 },
   { id: "d-er", name: "Emergency", head: "Dr. Owen Reyes", doctorCount: 9, patientsToday: 64 },
 ];
 
 export const doctors: Doctor[] = [
-  { id: "u-doc-1", name: "Dr. Vikram Shah", specialization: "Interventional Cardiologist", department: "Cardiology", email: "vikram@medicore.io", phone: "+91 98200 11111", experienceYears: 18, fee: 1500, rating: 4.9, available: true },
-  { id: "u-doc-2", name: "Dr. Lin Park", specialization: "Neurologist", department: "Neurology", email: "lin@medicore.io", phone: "+91 98200 22222", experienceYears: 12, fee: 1300, rating: 4.7, available: true },
-  { id: "u-doc-3", name: "Dr. Sara Iqbal", specialization: "Pediatrician", department: "Pediatrics", email: "sara@medicore.io", phone: "+91 98200 33333", experienceYears: 9, fee: 900, rating: 4.8, available: false },
-  { id: "u-doc-4", name: "Dr. Marco Bellini", specialization: "Orthopedic Surgeon", department: "Orthopedics", email: "marco@medicore.io", phone: "+91 98200 44444", experienceYears: 22, fee: 1700, rating: 4.6, available: true },
-  { id: "u-doc-5", name: "Dr. Hannah Cole", specialization: "OB-GYN", department: "Gynecology", email: "hannah@medicore.io", phone: "+91 98200 55555", experienceYears: 14, fee: 1200, rating: 4.9, available: true },
-  { id: "u-doc-6", name: "Dr. Aman Gill", specialization: "Dermatologist", department: "Dermatology", email: "aman@medicore.io", phone: "+91 98200 66666", experienceYears: 7, fee: 800, rating: 4.5, available: true },
-  { id: "u-doc-7", name: "Dr. Owen Reyes", specialization: "Emergency Physician", department: "Emergency", email: "owen@medicore.io", phone: "+91 98200 77777", experienceYears: 11, fee: 0, rating: 4.8, available: true },
+  {
+    id: "u-doc-1",
+    name: "Dr. Vikram Shah",
+    specialization: "Interventional Cardiologist",
+    department: "Cardiology",
+    email: "vikram@medicore.io",
+    phone: "+91 98200 11111",
+    experienceYears: 18,
+    fee: 1500,
+    rating: 4.9,
+    available: true,
+  },
+  {
+    id: "u-doc-2",
+    name: "Dr. Lin Park",
+    specialization: "Neurologist",
+    department: "Neurology",
+    email: "lin@medicore.io",
+    phone: "+91 98200 22222",
+    experienceYears: 12,
+    fee: 1300,
+    rating: 4.7,
+    available: true,
+  },
+  {
+    id: "u-doc-3",
+    name: "Dr. Sara Iqbal",
+    specialization: "Pediatrician",
+    department: "Pediatrics",
+    email: "sara@medicore.io",
+    phone: "+91 98200 33333",
+    experienceYears: 9,
+    fee: 900,
+    rating: 4.8,
+    available: false,
+  },
+  {
+    id: "u-doc-4",
+    name: "Dr. Marco Bellini",
+    specialization: "Orthopedic Surgeon",
+    department: "Orthopedics",
+    email: "marco@medicore.io",
+    phone: "+91 98200 44444",
+    experienceYears: 22,
+    fee: 1700,
+    rating: 4.6,
+    available: true,
+  },
+  {
+    id: "u-doc-5",
+    name: "Dr. Hannah Cole",
+    specialization: "OB-GYN",
+    department: "Gynecology",
+    email: "hannah@medicore.io",
+    phone: "+91 98200 55555",
+    experienceYears: 14,
+    fee: 1200,
+    rating: 4.9,
+    available: true,
+  },
+  {
+    id: "u-doc-6",
+    name: "Dr. Aman Gill",
+    specialization: "Dermatologist",
+    department: "Dermatology",
+    email: "aman@medicore.io",
+    phone: "+91 98200 66666",
+    experienceYears: 7,
+    fee: 800,
+    rating: 4.5,
+    available: true,
+  },
+  {
+    id: "u-doc-7",
+    name: "Dr. Owen Reyes",
+    specialization: "Emergency Physician",
+    department: "Emergency",
+    email: "owen@medicore.io",
+    phone: "+91 98200 77777",
+    experienceYears: 11,
+    fee: 0,
+    rating: 4.8,
+    available: true,
+  },
 ];
 
 const allergyPool = ["Penicillin", "Peanuts", "Latex", "Sulfa", "Aspirin", "Shellfish", "Dust"];
-const meds = ["Atorvastatin 20mg", "Metformin 500mg", "Amlodipine 5mg", "Levothyroxine 50mcg", "Salbutamol inhaler", "Omeprazole 20mg"];
+const meds = [
+  "Atorvastatin 20mg",
+  "Metformin 500mg",
+  "Amlodipine 5mg",
+  "Levothyroxine 50mcg",
+  "Salbutamol inhaler",
+  "Omeprazole 20mg",
+];
 
 const patientNames = [
-  "Aarav Sharma", "Saanvi Patel", "Vihaan Iyer", "Diya Kapoor", "Arjun Mehta",
-  "Anaya Reddy", "Reyansh Khanna", "Ishaani Rao", "Kabir Joshi", "Aadhya Nair",
-  "Ayaan Bose", "Myra Sen", "Krishna Gupta", "Sara Williams", "Liam Carter",
-  "Olivia Bennett", "Noah Kim", "Emma Zhang", "Ethan Wright", "Mia Hassan",
-  "Yusuf Ahmed", "Zoya Khan", "Daniel Cohen", "Sofia Rossi", "Hiroshi Tanaka",
+  "Aarav Sharma",
+  "Saanvi Patel",
+  "Vihaan Iyer",
+  "Diya Kapoor",
+  "Arjun Mehta",
+  "Anaya Reddy",
+  "Reyansh Khanna",
+  "Ishaani Rao",
+  "Kabir Joshi",
+  "Aadhya Nair",
+  "Ayaan Bose",
+  "Myra Sen",
+  "Krishna Gupta",
+  "Sara Williams",
+  "Liam Carter",
+  "Olivia Bennett",
+  "Noah Kim",
+  "Emma Zhang",
+  "Ethan Wright",
+  "Mia Hassan",
+  "Yusuf Ahmed",
+  "Zoya Khan",
+  "Daniel Cohen",
+  "Sofia Rossi",
+  "Hiroshi Tanaka",
 ];
 
 export const patients: Patient[] = patientNames.map((name, i) => ({
@@ -68,8 +178,14 @@ export const patients: Patient[] = patientNames.map((name, i) => ({
   phone: `+91 90${String(10000000 + i * 13).slice(0, 8)}`,
   email: `${name.split(" ")[0]!.toLowerCase()}@mail.com`,
   bloodGroup: ["A+", "B+", "O+", "AB+", "O-", "A-"][i % 6]!,
-  address: ["12 Maple Ave, Mumbai", "5 Lotus Rd, Bengaluru", "8 Oak St, Pune", "21 Rose Ln, Delhi"][i % 4]!,
-  emergencyContact: { name: `${name.split(" ")[0]} Family`, phone: "+91 99999 88888", relation: i % 2 ? "Spouse" : "Parent" },
+  address: ["12 Maple Ave, Mumbai", "5 Lotus Rd, Bengaluru", "8 Oak St, Pune", "21 Rose Ln, Delhi"][
+    i % 4
+  ]!,
+  emergencyContact: {
+    name: `${name.split(" ")[0]} Family`,
+    phone: "+91 99999 88888",
+    relation: i % 2 ? "Spouse" : "Parent",
+  },
   allergies: i % 4 === 0 ? [] : [allergyPool[i % allergyPool.length]!],
   medications: i % 3 === 0 ? [] : [meds[i % meds.length]!],
   insurance: i % 2 === 0 ? { provider: "Star Health", policyNo: `SH-${5000 + i}` } : undefined,
@@ -77,9 +193,25 @@ export const patients: Patient[] = patientNames.map((name, i) => ({
   assignedDoctorId: doctors[i % doctors.length]!.id,
 }));
 
-const reasons = ["Routine checkup", "Chest pain", "Follow-up", "Headache", "Fever & cough", "Back pain", "Skin rash", "Diabetes review"];
+const reasons = [
+  "Routine checkup",
+  "Chest pain",
+  "Follow-up",
+  "Headache",
+  "Fever & cough",
+  "Back pain",
+  "Skin rash",
+  "Diabetes review",
+];
 const types: Appointment["type"][] = ["consultation", "follow-up", "walk-in", "tele"];
-const statuses: Appointment["status"][] = ["scheduled", "checked-in", "in-consultation", "completed", "cancelled", "no-show"];
+const statuses: Appointment["status"][] = [
+  "scheduled",
+  "checked-in",
+  "in-consultation",
+  "completed",
+  "cancelled",
+  "no-show",
+];
 
 export const appointments: Appointment[] = Array.from({ length: 48 }).map((_, i) => {
   const hour = 9 + (i % 9);
@@ -128,10 +260,23 @@ export const prescriptions: Prescription[] = patients.slice(0, 12).map((p, i) =>
   patientId: p.id,
   doctorId: p.assignedDoctorId!,
   date: daysAgo(i * 2 + 1),
-  diagnosis: ["Hypertension", "Type 2 Diabetes", "Migraine", "URTI", "Lower back strain", "Anxiety"][i % 6]!,
+  diagnosis: [
+    "Hypertension",
+    "Type 2 Diabetes",
+    "Migraine",
+    "URTI",
+    "Lower back strain",
+    "Anxiety",
+  ][i % 6]!,
   medicines: [
     { name: "Amlodipine 5mg", dose: "1 tab", frequency: "OD", duration: "30 days" },
-    { name: "Metformin 500mg", dose: "1 tab", frequency: "BD", duration: "30 days", notes: "After meals" },
+    {
+      name: "Metformin 500mg",
+      dose: "1 tab",
+      frequency: "BD",
+      duration: "30 days",
+      notes: "After meals",
+    },
   ],
   advice: "Adequate hydration. Low salt diet. Follow up in 4 weeks.",
 }));
@@ -147,10 +292,22 @@ export const labOrders: LabOrder[] = patients.slice(0, 10).map((p, i) => ({
 
 const medCats = ["Antibiotics", "Cardiac", "Diabetes", "Analgesic", "Respiratory", "Dermatology"];
 const medNames = [
-  "Amoxicillin 500mg", "Azithromycin 250mg", "Atorvastatin 20mg", "Aspirin 75mg",
-  "Metformin 500mg", "Glimepiride 2mg", "Paracetamol 650mg", "Ibuprofen 400mg",
-  "Salbutamol Inhaler", "Budesonide 200mcg", "Hydrocortisone 1% cream", "Cetirizine 10mg",
-  "Omeprazole 20mg", "Pantoprazole 40mg", "Amlodipine 5mg", "Losartan 50mg",
+  "Amoxicillin 500mg",
+  "Azithromycin 250mg",
+  "Atorvastatin 20mg",
+  "Aspirin 75mg",
+  "Metformin 500mg",
+  "Glimepiride 2mg",
+  "Paracetamol 650mg",
+  "Ibuprofen 400mg",
+  "Salbutamol Inhaler",
+  "Budesonide 200mcg",
+  "Hydrocortisone 1% cream",
+  "Cetirizine 10mg",
+  "Omeprazole 20mg",
+  "Pantoprazole 40mg",
+  "Amlodipine 5mg",
+  "Losartan 50mg",
 ];
 
 export const medicines: Medicine[] = medNames.map((name, i) => ({
@@ -168,9 +325,23 @@ export const medicines: Medicine[] = medNames.map((name, i) => ({
 
 export const auditLogs: AuditLog[] = Array.from({ length: 24 }).map((_, i) => ({
   id: `al-${i}`,
-  user: ["Dr. Anika Rao", "Priya Menon", "Sister Joan", "Rahul Verma", "Mei Chen", "Dr. Vikram Shah"][i % 6]!,
+  user: [
+    "Dr. Anika Rao",
+    "Priya Menon",
+    "Sister Joan",
+    "Rahul Verma",
+    "Mei Chen",
+    "Dr. Vikram Shah",
+  ][i % 6]!,
   role: (["doctor", "frontdesk", "nurse", "pharmacy", "lab", "admin"] as const)[i % 6]!,
-  action: ["Updated patient", "Created appointment", "Dispensed medicine", "Uploaded lab report", "Changed permissions", "Logged in"][i % 6]!,
+  action: [
+    "Updated patient",
+    "Created appointment",
+    "Dispensed medicine",
+    "Uploaded lab report",
+    "Changed permissions",
+    "Logged in",
+  ][i % 6]!,
   target: ["MRN-10231", "a-2034", "Amoxicillin 500mg", "lo-4002", "Role: Nurse", "—"][i % 6]!,
   at: daysAgo(i / 3),
   ip: `10.0.${i % 256}.${(i * 7) % 256}`,

@@ -65,8 +65,7 @@ export const useCredentials = create<CredentialState>()(
           ),
         })),
 
-      deleteAccount: (id) =>
-        set((s) => ({ accounts: s.accounts.filter((a) => a.id !== id) })),
+      deleteAccount: (id) => set((s) => ({ accounts: s.accounts.filter((a) => a.id !== id) })),
 
       getByEmail: (email) =>
         get().accounts.find((a) => a.email.toLowerCase() === email.toLowerCase()),

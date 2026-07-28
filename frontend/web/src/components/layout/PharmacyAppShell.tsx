@@ -6,7 +6,6 @@ import { useNotifications } from "@/lib/store/notifications";
 import { CommandPalette } from "./CommandPalette";
 import {
   Bell,
-  Menu,
   Moon,
   Search,
   Sun,
@@ -38,7 +37,9 @@ export function PharmacyAppShell({ children }: Props) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = useRouterState({ select: (r) => r.location.pathname });
 
-  const isInventoryActive = pathname.startsWith("/pharmacy/inventory") || pathname.startsWith("/pharmacy/manufacturemaster");
+  const isInventoryActive =
+    pathname.startsWith("/pharmacy/inventory") ||
+    pathname.startsWith("/pharmacy/manufacturemaster");
   const [inventoryOpen, setInventoryOpen] = useState(isInventoryActive);
 
   useEffect(() => {
@@ -101,7 +102,10 @@ export function PharmacyAppShell({ children }: Props) {
       <div className="px-3 pt-4">
         <button
           type="button"
-          onClick={() => { setOpenPalette(true); setMobileOpen(false); }}
+          onClick={() => {
+            setOpenPalette(true);
+            setMobileOpen(false);
+          }}
           className="flex w-full items-center gap-2 rounded-lg border border-input bg-muted/40 hover:bg-muted px-3 py-2 text-xs text-muted-foreground transition-colors"
         >
           <Search className="h-3.5 w-3.5 shrink-0" />
@@ -127,9 +131,7 @@ export function PharmacyAppShell({ children }: Props) {
                   onClick={() => setInventoryOpen(!isOpen)}
                   className={cn(
                     "flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium transition-colors hover:bg-accent hover:text-foreground",
-                    anyChildActive
-                      ? "text-foreground font-semibold"
-                      : "text-muted-foreground"
+                    anyChildActive ? "text-foreground font-semibold" : "text-muted-foreground"
                   )}
                 >
                   <div className="flex items-center gap-3">
@@ -147,7 +149,7 @@ export function PharmacyAppShell({ children }: Props) {
                 {isOpen && (
                   <div className="ml-5 pl-4 border-l border-border/50 space-y-1 mt-1">
                     {tab.children.map((child) => {
-                      const childActive = pathname.startsWith(child.to);
+                      const childActive = pathname === child.to;
                       return (
                         <Link
                           key={child.to}
@@ -171,7 +173,10 @@ export function PharmacyAppShell({ children }: Props) {
           }
 
           const Icon = tab.icon;
-          const active = tab.to ? pathname.startsWith(tab.to) : false;
+          // Use exact match to ensure only one tab is active at a time.
+          // Prefix match would cause /pharmacy/billing to stay active if a
+          // sub-route ever existed beneath it.
+          const active = tab.to ? pathname === tab.to : false;
           return (
             <Link
               key={tab.to}
@@ -238,7 +243,10 @@ export function PharmacyAppShell({ children }: Props) {
           </button>
           <button
             type="button"
-            onClick={() => { navigate({ to: "/notifications" }); setMobileOpen(false); }}
+            onClick={() => {
+              navigate({ to: "/notifications" });
+              setMobileOpen(false);
+            }}
             className="relative rounded-lg p-2 text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
             aria-label="Notifications"
           >
@@ -254,7 +262,11 @@ export function PharmacyAppShell({ children }: Props) {
         {/* User info + logout */}
         <div className="flex items-center gap-2 rounded-lg bg-accent/60 px-3 py-2.5">
           <div className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
-            {user.name.split(" ").map((n) => n[0]).slice(0, 2).join("")}
+            {user.name
+              .split(" ")
+              .map((n) => n[0])
+              .slice(0, 2)
+              .join("")}
           </div>
           <div className="flex-1 min-w-0">
             <p className="truncate text-sm font-semibold">{user.name}</p>
@@ -262,7 +274,10 @@ export function PharmacyAppShell({ children }: Props) {
           </div>
           <button
             type="button"
-            onClick={() => { logout(); navigate({ to: "/login" }); }}
+            onClick={() => {
+              logout();
+              navigate({ to: "/login" });
+            }}
             className="rounded-lg p-1.5 text-muted-foreground hover:bg-background hover:text-destructive transition-colors"
             title="Sign out"
             aria-label="Sign out"
@@ -302,11 +317,17 @@ export function PharmacyAppShell({ children }: Props) {
         <div className="sticky top-0 z-30 flex h-14 items-center border-b border-border bg-background/80 px-4 backdrop-blur-md lg:hidden">
           <button
             type="button"
-            className="rounded-md p-2 text-muted-foreground hover:bg-accent"
+            className="menu-btn-reset"
             onClick={() => setMobileOpen(true)}
             aria-label="Open menu"
           >
-            <Menu className="h-5 w-5" />
+            <div className="menu__background">
+              <div className="menu__icon">
+                <span />
+                <span />
+                <span />
+              </div>
+            </div>
           </button>
           <div className="flex items-center gap-2 ml-3">
             <span className="grid h-7 w-7 place-items-center rounded-lg overflow-hidden">
@@ -319,7 +340,10 @@ export function PharmacyAppShell({ children }: Props) {
         {/* Page content */}
         <main className="relative flex-1 w-full max-w-[1600px] mx-auto p-4 md:p-6 lg:p-8 flex flex-col">
           {/* Watermark */}
-          <div className="pointer-events-none fixed inset-0 z-0 flex items-center justify-center" aria-hidden="true">
+          <div
+            className="pointer-events-none fixed inset-0 z-0 flex items-center justify-center"
+            aria-hidden="true"
+          >
             <img
               src="/logo.png"
               alt=""

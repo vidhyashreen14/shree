@@ -14,6 +14,7 @@ import {
   IndianRupee,
   Activity,
   Flame,
+  RotateCcw,
 } from "lucide-react";
 import {
   LineChart,
@@ -56,20 +57,92 @@ interface SalesItem {
 
 const MOCK_SALES: Record<string, SalesItem[]> = {
   Koramangala: [
-    { id: "S-001", date: "2026-07-11", patientName: "Aarav Sharma", tests: ["CBC", "Lipid Panel"], paymentMode: "UPI", gross: 1800, discount: 100, net: 1700 },
-    { id: "S-002", date: "2026-07-11", patientName: "Arjun Mehta", tests: ["Thyroid Profile"], paymentMode: "Cash", gross: 1200, discount: 50, net: 1150 },
-    { id: "S-003", date: "2026-07-11", patientName: "Liam Carter", tests: ["Vitamin D", "B12"], paymentMode: "Card", gross: 2400, discount: 200, net: 2200 },
+    {
+      id: "S-001",
+      date: "2026-07-11",
+      patientName: "Aarav Sharma",
+      tests: ["CBC", "Lipid Panel"],
+      paymentMode: "UPI",
+      gross: 1800,
+      discount: 100,
+      net: 1700,
+    },
+    {
+      id: "S-002",
+      date: "2026-07-11",
+      patientName: "Arjun Mehta",
+      tests: ["Thyroid Profile"],
+      paymentMode: "Cash",
+      gross: 1200,
+      discount: 50,
+      net: 1150,
+    },
+    {
+      id: "S-003",
+      date: "2026-07-11",
+      patientName: "Liam Carter",
+      tests: ["Vitamin D", "B12"],
+      paymentMode: "Card",
+      gross: 2400,
+      discount: 200,
+      net: 2200,
+    },
   ],
   Indiranagar: [
-    { id: "S-004", date: "2026-07-11", patientName: "Saanvi Patel", tests: ["HbA1c"], paymentMode: "UPI", gross: 800, discount: 0, net: 800 },
-    { id: "S-005", date: "2026-07-11", patientName: "Apollo Hospital Group", tests: ["HbA1c", "TSH", "Urine R/M"], paymentMode: "NetBanking", gross: 4200, discount: 420, net: 3780 },
+    {
+      id: "S-004",
+      date: "2026-07-11",
+      patientName: "Saanvi Patel",
+      tests: ["HbA1c"],
+      paymentMode: "UPI",
+      gross: 800,
+      discount: 0,
+      net: 800,
+    },
+    {
+      id: "S-005",
+      date: "2026-07-11",
+      patientName: "Apollo Hospital Group",
+      tests: ["HbA1c", "TSH", "Urine R/M"],
+      paymentMode: "NetBanking",
+      gross: 4200,
+      discount: 420,
+      net: 3780,
+    },
   ],
   Whitefield: [
-    { id: "S-006", date: "2026-07-11", patientName: "Diya Kapoor", tests: ["Urinalysis"], paymentMode: "Card", gross: 600, discount: 0, net: 600 },
-    { id: "S-007", date: "2026-07-11", patientName: "Manipal Group Partner", tests: ["Lipid Panel", "CBC"], paymentMode: "NetBanking", gross: 3600, discount: 360, net: 3240 },
+    {
+      id: "S-006",
+      date: "2026-07-11",
+      patientName: "Diya Kapoor",
+      tests: ["Urinalysis"],
+      paymentMode: "Card",
+      gross: 600,
+      discount: 0,
+      net: 600,
+    },
+    {
+      id: "S-007",
+      date: "2026-07-11",
+      patientName: "Manipal Group Partner",
+      tests: ["Lipid Panel", "CBC"],
+      paymentMode: "NetBanking",
+      gross: 3600,
+      discount: 360,
+      net: 3240,
+    },
   ],
   Jayanagar: [
-    { id: "S-008", date: "2026-07-11", patientName: "Kabir Joshi", tests: ["CBC"], paymentMode: "Cash", gross: 500, discount: 0, net: 500 },
+    {
+      id: "S-008",
+      date: "2026-07-11",
+      patientName: "Kabir Joshi",
+      tests: ["CBC"],
+      paymentMode: "Cash",
+      gross: 500,
+      discount: 0,
+      net: 500,
+    },
   ],
 };
 
@@ -120,12 +193,54 @@ function LabAnalytics() {
     toast.success("Sales filters cleared");
   };
 
-  const handleExportExcel = () => {
+  const handleExportCSV = () => {
     if (salesBranch === "Select Branch") {
       toast.warning("Please select a specific branch to export its daily sales report");
       return;
     }
-    toast.success(`Exporting raw daily sales report for ${salesBranch} to Excel...`);
+
+    const headers = [
+      "ID",
+      "Patient / Client",
+      "Diagnostics",
+      "Gateway Mode",
+      "Gross",
+      "Discount",
+      "Net Amount",
+    ];
+    const rows = salesData.map((item) => [
+      item.id,
+      item.patientName,
+      item.tests.join("; "),
+      item.paymentMode,
+      item.gross,
+      item.discount,
+      item.net,
+    ]);
+
+    const csvContent = [
+      headers.join(","),
+      ...rows.map((e) =>
+        e
+          .map(String)
+          .map((s) => `"${s.replace(/"/g, '""')}"`)
+          .join(",")
+      ),
+    ].join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute(
+      "download",
+      `sales_report_${salesBranch.replace(/\s+/g, "_")}_${new Date().toISOString().split("T")[0]}.csv`
+    );
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    toast.success(`Exported daily sales report for ${salesBranch} to CSV`);
   };
 
   return (
@@ -155,7 +270,10 @@ function LabAnalytics() {
           <div className="flex flex-wrap items-end gap-3 rounded-lg border border-border bg-muted/20 p-4">
             {/* Branch */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground" htmlFor="sales-branch-select">
+              <label
+                className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground"
+                htmlFor="sales-branch-select"
+              >
                 Branch
               </label>
               <div className="relative">
@@ -163,9 +281,13 @@ function LabAnalytics() {
                   id="sales-branch-select"
                   value={salesBranch}
                   onChange={(e) => setSalesBranch(e.target.value)}
-                  className="appearance-none rounded-lg border border-border bg-background px-3 py-2 text-xs text-foreground outline-none pr-8 min-w-[150px] h-9"
+                  className="appearance-none rounded-lg border border-border bg-background px-3 py-2 text-xs text-primary font-medium outline-none pr-8 min-w-[150px] h-9"
                 >
-                  {BRANCHES.map((b) => <option key={b} value={b}>{b === "Select Branch" ? "All Branches" : b}</option>)}
+                  {BRANCHES.map((b) => (
+                    <option key={b} value={b}>
+                      {b === "Select Branch" ? "All Branches" : b}
+                    </option>
+                  ))}
                 </select>
                 <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
               </div>
@@ -173,34 +295,38 @@ function LabAnalytics() {
 
             {/* From Date */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground" htmlFor="sales-from-date">
+              <label
+                className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground"
+                htmlFor="sales-from-date"
+              >
                 From Date
               </label>
               <div className="relative flex items-center rounded-lg border border-border bg-background px-3 h-9">
-                <CalendarDays className="h-3.5 w-3.5 text-muted-foreground shrink-0 mr-1.5" />
                 <input
                   id="sales-from-date"
                   type="date"
                   value={fromDate}
                   onChange={(e) => setFromDate(e.target.value)}
-                  className="bg-transparent text-xs text-foreground outline-none w-28"
+                  className="bg-transparent text-xs text-primary font-medium outline-none w-28"
                 />
               </div>
             </div>
 
             {/* To Date */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground" htmlFor="sales-to-date">
+              <label
+                className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground"
+                htmlFor="sales-to-date"
+              >
                 To Date
               </label>
               <div className="relative flex items-center rounded-lg border border-border bg-background px-3 h-9">
-                <CalendarDays className="h-3.5 w-3.5 text-muted-foreground shrink-0 mr-1.5" />
                 <input
                   id="sales-to-date"
                   type="date"
                   value={toDate}
                   onChange={(e) => setToDate(e.target.value)}
-                  className="bg-transparent text-xs text-foreground outline-none w-28"
+                  className="bg-transparent text-xs text-primary font-medium outline-none w-28"
                 />
               </div>
             </div>
@@ -209,12 +335,12 @@ function LabAnalytics() {
             <div className="flex items-center gap-2 pb-0.5 ml-auto">
               <Button
                 size="sm"
-                onClick={handleExportExcel}
+                onClick={handleExportCSV}
                 className="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white"
                 id="btn-sales-export"
               >
                 <FileSpreadsheet className="h-4 w-4" />
-                Excel
+                Export CSV
               </Button>
               <Button
                 size="sm"
@@ -223,7 +349,7 @@ function LabAnalytics() {
                 className="flex items-center gap-1.5"
                 id="btn-sales-clear"
               >
-                <RefreshCw className="h-3.5 w-3.5" />
+                <RotateCcw className="h-3.5 w-3.5" />
                 Clear
               </Button>
             </div>
@@ -232,12 +358,32 @@ function LabAnalytics() {
           {/* Aggregates Metrics Row */}
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             {[
-              { label: "Gross Billing", value: `₹${salesSummary.gross.toLocaleString("en-IN")}`, desc: "Calculated before discount reductions", color: "text-primary", bg: "bg-primary/5 border-primary/10" },
-              { label: "Discount Deductible", value: `₹${salesSummary.discount.toLocaleString("en-IN")}`, desc: "Promotional & institutional offsets", color: "text-rose-600 dark:text-rose-400", bg: "bg-rose-50/50 dark:bg-rose-950/20 border-rose-100 dark:border-rose-900/30" },
-              { label: "Net Revenue Sales", value: `₹${salesSummary.net.toLocaleString("en-IN")}`, desc: "Final captured liquid cash flow yield", color: "text-teal-600 dark:text-teal-400", bg: "bg-teal-50/50 dark:bg-teal-950/20 border-teal-100 dark:border-teal-900/30" },
+              {
+                label: "Gross Billing",
+                value: `₹${salesSummary.gross.toLocaleString("en-IN")}`,
+                desc: "Calculated before discount reductions",
+                color: "text-primary",
+                bg: "bg-primary/5 border-primary/10",
+              },
+              {
+                label: "Discount Deductible",
+                value: `₹${salesSummary.discount.toLocaleString("en-IN")}`,
+                desc: "Promotional & institutional offsets",
+                color: "text-rose-600 dark:text-rose-400",
+                bg: "bg-rose-50/50 dark:bg-rose-950/20 border-rose-100 dark:border-rose-900/30",
+              },
+              {
+                label: "Net Revenue Sales",
+                value: `₹${salesSummary.net.toLocaleString("en-IN")}`,
+                desc: "Final captured liquid cash flow yield",
+                color: "text-teal-600 dark:text-teal-400",
+                bg: "bg-teal-50/50 dark:bg-teal-950/20 border-teal-100 dark:border-teal-900/30",
+              },
             ].map((card) => (
               <div key={card.label} className={`rounded-xl border p-4 ${card.bg}`}>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{card.label}</span>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                  {card.label}
+                </span>
                 <p className={`font-display text-2xl font-bold mt-1 ${card.color}`}>{card.value}</p>
                 <p className="text-[11px] text-muted-foreground mt-0.5">{card.desc}</p>
               </div>
@@ -249,30 +395,57 @@ function LabAnalytics() {
             <table className="w-full text-sm">
               <thead className="bg-muted/40">
                 <tr className="border-b border-border">
-                  <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground">ID</th>
-                  <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground">Patient / Client</th>
-                  <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground">Diagnostics</th>
-                  <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground">Gateway Mode</th>
-                  <th className="px-4 py-2.5 text-right text-xs font-semibold text-muted-foreground">Gross</th>
-                  <th className="px-4 py-2.5 text-right text-xs font-semibold text-muted-foreground">Discount</th>
-                  <th className="px-4 py-2.5 text-right text-xs font-semibold text-muted-foreground">Net Amount</th>
+                  <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground">
+                    ID
+                  </th>
+                  <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground">
+                    Patient / Client
+                  </th>
+                  <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground">
+                    Diagnostics
+                  </th>
+                  <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground">
+                    Gateway Mode
+                  </th>
+                  <th className="px-4 py-2.5 text-right text-xs font-semibold text-muted-foreground">
+                    Gross
+                  </th>
+                  <th className="px-4 py-2.5 text-right text-xs font-semibold text-muted-foreground">
+                    Discount
+                  </th>
+                  <th className="px-4 py-2.5 text-right text-xs font-semibold text-muted-foreground">
+                    Net Amount
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {salesData.map((item) => (
                   <tr key={item.id} className="hover:bg-muted/10 transition-colors">
-                    <td className="px-4 py-2.5 font-mono text-xs font-semibold text-muted-foreground">{item.id}</td>
+                    <td className="px-4 py-2.5 font-mono text-xs font-semibold text-muted-foreground">
+                      {item.id}
+                    </td>
                     <td className="px-4 py-2.5 font-semibold text-sm">{item.patientName}</td>
-                    <td className="px-4 py-2.5 text-xs text-muted-foreground">{item.tests.join(", ")}</td>
+                    <td className="px-4 py-2.5 text-xs text-muted-foreground">
+                      {item.tests.join(", ")}
+                    </td>
                     <td className="px-4 py-2.5 text-xs">{item.paymentMode}</td>
-                    <td className="px-4 py-2.5 text-right font-medium">₹{item.gross.toLocaleString("en-IN")}</td>
-                    <td className="px-4 py-2.5 text-right text-xs text-rose-500">-₹{item.discount.toLocaleString("en-IN")}</td>
-                    <td className="px-4 py-2.5 text-right font-bold text-teal-600 dark:text-teal-400">₹{item.net.toLocaleString("en-IN")}</td>
+                    <td className="px-4 py-2.5 text-right font-medium">
+                      ₹{item.gross.toLocaleString("en-IN")}
+                    </td>
+                    <td className="px-4 py-2.5 text-right text-xs text-rose-500">
+                      -₹{item.discount.toLocaleString("en-IN")}
+                    </td>
+                    <td className="px-4 py-2.5 text-right font-bold text-teal-600 dark:text-teal-400">
+                      ₹{item.net.toLocaleString("en-IN")}
+                    </td>
                   </tr>
                 ))}
                 {salesData.length === 0 && (
                   <tr>
-                    <td colSpan={7} className="px-4 py-10 text-center text-xs text-muted-foreground">
+                    <td
+                      colSpan={7}
+                      className="px-4 py-10 text-center text-xs text-muted-foreground"
+                    >
                       No sales matching the parameters were found for today.
                     </td>
                   </tr>
@@ -291,12 +464,16 @@ function LabAnalytics() {
             <div>
               <h3 className="font-display font-semibold text-base">Monthly Registrations</h3>
               <p className="text-xs text-muted-foreground mt-0.5">
-                Flow trend comparative overview showing direct consumers (B2C) against corporate partners (B2B).
+                Flow trend comparative overview showing direct consumers (B2C) against corporate
+                partners (B2B).
               </p>
             </div>
             <div className="h-64 flex-1 mt-2 min-h-[220px]">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={MONTHLY_REGISTRATIONS} margin={{ top: 5, right: 10, bottom: 0, left: -20 }}>
+                <AreaChart
+                  data={MONTHLY_REGISTRATIONS}
+                  margin={{ top: 5, right: 10, bottom: 0, left: -20 }}
+                >
                   <defs>
                     <linearGradient id="b2cGrad" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="var(--color-primary)" stopOpacity={0.2} />
@@ -307,9 +484,24 @@ function LabAnalytics() {
                       <stop offset="95%" stopColor="var(--color-info)" stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
-                  <XAxis dataKey="month" tickLine={false} axisLine={false} stroke="var(--color-muted-foreground)" fontSize={10} />
-                  <YAxis tickLine={false} axisLine={false} stroke="var(--color-muted-foreground)" fontSize={10} />
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    stroke="var(--color-border)"
+                    vertical={false}
+                  />
+                  <XAxis
+                    dataKey="month"
+                    tickLine={false}
+                    axisLine={false}
+                    stroke="var(--color-muted-foreground)"
+                    fontSize={10}
+                  />
+                  <YAxis
+                    tickLine={false}
+                    axisLine={false}
+                    stroke="var(--color-muted-foreground)"
+                    fontSize={10}
+                  />
                   <Tooltip
                     contentStyle={{
                       background: "var(--color-popover)",
@@ -351,14 +543,23 @@ function LabAnalytics() {
 
             <div className="space-y-3.5 my-2 flex-1 flex flex-col justify-center">
               {PEAK_DAYS.map((day, idx) => (
-                <div key={day.day} className="flex items-start gap-3 rounded-lg border border-border bg-muted/20 p-3.5">
+                <div
+                  key={day.day}
+                  className="flex items-start gap-3 rounded-lg border border-border bg-muted/20 p-3.5"
+                >
                   <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400">
-                    {idx === 0 ? <Flame className="h-4.5 w-4.5 animate-pulse" /> : <TrendingUp className="h-4.5 w-4.5" />}
+                    {idx === 0 ? (
+                      <Flame className="h-4.5 w-4.5 animate-pulse" />
+                    ) : (
+                      <TrendingUp className="h-4.5 w-4.5" />
+                    )}
                   </span>
                   <div className="min-w-0">
                     <div className="flex items-center gap-1.5">
                       <p className="font-semibold text-sm text-foreground">{day.day}</p>
-                      <span className="text-xs text-muted-foreground font-medium">({day.avgPatients} patients/avg)</span>
+                      <span className="text-xs text-muted-foreground font-medium">
+                        ({day.avgPatients} patients/avg)
+                      </span>
                     </div>
                     <p className="text-xs text-muted-foreground mt-0.5">{day.description}</p>
                   </div>
@@ -369,10 +570,13 @@ function LabAnalytics() {
             <div className="rounded-lg bg-primary/5 p-3.5 border border-primary/10">
               <div className="flex items-center gap-2">
                 <Users className="h-4 w-4 text-primary" />
-                <span className="text-xs font-bold text-primary uppercase tracking-wide">Flow Insight</span>
+                <span className="text-xs font-bold text-primary uppercase tracking-wide">
+                  Flow Insight
+                </span>
               </div>
               <p className="text-xs text-muted-foreground mt-1.5">
-                Mid-week corporate checkups drive the highest test densities. Shift CBC/Thyroid processing loads to Wednesday mornings.
+                Mid-week corporate checkups drive the highest test densities. Shift CBC/Thyroid
+                processing loads to Wednesday mornings.
               </p>
             </div>
           </div>

@@ -13,7 +13,10 @@ export const Route = createFileRoute("/_app/notifications")({
 });
 
 const tone: Record<Notification["kind"], Parameters<typeof StatusChip>[0]["tone"]> = {
-  info: "info", success: "success", warning: "warning", error: "danger",
+  info: "info",
+  success: "success",
+  warning: "warning",
+  error: "danger",
 };
 
 function Notifications() {
@@ -25,7 +28,11 @@ function Notifications() {
       <PageHeader
         title="Notifications"
         description="All alerts from across the hospital."
-        actions={<Button variant="outline" onClick={markAll}><CheckCheck className="mr-2 h-4 w-4" /> Mark all read</Button>}
+        actions={
+          <Button variant="outline" onClick={markAll}>
+            <CheckCheck className="mr-2 h-4 w-4" /> Mark all read
+          </Button>
+        }
       />
 
       <div className="surface-elevated divide-y divide-border">
@@ -37,7 +44,11 @@ function Notifications() {
         )}
         {items.map((n) => (
           <div key={n.id} className={cn("flex items-start gap-3 p-4", !n.read && "bg-primary/4")}>
-            <span className={cn("mt-1 grid h-9 w-9 shrink-0 place-items-center rounded-full bg-muted text-muted-foreground")}>
+            <span
+              className={cn(
+                "mt-1 grid h-9 w-9 shrink-0 place-items-center rounded-full bg-muted text-muted-foreground"
+              )}
+            >
               <Bell className="h-4 w-4" />
             </span>
             <div className="min-w-0 flex-1">
@@ -47,7 +58,9 @@ function Notifications() {
                 {!n.read && <span className="h-1.5 w-1.5 rounded-full bg-primary" />}
               </div>
               <p className="mt-0.5 text-sm text-muted-foreground">{n.body}</p>
-              <p className="mt-1 text-xs text-muted-foreground">{formatDistanceToNow(new Date(n.at), { addSuffix: true })}</p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {formatDistanceToNow(new Date(n.at), { addSuffix: true })}
+              </p>
             </div>
           </div>
         ))}

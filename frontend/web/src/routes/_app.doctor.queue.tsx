@@ -88,9 +88,7 @@ function QueueStatCard({
         <Icon className="h-5 w-5" />
       </span>
       <div>
-        <p className={`font-display text-2xl font-bold leading-none ${c.value}`}>
-          {value}
-        </p>
+        <p className={`font-display text-2xl font-bold leading-none ${c.value}`}>{value}</p>
         <p className="mt-0.5 text-xs text-muted-foreground">{label}</p>
       </div>
     </div>
@@ -159,29 +157,45 @@ function VitalsPanel({ vitals }: { vitals: NonNullable<any> }) {
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 border-b border-teal-100/50 dark:border-teal-900/20 pb-2.5">
         <div>
-          <span className="text-muted-foreground block text-[10px] uppercase tracking-wide mb-0.5">BP &amp; Pulse</span>
-          <span className="font-semibold">{vitals.bp} mmHg · {vitals.pulse} bpm</span>
+          <span className="text-muted-foreground block text-[10px] uppercase tracking-wide mb-0.5">
+            BP &amp; Pulse
+          </span>
+          <span className="font-semibold">
+            {vitals.bp} mmHg · {vitals.pulse} bpm
+          </span>
         </div>
         <div>
-          <span className="text-muted-foreground block text-[10px] uppercase tracking-wide mb-0.5">Temp &amp; SpO₂</span>
-          <span className="font-semibold">{vitals.tempF}°F · {vitals.spo2}%</span>
+          <span className="text-muted-foreground block text-[10px] uppercase tracking-wide mb-0.5">
+            Temp &amp; SpO₂
+          </span>
+          <span className="font-semibold">
+            {vitals.tempF}°F · {vitals.spo2}%
+          </span>
         </div>
         <div>
-          <span className="text-muted-foreground block text-[10px] uppercase tracking-wide mb-0.5">Height &amp; Weight</span>
-          <span className="font-semibold">{vitals.height} cm · {vitals.weight} kg</span>
+          <span className="text-muted-foreground block text-[10px] uppercase tracking-wide mb-0.5">
+            Height &amp; Weight
+          </span>
+          <span className="font-semibold">
+            {vitals.height} cm · {vitals.weight} kg
+          </span>
         </div>
         <div>
-          <span className="text-muted-foreground block text-[10px] uppercase tracking-wide mb-0.5">BMI</span>
+          <span className="text-muted-foreground block text-[10px] uppercase tracking-wide mb-0.5">
+            BMI
+          </span>
           <span className="font-semibold">
             {vitals.bmi}{" "}
             <span className="text-muted-foreground font-normal">
-              ({Number(vitals.bmi) < 18.5
+              (
+              {Number(vitals.bmi) < 18.5
                 ? "Underweight"
                 : Number(vitals.bmi) < 25
-                ? "Normal"
-                : Number(vitals.bmi) < 30
-                ? "Overweight"
-                : "Obese"})
+                  ? "Normal"
+                  : Number(vitals.bmi) < 30
+                    ? "Overweight"
+                    : "Obese"}
+              )
             </span>
           </span>
         </div>
@@ -192,9 +206,7 @@ function VitalsPanel({ vitals }: { vitals: NonNullable<any> }) {
           <span className="font-semibold">{vitals.sugar} mg/dL</span>
         </div>
       )}
-      <div className="mt-2 italic text-teal-800 dark:text-teal-200">
-        "{vitals.chiefComplaint}"
-      </div>
+      <div className="mt-2 italic text-teal-800 dark:text-teal-200">"{vitals.chiefComplaint}"</div>
     </div>
   );
 }
@@ -226,8 +238,8 @@ function PatientQueueCard({
     a.status === "in-consultation"
       ? "border-primary/50 ring-1 ring-primary/20"
       : a.status === "checked-in"
-      ? "border-amber-300/60 dark:border-amber-700/40"
-      : "border-border";
+        ? "border-amber-300/60 dark:border-amber-700/40"
+        : "border-border";
 
   return (
     <div
@@ -258,9 +270,7 @@ function PatientQueueCard({
               {/* Primary status badge */}
               <AppointmentStatusChip status={a.status} />
               {/* Pending Lab badge */}
-              {showPendingLab && (
-                <AppointmentStatusChip status="pending-lab" />
-              )}
+              {showPendingLab && <AppointmentStatusChip status="pending-lab" />}
               {/* Live Triage badge */}
               {isLive && (
                 <span className="inline-flex items-center gap-1 rounded-full bg-teal-500/10 px-2 py-0.5 text-[10px] font-bold text-teal-600 dark:text-teal-400">
@@ -272,8 +282,7 @@ function PatientQueueCard({
             {!compact && (
               <p className="mt-1 text-xs text-muted-foreground">
                 {patient.age}y · {patient.gender} · {a.reason} ·{" "}
-                <Clock className="inline h-3 w-3 -mt-px" />{" "}
-                {format(new Date(a.date), "p")}
+                <Clock className="inline h-3 w-3 -mt-px" /> {format(new Date(a.date), "p")}
               </p>
             )}
           </div>
@@ -318,11 +327,7 @@ function PatientQueueCard({
             </Button>
           )}
           <Link to="/doctor/patients/$id" params={{ id: patient.id }}>
-            <Button
-              size="sm"
-              variant="ghost"
-              id={`btn-report-${a.id}`}
-            >
+            <Button size="sm" variant="ghost" id={`btn-report-${a.id}`}>
               <FileText className="mr-1.5 h-3.5 w-3.5" />
               View Report
             </Button>
@@ -368,8 +373,7 @@ function PatientQueueCard({
           {compact && (
             <p className="mt-3 text-xs text-muted-foreground">
               {patient.age}y · {patient.gender} · {a.reason} ·{" "}
-              <Clock className="inline h-3 w-3 -mt-px" />{" "}
-              {format(new Date(a.date), "p")}
+              <Clock className="inline h-3 w-3 -mt-px" /> {format(new Date(a.date), "p")}
             </p>
           )}
           {/* Vitals (order depends on preference) */}
@@ -404,9 +408,7 @@ function DoctorQueue() {
   const [tab, setTab] = useState<AppointmentStatus | "all">("all");
 
   // Live nurse queue
-  const liveQueue = queue.filter(
-    (e) => e.doctorId === doctorId && e.vitalsStatus === "done"
-  );
+  const liveQueue = queue.filter((e) => e.doctorId === doctorId && e.vitalsStatus === "done");
   const liveRows = liveQueue.map((e) => ({
     id: e.id,
     patientId: e.patientId,
@@ -426,22 +428,13 @@ function DoctorQueue() {
   const combinedRows = [
     ...rows.map((r) => ({ ...r, vitals: undefined as any, isLive: false })),
     ...liveRows,
-  ].sort(
-    (a, b) =>
-      (priorityOrder[a.status] ?? 99) - (priorityOrder[b.status] ?? 99)
-  );
+  ].sort((a, b) => (priorityOrder[a.status] ?? 99) - (priorityOrder[b.status] ?? 99));
 
-  const filtered =
-    tab === "all"
-      ? combinedRows
-      : combinedRows.filter((r) => r.status === tab);
+  const filtered = tab === "all" ? combinedRows : combinedRows.filter((r) => r.status === tab);
 
   const update = (id: string, status: AppointmentStatus) => {
     if (id.startsWith("nq-")) {
-      const statusMap: Record<
-        string,
-        "waiting" | "in-consultation" | "completed" | "cancelled"
-      > = {
+      const statusMap: Record<string, "waiting" | "in-consultation" | "completed" | "cancelled"> = {
         "checked-in": "waiting",
         "in-consultation": "in-consultation",
         completed: "completed",
@@ -490,12 +483,7 @@ function DoctorQueue() {
           icon={CheckCircle2}
           color="emerald"
         />
-        <QueueStatCard
-          label="Pending Labs"
-          value={4}
-          icon={FlaskConical}
-          color="red"
-        />
+        <QueueStatCard label="Pending Labs" value={4} icon={FlaskConical} color="red" />
       </div>
 
       {/* ── Personalization ──────────────────────────────────────────── */}
@@ -514,18 +502,12 @@ function DoctorQueue() {
       >
         <TabsList className="flex-wrap">
           <TabsTrigger value="all">All ({combinedRows.length})</TabsTrigger>
-          <TabsTrigger value="checked-in">
-            ⏳ Waiting ({counts["checked-in"] ?? 0})
-          </TabsTrigger>
+          <TabsTrigger value="checked-in">⏳ Waiting ({counts["checked-in"] ?? 0})</TabsTrigger>
           <TabsTrigger value="in-consultation">
             🩺 In consult ({counts["in-consultation"] ?? 0})
           </TabsTrigger>
-          <TabsTrigger value="completed">
-            ✅ Completed ({counts["completed"] ?? 0})
-          </TabsTrigger>
-          <TabsTrigger value="cancelled">
-            🚫 Cancelled ({counts["cancelled"] ?? 0})
-          </TabsTrigger>
+          <TabsTrigger value="completed">✅ Completed ({counts["completed"] ?? 0})</TabsTrigger>
+          <TabsTrigger value="cancelled">🚫 Cancelled ({counts["cancelled"] ?? 0})</TabsTrigger>
         </TabsList>
       </Tabs>
 

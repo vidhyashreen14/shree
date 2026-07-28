@@ -4,7 +4,13 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { PageHeader } from "@/components/common/PageHeader";
 import { DataTable } from "@/components/common/DataTable";
 import { StatusChip } from "@/components/common/StatusChip";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Filter, RotateCcw } from "lucide-react";
 import { useAudit } from "@/lib/store/audit";
@@ -58,7 +64,8 @@ function AdminAudit() {
     });
   }, [auditLogs, roleFilter, actionFilter, timeframeFilter]);
 
-  const hasActiveFilters = roleFilter !== "all" || actionFilter !== "all" || timeframeFilter !== "all";
+  const hasActiveFilters =
+    roleFilter !== "all" || actionFilter !== "all" || timeframeFilter !== "all";
 
   const resetFilters = () => {
     setRoleFilter("all");
@@ -66,17 +73,33 @@ function AdminAudit() {
     setTimeframeFilter("all");
   };
 
-  const columns = useMemo<ColumnDef<AuditLog>[]>(() => [
-    { header: "User", accessorKey: "user" },
-    { header: "Role", accessorKey: "role", cell: ({ getValue }) => <StatusChip tone="primary">{String(getValue())}</StatusChip> },
-    { header: "Action", accessorKey: "action" },
-    { header: "When", accessorKey: "at", cell: ({ getValue }) => formatDistanceToNow(new Date(String(getValue())), { addSuffix: true }) },
-  ], []);
+  const columns = useMemo<ColumnDef<AuditLog>[]>(
+    () => [
+      { header: "User", accessorKey: "user" },
+      {
+        header: "Role",
+        accessorKey: "role",
+        cell: ({ getValue }) => <StatusChip tone="primary">{String(getValue())}</StatusChip>,
+      },
+      { header: "Action", accessorKey: "action" },
+      {
+        header: "When",
+        accessorKey: "at",
+        cell: ({ getValue }) =>
+          formatDistanceToNow(new Date(String(getValue())), { addSuffix: true }),
+      },
+    ],
+    []
+  );
 
   return (
     <>
-      <PageHeader eyebrow="System" title="Audit logs" description="Every privileged action across the platform." />
-      
+      <PageHeader
+        eyebrow="System"
+        title="Audit logs"
+        description="Every privileged action across the platform."
+      />
+
       {/* Filters Bar */}
       <div className="mb-5 flex flex-wrap items-center gap-3 rounded-xl border bg-card p-4 shadow-sm">
         <div className="flex items-center gap-2 text-sm font-semibold text-muted-foreground mr-2">
@@ -107,8 +130,10 @@ function AdminAudit() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Actions</SelectItem>
-            {uniqueActions.map(action => (
-              <SelectItem key={action} value={action}>{action}</SelectItem>
+            {uniqueActions.map((action) => (
+              <SelectItem key={action} value={action}>
+                {action}
+              </SelectItem>
             ))}
           </SelectContent>
         </Select>
@@ -141,7 +166,12 @@ function AdminAudit() {
         )}
       </div>
 
-      <DataTable columns={columns} data={filteredLogs} searchPlaceholder="Search by user, action…" pageSize={12} />
+      <DataTable
+        columns={columns}
+        data={filteredLogs}
+        searchPlaceholder="Search by user, action…"
+        pageSize={12}
+      />
     </>
   );
 }

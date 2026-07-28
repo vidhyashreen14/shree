@@ -174,8 +174,12 @@ export default function TabsScrollSwitchRadix() {
                     <div className="grid grid-cols-3 gap-4">
                       {tab.stats.map((s) => (
                         <div key={s.label}>
-                          <div className="text-2xl font-bold tracking-tight text-foreground tabular-nums">{s.value}</div>
-                          <div className="text-[11px] uppercase tracking-wide text-muted-foreground mt-1 font-medium">{s.label}</div>
+                          <div className="text-2xl font-bold tracking-tight text-foreground tabular-nums">
+                            {s.value}
+                          </div>
+                          <div className="text-[11px] uppercase tracking-wide text-muted-foreground mt-1 font-medium">
+                            {s.label}
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -186,11 +190,17 @@ export default function TabsScrollSwitchRadix() {
                     <ul className="flex flex-col gap-2.5">
                       {tab.features.map((f) => (
                         <li key={f.label} className="flex items-center gap-3 text-sm">
-                          {f.done
-                            ? <CheckCircle2 className="w-4 h-4 text-foreground shrink-0" />
-                            : <Circle className="w-4 h-4 text-muted-foreground/30 shrink-0" />
-                          }
-                          <span className={cn("font-medium", f.done ? "text-foreground" : "text-muted-foreground")}>
+                          {f.done ? (
+                            <CheckCircle2 className="w-4 h-4 text-foreground shrink-0" />
+                          ) : (
+                            <Circle className="w-4 h-4 text-muted-foreground/30 shrink-0" />
+                          )}
+                          <span
+                            className={cn(
+                              "font-medium",
+                              f.done ? "text-foreground" : "text-muted-foreground"
+                            )}
+                          >
                             {f.label}
                           </span>
                         </li>

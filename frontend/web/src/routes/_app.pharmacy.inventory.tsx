@@ -50,12 +50,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { medicines as seedMedicines } from "@/lib/mock/data";
 import type { Medicine } from "@/lib/types";
@@ -160,12 +155,9 @@ function highlight(text: string, term: string) {
   while (idx !== -1) {
     if (idx > i) out.push(text.slice(i, idx));
     out.push(
-      <mark
-        key={key++}
-        className="rounded bg-primary/20 px-0.5 text-foreground"
-      >
+      <mark key={key++} className="rounded bg-primary/20 px-0.5 text-foreground">
         {text.slice(idx, idx + term.length)}
-      </mark>,
+      </mark>
     );
     i = idx + term.length;
     idx = lower.indexOf(term, i);
@@ -255,11 +247,11 @@ function PharmacyInventory() {
 
   const sorting: SortingState = useMemo(
     () => [{ id: search.sort, desc: search.desc }],
-    [search.sort, search.desc],
+    [search.sort, search.desc]
   );
   const pagination: PaginationState = useMemo(
     () => ({ pageIndex: search.page - 1, pageSize: search.size }),
-    [search.page, search.size],
+    [search.page, search.size]
   );
 
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
@@ -277,16 +269,14 @@ function PharmacyInventory() {
   const [thresholdEditing, setThresholdEditing] = useState<Medicine | null>(null);
   const [thresholdInput, setThresholdInput] = useState<string>("");
 
-
   const categories = useMemo(
     () => Array.from(new Set(items.map((m) => m.category))).sort(),
-    [items],
+    [items]
   );
 
   const effectiveMin = (m: Medicine): number => {
     if (thresholds.overrides[m.id] != null) return thresholds.overrides[m.id]!;
-    if (thresholds.categories[m.category] != null)
-      return thresholds.categories[m.category]!;
+    if (thresholds.categories[m.category] != null) return thresholds.categories[m.category]!;
     return m.minStock;
   };
 
@@ -390,7 +380,7 @@ function PharmacyInventory() {
     toast.success(
       action === "set"
         ? `Stock set to ${n} for ${editing.name}`
-        : `${action === "add" ? "Added" : "Removed"} ${n} units · ${editing.name}`,
+        : `${action === "add" ? "Added" : "Removed"} ${n} units · ${editing.name}`
     );
     setEditing(null);
     setQty("");
@@ -419,7 +409,7 @@ function PharmacyInventory() {
     toast.success(
       trimmed === ""
         ? `Cleared override for ${thresholdEditing.name}`
-        : `Low-stock threshold for ${thresholdEditing.name} set to ${trimmed}`,
+        : `Low-stock threshold for ${thresholdEditing.name} set to ${trimmed}`
     );
     setThresholdEditing(null);
     setThresholdInput("");
@@ -514,13 +504,7 @@ function PharmacyInventory() {
           const days = differenceInDays(d, new Date());
           return (
             <span
-              className={
-                days < 0
-                  ? "text-destructive"
-                  : days < 60
-                    ? "text-warning-foreground"
-                    : ""
-              }
+              className={days < 0 ? "text-destructive" : days < 60 ? "text-warning-foreground" : ""}
             >
               {format(d, "MMM yyyy")}
             </span>
@@ -593,7 +577,7 @@ function PharmacyInventory() {
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [search.q, thresholds],
+    [search.q, thresholds]
   );
 
   const table = useReactTable({
@@ -627,14 +611,9 @@ function PharmacyInventory() {
   const selectedIds = Object.keys(rowSelection).filter((id) => rowSelection[id]);
   const selectedItems = items.filter((m) => selectedIds.includes(m.id));
 
-  const undoBulkRestock = (
-    batchId: string,
-    snapshot: { id: string; stock: number }[],
-  ) => {
+  const undoBulkRestock = (batchId: string, snapshot: { id: string; stock: number }[]) => {
     const map = new Map(snapshot.map((s) => [s.id, s.stock]));
-    setItems((prev) =>
-      prev.map((m) => (map.has(m.id) ? { ...m, stock: map.get(m.id)! } : m)),
-    );
+    setItems((prev) => prev.map((m) => (map.has(m.id) ? { ...m, stock: map.get(m.id)! } : m)));
     setHistory((prev) => {
       const reversed = prev
         .filter((h) => h.batchId === batchId)
@@ -667,7 +646,7 @@ function PharmacyInventory() {
     const snapshot = selectedItems.map((m) => ({ id: m.id, stock: m.stock }));
     const batchId = `bulk-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
     setItems((prev) =>
-      prev.map((m) => (selectedIds.includes(m.id) ? { ...m, stock: m.stock + n } : m)),
+      prev.map((m) => (selectedIds.includes(m.id) ? { ...m, stock: m.stock + n } : m))
     );
     selectedItems.forEach((m) =>
       recordHistory({
@@ -679,7 +658,7 @@ function PharmacyInventory() {
         by: "You",
         note: `Bulk restock (+${n})`,
         batchId,
-      }),
+      })
     );
     toast.success(`Restocked ${selectedItems.length} medicine(s) by ${n} units`, {
       action: {
@@ -725,7 +704,7 @@ function PharmacyInventory() {
         m.pricePerUnit,
       ]
         .map(esc)
-        .join(","),
+        .join(",")
     );
     const csv = [headers.join(","), ...rows].join("\n");
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
@@ -742,12 +721,9 @@ function PharmacyInventory() {
 
   const alerts = [...outOfStock, ...lowStock, ...expired].slice(0, 6);
 
-  const historyEntries = historyFor
-    ? history.filter((h) => h.medicineId === historyFor.id)
-    : [];
+  const historyEntries = historyFor ? history.filter((h) => h.medicineId === historyFor.id) : [];
 
-  const hasActiveFilters =
-    search.cat !== "all" || search.stock !== "all" || search.q !== "";
+  const hasActiveFilters = search.cat !== "all" || search.stock !== "all" || search.q !== "";
 
   return (
     <TooltipProvider delayDuration={150}>
@@ -756,16 +732,10 @@ function PharmacyInventory() {
         description="All medicines, batches, GST and live stock levels."
         actions={
           <>
-            <Button
-              variant="default"
-              onClick={() => setThresholdsOpen(true)}
-            >
+            <Button variant="default" onClick={() => setThresholdsOpen(true)}>
               <SlidersHorizontal className="mr-2 h-4 w-4" /> Thresholds
             </Button>
-            <Button
-              variant="default"
-              onClick={exportCsv}
-            >
+            <Button variant="default" onClick={exportCsv}>
               <Download className="mr-2 h-4 w-4" /> Export CSV
             </Button>
             <Button
@@ -788,14 +758,13 @@ function PharmacyInventory() {
               <div>
                 <p className="font-display text-sm font-semibold">Inventory needs attention</p>
                 <p className="text-xs text-muted-foreground">
-                  {outOfStock.length} out of stock · {lowStock.length} low stock ·{" "}
-                  {expired.length} expired batch(es)
+                  {outOfStock.length} out of stock · {lowStock.length} low stock · {expired.length}{" "}
+                  expired batch(es)
                 </p>
                 <div className="mt-2 flex flex-wrap gap-1.5">
                   {alerts.map((m) => {
                     const isExpired = new Date(m.expiry) < new Date();
-                    const tone =
-                      m.stock === 0 || isExpired ? "danger" : ("warning" as const);
+                    const tone = m.stock === 0 || isExpired ? "danger" : ("warning" as const);
                     const min = effectiveMin(m);
                     const overridden = thresholds.overrides[m.id] != null;
                     const catSet = thresholds.categories[m.category] != null;
@@ -829,10 +798,7 @@ function PharmacyInventory() {
                 </div>
               </div>
             </div>
-            <Button
-              size="sm"
-              onClick={() => updateSearch({ stock: "low", page: 1 })}
-            >
+            <Button size="sm" onClick={() => updateSearch({ stock: "low", page: 1 })}>
               <PackageX className="mr-2 h-4 w-4" /> Review low stock
             </Button>
           </div>
@@ -901,9 +867,7 @@ function PharmacyInventory() {
             Clear
           </Button>
         )}
-        <span className="ml-auto text-xs text-muted-foreground">
-          {sorted.length} record(s)
-        </span>
+        <span className="ml-auto text-xs text-muted-foreground">{sorted.length} record(s)</span>
       </div>
 
       {selectedItems.length > 0 && (
@@ -943,8 +907,9 @@ function PharmacyInventory() {
                     return (
                       <th
                         key={h.id}
-                        className={`px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground ${canSort ? "cursor-pointer select-none hover:text-foreground" : ""
-                          }`}
+                        className={`px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground ${
+                          canSort ? "cursor-pointer select-none hover:text-foreground" : ""
+                        }`}
                         onClick={canSort ? h.column.getToggleSortingHandler() : undefined}
                       >
                         <span className="inline-flex items-center gap-1">
@@ -971,7 +936,8 @@ function PharmacyInventory() {
               {table.getRowModel().rows.length === 0 ? (
                 <tr>
                   <td colSpan={columns.length} className="px-4 py-10">
-                    <EmptyState icon={Boxes}
+                    <EmptyState
+                      icon={Boxes}
                       title="No medicines match"
                       description="Adjust your filters or clear the search."
                     />
@@ -1003,8 +969,8 @@ function PharmacyInventory() {
             </span>
             <span>·</span>
             <span>
-              Showing {pageRows.length === 0 ? 0 : pagination.pageIndex * pagination.pageSize + 1}
-              –{pagination.pageIndex * pagination.pageSize + pageRows.length} of {sorted.length}
+              Showing {pageRows.length === 0 ? 0 : pagination.pageIndex * pagination.pageSize + 1}–
+              {pagination.pageIndex * pagination.pageSize + pageRows.length} of {sorted.length}
             </span>
             <Select
               value={String(pagination.pageSize)}
@@ -1079,9 +1045,7 @@ function PharmacyInventory() {
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-3 py-2">
-            <Label htmlFor="qty">
-              {action === "set" ? "New stock level" : "Quantity"}
-            </Label>
+            <Label htmlFor="qty">{action === "set" ? "New stock level" : "Quantity"}</Label>
             <Input
               id="qty"
               type="number"
@@ -1107,8 +1071,8 @@ function PharmacyInventory() {
           <DialogHeader>
             <DialogTitle>Bulk restock</DialogTitle>
             <DialogDescription>
-              Add the same quantity to every selected medicine. This action is logged in
-              stock history.
+              Add the same quantity to every selected medicine. This action is logged in stock
+              history.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-3 py-2">
@@ -1179,10 +1143,11 @@ function PharmacyInventory() {
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-start gap-3">
                       <div
-                        className={`rounded-full p-2 ${positive
-                          ? "bg-success/15 text-success-foreground"
-                          : "bg-destructive/10 text-destructive"
-                          }`}
+                        className={`rounded-full p-2 ${
+                          positive
+                            ? "bg-success/15 text-success-foreground"
+                            : "bg-destructive/10 text-destructive"
+                        }`}
                       >
                         {h.action === "bulk-undo" ? (
                           <Undo2 className="h-4 w-4" />
@@ -1196,20 +1161,18 @@ function PharmacyInventory() {
                         <p className="text-sm font-medium capitalize">
                           {h.action.replace("-", " ")}
                           <span
-                            className={`ml-2 text-xs font-bold ${positive ? "text-success-foreground" : "text-destructive"
-                              }`}
+                            className={`ml-2 text-xs font-bold ${
+                              positive ? "text-success-foreground" : "text-destructive"
+                            }`}
                           >
                             {positive ? "+" : ""}
                             {h.delta}
                           </span>
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          {h.before} → <span className="font-semibold">{h.after}</span> · by{" "}
-                          {h.by}
+                          {h.before} → <span className="font-semibold">{h.after}</span> · by {h.by}
                         </p>
-                        {h.note && (
-                          <p className="mt-1 text-xs text-muted-foreground">{h.note}</p>
-                        )}
+                        {h.note && <p className="mt-1 text-xs text-muted-foreground">{h.note}</p>}
                       </div>
                     </div>
                     <span
@@ -1237,8 +1200,6 @@ function PharmacyInventory() {
         effectiveMin={effectiveMin}
       />
 
-
-
       {/* Per-medicine threshold override dialog */}
       <Dialog
         open={!!thresholdEditing}
@@ -1254,10 +1215,8 @@ function PharmacyInventory() {
             <DialogTitle>Set low-stock threshold</DialogTitle>
             <DialogDescription>
               {thresholdEditing?.name} · current stock{" "}
-              <span className="font-semibold text-foreground">
-                {thresholdEditing?.stock}
-              </span>
-              . Leave empty to fall back to the category or default minimum.
+              <span className="font-semibold text-foreground">{thresholdEditing?.stock}</span>.
+              Leave empty to fall back to the category or default minimum.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-3 py-2">
@@ -1271,9 +1230,7 @@ function PharmacyInventory() {
                 </div>
                 <div>
                   Default minimum:{" "}
-                  <span className="font-medium text-foreground">
-                    {thresholdEditing.minStock}
-                  </span>
+                  <span className="font-medium text-foreground">{thresholdEditing.minStock}</span>
                 </div>
                 <div>
                   Current effective:{" "}
@@ -1371,9 +1328,7 @@ function ThresholdsDrawer({
       }
       return { ...prev, overrides: next };
     });
-    toast.success(
-      `Applied threshold ${value} to ${touched} medicine(s) in ${category}`,
-    );
+    toast.success(`Applied threshold ${value} to ${touched} medicine(s) in ${category}`);
     setBulkTarget(null);
   };
 
@@ -1419,7 +1374,7 @@ function ThresholdsDrawer({
       (m) =>
         m.name.toLowerCase().includes(q) ||
         m.category.toLowerCase().includes(q) ||
-        m.manufacturer.toLowerCase().includes(q),
+        m.manufacturer.toLowerCase().includes(q)
     );
   }, [items, overrideQuery]);
 
@@ -1452,7 +1407,7 @@ function ThresholdsDrawer({
               const value = thresholds.categories[cat];
               const catItems = items.filter((m) => m.category === cat);
               const overriddenInCat = catItems.filter(
-                (m) => thresholds.overrides[m.id] != null,
+                (m) => thresholds.overrides[m.id] != null
               ).length;
               const bulkVal = bulkValueInput[cat] ?? (value != null ? String(value) : "");
               const replace = !!bulkReplace[cat];
@@ -1507,9 +1462,7 @@ function ThresholdsDrawer({
                     <label className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
                       <Checkbox
                         checked={replace}
-                        onCheckedChange={(v) =>
-                          setBulkReplace((prev) => ({ ...prev, [cat]: !!v }))
-                        }
+                        onCheckedChange={(v) => setBulkReplace((prev) => ({ ...prev, [cat]: !!v }))}
                       />
                       Overwrite existing
                     </label>
@@ -1600,10 +1553,7 @@ function ThresholdsDrawer({
         </div>
       </SheetContent>
 
-      <AlertDialog
-        open={!!bulkTarget}
-        onOpenChange={(o) => !o && setBulkTarget(null)}
-      >
+      <AlertDialog open={!!bulkTarget} onOpenChange={(o) => !o && setBulkTarget(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Apply bulk threshold?</AlertDialogTitle>
@@ -1611,26 +1561,20 @@ function ThresholdsDrawer({
               {bulkTarget && (
                 <>
                   This will set an override low-stock threshold of{" "}
-                  <span className="font-semibold text-foreground">{bulkTarget.value}</span>{" "}
-                  on{" "}
+                  <span className="font-semibold text-foreground">{bulkTarget.value}</span> on{" "}
                   <span className="font-semibold text-foreground">
                     {
                       items.filter((m) => {
                         if (m.category !== bulkTarget.category) return false;
-                        if (
-                          !bulkTarget.replaceExisting &&
-                          thresholds.overrides[m.id] != null
-                        )
+                        if (!bulkTarget.replaceExisting && thresholds.overrides[m.id] != null)
                           return false;
                         return true;
                       }).length
                     }
                   </span>{" "}
                   medicine(s) in{" "}
-                  <span className="font-semibold text-foreground">
-                    {bulkTarget.category}
-                  </span>
-                  . {bulkTarget.replaceExisting
+                  <span className="font-semibold text-foreground">{bulkTarget.category}</span>.{" "}
+                  {bulkTarget.replaceExisting
                     ? "Existing overrides will be replaced."
                     : "Medicines that already have an override are skipped."}
                 </>
@@ -1639,13 +1583,10 @@ function ThresholdsDrawer({
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={applyBulkCategory}>
-              Apply thresholds
-            </AlertDialogAction>
+            <AlertDialogAction onClick={applyBulkCategory}>Apply thresholds</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
     </Sheet>
   );
 }
-

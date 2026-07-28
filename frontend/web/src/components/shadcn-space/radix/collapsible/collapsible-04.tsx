@@ -97,9 +97,7 @@ const UserProfileDemo = ({
                   <span className="text-foreground text-sm font-semibold leading-tight">
                     {name}
                   </span>
-                  <span className="text-muted-foreground text-xs leading-tight">
-                    {status}
-                  </span>
+                  <span className="text-muted-foreground text-xs leading-tight">{status}</span>
                 </div>
               </div>
               <motion.span
@@ -107,10 +105,7 @@ const UserProfileDemo = ({
                 transition={{ duration: 0.25, ease: "easeInOut" }}
                 className="inline-flex"
               >
-                <ChevronRightIcon
-                  aria-hidden="true"
-                  className="text-muted-foreground size-4"
-                />
+                <ChevronRightIcon aria-hidden="true" className="text-muted-foreground size-4" />
               </motion.span>
             </div>
           </CollapsibleTrigger>
@@ -141,13 +136,9 @@ const UserProfileDemo = ({
                           aria-hidden="true"
                           className="text-muted-foreground size-3.5 shrink-0"
                         />
-                        <span className="text-muted-foreground text-xs">
-                          {label}
-                        </span>
+                        <span className="text-muted-foreground text-xs">{label}</span>
                       </div>
-                      <span className="text-foreground text-xs font-medium">
-                        {value}
-                      </span>
+                      <span className="text-foreground text-xs font-medium">{value}</span>
                     </motion.div>
                   ))}
                 </div>
@@ -162,10 +153,7 @@ const UserProfileDemo = ({
                     className="group flex gap-1 items-center text-muted-foreground hover:text-primary text-xs font-medium transition-colors"
                   >
                     View full profile{" "}
-                    <ArrowRight
-                      size={14}
-                      className="group-hover:translate-x-1 duration-300"
-                    />
+                    <ArrowRight size={14} className="group-hover:translate-x-1 duration-300" />
                   </a>
                 </motion.div>
               </motion.div>

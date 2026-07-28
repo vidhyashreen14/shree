@@ -3,7 +3,13 @@
 import { useState, useId } from "react";
 import { CircleIcon } from "lucide-react";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const statuses = [
   {
@@ -44,20 +50,16 @@ const SelectStatusDemo = () => {
       <Label htmlFor={id}>Status</Label>
 
       <Select value={value} onValueChange={(val) => val && setValue(val)}>
-        <SelectTrigger
-          id={id}
-          className="w-full"
-        >
+        <SelectTrigger id={id} className="w-full">
           <SelectValue />
         </SelectTrigger>
 
-        <SelectContent align="start" className="data-[state=open]:slide-in-from-bottom-8 data-[state=open]:zoom-in-100 duration-400">
+        <SelectContent
+          align="start"
+          className="data-[state=open]:slide-in-from-bottom-8 data-[state=open]:zoom-in-100 duration-400"
+        >
           {statuses.map((status) => (
-            <SelectItem
-              key={status.value}
-              value={status.value}
-              className="flex items-center gap-2"
-            >
+            <SelectItem key={status.value} value={status.value} className="flex items-center gap-2">
               <div className="flex items-center gap-2">
                 <CircleIcon className={`size-2 ${status.color}`} />
                 <span className="truncate">{status.label}</span>

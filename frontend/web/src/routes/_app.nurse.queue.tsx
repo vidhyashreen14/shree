@@ -19,10 +19,14 @@ function NurseQueue() {
           const d = doctors.find((x) => x.id === a.doctorId);
           return (
             <div key={a.id} className="surface-elevated flex flex-wrap items-center gap-3 p-4">
-              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/10 font-display font-bold text-primary">#{a.token}</span>
+              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/10 font-display font-bold text-primary">
+                #{a.token}
+              </span>
               <div className="min-w-0 flex-1">
                 <p className="font-semibold">{p.name}</p>
-                <p className="text-xs text-muted-foreground">{p.age}y · {d?.name} · {format(new Date(a.date), "p")}</p>
+                <p className="text-xs text-muted-foreground">
+                  {p.age}y · {d?.name} · {format(new Date(a.date), "p")}
+                </p>
               </div>
               <AppointmentStatusChip status={a.status} />
             </div>

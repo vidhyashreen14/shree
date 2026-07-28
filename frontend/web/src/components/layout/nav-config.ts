@@ -1,14 +1,44 @@
 import type { Role } from "@/lib/types";
 import {
-  LayoutDashboard, Users, Stethoscope, CalendarDays, Activity, FlaskConical,
-  Pill, ClipboardList, Building2, Shield, Settings, Bell, FileText, UserCog,
-  ScrollText, BadgeCheck, ListChecks, Search, Receipt, Truck, AlertTriangle,
-  HeartPulse, Inbox, PackageSearch, FilePlus2, FileCheck2, ClipboardPlus, Beaker,
-  Calendar, UserPlus, Hourglass, KeyRound, Monitor, IndianRupee, ClipboardPen,
-  FileSpreadsheet, TrendingUp,
+  LayoutDashboard,
+  Users,
+  Stethoscope,
+  CalendarDays,
+  Activity,
+  FlaskConical,
+  Pill,
+  ClipboardList,
+  Building2,
+  Shield,
+  Settings,
+  Bell,
+  FileText,
+  UserCog,
+  ScrollText,
+  BadgeCheck,
+  ListChecks,
+  Search,
+  Receipt,
+  Truck,
+  AlertTriangle,
+  HeartPulse,
+  Inbox,
+  PackageSearch,
+  FilePlus2,
+  FileCheck2,
+  ClipboardPlus,
+  Beaker,
+  Calendar,
+  UserPlus,
+  Hourglass,
+  KeyRound,
+  Monitor,
+  IndianRupee,
+  ClipboardPen,
+  FileSpreadsheet,
+  TrendingUp,
 } from "lucide-react";
 import type { ComponentType } from "react";
-
 
 export interface NavItem {
   to: string;
@@ -39,7 +69,7 @@ export const NAV: Record<Role, NavItem[]> = {
     { to: "/doctor/prescriptions", label: "Prescriptions", icon: ClipboardPlus, group: "Clinical" },
     { to: "/doctor/lab-orders", label: "Lab orders", icon: FlaskConical, group: "Clinical" },
     { to: "/doctor/schedule", label: "My schedule", icon: Calendar, group: "Practice" },
-    { to: "/doctor/patient-history", label: "Patient history", icon: FileText, group: "Clinical" }
+    { to: "/doctor/patient-history", label: "Patient history", icon: FileText, group: "Clinical" },
   ],
   frontdesk: [
     { to: "/frontdesk", label: "Overview", icon: LayoutDashboard },
@@ -64,10 +94,20 @@ export const NAV: Record<Role, NavItem[]> = {
     { to: "/lab/visits", label: "Visit List", icon: ClipboardList, group: "Main" },
     // { to: "/lab/pending", label: "Pending tests", icon: Beaker, group: "Main" },
     { to: "/lab/reports", label: "Reports", icon: FileCheck2, group: "Main" },
-    { to: "/lab/upload", label: "Upload report", icon: FilePlus2, group: "Main" },
+    { to: "/lab/upload", label: "Generate report", icon: FilePlus2, group: "Main" },
     { to: "/lab/quotations", label: "Quotations", icon: ClipboardPen, group: "Transaction" },
-    { to: "/lab/analytics?tab=sales", label: "Branch Daily Sales Report", icon: FileSpreadsheet, group: "Analytics" },
-    { to: "/lab/analytics?tab=registrations", label: "Monthly Registrations", icon: TrendingUp, group: "Analytics" },
+    {
+      to: "/lab/analytics?tab=sales",
+      label: "Branch Daily Sales Report",
+      icon: FileSpreadsheet,
+      group: "Analytics",
+    },
+    {
+      to: "/lab/analytics?tab=registrations",
+      label: "Monthly Registrations",
+      icon: TrendingUp,
+      group: "Analytics",
+    },
   ],
 };
 

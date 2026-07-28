@@ -17,7 +17,7 @@ import {
   DollarSign,
   Layers,
   Activity,
-  Printer
+  Printer,
 } from "lucide-react";
 import { toast } from "sonner";
 import { medicines } from "@/lib/mock/data";
@@ -63,12 +63,20 @@ const getMockSales = (): SaleInvoice[] => {
     { name: "Ibuprofen 400mg", price: 8, gst: 12 },
     { name: "Cetirizine 10mg", price: 7, gst: 18 },
     { name: "Omeprazole 20mg", price: 12, gst: 18 },
-    { name: "Amlodipine 5mg", price: 14, gst: 5 }
+    { name: "Amlodipine 5mg", price: 14, gst: 5 },
   ];
 
   const patientList = [
-    "Aarav Sharma", "Saanvi Patel", "Vihaan Iyer", "Diya Kapoor", "Arjun Mehta",
-    "Anaya Reddy", "Reyansh Khanna", "Ishaani Rao", "Kabir Joshi", "Aadhya Nair"
+    "Aarav Sharma",
+    "Saanvi Patel",
+    "Vihaan Iyer",
+    "Diya Kapoor",
+    "Arjun Mehta",
+    "Anaya Reddy",
+    "Reyansh Khanna",
+    "Ishaani Rao",
+    "Kabir Joshi",
+    "Aadhya Nair",
   ];
 
   const baseDate = new Date("2026-07-10");
@@ -111,7 +119,7 @@ const getMockSales = (): SaleInvoice[] => {
       amount: subtotal,
       tax: Number(taxTotal.toFixed(2)),
       grandTotal: Number((subtotal + taxTotal).toFixed(2)),
-      status: "paid"
+      status: "paid",
     });
   }
   return sales;
@@ -119,31 +127,143 @@ const getMockSales = (): SaleInvoice[] => {
 
 // Audit logs mock datasets
 const getMockDeletedOrders = () => [
-  { date: "2026-07-08", id: "PO-5012", supplier: "MedPlus Distributors", amount: 15400, user: "Sister Joan", reason: "Ordered wrong batch size" },
-  { date: "2026-07-02", id: "PO-5008", supplier: "Apollo Pharmacy", amount: 8900, user: "Rahul Verma", reason: "Supplier out of stock" },
-  { date: "2026-06-25", id: "PO-5004", supplier: "Wellness Medical Suppliers", amount: 24500, user: "Sister Joan", reason: "Duplicate purchase order" },
-  { date: "2026-06-12", id: "PO-5001", supplier: "Global Health Distributors", amount: 12000, user: "Rahul Verma", reason: "Items added directly to inventory instead" }
+  {
+    date: "2026-07-08",
+    id: "PO-5012",
+    supplier: "MedPlus Distributors",
+    amount: 15400,
+    user: "Sister Joan",
+    reason: "Ordered wrong batch size",
+  },
+  {
+    date: "2026-07-02",
+    id: "PO-5008",
+    supplier: "Apollo Pharmacy",
+    amount: 8900,
+    user: "Rahul Verma",
+    reason: "Supplier out of stock",
+  },
+  {
+    date: "2026-06-25",
+    id: "PO-5004",
+    supplier: "Wellness Medical Suppliers",
+    amount: 24500,
+    user: "Sister Joan",
+    reason: "Duplicate purchase order",
+  },
+  {
+    date: "2026-06-12",
+    id: "PO-5001",
+    supplier: "Global Health Distributors",
+    amount: 12000,
+    user: "Rahul Verma",
+    reason: "Items added directly to inventory instead",
+  },
 ];
 
 const getMockModifiedInvoices = () => [
-  { date: "2026-07-09", id: "INV-9022", cashier: "Priya Menon", original: 850, modified: 650, reason: "Corrected quantity of Paracetamol 650mg" },
-  { date: "2026-07-05", id: "INV-9018", cashier: "Mei Chen", original: 1450, modified: 1100, reason: "Applied senior citizen discount" },
-  { date: "2026-06-28", id: "INV-9012", cashier: "Priya Menon", original: 600, modified: 720, reason: "Added missing Salbutamol Inhaler to invoice" },
-  { date: "2026-06-18", id: "INV-9005", cashier: "Mei Chen", original: 2200, modified: 1950, reason: "Patient returned partial strips of Amlodipine" }
+  {
+    date: "2026-07-09",
+    id: "INV-9022",
+    cashier: "Priya Menon",
+    original: 850,
+    modified: 650,
+    reason: "Corrected quantity of Paracetamol 650mg",
+  },
+  {
+    date: "2026-07-05",
+    id: "INV-9018",
+    cashier: "Mei Chen",
+    original: 1450,
+    modified: 1100,
+    reason: "Applied senior citizen discount",
+  },
+  {
+    date: "2026-06-28",
+    id: "INV-9012",
+    cashier: "Priya Menon",
+    original: 600,
+    modified: 720,
+    reason: "Added missing Salbutamol Inhaler to invoice",
+  },
+  {
+    date: "2026-06-18",
+    id: "INV-9005",
+    cashier: "Mei Chen",
+    original: 2200,
+    modified: 1950,
+    reason: "Patient returned partial strips of Amlodipine",
+  },
 ];
 
 const getMockModifiedBills = () => [
-  { date: "2026-07-10", id: "BILL-2041", cashier: "Priya Menon", action: "Item Removed", details: "Removed Ibuprofen 400mg x2" },
-  { date: "2026-07-06", id: "BILL-2035", cashier: "Mei Chen", action: "Qty Reduced", details: "Reduced Glimepiride 2mg from 5 to 2 units" },
-  { date: "2026-06-30", id: "BILL-2022", cashier: "Priya Menon", action: "Discount Changed", details: "Increased discount from 5% to 10%" },
-  { date: "2026-06-15", id: "BILL-2010", cashier: "Mei Chen", action: "Item Added", details: "Added Cetirizine 10mg x10" }
+  {
+    date: "2026-07-10",
+    id: "BILL-2041",
+    cashier: "Priya Menon",
+    action: "Item Removed",
+    details: "Removed Ibuprofen 400mg x2",
+  },
+  {
+    date: "2026-07-06",
+    id: "BILL-2035",
+    cashier: "Mei Chen",
+    action: "Qty Reduced",
+    details: "Reduced Glimepiride 2mg from 5 to 2 units",
+  },
+  {
+    date: "2026-06-30",
+    id: "BILL-2022",
+    cashier: "Priya Menon",
+    action: "Discount Changed",
+    details: "Increased discount from 5% to 10%",
+  },
+  {
+    date: "2026-06-15",
+    id: "BILL-2010",
+    cashier: "Mei Chen",
+    action: "Item Added",
+    details: "Added Cetirizine 10mg x10",
+  },
 ];
 
 const getMockReturns = () => [
-  { date: "2026-07-09", id: "RET-4008", patient: "Saanvi Patel", medicine: "Atorvastatin 20mg", qty: 10, amount: 220, reason: "Doctor changed prescription" },
-  { date: "2026-07-05", id: "RET-4005", patient: "Vihaan Iyer", medicine: "Budesonide 200mcg", qty: 1, amount: 24, reason: "Damaged packaging" },
-  { date: "2026-06-27", id: "RET-4002", patient: "Arjun Mehta", medicine: "Cetirizine 10mg", qty: 20, amount: 140, reason: "Allergic reaction to medicine" },
-  { date: "2026-06-14", id: "RET-4001", patient: "Anaya Reddy", medicine: "Amoxicillin 500mg", qty: 5, amount: 75, reason: "Patient was discharged early" }
+  {
+    date: "2026-07-09",
+    id: "RET-4008",
+    patient: "Saanvi Patel",
+    medicine: "Atorvastatin 20mg",
+    qty: 10,
+    amount: 220,
+    reason: "Doctor changed prescription",
+  },
+  {
+    date: "2026-07-05",
+    id: "RET-4005",
+    patient: "Vihaan Iyer",
+    medicine: "Budesonide 200mcg",
+    qty: 1,
+    amount: 24,
+    reason: "Damaged packaging",
+  },
+  {
+    date: "2026-06-27",
+    id: "RET-4002",
+    patient: "Arjun Mehta",
+    medicine: "Cetirizine 10mg",
+    qty: 20,
+    amount: 140,
+    reason: "Allergic reaction to medicine",
+  },
+  {
+    date: "2026-06-14",
+    id: "RET-4001",
+    patient: "Anaya Reddy",
+    medicine: "Amoxicillin 500mg",
+    qty: 5,
+    amount: 75,
+    reason: "Patient was discharged early",
+  },
 ];
 
 // Summary block structure
@@ -231,16 +351,39 @@ const generateReportData = (
       `;
 
       summary = [
-        { label: "Taxable Sales", value: `₹${totalTaxable.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, icon: DollarSign, tone: "primary" },
-        { label: "CGST (Central)", value: `₹${(totalTax / 2).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, icon: Layers, tone: "warning" },
-        { label: "SGST (State)", value: `₹${(totalTax / 2).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, icon: Layers, tone: "warning" },
-        { label: "Total GST Collected", value: `₹${totalTax.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, icon: TrendingUp, tone: "success" }
+        {
+          label: "Taxable Sales",
+          value: `₹${totalTaxable.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+          icon: DollarSign,
+          tone: "primary",
+        },
+        {
+          label: "CGST (Central)",
+          value: `₹${(totalTax / 2).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+          icon: Layers,
+          tone: "warning",
+        },
+        {
+          label: "SGST (State)",
+          value: `₹${(totalTax / 2).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+          icon: Layers,
+          tone: "warning",
+        },
+        {
+          label: "Total GST Collected",
+          value: `₹${totalTax.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+          icon: TrendingUp,
+          tone: "success",
+        },
       ];
       break;
     }
 
     case "monthly-billing": {
-      const monthsMap: Record<string, { count: number; amount: number; tax: number; total: number }> = {};
+      const monthsMap: Record<
+        string,
+        { count: number; amount: number; tax: number; total: number }
+      > = {};
       sales.forEach((sale) => {
         const month = sale.date.slice(0, 7);
         if (!monthsMap[month]) {
@@ -257,11 +400,13 @@ const generateReportData = (
       let grandInvoicesCount = 0;
       csv = "Month,Invoices Count,Taxable Sales,GST Amount,Grand Total\n";
 
-      Object.entries(monthsMap).sort().forEach(([month, data]) => {
-        grandTotalBillings += data.total;
-        grandInvoicesCount += data.count;
+      Object.entries(monthsMap)
+        .sort()
+        .forEach(([month, data]) => {
+          grandTotalBillings += data.total;
+          grandInvoicesCount += data.count;
 
-        rows += `
+          rows += `
           <tr class="hover:bg-muted/30 border-b border-border transition-colors">
             <td class="px-4 py-3 text-sm font-semibold">${month}</td>
             <td class="px-4 py-3 text-sm">${data.count}</td>
@@ -270,8 +415,8 @@ const generateReportData = (
             <td class="px-4 py-3 text-sm text-right font-bold text-primary">₹${data.total.toFixed(2)}</td>
           </tr>
         `;
-        csv += `${month},${data.count},${data.amount},${data.tax},${data.total}\n`;
-      });
+          csv += `${month},${data.count},${data.amount},${data.tax},${data.total}\n`;
+        });
 
       if (Object.keys(monthsMap).length === 0) {
         rows = `<tr><td colSpan="5" class="px-4 py-8 text-center text-muted-foreground italic">No monthly aggregates found in selected date range.</td></tr>`;
@@ -295,15 +440,31 @@ const generateReportData = (
       `;
 
       summary = [
-        { label: "Total Billings", value: `₹${grandTotalBillings.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, icon: TrendingUp, tone: "success" },
-        { label: "Total Invoices", value: String(grandInvoicesCount), icon: FileText, tone: "primary" },
-        { label: "Avg Invoice Size", value: `₹${grandInvoicesCount > 0 ? (grandTotalBillings / grandInvoicesCount).toFixed(2) : "0.00"}`, icon: DollarSign, tone: "warning" }
+        {
+          label: "Total Billings",
+          value: `₹${grandTotalBillings.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+          icon: TrendingUp,
+          tone: "success",
+        },
+        {
+          label: "Total Invoices",
+          value: String(grandInvoicesCount),
+          icon: FileText,
+          tone: "primary",
+        },
+        {
+          label: "Avg Invoice Size",
+          value: `₹${grandInvoicesCount > 0 ? (grandTotalBillings / grandInvoicesCount).toFixed(2) : "0.00"}`,
+          icon: DollarSign,
+          tone: "warning",
+        },
       ];
       break;
     }
 
     case "sale-item-wise": {
-      const itemsMap: Record<string, { qty: number; sales: number; cost: number; gst: number }> = {};
+      const itemsMap: Record<string, { qty: number; sales: number; cost: number; gst: number }> =
+        {};
       sales.forEach((sale) => {
         sale.items.forEach((item) => {
           if (!itemsMap[item.medicine]) {
@@ -377,8 +538,13 @@ const generateReportData = (
 
       summary = [
         { label: "Items Dispensed", value: String(totalQty), icon: Package, tone: "primary" },
-        { label: "Gross Margin", value: `₹${(totalSales - totalCost).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, icon: TrendingUp, tone: "success" },
-        { label: "Best Seller", value: bestSelling, icon: Activity, tone: "warning" }
+        {
+          label: "Gross Margin",
+          value: `₹${(totalSales - totalCost).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+          icon: TrendingUp,
+          tone: "success",
+        },
+        { label: "Best Seller", value: bestSelling, icon: Activity, tone: "warning" },
       ];
       break;
     }
@@ -443,10 +609,30 @@ const generateReportData = (
 
       const profit = totalSales - totalCost;
       summary = [
-        { label: "Total Revenue", value: `₹${totalSales.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, icon: DollarSign, tone: "primary" },
-        { label: "Total Cost", value: `₹${totalCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, icon: Layers, tone: "warning" },
-        { label: "Net Profit", value: `₹${profit.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, icon: TrendingUp, tone: "success" },
-        { label: "Profit Margin", value: `${totalSales > 0 ? ((profit / totalSales) * 100).toFixed(1) : "0.0"}%`, icon: Activity, tone: "success" }
+        {
+          label: "Total Revenue",
+          value: `₹${totalSales.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+          icon: DollarSign,
+          tone: "primary",
+        },
+        {
+          label: "Total Cost",
+          value: `₹${totalCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+          icon: Layers,
+          tone: "warning",
+        },
+        {
+          label: "Net Profit",
+          value: `₹${profit.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+          icon: TrendingUp,
+          tone: "success",
+        },
+        {
+          label: "Profit Margin",
+          value: `${totalSales > 0 ? ((profit / totalSales) * 100).toFixed(1) : "0.0"}%`,
+          icon: Activity,
+          tone: "success",
+        },
       ];
       break;
     }
@@ -457,7 +643,8 @@ const generateReportData = (
       let outOfStockCount = 0;
 
       let rows = "";
-      csv = "Medicine Name,Category,Batch,Expiry Date,Stock Level,Min Stock,Price,Stock Value,Status\n";
+      csv =
+        "Medicine Name,Category,Batch,Expiry Date,Stock Level,Min Stock,Price,Stock Value,Status\n";
 
       medicines.forEach((med) => {
         const val = med.stock * med.pricePerUnit;
@@ -517,9 +704,24 @@ const generateReportData = (
       `;
 
       summary = [
-        { label: "Total Stock Value", value: `₹${totalStockValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, icon: DollarSign, tone: "primary" },
-        { label: "Low Stock Items", value: String(lowStockCount), icon: AlertCircle, tone: "warning" },
-        { label: "Out of Stock", value: String(outOfStockCount), icon: TrendingDown, tone: "danger" }
+        {
+          label: "Total Stock Value",
+          value: `₹${totalStockValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+          icon: DollarSign,
+          tone: "primary",
+        },
+        {
+          label: "Low Stock Items",
+          value: String(lowStockCount),
+          icon: AlertCircle,
+          tone: "warning",
+        },
+        {
+          label: "Out of Stock",
+          value: String(outOfStockCount),
+          icon: TrendingDown,
+          tone: "danger",
+        },
       ];
       break;
     }
@@ -587,9 +789,14 @@ const generateReportData = (
       `;
 
       summary = [
-        { label: "Avg Profit Margin", value: `${count > 0 ? (totalMarginPct / count).toFixed(1) : "0.0"}%`, icon: TrendingUp, tone: "success" },
+        {
+          label: "Avg Profit Margin",
+          value: `${count > 0 ? (totalMarginPct / count).toFixed(1) : "0.0"}%`,
+          icon: TrendingUp,
+          tone: "success",
+        },
         { label: "Highest Margin", value: highestMarginName, icon: Activity, tone: "primary" },
-        { label: "Lowest Margin", value: lowestMarginName, icon: AlertCircle, tone: "warning" }
+        { label: "Lowest Margin", value: lowestMarginName, icon: AlertCircle, tone: "warning" },
       ];
       break;
     }
@@ -665,13 +872,23 @@ const generateReportData = (
       summary = [
         { label: "Fast Moving Items", value: String(fastCount), icon: TrendingUp, tone: "success" },
         { label: "Slow Moving Items", value: String(slowCount), icon: Activity, tone: "warning" },
-        { label: "Non-Moving Items", value: String(nonMovingCount), icon: AlertCircle, tone: "danger" }
+        {
+          label: "Non-Moving Items",
+          value: String(nonMovingCount),
+          icon: AlertCircle,
+          tone: "danger",
+        },
       ];
       break;
     }
 
     case "schedule-drug": {
-      const scheduleMeds = medicines.filter((m) => m.category === "Antibiotics" || m.name.includes("Amoxicillin") || m.name.includes("Azithromycin"));
+      const scheduleMeds = medicines.filter(
+        (m) =>
+          m.category === "Antibiotics" ||
+          m.name.includes("Amoxicillin") ||
+          m.name.includes("Azithromycin")
+      );
       const itemsMap: Record<string, number> = {};
       sales.forEach((sale) => {
         sale.items.forEach((item) => {
@@ -684,7 +901,8 @@ const generateReportData = (
 
       let totalSold = 0;
       let rows = "";
-      csv = "Medicine Name,Schedule Category,Batch,Total Dispensed,Prescribing Doctor,Verification Status\n";
+      csv =
+        "Medicine Name,Schedule Category,Batch,Total Dispensed,Prescribing Doctor,Verification Status\n";
 
       scheduleMeds.forEach((med) => {
         const qtySold = itemsMap[med.name] || 0;
@@ -731,8 +949,18 @@ const generateReportData = (
       `;
 
       summary = [
-        { label: "Schedule H/H1 Drugs Sold", value: String(totalSold), icon: Package, tone: "danger" },
-        { label: "Verified Logs", value: `${scheduleMeds.length} Items`, icon: CheckCircle, tone: "success" }
+        {
+          label: "Schedule H/H1 Drugs Sold",
+          value: String(totalSold),
+          icon: Package,
+          tone: "danger",
+        },
+        {
+          label: "Verified Logs",
+          value: `${scheduleMeds.length} Items`,
+          icon: CheckCircle,
+          tone: "success",
+        },
       ];
       break;
     }
@@ -781,14 +1009,26 @@ const generateReportData = (
       `;
 
       summary = [
-        { label: "Total Deletions", value: String(orders.length), icon: AlertCircle, tone: "danger" },
-        { label: "Total Loss Value", value: `₹${totalVal.toLocaleString()}`, icon: TrendingDown, tone: "danger" }
+        {
+          label: "Total Deletions",
+          value: String(orders.length),
+          icon: AlertCircle,
+          tone: "danger",
+        },
+        {
+          label: "Total Loss Value",
+          value: `₹${totalVal.toLocaleString()}`,
+          icon: TrendingDown,
+          tone: "danger",
+        },
       ];
       break;
     }
 
     case "invoices-modified": {
-      const logs = getMockModifiedInvoices().filter((l) => l.date >= startDate && l.date <= endDate);
+      const logs = getMockModifiedInvoices().filter(
+        (l) => l.date >= startDate && l.date <= endDate
+      );
       let rows = "";
       let totalDiff = 0;
       csv = "Date,Invoice ID,Cashier,Original Amount,Modified Amount,Difference,Reason\n";
@@ -837,7 +1077,12 @@ const generateReportData = (
 
       summary = [
         { label: "Invoice Audits", value: String(logs.length), icon: Edit, tone: "warning" },
-        { label: "Financial Impact", value: `${totalDiff >= 0 ? "+" : ""}₹${totalDiff.toLocaleString()}`, icon: DollarSign, tone: totalDiff >= 0 ? "success" : "danger" }
+        {
+          label: "Financial Impact",
+          value: `${totalDiff >= 0 ? "+" : ""}₹${totalDiff.toLocaleString()}`,
+          icon: DollarSign,
+          tone: totalDiff >= 0 ? "success" : "danger",
+        },
       ];
       break;
     }
@@ -890,7 +1135,7 @@ const generateReportData = (
       `;
 
       summary = [
-        { label: "Total Modifications", value: String(logs.length), icon: Edit, tone: "warning" }
+        { label: "Total Modifications", value: String(logs.length), icon: Edit, tone: "warning" },
       ];
       break;
     }
@@ -941,8 +1186,18 @@ const generateReportData = (
       `;
 
       summary = [
-        { label: "Returned Items", value: String(returns.length), icon: RefreshCw, tone: "warning" },
-        { label: "Amount Refunded", value: `₹${totalRefund.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, icon: TrendingDown, tone: "danger" }
+        {
+          label: "Returned Items",
+          value: String(returns.length),
+          icon: RefreshCw,
+          tone: "warning",
+        },
+        {
+          label: "Amount Refunded",
+          value: `₹${totalRefund.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+          icon: TrendingDown,
+          tone: "danger",
+        },
       ];
       break;
     }
@@ -976,34 +1231,94 @@ function PharmacyReports() {
       icon: <TrendingUp className="h-5 w-5" />,
       emoji: "📊",
       reports: [
-        { id: "sales-tax-report", name: "Sales Tax Report", icon: "📈", desc: "View sales tax and GST data" },
-        { id: "monthly-billing", name: "Monthly Billing Report", icon: "📅", desc: "Monthly billing summary" },
-        { id: "sale-item-wise", name: "Sale Item Wise Report", icon: "📋", desc: "Sales analysis by item" },
-        { id: "date-wise-margin", name: "Date Wise Margin Report", icon: "💰", desc: "Profit margins by date" }
-      ]
+        {
+          id: "sales-tax-report",
+          name: "Sales Tax Report",
+          icon: "📈",
+          desc: "View sales tax and GST data",
+        },
+        {
+          id: "monthly-billing",
+          name: "Monthly Billing Report",
+          icon: "📅",
+          desc: "Monthly billing summary",
+        },
+        {
+          id: "sale-item-wise",
+          name: "Sale Item Wise Report",
+          icon: "📋",
+          desc: "Sales analysis by item",
+        },
+        {
+          id: "date-wise-margin",
+          name: "Date Wise Margin Report",
+          icon: "💰",
+          desc: "Profit margins by date",
+        },
+      ],
     },
     inventory: {
       title: "Inventory & Stock Reports",
       icon: <Package className="h-5 w-5" />,
       emoji: "📦",
       reports: [
-        { id: "inventory-report", name: "Inventory Report", icon: "📦", desc: "Current stock status" },
-        { id: "product-margin", name: "Product Margin Report", icon: "📊", desc: "Margin analysis by product" },
-        { id: "moving-nonmoving", name: "Moving & Non-Moving Medicines", icon: "🔄", desc: "Stock movement analysis" },
-        { id: "schedule-drug", name: "Schedule Drug Report", icon: "💊", desc: "Schedule H/H1 drug list" }
-      ]
+        {
+          id: "inventory-report",
+          name: "Inventory Report",
+          icon: "📦",
+          desc: "Current stock status",
+        },
+        {
+          id: "product-margin",
+          name: "Product Margin Report",
+          icon: "📊",
+          desc: "Margin analysis by product",
+        },
+        {
+          id: "moving-nonmoving",
+          name: "Moving & Non-Moving Medicines",
+          icon: "🔄",
+          desc: "Stock movement analysis",
+        },
+        {
+          id: "schedule-drug",
+          name: "Schedule Drug Report",
+          icon: "💊",
+          desc: "Schedule H/H1 drug list",
+        },
+      ],
     },
     modifications: {
       title: "Modification & Deletion Reports",
       icon: <Edit className="h-5 w-5" />,
       emoji: "📝",
       reports: [
-        { id: "orders-deleted", name: "Orders Deleted Report", icon: "🗑️", desc: "Deleted order history" },
-        { id: "invoices-modified", name: "Invoices Modified Report", icon: "✏️", desc: "Invoice modification history" },
-        { id: "bill-modified", name: "Bill Modified Report", icon: "📝", desc: "Bill modification tracking" },
-        { id: "medicine-returns", name: "Medicine Returns Report", icon: "↩️", desc: "Returned medicines log" }
-      ]
-    }
+        {
+          id: "orders-deleted",
+          name: "Orders Deleted Report",
+          icon: "🗑️",
+          desc: "Deleted order history",
+        },
+        {
+          id: "invoices-modified",
+          name: "Invoices Modified Report",
+          icon: "✏️",
+          desc: "Invoice modification history",
+        },
+        {
+          id: "bill-modified",
+          name: "Bill Modified Report",
+          icon: "📝",
+          desc: "Bill modification tracking",
+        },
+        {
+          id: "medicine-returns",
+          name: "Medicine Returns Report",
+          icon: "↩️",
+          desc: "Returned medicines log",
+        },
+      ],
+    },
   };
 
   const handleOpenGenerator = (reportId: string, reportName: string) => {
@@ -1074,18 +1389,25 @@ function PharmacyReports() {
   };
 
   const toneClasses = {
-    success: "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-400 border-emerald-100 dark:border-emerald-900/30",
+    success:
+      "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-400 border-emerald-100 dark:border-emerald-900/30",
     primary: "bg-primary/5 text-primary border-primary/10",
-    warning: "bg-amber-50 text-amber-700 dark:bg-amber-950/20 dark:text-amber-400 border-amber-100 dark:border-amber-900/30",
-    danger: "bg-rose-50 text-rose-700 dark:bg-rose-950/20 dark:text-rose-400 border-rose-100 dark:border-rose-900/30"
+    warning:
+      "bg-amber-50 text-amber-700 dark:bg-amber-950/20 dark:text-amber-400 border-amber-100 dark:border-amber-900/30",
+    danger:
+      "bg-rose-50 text-rose-700 dark:bg-rose-950/20 dark:text-rose-400 border-rose-100 dark:border-rose-900/30",
   };
 
   return (
     <div className="flex flex-col gap-6">
       {/* Print-only Hospital Header */}
       <div className="hidden print:block text-center border-b-2 border-gray-800 pb-3 pt-2 mb-2">
-        <h1 className="text-2xl font-extrabold tracking-widest text-gray-900 uppercase">SRI MANJUNATHA HOSPITAL</h1>
-        <p className="text-sm text-gray-700 mt-0.5">C.K.PURA, KELAGOTE, BESIDE SBI BANK, CHITRADURGA</p>
+        <h1 className="text-2xl font-extrabold tracking-widest text-gray-900 uppercase">
+          SRI MANJUNATHA HOSPITAL
+        </h1>
+        <p className="text-sm text-gray-700 mt-0.5">
+          C.K.PURA, KELAGOTE, BESIDE SBI BANK, CHITRADURGA
+        </p>
         <p className="text-sm text-gray-700">PH NO : 9108453470</p>
       </div>
 
@@ -1104,7 +1426,10 @@ function PharmacyReports() {
       {/* Report Categories */}
       <div className="space-y-8">
         {Object.entries(reportCategories).map(([key, category]) => (
-          <div key={key} className="surface-elevated rounded-2xl overflow-hidden shadow-xs border border-border">
+          <div
+            key={key}
+            className="surface-elevated rounded-2xl overflow-hidden shadow-xs border border-border"
+          >
             <div className="p-4 border-b border-border bg-muted/20 flex items-center gap-3">
               <span className="text-2xl">{category.emoji}</span>
               {category.icon}
@@ -1126,8 +1451,12 @@ function PharmacyReports() {
                       <div className="text-3xl mb-2 group-hover:scale-110 transition-transform duration-200 inline-block">
                         {report.icon}
                       </div>
-                      <h4 className="font-semibold text-foreground text-sm tracking-tight">{report.name}</h4>
-                      <p className="text-xs text-muted-foreground mt-1 min-h-[32px]">{report.desc}</p>
+                      <h4 className="font-semibold text-foreground text-sm tracking-tight">
+                        {report.name}
+                      </h4>
+                      <p className="text-xs text-muted-foreground mt-1 min-h-[32px]">
+                        {report.desc}
+                      </p>
                     </div>
                     <div className="mt-4 pt-1">
                       <button
@@ -1149,7 +1478,6 @@ function PharmacyReports() {
       {selectedReportId && (
         <div className="fixed inset-0 bg-black/55 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in print:absolute print:inset-0 print:bg-white print:p-0">
           <div className="bg-white border border-border rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden shadow-2xl flex flex-col animate-scale-up print:border-none print:shadow-none print:max-h-none print:w-full">
-
             {/* Modal Header */}
             <div className="flex items-center justify-between p-5 border-b border-border bg-muted/20 print:hidden">
               <h3 className="font-display font-bold text-lg flex items-center gap-2 text-slate-800">
@@ -1166,7 +1494,6 @@ function PharmacyReports() {
 
             {/* Modal Content */}
             <div className="p-6 overflow-y-auto flex-1 flex flex-col gap-6">
-
               {/* Date Input Box (Hidden when printing) */}
               <div className="surface-elevated p-4 rounded-xl border border-border flex flex-wrap items-end gap-4 justify-between print:hidden">
                 <div className="flex flex-wrap items-center gap-4">
@@ -1216,7 +1543,10 @@ function PharmacyReports() {
                   {/* Shimmer Stat blocks */}
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     {Array.from({ length: 3 }).map((_, i) => (
-                      <div key={i} className="border border-border p-4 rounded-xl flex flex-col gap-2.5 animate-pulse bg-muted/10">
+                      <div
+                        key={i}
+                        className="border border-border p-4 rounded-xl flex flex-col gap-2.5 animate-pulse bg-muted/10"
+                      >
                         <div className="h-3 bg-muted rounded w-24"></div>
                         <div className="h-7 bg-muted rounded w-32"></div>
                       </div>
@@ -1248,12 +1578,15 @@ function PharmacyReports() {
               {/* Main Report Output */}
               {reportGenerated && !isGenerating && (
                 <div className="flex-1 flex flex-col gap-5">
-
                   {/* Printing Header Details (Visible only when printing) */}
                   <div className="hidden print:flex flex-col gap-2 border-b border-border pb-4 mb-4">
                     <h1 className="text-2xl font-bold text-slate-800">MediCore Pharmacy</h1>
-                    <p className="text-sm font-semibold text-slate-600">Report: {selectedReportName}</p>
-                    <p className="text-xs text-muted-foreground">Period: {startDate} to {endDate}</p>
+                    <p className="text-sm font-semibold text-slate-600">
+                      Report: {selectedReportName}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      Period: {startDate} to {endDate}
+                    </p>
                   </div>
 
                   {/* Dynamic Summary Cards */}
@@ -1285,7 +1618,10 @@ function PharmacyReports() {
 
                   {/* Scrollable Table Content */}
                   <div className="bg-background border border-border rounded-xl overflow-hidden max-h-[420px] overflow-y-auto">
-                    <div className="report-content" dangerouslySetInnerHTML={{ __html: reportHTML }} />
+                    <div
+                      className="report-content"
+                      dangerouslySetInnerHTML={{ __html: reportHTML }}
+                    />
                   </div>
                 </div>
               )}
@@ -1296,11 +1632,11 @@ function PharmacyReports() {
                   <FileText className="h-16 w-16 text-primary/40 mb-3" />
                   <h4 className="font-semibold text-slate-700 text-base">Select Date Range</h4>
                   <p className="text-sm text-muted-foreground max-w-sm mt-1">
-                    Select a start and end date range above, then click <strong>View Report</strong> to see the pharmacy metrics.
+                    Select a start and end date range above, then click <strong>View Report</strong>{" "}
+                    to see the pharmacy metrics.
                   </p>
                 </div>
               )}
-
             </div>
 
             {/* Modal Footer */}
@@ -1340,7 +1676,6 @@ function PharmacyReports() {
                 </button>
               </div>
             </div>
-
           </div>
         </div>
       )}

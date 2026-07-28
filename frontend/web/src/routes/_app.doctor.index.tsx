@@ -9,7 +9,15 @@ import { useNurseQueue } from "@/lib/store/nurseQueue";
 import { usePatients } from "@/lib/store/patients";
 import { useClinicalStore } from "@/lib/store/clinical";
 import { format, isToday } from "date-fns";
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
+import {
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+} from "recharts";
 import type { AppointmentStatus } from "@/lib/types";
 
 export const Route = createFileRoute("/_app/doctor/")({
@@ -28,9 +36,7 @@ function DoctorOverview() {
   const todayMock = myAppts.filter((a) => isToday(new Date(a.date)));
 
   // Load nurse queue entries for this doctor that are ready for consultation
-  const liveQueue = queue.filter(
-    (e) => e.doctorId === doctorId && e.vitalsStatus === "done"
-  );
+  const liveQueue = queue.filter((e) => e.doctorId === doctorId && e.vitalsStatus === "done");
 
   // Map live queue entries to appointments structure
   const liveRows = liveQueue.map((e) => ({
@@ -50,7 +56,9 @@ function DoctorOverview() {
   }));
 
   const combinedToday = [...todayMock, ...liveRows];
-  const myPatients = patients.filter((p) => p.assignedDoctorId === doctorId || liveQueue.some(e => e.patientId === p.id));
+  const myPatients = patients.filter(
+    (p) => p.assignedDoctorId === doctorId || liveQueue.some((e) => e.patientId === p.id)
+  );
   const myRx = prescriptions.filter((p) => p.doctorId === doctorId);
 
   const weekly = Array.from({ length: 7 }).map((_, i) => ({
@@ -67,9 +75,19 @@ function DoctorOverview() {
       />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard label="Today's appointments" value={combinedToday.length} icon={CalendarDays} tone="primary" />
+        <StatCard
+          label="Today's appointments"
+          value={combinedToday.length}
+          icon={CalendarDays}
+          tone="primary"
+        />
         <StatCard label="Active patients" value={myPatients.length} icon={Users} tone="info" />
-        <StatCard label="Prescriptions issued" value={myRx.length} icon={ClipboardCheck} tone="success" />
+        <StatCard
+          label="Prescriptions issued"
+          value={myRx.length}
+          icon={ClipboardCheck}
+          tone="success"
+        />
         <StatCard label="Pending lab results" value="4" icon={FlaskConical} tone="warning" />
       </div>
 
@@ -102,13 +120,19 @@ function DoctorOverview() {
                         </span>
                       )}
                     </div>
-                    <p className="truncate text-xs text-muted-foreground">{a.reason} · {format(new Date(a.date), "p")}</p>
+                    <p className="truncate text-xs text-muted-foreground">
+                      {a.reason} · {format(new Date(a.date), "p")}
+                    </p>
                   </div>
                   <AppointmentStatusChip status={a.status} />
                 </div>
               );
             })}
-            {combinedToday.length === 0 && <p className="py-6 text-center text-sm text-muted-foreground">No appointments today.</p>}
+            {combinedToday.length === 0 && (
+              <p className="py-6 text-center text-sm text-muted-foreground">
+                No appointments today.
+              </p>
+            )}
           </div>
         </div>
 
@@ -120,14 +144,29 @@ function DoctorOverview() {
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
                 <XAxis dataKey="day" stroke="var(--color-muted-foreground)" fontSize={11} />
                 <YAxis stroke="var(--color-muted-foreground)" fontSize={11} />
-                <Tooltip contentStyle={{ background: "var(--color-popover)", border: "1px solid var(--color-border)", borderRadius: 12, fontSize: 12 }} />
-                <Line type="monotone" dataKey="consults" stroke="var(--color-primary)" strokeWidth={2.5} dot={{ r: 3 }} />
+                <Tooltip
+                  contentStyle={{
+                    background: "var(--color-popover)",
+                    border: "1px solid var(--color-border)",
+                    borderRadius: 12,
+                    fontSize: 12,
+                  }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="consults"
+                  stroke="var(--color-primary)"
+                  strokeWidth={2.5}
+                  dot={{ r: 3 }}
+                />
               </LineChart>
             </ResponsiveContainer>
           </div>
           <div className="mt-2 rounded-lg bg-primary/5 p-3 text-xs">
             <p className="font-semibold text-primary">Tip</p>
-            <p className="text-muted-foreground">Block follow-up slots after 4pm to improve adherence.</p>
+            <p className="text-muted-foreground">
+              Block follow-up slots after 4pm to improve adherence.
+            </p>
           </div>
         </div>
       </div>

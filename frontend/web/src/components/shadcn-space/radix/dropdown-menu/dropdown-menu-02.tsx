@@ -12,15 +12,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import {
-  BellRing,
-  Headset,
-  LucideIcon,
-  Salad,
-  ScanText,
-  Star,
-  Video,
-} from "lucide-react";
+import { BellRing, Headset, LucideIcon, Salad, ScanText, Star, Video } from "lucide-react";
 
 type Props = {
   trigger: ReactElement;
@@ -92,38 +84,28 @@ const Dropdown = ({ trigger, defaultOpen, align = "end" }: Props) => {
           <DropdownMenuGroup>
             {/* title */}
             <DropdownMenuLabel className="flex items-center justify-between p-4">
-              <p className="text-base font-medium text-popover-foreground">
-                Notifications
-              </p>
+              <p className="text-base font-medium text-popover-foreground">Notifications</p>
               <Badge className="font-normal leading-0">5 New</Badge>
             </DropdownMenuLabel>
 
             {/* Notifications */}
-            {PROFILE_ITEMS.map(
-              ({ bgColor, iconColor, icon: Icon, title, desc, time }) => (
-                <DropdownMenuItem
-                  key={title}
-                  className={
-                    "mx-1.5 my-1 p-2 flex items-center justify-between cursor-pointer"
-                  }
-                >
-                  <div className="flex items-center gap-3">
-                    <div className={cn("p-2.5 rounded-xl", bgColor)}>
-                      <Icon size={20} className={cn("size-5", iconColor)} />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-popover-foreground">
-                        {title}
-                      </p>
-                      <p className="max-w-52 truncate text-sm text-muted-foreground">
-                        {desc}
-                      </p>
-                    </div>
+            {PROFILE_ITEMS.map(({ bgColor, iconColor, icon: Icon, title, desc, time }) => (
+              <DropdownMenuItem
+                key={title}
+                className={"mx-1.5 my-1 p-2 flex items-center justify-between cursor-pointer"}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={cn("p-2.5 rounded-xl", bgColor)}>
+                    <Icon size={20} className={cn("size-5", iconColor)} />
                   </div>
-                  <p className="text-xs text-muted-foreground">{time}</p>
-                </DropdownMenuItem>
-              ),
-            )}
+                  <div>
+                    <p className="text-sm font-medium text-popover-foreground">{title}</p>
+                    <p className="max-w-52 truncate text-sm text-muted-foreground">{desc}</p>
+                  </div>
+                </div>
+                <p className="text-xs text-muted-foreground">{time}</p>
+              </DropdownMenuItem>
+            ))}
 
             {/* button */}
             <div className="mx-1.5 my-1 p-2">

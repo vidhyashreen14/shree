@@ -9,18 +9,12 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 const DateAndTimePickerDemo = () => {
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState<Date | undefined>(undefined);
-  const [bookingStatus, setBookingStatus] = useState<
-    "idle" | "loading" | "success"
-  >("idle");
+  const [bookingStatus, setBookingStatus] = useState<"idle" | "loading" | "success">("idle");
 
   const handleBooking = () => {
     setBookingStatus("loading");
@@ -35,16 +29,13 @@ const DateAndTimePickerDemo = () => {
             Select Date
           </Label>
           <Popover open={open} onOpenChange={setOpen}>
-            <PopoverTrigger
-              asChild
-              onPointerDown={() => setBookingStatus("idle")}
-            >
+            <PopoverTrigger asChild onPointerDown={() => setBookingStatus("idle")}>
               <Button
                 variant="outline"
                 id="date"
                 className={cn(
                   "w-full justify-start text-left font-normal h-10 transition-all hover:bg-muted/50 cursor-pointer",
-                  !date && "text-muted-foreground",
+                  !date && "text-muted-foreground"
                 )}
               >
                 <CalendarIcon className="mr-2 h-4 w-4 opacity-70" />

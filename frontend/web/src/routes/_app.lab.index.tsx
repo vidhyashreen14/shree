@@ -4,7 +4,6 @@ import { PageHeader } from "@/components/common/PageHeader";
 import { Button } from "@/components/ui/button";
 import { labOrders, patients } from "@/lib/mock/data";
 import {
-
   FilePlus2,
   FlaskConical,
   CheckCircle2,
@@ -50,9 +49,7 @@ const SBU_OPTIONS = ["All SBU", "Diagnostics", "Pathology", "Radiology", "Microb
 const BRANCH_OPTIONS = ["All Branches", "Koramangala", "Indiranagar", "Whitefield", "Jayanagar"];
 
 // ─── Sample count trend data ──────────────────────────────────────────────────
-const dayLabels = Array.from({ length: 7 }, (_, i) =>
-  format(subDays(new Date(), 6 - i), "EEE d")
-);
+const dayLabels = Array.from({ length: 7 }, (_, i) => format(subDays(new Date(), 6 - i), "EEE d"));
 const dayWiseSamples = [38, 52, 47, 63, 70, 55, 61];
 const DAY_AVG = Math.round(dayWiseSamples.reduce((a, b) => a + b, 0) / dayWiseSamples.length);
 const dayWiseData = dayLabels.map((label, i) => ({
@@ -95,15 +92,23 @@ function fmt(n: number) {
 
 // ─── Top Filter Bar ───────────────────────────────────────────────────────────
 function TopFilters({
-  dateFrom, setDateFrom,
-  dateTo, setDateTo,
-  sbu, setSbu,
-  branch, setBranch,
+  dateFrom,
+  setDateFrom,
+  dateTo,
+  setDateTo,
+  sbu,
+  setSbu,
+  branch,
+  setBranch,
 }: {
-  dateFrom: string; setDateFrom: (v: string) => void;
-  dateTo: string; setDateTo: (v: string) => void;
-  sbu: string; setSbu: (v: string) => void;
-  branch: string; setBranch: (v: string) => void;
+  dateFrom: string;
+  setDateFrom: (v: string) => void;
+  dateTo: string;
+  setDateTo: (v: string) => void;
+  sbu: string;
+  setSbu: (v: string) => void;
+  branch: string;
+  setBranch: (v: string) => void;
 }) {
   return (
     <div className="mb-6 flex flex-wrap items-center gap-2">
@@ -138,7 +143,11 @@ function TopFilters({
           aria-label="SBU filter"
           id="lab-filter-sbu"
         >
-          {SBU_OPTIONS.map((s) => <option key={s} value={s}>{s}</option>)}
+          {SBU_OPTIONS.map((s) => (
+            <option key={s} value={s}>
+              {s}
+            </option>
+          ))}
         </select>
         <ChevronDown className="pointer-events-none absolute right-2 h-3 w-3 text-muted-foreground" />
       </div>
@@ -152,13 +161,22 @@ function TopFilters({
           aria-label="Branch filter"
           id="lab-filter-branch"
         >
-          {BRANCH_OPTIONS.map((b) => <option key={b} value={b}>{b}</option>)}
+          {BRANCH_OPTIONS.map((b) => (
+            <option key={b} value={b}>
+              {b}
+            </option>
+          ))}
         </select>
         <ChevronDown className="pointer-events-none absolute right-2 h-3 w-3 text-muted-foreground" />
       </div>
 
       <button
-        onClick={() => { setDateFrom(""); setDateTo(""); setSbu(SBU_OPTIONS[0]!); setBranch(BRANCH_OPTIONS[0]!); }}
+        onClick={() => {
+          setDateFrom("");
+          setDateTo("");
+          setSbu(SBU_OPTIONS[0]!);
+          setBranch(BRANCH_OPTIONS[0]!);
+        }}
         className="rounded-lg border border-border bg-background px-3 py-2 text-xs text-muted-foreground shadow-sm hover:bg-muted transition-colors"
         id="lab-filter-clear"
       >
@@ -170,15 +188,20 @@ function TopFilters({
 
 // ─── KPI Card ─────────────────────────────────────────────────────────────────
 function KpiCard({
-  label, value, sub, icon: Icon,
-  accent, iconBg, valueSuffix,
+  label,
+  value,
+  sub,
+  icon: Icon,
+  accent,
+  iconBg,
+  valueSuffix,
 }: {
   label: string;
   value: string | number;
   sub?: React.ReactNode;
   icon: React.ElementType;
-  accent: string;       // text colour class
-  iconBg: string;       // icon container bg class
+  accent: string; // text colour class
+  iconBg: string; // icon container bg class
   valueSuffix?: string;
 }) {
   return (
@@ -208,10 +231,7 @@ function KpiCard({
 function SampleAnalytics() {
   const [gran, setGran] = useState<"day" | "week" | "month">("week");
 
-  const data =
-    gran === "day" ? dayWiseData :
-      gran === "week" ? weekWiseData :
-        monthWiseData;
+  const data = gran === "day" ? dayWiseData : gran === "week" ? weekWiseData : monthWiseData;
 
   const peak = Math.max(...data.map((d) => d.samples));
   const avg = data[0]!.avg;
@@ -225,7 +245,8 @@ function SampleAnalytics() {
         <div>
           <h3 className="font-display font-semibold">Sample Count</h3>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Trend vs average baseline · {gran === "day" ? "Last 7 days" : gran === "week" ? "Last 6 weeks" : "Last 7 months"}
+            Trend vs average baseline ·{" "}
+            {gran === "day" ? "Last 7 days" : gran === "week" ? "Last 6 weeks" : "Last 7 months"}
           </p>
         </div>
 
@@ -235,10 +256,11 @@ function SampleAnalytics() {
             <button
               key={g}
               onClick={() => setGran(g)}
-              className={`rounded-md px-3 py-1.5 text-xs font-semibold capitalize transition-all ${gran === g
+              className={`rounded-md px-3 py-1.5 text-xs font-semibold capitalize transition-all ${
+                gran === g
                   ? "bg-primary text-primary-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground"
-                }`}
+              }`}
               id={`btn-gran-${g}`}
             >
               {g === "day" ? "Day" : g === "week" ? "Week" : "Month"}
@@ -252,7 +274,15 @@ function SampleAnalytics() {
         {[
           { label: "Peak", value: peak, icon: TrendingUp, color: "text-primary" },
           { label: "Avg", value: avg, icon: Minus, color: "text-amber-600 dark:text-amber-400" },
-          { label: "Latest vs prev", value: `${delta >= 0 ? "+" : ""}${delta}`, icon: delta >= 0 ? TrendingUp : TrendingDown, color: delta >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400" },
+          {
+            label: "Latest vs prev",
+            value: `${delta >= 0 ? "+" : ""}${delta}`,
+            icon: delta >= 0 ? TrendingUp : TrendingDown,
+            color:
+              delta >= 0
+                ? "text-emerald-600 dark:text-emerald-400"
+                : "text-rose-600 dark:text-rose-400",
+          },
         ].map(({ label, value, icon: I, color }) => (
           <div key={label} className="rounded-xl bg-muted/30 p-3">
             <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</p>
@@ -275,8 +305,19 @@ function SampleAnalytics() {
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
-            <XAxis dataKey="label" tickLine={false} axisLine={false} stroke="var(--color-muted-foreground)" fontSize={10} />
-            <YAxis tickLine={false} axisLine={false} stroke="var(--color-muted-foreground)" fontSize={10} />
+            <XAxis
+              dataKey="label"
+              tickLine={false}
+              axisLine={false}
+              stroke="var(--color-muted-foreground)"
+              fontSize={10}
+            />
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              stroke="var(--color-muted-foreground)"
+              fontSize={10}
+            />
             <Tooltip
               contentStyle={{
                 background: "var(--color-popover)",
@@ -292,7 +333,12 @@ function SampleAnalytics() {
               stroke="var(--color-warning)"
               strokeDasharray="5 3"
               strokeWidth={1.5}
-              label={{ value: `Avg ${avg}`, position: "insideTopRight", fontSize: 10, fill: "var(--color-warning)" }}
+              label={{
+                value: `Avg ${avg}`,
+                position: "insideTopRight",
+                fontSize: 10,
+                fill: "var(--color-warning)",
+              }}
             />
             <Area
               type="monotone"
@@ -318,11 +364,10 @@ function PendingPipeline() {
       <div className="mb-3 flex items-center justify-between">
         <div>
           <h3 className="font-display font-semibold">Pending pipeline</h3>
-          <p className="text-xs text-muted-foreground mt-0.5">{pending.length} orders awaiting completion</p>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            {pending.length} orders awaiting completion
+          </p>
         </div>
-        <Link to="/lab/pending" className="text-xs font-semibold text-primary hover:underline">
-          View all
-        </Link>
       </div>
       <div className="divide-y divide-border flex-1">
         {pending.slice(0, 6).map((l) => {
@@ -349,38 +394,15 @@ function PendingPipeline() {
 
 // ─── Main Component ────────────────────────────────────────────────────────────
 function LabOverview() {
-  const [dateFrom, setDateFrom] = useState("");
-  const [dateTo, setDateTo] = useState("");
-  const [sbu, setSbu] = useState(SBU_OPTIONS[0]!);
-  const [branch, setBranch] = useState(BRANCH_OPTIONS[0]!);
-
   return (
     <>
       <PageHeader
         eyebrow="Laboratory"
-        title="Investigations control room"
+        title="Investigations Control Room"
         description="Daily operational and financial snapshot across all branches."
-        actions={
-          <Link to="/lab/upload">
-            <Button id="btn-upload-report">
-              <FilePlus2 className="mr-2 h-4 w-4" />
-              Generate report
-            </Button>
-          </Link>
-        }
       />
-
-      {/* ── Top Filters ─────────────────────────────────────────────────── */}
-      <TopFilters
-        dateFrom={dateFrom} setDateFrom={setDateFrom}
-        dateTo={dateTo} setDateTo={setDateTo}
-        sbu={sbu} setSbu={setSbu}
-        branch={branch} setBranch={setBranch}
-      />
-
       {/* ── 6 KPI Cards ─────────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6">
-
         {/* 1. Samples Registered */}
         <KpiCard
           label="Samples Registered"
@@ -416,7 +438,9 @@ function LabOverview() {
             <div className="w-full rounded-full bg-muted h-1.5 overflow-hidden">
               <div
                 className="h-full rounded-full bg-amber-500 transition-all"
-                style={{ width: `${Math.round((KPI.testsInProgress / KPI.samplesRegistered) * 100)}%` }}
+                style={{
+                  width: `${Math.round((KPI.testsInProgress / KPI.samplesRegistered) * 100)}%`,
+                }}
               />
             </div>
           }
@@ -443,9 +467,7 @@ function LabOverview() {
           icon={IndianRupee}
           accent="text-violet-600 dark:text-violet-400"
           iconBg="bg-violet-50 dark:bg-violet-950/40"
-          sub={
-            <p className="text-[11px] text-muted-foreground">Before deductions</p>
-          }
+          sub={<p className="text-[11px] text-muted-foreground">Before deductions</p>}
         />
 
         {/* 5. Discount Amount */}

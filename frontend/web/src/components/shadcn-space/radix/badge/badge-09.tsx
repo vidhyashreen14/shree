@@ -29,7 +29,7 @@ const FailedBadgeDemo = () => {
         "gap-2 px-3 py-2",
         "bg-background backdrop-blur-md",
         "text-foreground text-sm font-medium leading-none",
-        "border-red-500/25",
+        "border-red-500/25"
       )}
     >
       {/* Top glow */}

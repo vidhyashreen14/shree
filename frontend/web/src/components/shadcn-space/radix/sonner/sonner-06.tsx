@@ -1,20 +1,20 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from "react"
-import { AnimatePresence, motion } from "motion/react"
-import { toast } from "sonner"
-import { Button } from "@/components/ui/button"
-import { Spinner } from "@/components/ui/spinner"
-import { Check, Wallet } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { useState, useEffect } from "react";
+import { AnimatePresence, motion } from "motion/react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
+import { Check, Wallet } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const TransactionToastContent = () => {
-  const [status, setStatus] = useState<"pending" | "success">("pending")
+  const [status, setStatus] = useState<"pending" | "success">("pending");
 
   useEffect(() => {
-    const t = setTimeout(() => setStatus("success"), 2200)
-    return () => clearTimeout(t)
-  }, [])
+    const t = setTimeout(() => setStatus("success"), 2200);
+    return () => clearTimeout(t);
+  }, []);
 
   return (
     <>
@@ -44,11 +44,18 @@ const TransactionToastContent = () => {
           )}
 
           {/* Icon circle */}
-          <div className={cn("relative flex size-11 items-center justify-center rounded-full shadow-xs", status === "pending" ? "bg-amber-300/20" : "bg-teal-400/20")}>
-            <Wallet className={cn(
-              "size-5 transition-colors duration-500",
-              status === "pending" ? "text-amber-400" : "text-teal-400"
-            )} />
+          <div
+            className={cn(
+              "relative flex size-11 items-center justify-center rounded-full shadow-xs",
+              status === "pending" ? "bg-amber-300/20" : "bg-teal-400/20"
+            )}
+          >
+            <Wallet
+              className={cn(
+                "size-5 transition-colors duration-500",
+                status === "pending" ? "text-amber-400" : "text-teal-400"
+              )}
+            />
 
             {/* Status badge */}
             <div
@@ -89,13 +96,13 @@ const TransactionToastContent = () => {
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
 const PayoutSuccess = () => {
   const showToast = () => {
-    toast.custom(() => <TransactionToastContent />, { duration: 6000 })
-  }
+    toast.custom(() => <TransactionToastContent />, { duration: 6000 });
+  };
 
   return (
     <div className="flex items-center justify-center">
@@ -103,7 +110,7 @@ const PayoutSuccess = () => {
         Success Payout
       </Button>
     </div>
-  )
-}
+  );
+};
 
-export default PayoutSuccess
+export default PayoutSuccess;

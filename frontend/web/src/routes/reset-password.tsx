@@ -37,13 +37,27 @@ function ResetPage() {
         >
           <div>
             <Label htmlFor="pwd">New password</Label>
-            <Input id="pwd" type="password" value={pwd} onChange={(e) => setPwd(e.target.value)} className="mt-1.5" />
+            <Input
+              id="pwd"
+              type="password"
+              value={pwd}
+              onChange={(e) => setPwd(e.target.value)}
+              className="mt-1.5"
+            />
           </div>
           <div>
             <Label htmlFor="confirm">Confirm password</Label>
-            <Input id="confirm" type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} className="mt-1.5" />
+            <Input
+              id="confirm"
+              type="password"
+              value={confirm}
+              onChange={(e) => setConfirm(e.target.value)}
+              className="mt-1.5"
+            />
           </div>
-          <Button type="submit" className="w-full" size="lg">Update password</Button>
+          <Button type="submit" className="w-full" size="lg">
+            Update password
+          </Button>
         </form>
       </div>
     </div>

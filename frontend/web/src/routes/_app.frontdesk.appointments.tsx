@@ -15,23 +15,59 @@ export const Route = createFileRoute("/_app/frontdesk/appointments")({
 });
 
 function FdAppts() {
-  const columns = useMemo<ColumnDef<Appointment>[]>(() => [
-    { header: "Token", accessorKey: "token", cell: ({ getValue }) => <span className="font-mono font-semibold">#{String(getValue())}</span> },
-    { header: "Patient", accessorKey: "patientId", cell: ({ getValue }) => patients.find((p) => p.id === getValue())?.name },
-    { header: "Doctor", accessorKey: "doctorId", cell: ({ getValue }) => doctors.find((d) => d.id === getValue())?.name },
-    { header: "Reason", accessorKey: "reason" },
-    { header: "When", accessorKey: "date", cell: ({ getValue }) => format(new Date(String(getValue())), "MMM d, p") },
-    { header: "Status", accessorKey: "status", cell: ({ getValue }) => <AppointmentStatusChip status={getValue() as Appointment["status"]} /> },
-  ], []);
+  const columns = useMemo<ColumnDef<Appointment>[]>(
+    () => [
+      {
+        header: "Token",
+        accessorKey: "token",
+        cell: ({ getValue }) => (
+          <span className="font-mono font-semibold">#{String(getValue())}</span>
+        ),
+      },
+      {
+        header: "Patient",
+        accessorKey: "patientId",
+        cell: ({ getValue }) => patients.find((p) => p.id === getValue())?.name,
+      },
+      {
+        header: "Doctor",
+        accessorKey: "doctorId",
+        cell: ({ getValue }) => doctors.find((d) => d.id === getValue())?.name,
+      },
+      { header: "Reason", accessorKey: "reason" },
+      {
+        header: "When",
+        accessorKey: "date",
+        cell: ({ getValue }) => format(new Date(String(getValue())), "MMM d, p"),
+      },
+      {
+        header: "Status",
+        accessorKey: "status",
+        cell: ({ getValue }) => (
+          <AppointmentStatusChip status={getValue() as Appointment["status"]} />
+        ),
+      },
+    ],
+    []
+  );
 
   return (
     <>
       <PageHeader
         title="Appointments"
         description="Book, reschedule and manage appointments."
-        actions={<Button><CalendarPlus className="mr-2 h-4 w-4" /> Book appointment</Button>}
+        actions={
+          <Button>
+            <CalendarPlus className="mr-2 h-4 w-4" /> Book appointment
+          </Button>
+        }
       />
-      <DataTable columns={columns} data={appointments} searchPlaceholder="Search by patient, doctor…" pageSize={10} />
+      <DataTable
+        columns={columns}
+        data={appointments}
+        searchPlaceholder="Search by patient, doctor…"
+        pageSize={10}
+      />
     </>
   );
 }

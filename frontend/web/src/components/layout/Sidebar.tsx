@@ -6,172 +6,195 @@ import { cn } from "@/lib/utils";
 import { X, LogOut } from "lucide-react";
 
 interface Props {
-    open: boolean;
-    onClose: () => void;
-    desktopOpen?: boolean;
+  open: boolean;
+  onClose: () => void;
+  desktopOpen?: boolean;
 }
 
 export function Sidebar({ open, onClose, desktopOpen = true }: Props) {
-    const user = useAuth((s) => s.user);
-    const logout = useAuth((s) => s.logout);
-    const navigate = useNavigate();
-    const location = useRouterState({ select: (r) => r.location });
-    const { logoUrl, name } = useHospitalSettings();
-    
-    if (!user) return null;
-    const items = NAV[user.role];
-    const groups = Array.from(new Set(items.map((i) => i.group ?? "Menu")));
+  const user = useAuth((s) => s.user);
+  const logout = useAuth((s) => s.logout);
+  const navigate = useNavigate();
+  const location = useRouterState({ select: (r) => r.location });
+  const { logoUrl, name } = useHospitalSettings();
 
-    const isActive = (to: string) => {
-        const href = decodeURIComponent(location.href);
-        const target = decodeURIComponent(to);
-        if (href === target) return true;
-        if (!target.includes("?")) {
-            return location.pathname === target || (target !== "/" && location.pathname.startsWith(target + "/"));
-        }
-        return false;
-    };
+  if (!user) return null;
+  const items = NAV[user.role];
+  const groups = Array.from(new Set(items.map((i) => i.group ?? "Menu")));
 
-    const displayLogo = logoUrl || "/logo.svg";
-    const isCustomLogo = !!logoUrl;
+  // Collect all nav paths (for specificity check)
+  const allNavPaths = [...items, ...SHARED_NAV]
+    .map((i) => decodeURIComponent(i.to))
+    .map((t) => t.split("?")[0]);
 
-    return (
-        <>
-            {open && (
-                <div
-                    className="fixed inset-0 z-40 bg-foreground/40 lg:hidden"
-                    onClick={onClose}
-                    aria-hidden
-                />
-            )}
-            <aside
-                className={cn(
-                    "fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground transition-transform duration-200",
-                    open ? "translate-x-0" : "-translate-x-full",
-                    desktopOpen ? "lg:static lg:translate-x-0" : "lg:hidden lg:w-0"
-                )}
-            >
-                {/* ── Logo ── */}
-                <div className="flex h-16 shrink-0 items-center justify-between border-b border-sidebar-border px-5">
-                    <Link to="/" className="flex items-center gap-2 max-w-[200px]" title={name}>
-                        <span className="grid h-9 w-9 place-items-center rounded-xl bg-primary overflow-hidden shrink-0">
-                            <img
-                                src={displayLogo}
-                                alt={`${name} Logo`}
-                                className="h-6 w-6 object-contain"
-                                style={!isCustomLogo ? { filter: "invert(1)" } : undefined}
-                            />
-                        </span>
-                        <span className="flex flex-col leading-tight min-w-0">
-                            <span className="font-display text-sm font-bold tracking-tight truncate">
-                                {name}
-                            </span>
-                            <span className="text-[10px] uppercase tracking-widest text-muted-foreground truncate">
-                                Hospital Suite
-                            </span>
-                        </span>
+  const isActive = (to: string) => {
+    const href = decodeURIComponent(location.href);
+    const target = decodeURIComponent(to);
+    const path = location.pathname;
+
+    // For items with query strings, match the full href exactly
+    if (target.includes("?")) {
+      return href === target || href.startsWith(target + "&");
+    }
+
+    // Exact pathname match — always wins
+    if (path === target) return true;
+
+    // Prefix match — only allow if no other nav item matches more specifically.
+    // This prevents /lab from lighting up when the user is at /lab/visits.
+    if (target !== "/" && path.startsWith(target + "/")) {
+      const hasMoreSpecificMatch = allNavPaths.some(
+        (t) =>
+          t !== target && t.startsWith(target + "/") && (path === t || path.startsWith(t + "/"))
+      );
+      return !hasMoreSpecificMatch;
+    }
+
+    return false;
+  };
+
+  const displayLogo = logoUrl || "/logo.svg";
+  const isCustomLogo = !!logoUrl;
+
+  return (
+    <>
+      {open && (
+        <div
+          className="fixed inset-0 z-40 bg-foreground/40 lg:hidden"
+          onClick={onClose}
+          aria-hidden
+        />
+      )}
+      <aside
+        className={cn(
+          "fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground transition-transform duration-200",
+          open ? "translate-x-0" : "-translate-x-full",
+          desktopOpen ? "lg:static lg:translate-x-0" : "lg:hidden lg:w-0"
+        )}
+      >
+        {/* ── Logo ── */}
+        <div className="flex h-16 shrink-0 items-center justify-between border-b border-sidebar-border px-5">
+          <Link to="/" className="flex items-center gap-2 max-w-[200px]" title={name}>
+            <span className="grid h-9 w-9 place-items-center rounded-xl bg-primary overflow-hidden shrink-0">
+              <img
+                src={displayLogo}
+                alt={`${name} Logo`}
+                className="h-6 w-6 object-contain"
+                style={!isCustomLogo ? { filter: "invert(1)" } : undefined}
+              />
+            </span>
+            <span className="flex flex-col leading-tight min-w-0">
+              <span className="font-display text-sm font-bold tracking-tight truncate">{name}</span>
+              <span className="text-[10px] uppercase tracking-widest text-muted-foreground truncate">
+                Hospital Suite
+              </span>
+            </span>
+          </Link>
+          <button
+            type="button"
+            className="rounded-md p-1.5 hover:bg-sidebar-accent lg:hidden"
+            onClick={onClose}
+            aria-label="Close sidebar"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+
+        {/* ── Navigation ── */}
+        <nav className="flex-1 space-y-6 overflow-y-auto px-3 py-5">
+          {groups.map((g) => (
+            <div key={g}>
+              <p className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                {g}
+              </p>
+              <ul className="space-y-0.5">
+                {items
+                  .filter((i) => (i.group ?? "Menu") === g)
+                  .map((item) => {
+                    const Icon = item.icon;
+                    const active = isActive(item.to);
+                    return (
+                      <li key={item.to}>
+                        <Link
+                          to={item.to}
+                          onClick={onClose}
+                          className={cn(
+                            "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                            active
+                              ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-sm"
+                              : "text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                          )}
+                        >
+                          <Icon className="h-4 w-4 shrink-0" />
+                          <span className="truncate">{item.label}</span>
+                        </Link>
+                      </li>
+                    );
+                  })}
+              </ul>
+            </div>
+          ))}
+
+          {/* Shared nav */}
+          <div>
+            <p className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+              Account
+            </p>
+            <ul className="space-y-0.5">
+              {SHARED_NAV.map((item) => {
+                const Icon = item.icon;
+                const active = isActive(item.to);
+                return (
+                  <li key={item.to}>
+                    <Link
+                      to={item.to}
+                      onClick={onClose}
+                      className={cn(
+                        "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                        active
+                          ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-sm"
+                          : "text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                      )}
+                    >
+                      <Icon className="h-4 w-4 shrink-0" />
+                      <span className="truncate">{item.label}</span>
                     </Link>
-                    <button
-                        type="button"
-                        className="rounded-md p-1.5 hover:bg-sidebar-accent lg:hidden"
-                        onClick={onClose}
-                        aria-label="Close sidebar"
-                    >
-                        <X className="h-4 w-4" />
-                    </button>
-                </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </nav>
 
-                {/* ── Navigation ── */}
-                <nav className="flex-1 space-y-6 overflow-y-auto px-3 py-5">
-                    {groups.map((g) => (
-                        <div key={g}>
-                            <p className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-                                {g}
-                            </p>
-                            <ul className="space-y-0.5">
-                                {items
-                                    .filter((i) => (i.group ?? "Menu") === g)
-                                    .map((item) => {
-                                        const Icon = item.icon;
-                                        const active = isActive(item.to);
-                                        return (
-                                            <li key={item.to}>
-                                                <Link
-                                                    to={item.to}
-                                                    onClick={onClose}
-                                                    className={cn(
-                                                        "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                                                        active
-                                                            ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-sm"
-                                                            : "text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-                                                    )}
-                                                >
-                                                    <Icon className="h-4 w-4 shrink-0" />
-                                                    <span className="truncate">{item.label}</span>
-                                                </Link>
-                                            </li>
-                                        );
-                                    })}
-                            </ul>
-                        </div>
-                    ))}
-
-                    {/* Shared nav */}
-                    <div>
-                        <p className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-                            Account
-                        </p>
-                        <ul className="space-y-0.5">
-                            {SHARED_NAV.map((item) => {
-                                const Icon = item.icon;
-                                const active = isActive(item.to);
-                                return (
-                                    <li key={item.to}>
-                                        <Link
-                                            to={item.to}
-                                            onClick={onClose}
-                                            className={cn(
-                                                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                                                active
-                                                    ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-sm"
-                                                    : "text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-                                            )}
-                                        >
-                                            <Icon className="h-4 w-4 shrink-0" />
-                                            <span className="truncate">{item.label}</span>
-                                        </Link>
-                                    </li>
-                                );
-                            })}
-                        </ul>
-                    </div>
-                </nav>
-
-                {/* ── User footer ── */}
-                <div className="border-t border-sidebar-border p-4 flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-3 rounded-lg bg-sidebar-accent/60 p-3 flex-1 min-w-0">
-                        <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
-                            {user.name.split(" ").map((n) => n[0]).slice(0, 2).join("")}
-                        </div>
-                        <div className="min-w-0">
-                            <p className="truncate text-sm font-semibold">{user.name}</p>
-                            <p className="truncate text-xs text-muted-foreground capitalize">{user.role}</p>
-                        </div>
-                    </div>
-                    <button
-                        type="button"
-                        onClick={() => {
-                            logout();
-                            navigate({ to: "/login" });
-                        }}
-                        className="rounded-lg p-2 text-muted-foreground hover:bg-sidebar-accent hover:text-destructive transition-colors shrink-0"
-                        title="Sign out"
-                        aria-label="Sign out"
-                    >
-                        <LogOut className="h-5 w-5" />
-                    </button>
-                </div>
-            </aside>
-        </>
-    );
+        {/* ── User footer ── */}
+        <div className="border-t border-sidebar-border p-4 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-3 rounded-lg bg-sidebar-accent/60 p-3 flex-1 min-w-0">
+            <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
+              {user.name
+                .split(" ")
+                .map((n) => n[0])
+                .slice(0, 2)
+                .join("")}
+            </div>
+            <div className="min-w-0">
+              <p className="truncate text-sm font-semibold">{user.name}</p>
+              <p className="truncate text-xs text-muted-foreground capitalize">{user.role}</p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              logout();
+              navigate({ to: "/login" });
+            }}
+            className="rounded-lg p-2 text-muted-foreground hover:bg-sidebar-accent hover:text-destructive transition-colors shrink-0"
+            title="Sign out"
+            aria-label="Sign out"
+          >
+            <LogOut className="h-5 w-5" />
+          </button>
+        </div>
+      </aside>
+    </>
+  );
 }

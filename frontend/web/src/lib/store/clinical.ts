@@ -15,12 +15,10 @@ export const useClinicalStore = create<ClinicalState>()(
     (set) => ({
       prescriptions: mockRx,
       labOrders: mockLabs,
-      
-      addPrescription: (rx) =>
-        set((s) => ({ prescriptions: [rx, ...s.prescriptions] })),
-        
-      addLabOrder: (order) =>
-        set((s) => ({ labOrders: [order, ...s.labOrders] })),
+
+      addPrescription: (rx) => set((s) => ({ prescriptions: [rx, ...s.prescriptions] })),
+
+      addLabOrder: (order) => set((s) => ({ labOrders: [order, ...s.labOrders] })),
     }),
     { name: "medicore-clinical-records" }
   )

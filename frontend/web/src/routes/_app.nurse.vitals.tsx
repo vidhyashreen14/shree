@@ -4,7 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useNurseQueue } from "@/lib/store/nurseQueue";
 import { usePatients } from "@/lib/store/patients";
 import { useState, useEffect } from "react";
@@ -21,8 +27,16 @@ export const Route = createFileRoute("/_app/nurse/vitals")({
 });
 
 const CHIEF_COMPLAINT_TEMPLATES = [
-  "Fever", "Headache", "Knee Pain", "Chest Pain", "Abdominal Pain", 
-  "Cough & Cold", "Shortness of Breath", "Dizziness", "High BP Check", "Regular Follow-up"
+  "Fever",
+  "Headache",
+  "Knee Pain",
+  "Chest Pain",
+  "Abdominal Pain",
+  "Cough & Cold",
+  "Shortness of Breath",
+  "Dizziness",
+  "High BP Check",
+  "Regular Follow-up",
 ];
 
 function NurseVitals() {
@@ -32,10 +46,14 @@ function NurseVitals() {
   const { patients } = usePatients();
 
   // Find selected patient / queue entry
-  const initialQueueEntry = queue.find((e) => e.id === queueId || (queryPatientId && e.patientId === queryPatientId));
-  
+  const initialQueueEntry = queue.find(
+    (e) => e.id === queueId || (queryPatientId && e.patientId === queryPatientId)
+  );
+
   const [selectedQueueId, setSelectedQueueId] = useState<string>(initialQueueEntry?.id || "none");
-  const [selectedPatientId, setSelectedPatientId] = useState<string>(initialQueueEntry?.patientId || queryPatientId || "none");
+  const [selectedPatientId, setSelectedPatientId] = useState<string>(
+    initialQueueEntry?.patientId || queryPatientId || "none"
+  );
 
   // Vitals form state
   const [height, setHeight] = useState("");
@@ -73,7 +91,9 @@ function NurseVitals() {
 
   // Handle setting active queue entry fields
   const activeQueueEntry = queue.find((e) => e.id === selectedQueueId);
-  const activePatient = patients.find((p) => p.id === selectedPatientId || (activeQueueEntry && p.id === activeQueueEntry.patientId));
+  const activePatient = patients.find(
+    (p) => p.id === selectedPatientId || (activeQueueEntry && p.id === activeQueueEntry.patientId)
+  );
 
   // Sync state if selected queue changes
   useEffect(() => {
@@ -101,7 +121,10 @@ function NurseVitals() {
       if (!trimmed) return template;
       if (trimmed.toLowerCase().includes(template.toLowerCase())) {
         // Toggle off
-        return trimmed.split(", ").filter(x => x.toLowerCase() !== template.toLowerCase()).join(", ");
+        return trimmed
+          .split(", ")
+          .filter((x) => x.toLowerCase() !== template.toLowerCase())
+          .join(", ");
       }
       return `${trimmed}, ${template}`;
     });
@@ -161,7 +184,7 @@ function NurseVitals() {
               <User className="h-4 w-4 text-primary" />
               Intake Patient Select
             </h3>
-            
+
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
                 <Label>Select From Reception Queue</Label>
@@ -180,11 +203,13 @@ function NurseVitals() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="none">-- Select from live queue --</SelectItem>
-                    {queue.filter(e => e.vitalsStatus !== "done").map((entry) => (
-                      <SelectItem key={entry.id} value={entry.id}>
-                        {entry.patientName} ({entry.uhid})
-                      </SelectItem>
-                    ))}
+                    {queue
+                      .filter((e) => e.vitalsStatus !== "done")
+                      .map((entry) => (
+                        <SelectItem key={entry.id} value={entry.id}>
+                          {entry.patientName} ({entry.uhid})
+                        </SelectItem>
+                      ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -195,7 +220,9 @@ function NurseVitals() {
                   value={selectedPatientId}
                   onValueChange={(v) => {
                     setSelectedPatientId(v);
-                    const matchedQueue = queue.find((e) => e.patientId === v && e.vitalsStatus !== "done");
+                    const matchedQueue = queue.find(
+                      (e) => e.patientId === v && e.vitalsStatus !== "done"
+                    );
                     if (matchedQueue) {
                       setSelectedQueueId(matchedQueue.id);
                     } else {
@@ -227,11 +254,26 @@ function NurseVitals() {
                   </span>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs text-muted-foreground">
-                  <div>Age / Gender: <span className="font-semibold text-foreground">{activePatient.age}y / {activePatient.gender}</span></div>
-                  <div>Blood Group: <span className="font-semibold text-foreground">{activePatient.bloodGroup || "O+"}</span></div>
+                  <div>
+                    Age / Gender:{" "}
+                    <span className="font-semibold text-foreground">
+                      {activePatient.age}y / {activePatient.gender}
+                    </span>
+                  </div>
+                  <div>
+                    Blood Group:{" "}
+                    <span className="font-semibold text-foreground">
+                      {activePatient.bloodGroup || "O+"}
+                    </span>
+                  </div>
                   {activeQueueEntry && (
                     <>
-                      <div className="col-span-2">Assigned Doctor: <span className="font-semibold text-foreground">{activeQueueEntry.doctorName} ({activeQueueEntry.department})</span></div>
+                      <div className="col-span-2">
+                        Assigned Doctor:{" "}
+                        <span className="font-semibold text-foreground">
+                          {activeQueueEntry.doctorName} ({activeQueueEntry.department})
+                        </span>
+                      </div>
                     </>
                   )}
                 </div>
@@ -261,16 +303,22 @@ function NurseVitals() {
                 placeholder="e.g. 72"
                 required
               />
-              
+
               {/* BMI Card */}
               <div>
                 <Label>BMI (calculated)</Label>
-                <div className={cn(
-                  "mt-1.5 flex h-10 items-center justify-between rounded-md border px-3 text-sm font-semibold transition-all",
-                  bmiVal ? bmiColor : "bg-muted/40 border-input"
-                )}>
+                <div
+                  className={cn(
+                    "mt-1.5 flex h-10 items-center justify-between rounded-md border px-3 text-sm font-semibold transition-all",
+                    bmiVal ? bmiColor : "bg-muted/40 border-input"
+                  )}
+                >
                   <span>{bmiVal || "—"}</span>
-                  {bmiCategory && <span className="text-xs uppercase tracking-wider font-bold">{bmiCategory}</span>}
+                  {bmiCategory && (
+                    <span className="text-xs uppercase tracking-wider font-bold">
+                      {bmiCategory}
+                    </span>
+                  )}
                 </div>
               </div>
 
@@ -317,7 +365,7 @@ function NurseVitals() {
               <FileText className="h-4 w-4 text-primary" />
               Chief Complaint
             </h3>
-            
+
             <p className="text-xs italic text-muted-foreground">
               Nurse: "What brings you to the hospital today?"
             </p>
@@ -355,11 +403,7 @@ function NurseVitals() {
 
           {/* Submit buttons */}
           <div className="flex justify-end gap-3">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => navigate({ to: "/nurse" })}
-            >
+            <Button type="button" variant="outline" onClick={() => navigate({ to: "/nurse" })}>
               Cancel
             </Button>
             <Button type="submit" className="h-11 px-6 font-semibold" disabled={!activePatient}>
@@ -376,17 +420,21 @@ function NurseVitals() {
               <Scale className="h-4 w-4 text-primary" />
               Vitals Guide References
             </h4>
-            
+
             <div className="space-y-3.5 text-xs">
               <div className="border-b pb-2">
                 <p className="font-semibold text-foreground">Blood Pressure (BP)</p>
-                <p className="text-muted-foreground mt-0.5">Normal: Systolic &lt; 120 and Diastolic &lt; 80 mmHg</p>
+                <p className="text-muted-foreground mt-0.5">
+                  Normal: Systolic &lt; 120 and Diastolic &lt; 80 mmHg
+                </p>
                 <p className="text-amber-600 font-medium mt-0.5">Hypertension: &gt; 130/80 mmHg</p>
               </div>
 
               <div className="border-b pb-2">
                 <p className="font-semibold text-foreground">Pulse Rate</p>
-                <p className="text-muted-foreground mt-0.5">Normal: 60 - 100 bpm (beats per minute)</p>
+                <p className="text-muted-foreground mt-0.5">
+                  Normal: 60 - 100 bpm (beats per minute)
+                </p>
               </div>
 
               <div className="border-b pb-2">
@@ -409,7 +457,11 @@ function NurseVitals() {
 }
 
 function VitalsInput({
-  label, value, onChange, placeholder, required
+  label,
+  value,
+  onChange,
+  placeholder,
+  required,
 }: {
   label: string;
   value: string;

@@ -5,14 +5,7 @@ import { appointments, doctors, patients } from "@/lib/mock/data";
 import { useAuth } from "@/lib/store/auth";
 import { addDays, format, isSameDay, startOfWeek } from "date-fns";
 import { Button } from "@/components/ui/button";
-import {
-  ChevronLeft,
-  ChevronRight,
-  Stethoscope,
-  UserPlus,
-  RefreshCw,
-  Video,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, Stethoscope, UserPlus, RefreshCw, Video } from "lucide-react";
 
 export const Route = createFileRoute("/_app/doctor/schedule")({
   component: DoctorSchedule,
@@ -62,9 +55,7 @@ const typeConfig: Record<
 function DoctorSchedule() {
   const user = useAuth((s) => s.user);
   const doctorId = user?.role === "doctor" ? user.id : doctors[0]!.id;
-  const [weekStart, setWeekStart] = useState(() =>
-    startOfWeek(new Date(), { weekStartsOn: 1 })
-  );
+  const [weekStart, setWeekStart] = useState(() => startOfWeek(new Date(), { weekStartsOn: 1 }));
   const days = useMemo(
     () => Array.from({ length: 7 }).map((_, i) => addDays(weekStart, i)),
     [weekStart]
@@ -102,17 +93,11 @@ function DoctorSchedule() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() =>
-                setWeekStart(startOfWeek(new Date(), { weekStartsOn: 1 }))
-              }
+              onClick={() => setWeekStart(startOfWeek(new Date(), { weekStartsOn: 1 }))}
             >
               This week
             </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setWeekStart(addDays(weekStart, 7))}
-            >
+            <Button variant="outline" size="sm" onClick={() => setWeekStart(addDays(weekStart, 7))}>
               <ChevronRight className="h-4 w-4" />
             </Button>
           </>
@@ -152,10 +137,9 @@ function DoctorSchedule() {
                 return (
                   <th
                     key={d.toISOString()}
-                    className={`px-2 py-3 text-left text-xs font-semibold uppercase ${isToday
-                      ? "bg-primary/5 dark:bg-primary/10"
-                      : ""
-                      }`}
+                    className={`px-2 py-3 text-left text-xs font-semibold uppercase ${
+                      isToday ? "bg-primary/5 dark:bg-primary/10" : ""
+                    }`}
                   >
                     <div
                       className={`text-[10px] ${isToday ? "text-primary" : "text-muted-foreground"}`}
@@ -172,9 +156,7 @@ function DoctorSchedule() {
                     >
                       {format(d, "MMM")}
                     </div>
-                    {isToday && (
-                      <div className="mt-1 h-0.5 w-full rounded-full bg-primary/50" />
-                    )}
+                    {isToday && <div className="mt-1 h-0.5 w-full rounded-full bg-primary/50" />}
                   </th>
                 );
               })}
@@ -183,8 +165,7 @@ function DoctorSchedule() {
           <tbody>
             {hours.map((h) => {
               const isCurrentHour =
-                isSameDay(days[0] ?? new Date(), now) ||
-                days.some((d) => isSameDay(d, now));
+                isSameDay(days[0] ?? new Date(), now) || days.some((d) => isSameDay(d, now));
               const showNowLine = h === currentHour && isCurrentHour;
 
               return (
@@ -196,15 +177,16 @@ function DoctorSchedule() {
                     const a = slot(d, h);
                     const isTodayCol = isSameDay(d, now);
                     const showNow = showNowLine && isTodayCol;
-                    const cfg = a ? typeConfig[a.type] ?? typeConfig["consultation"] : null;
+                    const cfg = a ? (typeConfig[a.type] ?? typeConfig["consultation"]) : null;
                     const p = a ? patients.find((x) => x.id === a.patientId) : null;
                     const Icon = cfg?.icon;
 
                     return (
                       <td
                         key={d.toISOString()}
-                        className={`relative h-16 border-l border-border p-1 align-top ${isTodayCol ? "bg-primary/3 dark:bg-primary/5" : ""
-                          }`}
+                        className={`relative h-16 border-l border-border p-1 align-top ${
+                          isTodayCol ? "bg-primary/3 dark:bg-primary/5" : ""
+                        }`}
                       >
                         {/* "Now" indicator line */}
                         {showNow && (
@@ -234,9 +216,7 @@ function DoctorSchedule() {
                             <p className="truncate text-xs font-semibold text-foreground">
                               {p.name}
                             </p>
-                            <p className="truncate text-[10px] text-muted-foreground">
-                              {a.reason}
-                            </p>
+                            <p className="truncate text-[10px] text-muted-foreground">{a.reason}</p>
                           </div>
                         )}
                       </td>

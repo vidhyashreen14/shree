@@ -1,0 +1,8 @@
+node_modules
+dist
+build
+.tanstack
+next-app
+src/routeTree.gen.ts
+*.lock
+package-lock.json

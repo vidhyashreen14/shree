@@ -1,16 +1,16 @@
-import { useRef } from "react"
-import { motion, useInView } from "motion/react"
-import { Skeleton } from "@/components/ui/skeleton"
+import { useRef } from "react";
+import { motion, useInView } from "motion/react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const fadeUp = (inView: boolean, delay: number) => ({
   initial: { opacity: 0, y: 8 },
   animate: inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 },
   transition: { duration: 0.4, ease: "easeOut" as const, delay },
-})
+});
 
 const ListSkeleton = () => {
-  const ref = useRef(null)
-  const inView = useInView(ref, { once: true, amount: 0.3 })
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, amount: 0.3 });
 
   return (
     <motion.div
@@ -44,7 +44,7 @@ const ListSkeleton = () => {
         ))}
       </div>
     </motion.div>
-  )
-}
+  );
+};
 
 export default ListSkeleton;

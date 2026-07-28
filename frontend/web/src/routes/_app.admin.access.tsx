@@ -8,19 +8,48 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import {
-  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
 import {
-  KeyRound, UserPlus, Monitor, Eye, EyeOff, MoreHorizontal, Copy,
-  Lock, Unlock, RefreshCw, Stethoscope, Users, HeartPulse, Pill, FlaskConical,
-  Shield, ArrowRight, X, ExternalLink,
+  KeyRound,
+  UserPlus,
+  Monitor,
+  Eye,
+  EyeOff,
+  MoreHorizontal,
+  Copy,
+  Lock,
+  Unlock,
+  RefreshCw,
+  Stethoscope,
+  Users,
+  HeartPulse,
+  Pill,
+  FlaskConical,
+  Shield,
+  ArrowRight,
+  X,
+  ExternalLink,
 } from "lucide-react";
 import { useCredentials, type StaffAccount } from "@/lib/store/credentials";
 import { useAuth } from "@/lib/store/auth";
@@ -42,44 +71,118 @@ export const Route = createFileRoute("/_app/admin/access")({
 
 // ─── Constants ──────────────────────────────────────────────────────────────
 
-const STAFF_ROLES: { value: Role; label: string; icon: typeof Shield; color: string; description: string }[] = [
-  { value: "frontdesk", label: "Front Desk", icon: Users, color: "bg-blue-500/10 text-blue-600 border-blue-200", description: "Registration & appointments" },
-  { value: "doctor", label: "Doctor", icon: Stethoscope, color: "bg-emerald-500/10 text-emerald-600 border-emerald-200", description: "Patient care & prescriptions" },
-  { value: "nurse", label: "Nurse", icon: HeartPulse, color: "bg-pink-500/10 text-pink-600 border-pink-200", description: "Vitals & observations" },
-  { value: "pharmacy", label: "Pharmacy", icon: Pill, color: "bg-amber-500/10 text-amber-600 border-amber-200", description: "Inventory & dispensing" },
-  { value: "lab", label: "Laboratory", icon: FlaskConical, color: "bg-violet-500/10 text-violet-600 border-violet-200", description: "Test orders & reports" },
+const STAFF_ROLES: {
+  value: Role;
+  label: string;
+  icon: typeof Shield;
+  color: string;
+  description: string;
+}[] = [
+  {
+    value: "frontdesk",
+    label: "Front Desk",
+    icon: Users,
+    color: "bg-blue-500/10 text-blue-600 border-blue-200",
+    description: "Registration & appointments",
+  },
+  {
+    value: "doctor",
+    label: "Doctor",
+    icon: Stethoscope,
+    color: "bg-emerald-500/10 text-emerald-600 border-emerald-200",
+    description: "Patient care & prescriptions",
+  },
+  {
+    value: "nurse",
+    label: "Nurse",
+    icon: HeartPulse,
+    color: "bg-pink-500/10 text-pink-600 border-pink-200",
+    description: "Vitals & observations",
+  },
+  {
+    value: "pharmacy",
+    label: "Pharmacy",
+    icon: Pill,
+    color: "bg-amber-500/10 text-amber-600 border-amber-200",
+    description: "Inventory & dispensing",
+  },
+  {
+    value: "lab",
+    label: "Laboratory",
+    icon: FlaskConical,
+    color: "bg-violet-500/10 text-violet-600 border-violet-200",
+    description: "Test orders & reports",
+  },
 ];
 
-const ALL_MONITOR_ROLES: { value: Role; label: string; icon: typeof Shield; color: string; path: string; description: string; stats: { label: string; value: string }[] }[] = [
+const ALL_MONITOR_ROLES: {
+  value: Role;
+  label: string;
+  icon: typeof Shield;
+  color: string;
+  path: string;
+  description: string;
+  stats: { label: string; value: string }[];
+}[] = [
   {
-    value: "frontdesk", label: "Front Desk", icon: Users,
-    color: "from-blue-500 to-blue-700", path: "/frontdesk",
+    value: "frontdesk",
+    label: "Front Desk",
+    icon: Users,
+    color: "from-blue-500 to-blue-700",
+    path: "/frontdesk",
     description: "Patient registration, appointments & queue management",
-    stats: [{ label: "Today's check-ins", value: "47" }, { label: "Queue", value: "12" }],
+    stats: [
+      { label: "Today's check-ins", value: "47" },
+      { label: "Queue", value: "12" },
+    ],
   },
   {
-    value: "doctor", label: "Doctor", icon: Stethoscope,
-    color: "from-emerald-500 to-emerald-700", path: "/doctor",
+    value: "doctor",
+    label: "Doctor",
+    icon: Stethoscope,
+    color: "from-emerald-500 to-emerald-700",
+    path: "/doctor",
     description: "Patient consultations, prescriptions & lab orders",
-    stats: [{ label: "In queue", value: "8" }, { label: "Completed", value: "23" }],
+    stats: [
+      { label: "In queue", value: "8" },
+      { label: "Completed", value: "23" },
+    ],
   },
   {
-    value: "nurse", label: "Nurse", icon: HeartPulse,
-    color: "from-pink-500 to-pink-700", path: "/nurse",
+    value: "nurse",
+    label: "Nurse",
+    icon: HeartPulse,
+    color: "from-pink-500 to-pink-700",
+    path: "/nurse",
     description: "Vitals recording, patient observations & triage",
-    stats: [{ label: "Vitals recorded", value: "31" }, { label: "Pending", value: "5" }],
+    stats: [
+      { label: "Vitals recorded", value: "31" },
+      { label: "Pending", value: "5" },
+    ],
   },
   {
-    value: "pharmacy", label: "Pharmacy", icon: Pill,
-    color: "from-amber-500 to-amber-700", path: "/pharmacy",
+    value: "pharmacy",
+    label: "Pharmacy",
+    icon: Pill,
+    color: "from-amber-500 to-amber-700",
+    path: "/pharmacy",
     description: "Medicine dispensing, inventory & billing",
-    stats: [{ label: "Orders today", value: "64" }, { label: "Low stock", value: "3" }],
+    stats: [
+      { label: "Orders today", value: "64" },
+      { label: "Low stock", value: "3" },
+    ],
   },
   {
-    value: "lab", label: "Laboratory", icon: FlaskConical,
-    color: "from-violet-500 to-violet-700", path: "/lab",
+    value: "lab",
+    label: "Laboratory",
+    icon: FlaskConical,
+    color: "from-violet-500 to-violet-700",
+    path: "/lab",
     description: "Lab tests, reports upload & pending work",
-    stats: [{ label: "Pending tests", value: "14" }, { label: "Completed", value: "36" }],
+    stats: [
+      { label: "Pending tests", value: "14" },
+      { label: "Completed", value: "36" },
+    ],
   },
 ];
 
@@ -105,7 +208,10 @@ function getPasswordStrength(pwd: string): { score: number; label: string; color
 
 // ─── Create Account Modal ────────────────────────────────────────────────────
 
-interface CreateModalProps { open: boolean; onClose: () => void }
+interface CreateModalProps {
+  open: boolean;
+  onClose: () => void;
+}
 
 function CreateAccountModal({ open, onClose }: CreateModalProps) {
   const addAccount = useCredentials((s) => s.addAccount);
@@ -114,8 +220,12 @@ function CreateAccountModal({ open, onClose }: CreateModalProps) {
   const [showPwd, setShowPwd] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [form, setForm] = useState({
-    name: "", email: "", role: "frontdesk" as Role,
-    department: "", password: "", confirm: "",
+    name: "",
+    email: "",
+    role: "frontdesk" as Role,
+    department: "",
+    password: "",
+    confirm: "",
   });
 
   const strength = getPasswordStrength(form.password);
@@ -145,7 +255,7 @@ function CreateAccountModal({ open, onClose }: CreateModalProps) {
       target: `${form.name.trim()} (${form.role})`,
     });
     toast.success(`Login access created for ${form.name}`, {
-      description: `${form.email} can now sign in as ${STAFF_ROLES.find(r => r.value === form.role)?.label}.`,
+      description: `${form.email} can now sign in as ${STAFF_ROLES.find((r) => r.value === form.role)?.label}.`,
     });
     setForm({ name: "", email: "", role: "frontdesk", department: "", password: "", confirm: "" });
     onClose();
@@ -187,7 +297,12 @@ function CreateAccountModal({ open, onClose }: CreateModalProps) {
                       : "border-border bg-background hover:border-primary/40 hover:bg-accent/40 text-muted-foreground"
                   )}
                 >
-                  <span className={cn("grid h-7 w-7 place-items-center rounded-lg", active ? "bg-primary text-primary-foreground" : "bg-muted")}>
+                  <span
+                    className={cn(
+                      "grid h-7 w-7 place-items-center rounded-lg",
+                      active ? "bg-primary text-primary-foreground" : "bg-muted"
+                    )}
+                  >
                     <Icon className="h-3.5 w-3.5" />
                   </span>
                   <span className="leading-tight">{r.label}</span>
@@ -196,7 +311,7 @@ function CreateAccountModal({ open, onClose }: CreateModalProps) {
             })}
           </div>
           <p className="mt-1.5 text-xs text-muted-foreground">
-            {STAFF_ROLES.find(r => r.value === form.role)?.description}
+            {STAFF_ROLES.find((r) => r.value === form.role)?.description}
           </p>
         </div>
 
@@ -261,7 +376,7 @@ function CreateAccountModal({ open, onClose }: CreateModalProps) {
               />
               <button
                 type="button"
-                onClick={() => setShowPwd(s => !s)}
+                onClick={() => setShowPwd((s) => !s)}
                 className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-muted-foreground hover:bg-accent"
               >
                 {showPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -280,7 +395,12 @@ function CreateAccountModal({ open, onClose }: CreateModalProps) {
                     />
                   ))}
                 </div>
-                <span className={cn("text-xs font-medium", strength.score >= 3 ? "text-emerald-600" : "text-amber-600")}>
+                <span
+                  className={cn(
+                    "text-xs font-medium",
+                    strength.score >= 3 ? "text-emerald-600" : "text-amber-600"
+                  )}
+                >
                   {strength.label}
                 </span>
               </div>
@@ -297,11 +417,13 @@ function CreateAccountModal({ open, onClose }: CreateModalProps) {
                 placeholder="Re-enter password"
                 value={form.confirm}
                 onChange={(e) => setForm({ ...form, confirm: e.target.value })}
-                className={cn(form.confirm && form.confirm !== form.password ? "border-destructive" : "")}
+                className={cn(
+                  form.confirm && form.confirm !== form.password ? "border-destructive" : ""
+                )}
               />
               <button
                 type="button"
-                onClick={() => setShowConfirm(s => !s)}
+                onClick={() => setShowConfirm((s) => !s)}
                 className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-muted-foreground hover:bg-accent"
               >
                 {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -314,7 +436,9 @@ function CreateAccountModal({ open, onClose }: CreateModalProps) {
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>Cancel</Button>
+          <Button variant="outline" onClick={onClose}>
+            Cancel
+          </Button>
           <Button onClick={handleCreate} disabled={!valid} id="btn-create-access">
             <KeyRound className="mr-2 h-4 w-4" /> Create Login Access
           </Button>
@@ -326,7 +450,13 @@ function CreateAccountModal({ open, onClose }: CreateModalProps) {
 
 // ─── Reset Password Modal ────────────────────────────────────────────────────
 
-function ResetPasswordModal({ account, onClose }: { account: StaffAccount | null; onClose: () => void }) {
+function ResetPasswordModal({
+  account,
+  onClose,
+}: {
+  account: StaffAccount | null;
+  onClose: () => void;
+}) {
   const resetPassword = useCredentials((s) => s.resetPassword);
   const addLog = useAudit((s) => s.addLog);
   const adminUser = useAuth((s) => s.user);
@@ -346,7 +476,8 @@ function ResetPasswordModal({ account, onClose }: { account: StaffAccount | null
       target: `${account.name} (${account.role})`,
     });
     toast.success(`Password reset for ${account.name}`);
-    setPwd(""); setConfirm("");
+    setPwd("");
+    setConfirm("");
     onClose();
   };
 
@@ -361,16 +492,31 @@ function ResetPasswordModal({ account, onClose }: { account: StaffAccount | null
           <div>
             <Label htmlFor="rp-pwd">New password</Label>
             <div className="relative mt-1.5">
-              <Input id="rp-pwd" type={show ? "text" : "password"} value={pwd} onChange={(e) => setPwd(e.target.value)} />
-              <button type="button" onClick={() => setShow(s => !s)} className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-muted-foreground">
+              <Input
+                id="rp-pwd"
+                type={show ? "text" : "password"}
+                value={pwd}
+                onChange={(e) => setPwd(e.target.value)}
+              />
+              <button
+                type="button"
+                onClick={() => setShow((s) => !s)}
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-muted-foreground"
+              >
                 {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
             </div>
             {pwd && (
               <div className="mt-1.5 flex items-center gap-2">
                 <div className="flex flex-1 gap-1">
-                  {[1, 2, 3, 4].map(n => (
-                    <div key={n} className={cn("h-1 flex-1 rounded-full", n <= strength.score ? strength.color : "bg-muted")} />
+                  {[1, 2, 3, 4].map((n) => (
+                    <div
+                      key={n}
+                      className={cn(
+                        "h-1 flex-1 rounded-full",
+                        n <= strength.score ? strength.color : "bg-muted"
+                      )}
+                    />
                   ))}
                 </div>
                 <span className="text-xs font-medium">{strength.label}</span>
@@ -379,13 +525,26 @@ function ResetPasswordModal({ account, onClose }: { account: StaffAccount | null
           </div>
           <div>
             <Label htmlFor="rp-confirm">Confirm password</Label>
-            <Input id="rp-confirm" type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} className="mt-1.5" />
-            {confirm && confirm !== pwd && <p className="mt-1 text-xs text-destructive">Passwords do not match</p>}
+            <Input
+              id="rp-confirm"
+              type="password"
+              value={confirm}
+              onChange={(e) => setConfirm(e.target.value)}
+              className="mt-1.5"
+            />
+            {confirm && confirm !== pwd && (
+              <p className="mt-1 text-xs text-destructive">Passwords do not match</p>
+            )}
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>Cancel</Button>
-          <Button onClick={handle} disabled={!valid}><RefreshCw className="mr-2 h-4 w-4" />Reset Password</Button>
+          <Button variant="outline" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button onClick={handle} disabled={!valid}>
+            <RefreshCw className="mr-2 h-4 w-4" />
+            Reset Password
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -402,117 +561,135 @@ function StaffAccountsTab({ onCreateClick }: { onCreateClick: () => void }) {
   const adminUser = useAuth((s) => s.user);
   const [resetTarget, setResetTarget] = useState<StaffAccount | null>(null);
 
-  const columns = useMemo<ColumnDef<StaffAccount>[]>(() => [
-    {
-      header: "Staff Member",
-      accessorKey: "name",
-      cell: ({ row }) => {
-        const r = row.original;
-        const roleInfo = STAFF_ROLES.find(x => x.value === r.role);
-        return (
-          <div className="flex items-center gap-3">
-            <span className={cn("grid h-9 w-9 place-items-center rounded-full border text-sm font-semibold", roleInfo?.color ?? "bg-muted text-muted-foreground")}>
-              {r.name.split(" ").map(n => n[0]).slice(0, 2).join("")}
-            </span>
-            <div>
-              <p className="font-medium">{r.name}</p>
-              <p className="text-xs text-muted-foreground">{r.email}</p>
-            </div>
-          </div>
-        );
-      },
-    },
-    {
-      header: "Role",
-      accessorKey: "role",
-      cell: ({ getValue }) => {
-        const r = getValue() as Role;
-        const info = STAFF_ROLES.find(x => x.value === r);
-        return <StatusChip tone="primary">{info?.label ?? r}</StatusChip>;
-      },
-    },
-    { header: "Department", accessorKey: "department" },
-    {
-      header: "Status",
-      accessorKey: "status",
-      cell: ({ getValue }) => {
-        const s = getValue() as StaffAccount["status"];
-        return <StatusChip tone={statusTone[s]}>{s === "suspended" ? "deactivated" : s}</StatusChip>;
-      },
-    },
-    {
-      header: "Created",
-      accessorKey: "createdAt",
-      cell: ({ getValue }) => (
-        <span className="text-xs text-muted-foreground">
-          {new Date(getValue() as string).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
-        </span>
-      ),
-    },
-    {
-      header: "",
-      id: "actions",
-      cell: ({ row }) => {
-        const a = row.original;
-        return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem
-                onClick={() => {
-                  navigator.clipboard.writeText(`Email: ${a.email}\nPassword: [Set by admin]`);
-                  toast.success("Credentials info copied");
-                }}
+  const columns = useMemo<ColumnDef<StaffAccount>[]>(
+    () => [
+      {
+        header: "Staff Member",
+        accessorKey: "name",
+        cell: ({ row }) => {
+          const r = row.original;
+          const roleInfo = STAFF_ROLES.find((x) => x.value === r.role);
+          return (
+            <div className="flex items-center gap-3">
+              <span
+                className={cn(
+                  "grid h-9 w-9 place-items-center rounded-full border text-sm font-semibold",
+                  roleInfo?.color ?? "bg-muted text-muted-foreground"
+                )}
               >
-                <Copy className="mr-2 h-4 w-4" /> Copy email
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setResetTarget(a)}>
-                <RefreshCw className="mr-2 h-4 w-4" /> Reset password
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              {a.status === "active" ? (
-                <DropdownMenuItem
-                  className="text-amber-600"
-                  onClick={() => {
-                    suspendAccount(a.id);
-                    addLog({
-                      user: adminUser?.name || "System Admin",
-                      role: adminUser?.role || "admin",
-                      action: "Deactivated access",
-                      target: `${a.name} (${a.role})`,
-                    });
-                    toast.success(`${a.name} deactivated`);
-                  }}
-                >
-                  <Lock className="mr-2 h-4 w-4" /> Deactivate
-                </DropdownMenuItem>
-              ) : (
-                <DropdownMenuItem
-                  className="text-emerald-600"
-                  onClick={() => {
-                    reactivateAccount(a.id);
-                    addLog({
-                      user: adminUser?.name || "System Admin",
-                      role: adminUser?.role || "admin",
-                      action: "Reactivated access",
-                      target: `${a.name} (${a.role})`,
-                    });
-                    toast.success(`${a.name} reactivated`);
-                  }}
-                >
-                  <Unlock className="mr-2 h-4 w-4" /> Reactivate access
-                </DropdownMenuItem>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        );
+                {r.name
+                  .split(" ")
+                  .map((n) => n[0])
+                  .slice(0, 2)
+                  .join("")}
+              </span>
+              <div>
+                <p className="font-medium">{r.name}</p>
+                <p className="text-xs text-muted-foreground">{r.email}</p>
+              </div>
+            </div>
+          );
+        },
       },
-    },
-  ], [suspendAccount, reactivateAccount]);
+      {
+        header: "Role",
+        accessorKey: "role",
+        cell: ({ getValue }) => {
+          const r = getValue() as Role;
+          const info = STAFF_ROLES.find((x) => x.value === r);
+          return <StatusChip tone="primary">{info?.label ?? r}</StatusChip>;
+        },
+      },
+      { header: "Department", accessorKey: "department" },
+      {
+        header: "Status",
+        accessorKey: "status",
+        cell: ({ getValue }) => {
+          const s = getValue() as StaffAccount["status"];
+          return (
+            <StatusChip tone={statusTone[s]}>{s === "suspended" ? "deactivated" : s}</StatusChip>
+          );
+        },
+      },
+      {
+        header: "Created",
+        accessorKey: "createdAt",
+        cell: ({ getValue }) => (
+          <span className="text-xs text-muted-foreground">
+            {new Date(getValue() as string).toLocaleDateString("en-IN", {
+              day: "2-digit",
+              month: "short",
+              year: "numeric",
+            })}
+          </span>
+        ),
+      },
+      {
+        header: "",
+        id: "actions",
+        cell: ({ row }) => {
+          const a = row.original;
+          return (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-8 w-8">
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem
+                  onClick={() => {
+                    navigator.clipboard.writeText(`Email: ${a.email}\nPassword: [Set by admin]`);
+                    toast.success("Credentials info copied");
+                  }}
+                >
+                  <Copy className="mr-2 h-4 w-4" /> Copy email
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setResetTarget(a)}>
+                  <RefreshCw className="mr-2 h-4 w-4" /> Reset password
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                {a.status === "active" ? (
+                  <DropdownMenuItem
+                    className="text-amber-600"
+                    onClick={() => {
+                      suspendAccount(a.id);
+                      addLog({
+                        user: adminUser?.name || "System Admin",
+                        role: adminUser?.role || "admin",
+                        action: "Deactivated access",
+                        target: `${a.name} (${a.role})`,
+                      });
+                      toast.success(`${a.name} deactivated`);
+                    }}
+                  >
+                    <Lock className="mr-2 h-4 w-4" /> Deactivate
+                  </DropdownMenuItem>
+                ) : (
+                  <DropdownMenuItem
+                    className="text-emerald-600"
+                    onClick={() => {
+                      reactivateAccount(a.id);
+                      addLog({
+                        user: adminUser?.name || "System Admin",
+                        role: adminUser?.role || "admin",
+                        action: "Reactivated access",
+                        target: `${a.name} (${a.role})`,
+                      });
+                      toast.success(`${a.name} reactivated`);
+                    }}
+                  >
+                    <Unlock className="mr-2 h-4 w-4" /> Reactivate access
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          );
+        },
+      },
+    ],
+    [suspendAccount, reactivateAccount]
+  );
 
   return (
     <>
@@ -542,7 +719,7 @@ function StaffAccountsTab({ onCreateClick }: { onCreateClick: () => void }) {
 function AccessManagement() {
   const [createOpen, setCreateOpen] = useState(false);
   const accounts = useCredentials((s) => s.accounts);
-  const activeCount = accounts.filter(a => a.status === "active").length;
+  const activeCount = accounts.filter((a) => a.status === "active").length;
 
   return (
     <>
@@ -565,7 +742,11 @@ function AccessManagement() {
           { label: "Total accounts", value: accounts.length, color: "text-primary" },
           { label: "Active", value: activeCount, color: "text-emerald-600" },
           { label: "Deactivated", value: accounts.length - activeCount, color: "text-amber-600" },
-          { label: "Roles covered", value: new Set(accounts.map(a => a.role)).size, color: "text-blue-600" },
+          {
+            label: "Roles covered",
+            value: new Set(accounts.map((a) => a.role)).size,
+            color: "text-blue-600",
+          },
         ].map((s) => (
           <div key={s.label} className="rounded-xl border bg-card px-4 py-3">
             <p className={cn("text-2xl font-bold", s.color)}>{s.value}</p>

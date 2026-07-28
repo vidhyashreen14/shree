@@ -48,12 +48,7 @@ export function StatCard({
   };
 
   return (
-    <div
-      className={cn(
-        "surface-elevated relative overflow-hidden p-5",
-        className,
-      )}
-    >
+    <div className={cn("surface-elevated relative overflow-hidden p-5", className)}>
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
           <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
@@ -66,10 +61,14 @@ export function StatCard({
                 <span
                   className={cn(
                     "inline-flex items-center gap-0.5 rounded-full px-1.5 py-0.5 font-semibold",
-                    trend >= 0 ? "bg-success/10 text-success" : "bg-destructive/10 text-destructive",
+                    trend >= 0 ? "bg-success/10 text-success" : "bg-destructive/10 text-destructive"
                   )}
                 >
-                  {trend >= 0 ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
+                  {trend >= 0 ? (
+                    <ArrowUpRight className="h-3 w-3" />
+                  ) : (
+                    <ArrowDownRight className="h-3 w-3" />
+                  )}
                   {Math.abs(trend)}%
                 </span>
               )}
@@ -77,7 +76,9 @@ export function StatCard({
             </div>
           )}
         </div>
-        <span className={cn("grid h-11 w-11 shrink-0 place-items-center rounded-xl", toneMap[tone])}>
+        <span
+          className={cn("grid h-11 w-11 shrink-0 place-items-center rounded-xl", toneMap[tone])}
+        >
           {renderIcon()}
         </span>
       </div>

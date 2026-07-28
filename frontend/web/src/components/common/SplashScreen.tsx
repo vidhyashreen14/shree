@@ -39,9 +39,7 @@ export function SplashScreen({ onDone }: SplashScreenProps) {
       <div className="flex w-1/2 max-w-[500px] flex-col items-center gap-8">
         {/* Brand Header */}
         <div className="text-center animate-fade-in">
-          <p className="font-display text-4xl font-bold tracking-tight text-foreground">
-            MediCore
-          </p>
+          <p className="font-display text-4xl font-bold tracking-tight text-foreground">MediCore</p>
           <p className="mt-1 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
             Hospital Suite
           </p>
@@ -56,21 +54,9 @@ export function SplashScreen({ onDone }: SplashScreenProps) {
             xmlns="http://www.w3.org/2000/svg"
           >
             {/* Left Earpiece */}
-            <circle
-              cx="68"
-              cy="18"
-              r="5"
-              fill="currentColor"
-              className="animate-fade-in-delayed"
-            />
+            <circle cx="68" cy="18" r="5" fill="currentColor" className="animate-fade-in-delayed" />
             {/* Right Earpiece */}
-            <circle
-              cx="88"
-              cy="18"
-              r="5"
-              fill="currentColor"
-              className="animate-fade-in-delayed"
-            />
+            <circle cx="88" cy="18" r="5" fill="currentColor" className="animate-fade-in-delayed" />
 
             {/* Continuous path: Left ear tube -> chest piece -> ECG line -> end connector */}
             <path
@@ -92,13 +78,7 @@ export function SplashScreen({ onDone }: SplashScreenProps) {
             />
 
             {/* End chestpiece ball */}
-            <circle
-              cx="161"
-              cy="88"
-              r="9"
-              fill="currentColor"
-              className="animate-fade-in-last"
-            />
+            <circle cx="161" cy="88" r="9" fill="currentColor" className="animate-fade-in-last" />
           </svg>
         </div>
 

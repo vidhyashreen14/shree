@@ -69,9 +69,7 @@ const CarouselCards = () => {
                           src={profile}
                         />
                         <div className="flex flex-col min-w-0">
-                          <p className="text-sm font-semibold text-foreground truncate">
-                            {name}
-                          </p>
+                          <p className="text-sm font-semibold text-foreground truncate">{name}</p>
                           <p className="text-xs font-medium text-muted-foreground truncate">
                             {username}
                           </p>

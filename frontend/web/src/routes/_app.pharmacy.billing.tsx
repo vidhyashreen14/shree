@@ -1,4 +1,3 @@
-
 import { createFileRoute } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -60,16 +59,17 @@ function PharmacyBilling() {
     };
   }, []);
 
-  const filteredPatients = patientName.trim() === ""
-    ? []
-    : patients.filter(
-      (p) =>
-        p.name.toLowerCase().includes(patientName.toLowerCase()) ||
-        p.id.toLowerCase().includes(patientName.toLowerCase()) ||
-        p.phone.toLowerCase().includes(patientName.toLowerCase())
-    );
+  const filteredPatients =
+    patientName.trim() === ""
+      ? []
+      : patients.filter(
+          (p) =>
+            p.name.toLowerCase().includes(patientName.toLowerCase()) ||
+            p.id.toLowerCase().includes(patientName.toLowerCase()) ||
+            p.phone.toLowerCase().includes(patientName.toLowerCase())
+        );
 
-  const selectPatient = (p: typeof patients[0]) => {
+  const selectPatient = (p: (typeof patients)[0]) => {
     setPatientName(p.name);
     setPatientId(p.id);
     setPhone(p.phone);
@@ -299,8 +299,12 @@ function PharmacyBilling() {
     <div className="flex flex-col gap-6">
       {/* Print-only Hospital Header */}
       <div className="hidden print:block text-center border-b-2 border-gray-800 pb-3 pt-2 mb-2">
-        <h1 className="text-2xl font-extrabold tracking-widest text-gray-900 uppercase">SRI MANJUNATHA HOSPITAL</h1>
-        <p className="text-sm text-gray-700 mt-0.5">C.K.PURA, KELAGOTE, BESIDE SBI BANK, CHITRADURGA</p>
+        <h1 className="text-2xl font-extrabold tracking-widest text-gray-900 uppercase">
+          SRI MANJUNATHA HOSPITAL
+        </h1>
+        <p className="text-sm text-gray-700 mt-0.5">
+          C.K.PURA, KELAGOTE, BESIDE SBI BANK, CHITRADURGA
+        </p>
         <p className="text-sm text-gray-700">PH NO : 9108453470</p>
       </div>
 
@@ -346,14 +350,11 @@ function PharmacyBilling() {
 
       {/* Main Billing Workspace Grid */}
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_360px] gap-6 items-start">
-
         {/* Left Column: Form & Item Table */}
         <div className="flex flex-col gap-6">
-
           {/* Patient Details Card */}
           <div className="surface-elevated p-5 rounded-2xl flex flex-col gap-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3.5">
-
               <div className="md:col-span-1">
                 <Label htmlFor="patId" className="text-xs font-semibold">
                   Patient ID
@@ -369,7 +370,8 @@ function PharmacyBilling() {
 
               <div className="md:col-span-2 relative" ref={suggestionsContainerRef}>
                 <Label htmlFor="patName" className="text-xs font-semibold">
-                  Patient Name * <span className="text-xs text-muted-foreground">(Letters only)</span>
+                  Patient Name *{" "}
+                  <span className="text-xs text-muted-foreground">(Letters only)</span>
                 </Label>
                 <Input
                   id="patName"
@@ -403,10 +405,11 @@ function PharmacyBilling() {
                           role="option"
                           aria-selected={isActive}
                           onClick={() => selectPatient(p)}
-                          className={`flex flex-col px-3 py-2 cursor-pointer transition-colors ${isActive
-                            ? "bg-accent text-accent-foreground font-medium"
-                            : "text-foreground hover:bg-accent hover:text-accent-foreground"
-                            }`}
+                          className={`flex flex-col px-3 py-2 cursor-pointer transition-colors ${
+                            isActive
+                              ? "bg-accent text-accent-foreground font-medium"
+                              : "text-foreground hover:bg-accent hover:text-accent-foreground"
+                          }`}
                         >
                           <div className="flex justify-between items-center">
                             <span className="font-semibold">{p.name}</span>
@@ -427,7 +430,8 @@ function PharmacyBilling() {
 
               <div className="md:col-span-1">
                 <Label htmlFor="patPhone" className="text-xs font-semibold">
-                  Patient Phone no <span className="text-xs text-muted-foreground">(10 digits)</span>
+                  Patient Phone no{" "}
+                  <span className="text-xs text-muted-foreground">(10 digits)</span>
                 </Label>
                 <Input
                   id="patPhone"
@@ -459,7 +463,6 @@ function PharmacyBilling() {
           {/* Medicine Entry Row Card */}
           <div className="surface-elevated p-5 rounded-2xl flex flex-col gap-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-3 items-end">
-
               <div className="md:col-span-5">
                 <Label htmlFor="medSelect" className="text-xs font-semibold">
                   Medicine Name
@@ -539,25 +542,44 @@ function PharmacyBilling() {
               <table className="min-w-full text-sm">
                 <thead className="bg-muted/40 text-muted-foreground border-b border-border">
                   <tr>
-                    <th className="px-4 py-3.5 text-left font-semibold uppercase text-xs">Medicine Name</th>
-                    <th className="px-4 py-3.5 text-left font-semibold uppercase text-xs w-28">Batch</th>
-                    <th className="px-4 py-3.5 text-left font-semibold uppercase text-xs w-24">Price</th>
-                    <th className="px-4 py-3.5 text-left font-semibold uppercase text-xs w-24">Quantity</th>
-                    <th className="px-4 py-3.5 text-left font-semibold uppercase text-xs w-24">Total</th>
-                    <th className="px-4 py-3.5 text-left font-semibold uppercase text-xs w-24">Disc. %</th>
-                    <th className="px-4 py-3.5 text-left font-semibold uppercase text-xs w-28">Amount</th>
-                    <th className="px-4 py-3.5 text-center font-semibold uppercase text-xs w-20">Edit/Delete</th>
+                    <th className="px-4 py-3.5 text-left font-semibold uppercase text-xs">
+                      Medicine Name
+                    </th>
+                    <th className="px-4 py-3.5 text-left font-semibold uppercase text-xs w-28">
+                      Batch
+                    </th>
+                    <th className="px-4 py-3.5 text-left font-semibold uppercase text-xs w-24">
+                      Price
+                    </th>
+                    <th className="px-4 py-3.5 text-left font-semibold uppercase text-xs w-24">
+                      Quantity
+                    </th>
+                    <th className="px-4 py-3.5 text-left font-semibold uppercase text-xs w-24">
+                      Total
+                    </th>
+                    <th className="px-4 py-3.5 text-left font-semibold uppercase text-xs w-24">
+                      Disc. %
+                    </th>
+                    <th className="px-4 py-3.5 text-left font-semibold uppercase text-xs w-28">
+                      Amount
+                    </th>
+                    <th className="px-4 py-3.5 text-center font-semibold uppercase text-xs w-20">
+                      Edit/Delete
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
                   {billingItems.length > 0 ? (
                     billingItems.map((item, index) => {
                       const baseLineValue = item.price * item.qty;
-                      const discountedLineValue = baseLineValue - (baseLineValue * item.discountPercent) / 100;
+                      const discountedLineValue =
+                        baseLineValue - (baseLineValue * item.discountPercent) / 100;
                       return (
                         <tr key={index} className="hover:bg-muted/30">
                           <td className="px-4 py-3 font-semibold text-slate-800">{item.name}</td>
-                          <td className="px-4 py-3 font-mono text-xs text-muted-foreground">{item.batch}</td>
+                          <td className="px-4 py-3 font-mono text-xs text-muted-foreground">
+                            {item.batch}
+                          </td>
                           <td className="px-4 py-3">₹{item.price}</td>
                           <td className="px-4 py-3">
                             <Input
@@ -575,7 +597,9 @@ function PharmacyBilling() {
                               min="0"
                               max="100"
                               value={item.discountPercent}
-                              onChange={(e) => handleUpdateItemDiscount(index, Number(e.target.value))}
+                              onChange={(e) =>
+                                handleUpdateItemDiscount(index, Number(e.target.value))
+                              }
                               className="h-8 w-16 bg-background p-1 text-center"
                             />
                           </td>
@@ -597,7 +621,10 @@ function PharmacyBilling() {
                     })
                   ) : (
                     <tr>
-                      <td colSpan={8} className="px-4 py-16 text-center text-muted-foreground italic bg-muted/10">
+                      <td
+                        colSpan={8}
+                        className="px-4 py-16 text-center text-muted-foreground italic bg-muted/10"
+                      >
                         No medicines added yet. Select a medicine and click add.
                       </td>
                     </tr>

@@ -43,11 +43,22 @@ function FrontDeskOverview() {
         eyebrow="Front desk"
         title="Reception command center"
         description="Today's footfall, walk-ins and live queue at a glance."
-        actions={<Link to="/frontdesk/register"><Button><UserPlus className="mr-2 h-4 w-4" /> Register patient</Button></Link>}
+        actions={
+          <Link to="/frontdesk/register">
+            <Button>
+              <UserPlus className="mr-2 h-4 w-4" /> Register patient
+            </Button>
+          </Link>
+        }
       />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard label="Today's appointments" value={today.length} icon={CalendarDays} tone="primary" />
+        <StatCard
+          label="Today's appointments"
+          value={today.length}
+          icon={CalendarDays}
+          tone="primary"
+        />
         <StatCard label="Waiting" value={waiting} icon={Hourglass} tone="warning" />
         <StatCard label="In consultation" value={inConsult} icon={Users} tone="info" />
         <StatCard label="Registered today" value={registeredToday} icon={UserPlus} tone="success" />
@@ -63,16 +74,24 @@ function FrontDeskOverview() {
               const d = doctors.find((x) => x.id === a.doctorId);
               return (
                 <div key={a.id} className="flex items-center gap-3 py-3">
-                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary/10 text-xs font-bold text-primary">#{a.token}</span>
+                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary/10 text-xs font-bold text-primary">
+                    #{a.token}
+                  </span>
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-semibold">{p?.name ?? "—"}</p>
-                    <p className="truncate text-xs text-muted-foreground">{d?.name} · {format(new Date(a.date), "p")}</p>
+                    <p className="truncate text-xs text-muted-foreground">
+                      {d?.name} · {format(new Date(a.date), "p")}
+                    </p>
                   </div>
                   <AppointmentStatusChip status={a.status} />
                 </div>
               );
             })}
-            {today.length === 0 && <p className="py-8 text-center text-sm text-muted-foreground">No appointments today.</p>}
+            {today.length === 0 && (
+              <p className="py-8 text-center text-sm text-muted-foreground">
+                No appointments today.
+              </p>
+            )}
           </div>
         </div>
 
@@ -93,22 +112,34 @@ function FrontDeskOverview() {
               return (
                 <div key={entry.id} className="flex items-center gap-3 py-3">
                   <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary/10 text-xs font-bold text-primary">
-                    {entry.patientName.split(" ").map((n) => n[0]).slice(0, 2).join("")}
+                    {entry.patientName
+                      .split(" ")
+                      .map((n) => n[0])
+                      .slice(0, 2)
+                      .join("")}
                   </span>
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-semibold">{entry.patientName}</p>
                     <p className="truncate text-xs text-muted-foreground">
-                      {entry.uhid} · {entry.doctorName} · {formatDistanceToNow(new Date(entry.arrivedAt), { addSuffix: true })}
+                      {entry.uhid} · {entry.doctorName} ·{" "}
+                      {formatDistanceToNow(new Date(entry.arrivedAt), { addSuffix: true })}
                     </p>
                   </div>
-                  <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-semibold", vStatus.color)}>
+                  <span
+                    className={cn(
+                      "rounded-full px-2 py-0.5 text-[10px] font-semibold",
+                      vStatus.color
+                    )}
+                  >
                     {vStatus.label}
                   </span>
                 </div>
               );
             })}
             {pendingQueue.length === 0 && (
-              <p className="py-8 text-center text-sm text-muted-foreground">No patients sent to nurse yet.</p>
+              <p className="py-8 text-center text-sm text-muted-foreground">
+                No patients sent to nurse yet.
+              </p>
             )}
           </div>
         </div>
@@ -118,7 +149,10 @@ function FrontDeskOverview() {
           <h3 className="font-display font-semibold">Doctor availability</h3>
           <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
             {doctors.map((d) => (
-              <div key={d.id} className="flex items-center gap-3 rounded-xl border bg-background/60 px-3 py-2.5">
+              <div
+                key={d.id}
+                className="flex items-center gap-3 rounded-xl border bg-background/60 px-3 py-2.5"
+              >
                 <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary/10 text-xs font-bold text-primary">
                   {d.name.split(" ").slice(-1)[0]?.[0]}
                 </span>
@@ -126,10 +160,14 @@ function FrontDeskOverview() {
                   <p className="truncate text-sm font-semibold">{d.name}</p>
                   <p className="truncate text-xs text-muted-foreground">{d.specialization}</p>
                 </div>
-                <span className={cn(
-                  "rounded-full px-2 py-0.5 text-xs font-semibold",
-                  d.available ? "bg-emerald-500/10 text-emerald-600" : "bg-muted text-muted-foreground"
-                )}>
+                <span
+                  className={cn(
+                    "rounded-full px-2 py-0.5 text-xs font-semibold",
+                    d.available
+                      ? "bg-emerald-500/10 text-emerald-600"
+                      : "bg-muted text-muted-foreground"
+                  )}
+                >
                   {d.available ? "Available" : "Off"}
                 </span>
               </div>

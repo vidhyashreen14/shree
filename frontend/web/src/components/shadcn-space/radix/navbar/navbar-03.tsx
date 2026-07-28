@@ -73,13 +73,15 @@ export default function Navbar03() {
     <div className="w-full border-b border-border bg-background/80 backdrop-blur-md">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between gap-4">
-          
           {/* Logo */}
           <div className="flex items-center gap-8">
             <a href="/" className="relative flex items-center gap-2 group">
               <div className="absolute -left-1.5 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-foreground/90 transition-transform duration-300 group-hover:scale-110" />
               <span className="relative z-10 font-display text-xl font-bold tracking-tight text-background dark:text-foreground pl-1.5 group-hover:text-background transition-colors duration-300">
-                shad<span className="text-foreground dark:text-background group-hover:text-foreground">cnspace.</span>
+                shad
+                <span className="text-foreground dark:text-background group-hover:text-foreground">
+                  cnspace.
+                </span>
               </span>
             </a>
 
@@ -97,7 +99,7 @@ export default function Navbar03() {
               >
                 Find a Doctor
               </a>
-              
+
               {/* Dropdown Link */}
               <div
                 className="relative"
@@ -207,7 +209,6 @@ export default function Navbar03() {
               {isOpen ? <X className="size-5.5" /> : <Menu className="size-5.5" />}
             </button>
           </div>
-
         </div>
       </div>
 
@@ -234,7 +235,7 @@ export default function Navbar03() {
               >
                 Find a Doctor
               </a>
-              
+
               {/* Mobile Services Accordion */}
               <div>
                 <button

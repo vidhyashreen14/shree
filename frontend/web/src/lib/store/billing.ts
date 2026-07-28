@@ -124,9 +124,7 @@ const defaultCategories: BillCategory[] = [
   {
     id: "admission",
     label: "Admission Advance Receipt",
-    items: [
-      { id: "adm-advance", name: "Advance Deposit", amount: 5000, enabled: true },
-    ],
+    items: [{ id: "adm-advance", name: "Advance Deposit", amount: 5000, enabled: true }],
   },
   {
     id: "room",
@@ -199,9 +197,7 @@ const defaultCategories: BillCategory[] = [
   {
     id: "refund",
     label: "Refund Receipt",
-    items: [
-      { id: "ref-amount", name: "Refund Amount", amount: 0, enabled: true },
-    ],
+    items: [{ id: "ref-amount", name: "Refund Amount", amount: 0, enabled: true }],
   },
   {
     id: "misc",
@@ -246,48 +242,55 @@ export const useBillingStore = create<BillingState>()(
       updateItemAmount: (categoryId, itemId, amount) =>
         set((s) => ({
           categories: s.categories.map((cat) =>
-            cat.id !== categoryId ? cat : {
-              ...cat,
-              items: cat.items.map((item) =>
-                item.id !== itemId ? item : { ...item, amount }
-              ),
-            }
+            cat.id !== categoryId
+              ? cat
+              : {
+                  ...cat,
+                  items: cat.items.map((item) => (item.id !== itemId ? item : { ...item, amount })),
+                }
           ),
         })),
 
       toggleItem: (categoryId, itemId, enabled) =>
         set((s) => ({
           categories: s.categories.map((cat) =>
-            cat.id !== categoryId ? cat : {
-              ...cat,
-              items: cat.items.map((item) =>
-                item.id !== itemId ? item : { ...item, enabled }
-              ),
-            }
+            cat.id !== categoryId
+              ? cat
+              : {
+                  ...cat,
+                  items: cat.items.map((item) =>
+                    item.id !== itemId ? item : { ...item, enabled }
+                  ),
+                }
           ),
         })),
 
       addItem: (categoryId, item) =>
         set((s) => ({
           categories: s.categories.map((cat) =>
-            cat.id !== categoryId ? cat : {
-              ...cat,
-              items: [...cat.items, item],
-            }
+            cat.id !== categoryId
+              ? cat
+              : {
+                  ...cat,
+                  items: [...cat.items, item],
+                }
           ),
         })),
 
       removeItem: (categoryId, itemId) =>
         set((s) => ({
           categories: s.categories.map((cat) =>
-            cat.id !== categoryId ? cat : {
-              ...cat,
-              items: cat.items.filter((item) => item.id !== itemId),
-            }
+            cat.id !== categoryId
+              ? cat
+              : {
+                  ...cat,
+                  items: cat.items.filter((item) => item.id !== itemId),
+                }
           ),
         })),
 
-      resetToDefaults: () => set({ categories: defaultCategories, registrationFee: 100, consultationFee: 500 }),
+      resetToDefaults: () =>
+        set({ categories: defaultCategories, registrationFee: 100, consultationFee: 500 }),
     }),
     { name: "medicore-billing-config" }
   )

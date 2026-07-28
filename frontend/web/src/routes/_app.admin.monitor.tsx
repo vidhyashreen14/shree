@@ -4,46 +4,98 @@ import { PageHeader } from "@/components/common/PageHeader";
 import { Button } from "@/components/ui/button";
 import { StatusChip } from "@/components/common/StatusChip";
 import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import {
-  Users, Stethoscope, HeartPulse, Pill, FlaskConical, Shield, Monitor, ArrowRight, X, ExternalLink,
+  Users,
+  Stethoscope,
+  HeartPulse,
+  Pill,
+  FlaskConical,
+  Shield,
+  Monitor,
+  ArrowRight,
+  X,
+  ExternalLink,
 } from "lucide-react";
 import { useCredentials } from "@/lib/store/credentials";
 import { useAuth } from "@/lib/store/auth";
 import type { Role } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
-const ALL_MONITOR_ROLES: { value: Role; label: string; icon: typeof Shield; color: string; path: string; description: string; stats: { label: string; value: string }[] }[] = [
+const ALL_MONITOR_ROLES: {
+  value: Role;
+  label: string;
+  icon: typeof Shield;
+  color: string;
+  path: string;
+  description: string;
+  stats: { label: string; value: string }[];
+}[] = [
   {
-    value: "frontdesk", label: "Front Desk", icon: Users,
-    color: "from-blue-500 to-blue-700", path: "/frontdesk",
+    value: "frontdesk",
+    label: "Front Desk",
+    icon: Users,
+    color: "from-blue-500 to-blue-700",
+    path: "/frontdesk",
     description: "Patient registration, appointments & queue management",
-    stats: [{ label: "Today's check-ins", value: "47" }, { label: "Queue", value: "12" }],
+    stats: [
+      { label: "Today's check-ins", value: "47" },
+      { label: "Queue", value: "12" },
+    ],
   },
   {
-    value: "doctor", label: "Doctor", icon: Stethoscope,
-    color: "from-emerald-500 to-emerald-700", path: "/doctor",
+    value: "doctor",
+    label: "Doctor",
+    icon: Stethoscope,
+    color: "from-emerald-500 to-emerald-700",
+    path: "/doctor",
     description: "Patient consultations, prescriptions & lab orders",
-    stats: [{ label: "In queue", value: "8" }, { label: "Completed", value: "23" }],
+    stats: [
+      { label: "In queue", value: "8" },
+      { label: "Completed", value: "23" },
+    ],
   },
   {
-    value: "nurse", label: "Nurse", icon: HeartPulse,
-    color: "from-pink-500 to-pink-700", path: "/nurse",
+    value: "nurse",
+    label: "Nurse",
+    icon: HeartPulse,
+    color: "from-pink-500 to-pink-700",
+    path: "/nurse",
     description: "Vitals recording, patient observations & triage",
-    stats: [{ label: "Vitals recorded", value: "31" }, { label: "Pending", value: "5" }],
+    stats: [
+      { label: "Vitals recorded", value: "31" },
+      { label: "Pending", value: "5" },
+    ],
   },
   {
-    value: "pharmacy", label: "Pharmacy", icon: Pill,
-    color: "from-amber-500 to-amber-700", path: "/pharmacy",
+    value: "pharmacy",
+    label: "Pharmacy",
+    icon: Pill,
+    color: "from-amber-500 to-amber-700",
+    path: "/pharmacy",
     description: "Medicine dispensing, inventory & billing",
-    stats: [{ label: "Orders today", value: "64" }, { label: "Low stock", value: "3" }],
+    stats: [
+      { label: "Orders today", value: "64" },
+      { label: "Low stock", value: "3" },
+    ],
   },
   {
-    value: "lab", label: "Laboratory", icon: FlaskConical,
-    color: "from-violet-500 to-violet-700", path: "/lab",
+    value: "lab",
+    label: "Laboratory",
+    icon: FlaskConical,
+    color: "from-violet-500 to-violet-700",
+    path: "/lab",
     description: "Lab tests, reports upload & pending work",
-    stats: [{ label: "Pending tests", value: "14" }, { label: "Completed", value: "36" }],
+    stats: [
+      { label: "Pending tests", value: "14" },
+      { label: "Completed", value: "36" },
+    ],
   },
 ];
 
@@ -57,7 +109,13 @@ export const Route = createFileRoute("/_app/admin/monitor")({
   component: MonitorDashboardsPage,
 });
 
-function MonitorModal({ role, onClose }: { role: typeof ALL_MONITOR_ROLES[0] | null; onClose: () => void }) {
+function MonitorModal({
+  role,
+  onClose,
+}: {
+  role: (typeof ALL_MONITOR_ROLES)[0] | null;
+  onClose: () => void;
+}) {
   const navigate = useNavigate();
   const user = useAuth((s) => s.user);
 
@@ -74,7 +132,12 @@ function MonitorModal({ role, onClose }: { role: typeof ALL_MONITOR_ROLES[0] | n
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <span className={cn("grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br text-white", role.color)}>
+            <span
+              className={cn(
+                "grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br text-white",
+                role.color
+              )}
+            >
               <Icon className="h-4 w-4" />
             </span>
             {role.label} Dashboard
@@ -96,14 +159,20 @@ function MonitorModal({ role, onClose }: { role: typeof ALL_MONITOR_ROLES[0] | n
         <div className="rounded-xl border border-blue-200 bg-blue-50 p-3 text-sm text-blue-800 dark:border-blue-800 dark:bg-blue-950/40 dark:text-blue-300">
           <p className="font-semibold">Admin Monitor Mode</p>
           <p className="mt-0.5 text-xs opacity-80">
-            As <span className="font-semibold">{user?.name}</span> (Admin), you have read access to all dashboards. Click "Open Dashboard" to navigate and inspect the full {role.label} view.
+            As <span className="font-semibold">{user?.name}</span> (Admin), you have read access to
+            all dashboards. Click "Open Dashboard" to navigate and inspect the full {role.label}{" "}
+            view.
           </p>
         </div>
 
         <DialogFooter className="gap-2">
-          <Button variant="outline" onClick={onClose}><X className="mr-2 h-4 w-4" />Close</Button>
+          <Button variant="outline" onClick={onClose}>
+            <X className="mr-2 h-4 w-4" />
+            Close
+          </Button>
           <Button onClick={openDashboard} id={`btn-monitor-${role.value}`}>
-            <ExternalLink className="mr-2 h-4 w-4" />Open Dashboard
+            <ExternalLink className="mr-2 h-4 w-4" />
+            Open Dashboard
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -112,7 +181,7 @@ function MonitorModal({ role, onClose }: { role: typeof ALL_MONITOR_ROLES[0] | n
 }
 
 function MonitorDashboardsPage() {
-  const [monitorRole, setMonitorRole] = useState<typeof ALL_MONITOR_ROLES[0] | null>(null);
+  const [monitorRole, setMonitorRole] = useState<(typeof ALL_MONITOR_ROLES)[0] | null>(null);
   const accounts = useCredentials((s) => s.accounts);
 
   return (
@@ -126,13 +195,16 @@ function MonitorDashboardsPage() {
       <MonitorModal role={monitorRole} onClose={() => setMonitorRole(null)} />
 
       <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-300">
-        <strong>Admin Monitor Mode</strong> — As admin, you can open any staff dashboard to observe their workflow in real time. Your admin session remains active.
+        <strong>Admin Monitor Mode</strong> — As admin, you can open any staff dashboard to observe
+        their workflow in real time. Your admin session remains active.
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {ALL_MONITOR_ROLES.map((role) => {
           const Icon = role.icon;
-          const staffCount = accounts.filter(a => a.role === role.value && a.status === "active").length;
+          const staffCount = accounts.filter(
+            (a) => a.role === role.value && a.status === "active"
+          ).length;
           return (
             <div
               key={role.value}
@@ -143,7 +215,12 @@ function MonitorDashboardsPage() {
 
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <span className={cn("grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br text-white shadow-sm", role.color)}>
+                  <span
+                    className={cn(
+                      "grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br text-white shadow-sm",
+                      role.color
+                    )}
+                  >
                     <Icon className="h-5 w-5" />
                   </span>
                   <div>

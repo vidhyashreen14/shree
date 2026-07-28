@@ -6,7 +6,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -16,8 +20,18 @@ import { useNurseQueue } from "@/lib/store/nurseQueue";
 import { useHospitalSettings } from "@/lib/store/hospitalSettings";
 import { doctors } from "@/lib/mock/data";
 import {
-  Search, Printer, Send, MessageSquare, Mail, Phone,
-  IndianRupee, CheckSquare, Square, X, ChevronDown, ChevronUp,
+  Search,
+  Printer,
+  Send,
+  MessageSquare,
+  Mail,
+  Phone,
+  IndianRupee,
+  CheckSquare,
+  Square,
+  X,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import { format } from "date-fns";
 
@@ -25,7 +39,11 @@ export const Route = createFileRoute("/_app/frontdesk/billing")({
   head: () => ({
     meta: [
       { title: "Optional Billing · MediCore Front Desk" },
-      { name: "description", content: "Create and print additional bills for laboratory, radiology, procedures and more." },
+      {
+        name: "description",
+        content:
+          "Create and print additional bills for laboratory, radiology, procedures and more.",
+      },
     ],
   }),
   component: FrontDeskBilling,
@@ -57,7 +75,10 @@ function PrintReceipt({ data, onClose }: { data: ReceiptData; onClose: () => voi
   const handlePrint = () => {
     const content = printRef.current?.innerHTML ?? "";
     const win = window.open("", "_blank");
-    if (!win) { toast.error("Pop-up blocked. Allow pop-ups and try again."); return; }
+    if (!win) {
+      toast.error("Pop-up blocked. Allow pop-ups and try again.");
+      return;
+    }
     win.document.write(`
       <html>
         <head>
@@ -110,7 +131,9 @@ function PrintReceipt({ data, onClose }: { data: ReceiptData; onClose: () => voi
   };
 
   const handleSMS = () => {
-    toast.info("SMS gateway integration required for live SMS dispatch.", { description: "In production, this connects to your SMS provider API." });
+    toast.info("SMS gateway integration required for live SMS dispatch.", {
+      description: "In production, this connects to your SMS provider API.",
+    });
   };
 
   return (
@@ -120,13 +143,28 @@ function PrintReceipt({ data, onClose }: { data: ReceiptData; onClose: () => voi
         <div className="flex items-center justify-between border-b p-4">
           <h2 className="font-display font-bold">Bill Preview — {data.billNo}</h2>
           <div className="flex items-center gap-2">
-            <Button size="sm" variant="outline" onClick={handleWhatsApp} className="text-emerald-600 border-emerald-200 hover:bg-emerald-50">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handleWhatsApp}
+              className="text-emerald-600 border-emerald-200 hover:bg-emerald-50"
+            >
               <MessageSquare className="mr-1.5 h-3.5 w-3.5" /> WhatsApp
             </Button>
-            <Button size="sm" variant="outline" onClick={handleSMS} className="text-blue-600 border-blue-200 hover:bg-blue-50">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handleSMS}
+              className="text-blue-600 border-blue-200 hover:bg-blue-50"
+            >
               <Phone className="mr-1.5 h-3.5 w-3.5" /> SMS
             </Button>
-            <Button size="sm" variant="outline" onClick={handleEmail} className="text-violet-600 border-violet-200 hover:bg-violet-50">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handleEmail}
+              className="text-violet-600 border-violet-200 hover:bg-violet-50"
+            >
               <Mail className="mr-1.5 h-3.5 w-3.5" /> Email
             </Button>
             <Button size="sm" onClick={handlePrint}>
@@ -142,26 +180,69 @@ function PrintReceipt({ data, onClose }: { data: ReceiptData; onClose: () => voi
         <div className="flex-1 overflow-y-auto p-6">
           <div ref={printRef}>
             {/* Header */}
-            <div className="header" style={{ display: "flex", flexDirection: "column", alignItems: "center", borderBottom: "2px solid #0d9488", paddingBottom: 16, marginBottom: 20 }}>
+            <div
+              className="header"
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                borderBottom: "2px solid #0d9488",
+                paddingBottom: 16,
+                marginBottom: 20,
+              }}
+            >
               {logoUrl ? (
-                <img src={logoUrl} alt="Logo" style={{ maxHeight: 50, maxWidth: 150, marginBottom: 8, objectFit: "contain" }} />
+                <img
+                  src={logoUrl}
+                  alt="Logo"
+                  style={{ maxHeight: 50, maxWidth: 150, marginBottom: 8, objectFit: "contain" }}
+                />
               ) : (
-                <div className="logo" style={{ fontSize: 22, fontWeight: 800, color: "#0d9488", letterSpacing: "-0.5px" }}>🏥 {name}</div>
+                <div
+                  className="logo"
+                  style={{
+                    fontSize: 22,
+                    fontWeight: 800,
+                    color: "#0d9488",
+                    letterSpacing: "-0.5px",
+                  }}
+                >
+                  🏥 {name}
+                </div>
               )}
-              {logoUrl && <div style={{ fontSize: 14, fontWeight: 800, color: "#0d9488", marginTop: 2 }}>{name}</div>}
+              {logoUrl && (
+                <div style={{ fontSize: 14, fontWeight: 800, color: "#0d9488", marginTop: 2 }}>
+                  {name}
+                </div>
+              )}
               <div className="subtitle">Multispecialty Hospital · Compassionate Care</div>
-              <div className="addr" style={{ textAlign: "center", fontSize: 11, color: "#555", marginTop: 6 }}>
-                {address}<br />
+              <div
+                className="addr"
+                style={{ textAlign: "center", fontSize: 11, color: "#555", marginTop: 6 }}
+              >
+                {address}
+                <br />
                 📞 {phone} · ✉ {email}
               </div>
             </div>
 
             {/* Bill type badge + number */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: 16,
+              }}
+            >
               <span className="badge">{data.billType}</span>
               <div style={{ textAlign: "right", fontSize: 12 }}>
-                <div><strong>Bill No:</strong> {data.billNo}</div>
-                <div><strong>Date:</strong> {data.date}</div>
+                <div>
+                  <strong>Bill No:</strong> {data.billNo}
+                </div>
+                <div>
+                  <strong>Date:</strong> {data.date}
+                </div>
               </div>
             </div>
 
@@ -169,13 +250,23 @@ function PrintReceipt({ data, onClose }: { data: ReceiptData; onClose: () => voi
             <div className="section-title">Patient Details</div>
             <div className="bill-meta">
               <div className="meta-block">
-                <p><strong>Patient Name:</strong> {data.patientName}</p>
-                <p><strong>Patient ID (UHID):</strong> {data.uhid}</p>
-                <p><strong>Age / Gender:</strong> {data.age} / {data.gender}</p>
+                <p>
+                  <strong>Patient Name:</strong> {data.patientName}
+                </p>
+                <p>
+                  <strong>Patient ID (UHID):</strong> {data.uhid}
+                </p>
+                <p>
+                  <strong>Age / Gender:</strong> {data.age} / {data.gender}
+                </p>
               </div>
               <div className="meta-block" style={{ textAlign: "right" }}>
-                <p><strong>Assigned Consultant:</strong> {data.doctor}</p>
-                <p><strong>Department:</strong> {data.department}</p>
+                <p>
+                  <strong>Assigned Consultant:</strong> {data.doctor}
+                </p>
+                <p>
+                  <strong>Department:</strong> {data.department}
+                </p>
               </div>
             </div>
 
@@ -205,13 +296,21 @@ function PrintReceipt({ data, onClose }: { data: ReceiptData; onClose: () => voi
             </table>
 
             {/* Payment method */}
-            <div style={{ marginTop: 16, padding: "10px 0", borderTop: "1px solid #e2e8f0", fontSize: 12 }}>
+            <div
+              style={{
+                marginTop: 16,
+                padding: "10px 0",
+                borderTop: "1px solid #e2e8f0",
+                fontSize: 12,
+              }}
+            >
               <strong>Payment Method:</strong> {data.paymentMethod.toUpperCase()}
             </div>
 
             {/* Footer */}
             <div className="footer">
-              This is a computer generated bill and does not require a signature.<br />
+              This is a computer generated bill and does not require a signature.
+              <br />
               Thank you for choosing {name}.
             </div>
           </div>
@@ -223,7 +322,13 @@ function PrintReceipt({ data, onClose }: { data: ReceiptData; onClose: () => voi
 
 // ─── Bill Item Row ────────────────────────────────────────────────────────────
 
-function BillItemRow({ item, selected, qty, onToggle, onQtyChange }: {
+function BillItemRow({
+  item,
+  selected,
+  qty,
+  onToggle,
+  onQtyChange,
+}: {
   item: BillLineItem;
   selected: boolean;
   qty: number;
@@ -231,21 +336,37 @@ function BillItemRow({ item, selected, qty, onToggle, onQtyChange }: {
   onQtyChange: (q: number) => void;
 }) {
   return (
-    <div className={cn("flex items-center gap-3 rounded-lg border px-3 py-2.5 transition-all cursor-pointer", selected ? "border-primary bg-primary/5" : "border-border hover:bg-accent/30")}
-      onClick={onToggle}>
-      {selected ? <CheckSquare className="h-4 w-4 text-primary shrink-0" /> : <Square className="h-4 w-4 text-muted-foreground shrink-0" />}
+    <div
+      className={cn(
+        "flex items-center gap-3 rounded-lg border px-3 py-2.5 transition-all cursor-pointer",
+        selected ? "border-primary bg-primary/5" : "border-border hover:bg-accent/30"
+      )}
+      onClick={onToggle}
+    >
+      {selected ? (
+        <CheckSquare className="h-4 w-4 text-primary shrink-0" />
+      ) : (
+        <Square className="h-4 w-4 text-muted-foreground shrink-0" />
+      )}
       <span className="flex-1 text-sm">{item.name}</span>
       {selected && (
         <div className="flex items-center gap-1.5 shrink-0" onClick={(e) => e.stopPropagation()}>
           <Label className="text-xs text-muted-foreground">Qty</Label>
           <Input
-            type="number" min={1} value={qty}
+            type="number"
+            min={1}
+            value={qty}
             onChange={(e) => onQtyChange(Math.max(1, Number(e.target.value)))}
             className="w-14 h-7 text-xs"
           />
         </div>
       )}
-      <span className={cn("text-sm font-semibold shrink-0", selected ? "text-primary" : "text-muted-foreground")}>
+      <span
+        className={cn(
+          "text-sm font-semibold shrink-0",
+          selected ? "text-primary" : "text-muted-foreground"
+        )}
+      >
         ₹{(item.amount * (selected ? qty : 1)).toLocaleString()}
       </span>
     </div>
@@ -254,7 +375,9 @@ function BillItemRow({ item, selected, qty, onToggle, onQtyChange }: {
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
-interface Selection { [itemId: string]: { selected: boolean; qty: number } }
+interface Selection {
+  [itemId: string]: { selected: boolean; qty: number };
+}
 
 function FrontDeskBilling() {
   const { categories, registrationFee, consultationFee } = useBillingStore();
@@ -262,7 +385,9 @@ function FrontDeskBilling() {
   const queue = useNurseQueue((s) => s.queue);
 
   const [patientSearch, setPatientSearch] = useState("");
-  const [selectedPatient, setSelectedPatient] = useState<ReturnType<typeof searchPatients>[0] | null>(null);
+  const [selectedPatient, setSelectedPatient] = useState<
+    ReturnType<typeof searchPatients>[0] | null
+  >(null);
   const [selectedDoctorId, setSelectedDoctorId] = useState("");
   const [selectedCategoryId, setSelectedCategoryId] = useState("");
   const [selections, setSelections] = useState<Selection>({});
@@ -278,7 +403,10 @@ function FrontDeskBilling() {
     ? selectedCategory.items.filter((i) => i.enabled && selections[i.id]?.selected)
     : [];
 
-  const total = selectedItems.reduce((sum, item) => sum + item.amount * (selections[item.id]?.qty ?? 1), 0);
+  const total = selectedItems.reduce(
+    (sum, item) => sum + item.amount * (selections[item.id]?.qty ?? 1),
+    0
+  );
 
   const toggleItem = (itemId: string) => {
     setSelections((prev) => ({
@@ -292,9 +420,18 @@ function FrontDeskBilling() {
   };
 
   const handleGenerateBill = () => {
-    if (!selectedPatient) { toast.error("Select a patient first"); return; }
-    if (!selectedCategoryId) { toast.error("Select a bill type"); return; }
-    if (selectedItems.length === 0) { toast.error("Select at least one item"); return; }
+    if (!selectedPatient) {
+      toast.error("Select a patient first");
+      return;
+    }
+    if (!selectedCategoryId) {
+      toast.error("Select a bill type");
+      return;
+    }
+    if (selectedItems.length === 0) {
+      toast.error("Select at least one item");
+      return;
+    }
 
     const doctor = doctors.find((d) => d.id === selectedDoctorId);
     const category = categories.find((c) => c.id === selectedCategoryId);
@@ -331,7 +468,10 @@ function FrontDeskBilling() {
       {receipt && (
         <PrintReceipt
           data={receipt}
-          onClose={() => { setReceipt(null); toast.success("Bill closed. Ready for next patient."); }}
+          onClose={() => {
+            setReceipt(null);
+            toast.success("Bill closed. Ready for next patient.");
+          }}
         />
       )}
 
@@ -344,13 +484,27 @@ function FrontDeskBilling() {
             {selectedPatient ? (
               <div className="flex items-center gap-3 rounded-xl border bg-primary/5 border-primary/30 p-3">
                 <span className="grid h-10 w-10 place-items-center rounded-full bg-primary text-primary-foreground text-sm font-bold">
-                  {selectedPatient.name.split(" ").map((n) => n[0]).slice(0, 2).join("")}
+                  {selectedPatient.name
+                    .split(" ")
+                    .map((n) => n[0])
+                    .slice(0, 2)
+                    .join("")}
                 </span>
                 <div className="flex-1 min-w-0">
                   <p className="font-semibold text-sm truncate">{selectedPatient.name}</p>
-                  <p className="text-xs text-muted-foreground">{selectedPatient.mrn} · {selectedPatient.age}y</p>
+                  <p className="text-xs text-muted-foreground">
+                    {selectedPatient.mrn} · {selectedPatient.age}y
+                  </p>
                 </div>
-                <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => { setSelectedPatient(null); setPatientSearch(""); }}>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-8 w-8"
+                  onClick={() => {
+                    setSelectedPatient(null);
+                    setPatientSearch("");
+                  }}
+                >
                   <X className="h-3.5 w-3.5" />
                 </Button>
               </div>
@@ -371,22 +525,33 @@ function FrontDeskBilling() {
                       <button
                         key={p.id}
                         type="button"
-                        onClick={() => { setSelectedPatient(p); setPatientSearch(""); }}
+                        onClick={() => {
+                          setSelectedPatient(p);
+                          setPatientSearch("");
+                        }}
                         className="flex w-full items-center gap-3 px-3 py-2.5 hover:bg-accent/40 text-left text-sm"
                       >
                         <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary/10 text-xs font-bold text-primary">
-                          {p.name.split(" ").map((n) => n[0]).slice(0, 2).join("")}
+                          {p.name
+                            .split(" ")
+                            .map((n) => n[0])
+                            .slice(0, 2)
+                            .join("")}
                         </span>
                         <div>
                           <p className="font-medium">{p.name}</p>
-                          <p className="text-xs text-muted-foreground">{p.mrn} · {p.phone}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {p.mrn} · {p.phone}
+                          </p>
                         </div>
                       </button>
                     ))}
                   </div>
                 )}
                 {patientSearch.length >= 2 && searchResults.length === 0 && (
-                  <p className="text-xs text-center text-muted-foreground py-3">No results for "{patientSearch}"</p>
+                  <p className="text-xs text-center text-muted-foreground py-3">
+                    No results for "{patientSearch}"
+                  </p>
                 )}
               </div>
             )}
@@ -396,10 +561,14 @@ function FrontDeskBilling() {
           <div className="surface-elevated p-5">
             <h3 className="font-display font-semibold mb-3">Assigned Doctor</h3>
             <Select value={selectedDoctorId} onValueChange={setSelectedDoctorId}>
-              <SelectTrigger><SelectValue placeholder="Select doctor…" /></SelectTrigger>
+              <SelectTrigger>
+                <SelectValue placeholder="Select doctor…" />
+              </SelectTrigger>
               <SelectContent>
                 {doctors.map((d) => (
-                  <SelectItem key={d.id} value={d.id}>{d.name} — {d.department}</SelectItem>
+                  <SelectItem key={d.id} value={d.id}>
+                    {d.name} — {d.department}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -413,7 +582,10 @@ function FrontDeskBilling() {
                 <button
                   key={cat.id}
                   type="button"
-                  onClick={() => { setSelectedCategoryId(cat.id); setSelections({}); }}
+                  onClick={() => {
+                    setSelectedCategoryId(cat.id);
+                    setSelections({});
+                  }}
                   className={cn(
                     "flex w-full items-center gap-2 rounded-lg border px-3 py-2.5 text-left text-sm transition-all",
                     selectedCategoryId === cat.id
@@ -457,24 +629,32 @@ function FrontDeskBilling() {
             <div className="surface-elevated flex flex-col items-center justify-center py-20 text-center">
               <IndianRupee className="h-10 w-10 text-muted-foreground mb-3" />
               <p className="font-semibold">Select a bill type</p>
-              <p className="text-sm text-muted-foreground mt-1">Choose from the list on the left to see available items</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                Choose from the list on the left to see available items
+              </p>
             </div>
           ) : (
             <div className="surface-elevated p-5">
-              <h3 className="font-display font-semibold mb-4">{selectedCategory?.label} — Select Items</h3>
+              <h3 className="font-display font-semibold mb-4">
+                {selectedCategory?.label} — Select Items
+              </h3>
               <div className="space-y-2">
-                {selectedCategory?.items.filter((i) => i.enabled).map((item) => (
-                  <BillItemRow
-                    key={item.id}
-                    item={item}
-                    selected={!!selections[item.id]?.selected}
-                    qty={selections[item.id]?.qty ?? 1}
-                    onToggle={() => toggleItem(item.id)}
-                    onQtyChange={(q) => setQty(item.id, q)}
-                  />
-                ))}
+                {selectedCategory?.items
+                  .filter((i) => i.enabled)
+                  .map((item) => (
+                    <BillItemRow
+                      key={item.id}
+                      item={item}
+                      selected={!!selections[item.id]?.selected}
+                      qty={selections[item.id]?.qty ?? 1}
+                      onToggle={() => toggleItem(item.id)}
+                      onQtyChange={(q) => setQty(item.id, q)}
+                    />
+                  ))}
                 {selectedCategory?.items.filter((i) => i.enabled).length === 0 && (
-                  <p className="py-6 text-center text-sm text-muted-foreground">No active items in this category.</p>
+                  <p className="py-6 text-center text-sm text-muted-foreground">
+                    No active items in this category.
+                  </p>
                 )}
               </div>
             </div>
@@ -487,8 +667,13 @@ function FrontDeskBilling() {
               <div className="space-y-2">
                 {selectedItems.map((item) => (
                   <div key={item.id} className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">{item.name} {(selections[item.id]?.qty ?? 1) > 1 && `× ${selections[item.id]?.qty}`}</span>
-                    <span className="font-medium">₹{(item.amount * (selections[item.id]?.qty ?? 1)).toLocaleString()}</span>
+                    <span className="text-muted-foreground">
+                      {item.name}{" "}
+                      {(selections[item.id]?.qty ?? 1) > 1 && `× ${selections[item.id]?.qty}`}
+                    </span>
+                    <span className="font-medium">
+                      ₹{(item.amount * (selections[item.id]?.qty ?? 1)).toLocaleString()}
+                    </span>
                   </div>
                 ))}
                 <div className="my-2 border-t border-dashed" />
@@ -509,7 +694,9 @@ function FrontDeskBilling() {
                 Generate &amp; Print Bill
               </Button>
               {!selectedPatient && (
-                <p className="mt-2 text-center text-xs text-muted-foreground">Select a patient to generate the bill</p>
+                <p className="mt-2 text-center text-xs text-muted-foreground">
+                  Select a patient to generate the bill
+                </p>
               )}
             </div>
           )}

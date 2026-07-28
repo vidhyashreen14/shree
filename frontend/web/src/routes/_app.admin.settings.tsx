@@ -6,6 +6,11 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import {
+  allowOnlyHospitalNameChars,
+  allowOnlyNumbers,
+  allowOnlyAddressChars,
+} from "@/lib/validations";
 import { useState } from "react";
 import { useFeeSettings } from "@/lib/store/feeSettings";
 import { useHospitalSettings } from "@/lib/store/hospitalSettings";
@@ -83,54 +88,65 @@ function HospitalSettings() {
 
   return (
     <>
-      <PageHeader eyebrow="Configuration" title="Hospital settings" description="Branding, fee structure, operational policy, and notifications." />
+      <PageHeader
+        eyebrow="Configuration"
+        title="Hospital settings"
+        description="Branding, fee structure, operational policy, and notifications."
+      />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Hospital Profile */}
         <div className="surface-elevated p-6 lg:col-span-2">
           <h3 className="font-display font-semibold">Hospital profile</h3>
-          <p className="text-xs text-muted-foreground">Information shown on prescriptions and reports.</p>
-          <form
-            className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2"
-            onSubmit={saveProfile}
-          >
+          <p className="text-xs text-muted-foreground">
+            Information shown on prescriptions and reports.
+          </p>
+          <form className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2" onSubmit={saveProfile}>
             {/* Hospital Logo Section */}
             <div className="sm:col-span-2 flex flex-col sm:flex-row items-center gap-6 pb-6 mb-2 border-b border-border">
               <div className="relative flex h-24 w-24 shrink-0 items-center justify-center rounded-2xl border-2 border-dashed border-border bg-muted/20 overflow-hidden group hover:border-primary/50 transition-colors">
                 {logoUrl ? (
-                  <img src={logoUrl} alt="Hospital Logo" className="h-full w-full object-contain p-2" />
+                  <img
+                    src={logoUrl}
+                    alt="Hospital Logo"
+                    className="h-full w-full object-contain p-2"
+                  />
                 ) : (
                   <div className="text-center p-3">
                     <span className="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-primary mx-auto mb-1 text-lg">
                       🏥
                     </span>
-                    <span className="text-[10px] text-muted-foreground font-medium">Default Brand</span>
+                    <span className="text-[10px] text-muted-foreground font-medium">
+                      Default Brand
+                    </span>
                   </div>
                 )}
               </div>
-              
+
               <div className="flex-1 text-center sm:text-left space-y-2.5">
                 <div>
                   <h4 className="text-sm font-semibold">Hospital Logo</h4>
-                  <p className="text-xs text-muted-foreground">This logo will appear on prescriptions, invoices, and the dashboard sidebar.</p>
+                  <p className="text-xs text-muted-foreground">
+                    This logo will appear on prescriptions, invoices, and the dashboard sidebar.
+                  </p>
                 </div>
                 <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
                   <label className="cursor-pointer inline-flex items-center gap-1.5 h-9 rounded-lg bg-primary px-4 text-xs font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90">
                     <UploadCloud className="h-3.5 w-3.5" />
                     Upload Logo
-                    <input 
-                      type="file" 
-                      accept="image/*" 
-                      className="hidden" 
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
                       onChange={handleLogoChange}
                     />
                   </label>
                   {logoUrl && (
-                    <Button 
-                      type="button" 
-                      variant="outline" 
-                      size="sm" 
-                      className="h-9 rounded-lg text-destructive hover:bg-destructive/10 hover:text-destructive" 
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="h-9 rounded-lg text-destructive hover:bg-destructive/10 hover:text-destructive"
                       onClick={() => {
                         setLogoUrl("");
                         toast.success("Logo removed from preview");
@@ -145,27 +161,61 @@ function HospitalSettings() {
 
             <div className="sm:col-span-2">
               <Label htmlFor="hosp-name">Hospital name</Label>
-              <Input id="hosp-name" value={name} onChange={(e) => setName(e.target.value)} className="mt-1.5" />
+              <Input
+                id="hosp-name"
+                value={name}
+                maxLength={150}
+                onChange={(e) => setName(allowOnlyHospitalNameChars(e.target.value))}
+                className="mt-1.5"
+              />
             </div>
             <div>
               <Label htmlFor="hosp-phone">Phone</Label>
-              <Input id="hosp-phone" value={phone} onChange={(e) => setPhone(e.target.value)} className="mt-1.5" />
+              <Input
+                id="hosp-phone"
+                value={phone}
+                maxLength={10}
+                onChange={(e) => setPhone(allowOnlyNumbers(e.target.value))}
+                className="mt-1.5"
+              />
             </div>
             <div>
               <Label htmlFor="hosp-email">Email</Label>
-              <Input id="hosp-email" value={email} onChange={(e) => setEmail(e.target.value)} className="mt-1.5" />
+              <Input
+                id="hosp-email"
+                value={email}
+                maxLength={100}
+                onChange={(e) => setEmail(e.target.value.replace(/\s/g, ""))}
+                className="mt-1.5"
+              />
             </div>
             <div className="sm:col-span-2">
               <Label htmlFor="hosp-address">Address</Label>
-              <Textarea id="hosp-address" value={address} onChange={(e) => setAddress(e.target.value)} className="mt-1.5" />
+              <Textarea
+                id="hosp-address"
+                value={address}
+                maxLength={250}
+                onChange={(e) => setAddress(allowOnlyAddressChars(e.target.value))}
+                className="mt-1.5"
+              />
             </div>
             <div>
               <Label htmlFor="hosp-gst">GST number</Label>
-              <Input id="hosp-gst" value={gstNumber} onChange={(e) => setGstNumber(e.target.value)} className="mt-1.5" />
+              <Input
+                id="hosp-gst"
+                value={gstNumber}
+                onChange={(e) => setGstNumber(e.target.value)}
+                className="mt-1.5"
+              />
             </div>
             <div>
               <Label htmlFor="hosp-license">License number</Label>
-              <Input id="hosp-license" value={licenseNumber} onChange={(e) => setLicenseNumber(e.target.value)} className="mt-1.5" />
+              <Input
+                id="hosp-license"
+                value={licenseNumber}
+                onChange={(e) => setLicenseNumber(e.target.value)}
+                className="mt-1.5"
+              />
             </div>
             <div className="sm:col-span-2 mt-2 flex justify-end">
               <Button type="submit">Save changes</Button>
@@ -212,9 +262,13 @@ function HospitalSettings() {
           <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
               <Label htmlFor="reg-fee">Registration fee (₹)</Label>
-              <p className="text-xs text-muted-foreground mb-1.5">Charged once for new patients only</p>
+              <p className="text-xs text-muted-foreground mb-1.5">
+                Charged once for new patients only
+              </p>
               <div className="relative">
-                <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted-foreground text-sm">₹</span>
+                <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted-foreground text-sm">
+                  ₹
+                </span>
                 <Input
                   id="reg-fee"
                   type="number"
@@ -228,9 +282,13 @@ function HospitalSettings() {
 
             <div>
               <Label htmlFor="cons-fee">Consultation fee (₹)</Label>
-              <p className="text-xs text-muted-foreground mb-1.5">Charged per visit for all patients</p>
+              <p className="text-xs text-muted-foreground mb-1.5">
+                Charged per visit for all patients
+              </p>
               <div className="relative">
-                <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted-foreground text-sm">₹</span>
+                <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted-foreground text-sm">
+                  ₹
+                </span>
                 <Input
                   id="cons-fee"
                   type="number"
@@ -259,7 +317,9 @@ function HospitalSettings() {
                 <div className="my-2 border-t border-dashed" />
                 <div className="flex justify-between font-bold">
                   <span>Total (new patient)</span>
-                  <span className="text-primary">₹{(Number(regFee) || 0) + (Number(consFee) || 0)}</span>
+                  <span className="text-primary">
+                    ₹{(Number(regFee) || 0) + (Number(consFee) || 0)}
+                  </span>
                 </div>
                 <div className="flex justify-between text-xs text-muted-foreground mt-1">
                   <span>Returning patient (consultation only)</span>
@@ -269,7 +329,13 @@ function HospitalSettings() {
             </div>
 
             <div className="sm:col-span-2 flex justify-end gap-2">
-              <Button variant="outline" onClick={() => { setRegFee(String(registrationFee)); setConsFee(String(consultationFee)); }}>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setRegFee(String(registrationFee));
+                  setConsFee(String(consultationFee));
+                }}
+              >
                 Reset
               </Button>
               <Button onClick={saveFees} id="btn-save-fees">

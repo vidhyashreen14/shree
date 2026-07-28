@@ -7,17 +7,17 @@ import "./styles.css";
 const router = getRouter();
 
 declare module "@tanstack/react-router" {
-    interface Register {
-        router: ReturnType<typeof getRouter>;
-    }
+  interface Register {
+    router: ReturnType<typeof getRouter>;
+  }
 }
 
 const rootElement = document.getElementById("root");
 if (rootElement && !rootElement.innerHTML) {
-    const root = ReactDOM.createRoot(rootElement);
-    root.render(
-        <React.StrictMode>
-        <RouterProvider router={ router } />
+  const root = ReactDOM.createRoot(rootElement);
+  root.render(
+    <React.StrictMode>
+      <RouterProvider router={router} />
     </React.StrictMode>
-    );
+  );
 }

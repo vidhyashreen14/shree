@@ -1,4 +1,4 @@
-export type Role = 'admin' | 'doctor' | 'frontdesk' | 'nurse' | 'pharmacy' | 'lab';
+export type Role = "admin" | "doctor" | "frontdesk" | "nurse" | "pharmacy" | "lab";
 
 export interface User {
   id: string;
@@ -35,8 +35,9 @@ export interface Patient {
   assignedDoctorId: string;
 }
 
-export type AppointmentStatus = 'scheduled' | 'checked-in' | 'in-consultation' | 'completed' | 'cancelled' | 'no-show';
-export type AppointmentType = 'consultation' | 'follow-up' | 'walk-in' | 'tele';
+export type AppointmentStatus =
+  "scheduled" | "checked-in" | "in-consultation" | "completed" | "cancelled" | "no-show";
+export type AppointmentType = "consultation" | "follow-up" | "walk-in" | "tele";
 
 export interface Appointment {
   id: string;
@@ -84,7 +85,7 @@ export interface Prescription {
   advice: string;
 }
 
-export type LabOrderStatus = 'ordered' | 'sample-collected' | 'in-progress' | 'completed';
+export type LabOrderStatus = "ordered" | "sample-collected" | "in-progress" | "completed";
 
 export interface LabOrder {
   id: string;
@@ -179,7 +180,6 @@ export interface NurseQueueEntry {
   vitals?: NurseVitals;
   consultStatus?: "waiting" | "in-consultation" | "completed" | "cancelled";
 }
-
 
 export interface VisitRecord {
   id: string;

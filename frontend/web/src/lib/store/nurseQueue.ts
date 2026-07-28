@@ -17,8 +17,7 @@ export const useNurseQueue = create<NurseQueueState>()(
     (set) => ({
       queue: [],
 
-      addToQueue: (entry) =>
-        set((s) => ({ queue: [entry, ...s.queue] })),
+      addToQueue: (entry) => set((s) => ({ queue: [entry, ...s.queue] })),
 
       markVitalsStatus: (id, status) =>
         set((s) => ({
@@ -27,7 +26,9 @@ export const useNurseQueue = create<NurseQueueState>()(
 
       saveVitals: (id, vitals) =>
         set((s) => ({
-          queue: s.queue.map((e) => (e.id === id ? { ...e, vitals, vitalsStatus: "done", consultStatus: "waiting" } : e)),
+          queue: s.queue.map((e) =>
+            e.id === id ? { ...e, vitals, vitalsStatus: "done", consultStatus: "waiting" } : e
+          ),
         })),
 
       markConsultStatus: (id, status) =>
@@ -35,11 +36,9 @@ export const useNurseQueue = create<NurseQueueState>()(
           queue: s.queue.map((e) => (e.id === id ? { ...e, consultStatus: status } : e)),
         })),
 
-      removeFromQueue: (id) =>
-        set((s) => ({ queue: s.queue.filter((e) => e.id !== id) })),
+      removeFromQueue: (id) => set((s) => ({ queue: s.queue.filter((e) => e.id !== id) })),
 
-      clearDone: () =>
-        set((s) => ({ queue: s.queue.filter((e) => e.vitalsStatus !== "done") })),
+      clearDone: () => set((s) => ({ queue: s.queue.filter((e) => e.vitalsStatus !== "done") })),
     }),
     { name: "medicore-nurse-queue" }
   )

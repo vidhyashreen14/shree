@@ -1,4 +1,9 @@
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { cn } from "@/lib/utils";
 import { FileText, Folder, LucideIcon, Settings, Users } from "lucide-react";
 
@@ -35,8 +40,7 @@ const data: {
     value: "settings",
     title: "Settings",
     subtitle: "Customize your experience",
-    content:
-      "Adjust preferences, update account details, and configure application behavior.",
+    content: "Adjust preferences, update account details, and configure application behavior.",
     icon: Settings,
     textColor: "text-teal-400",
     bgColor: "bg-teal-400/10",
@@ -45,8 +49,7 @@ const data: {
     value: "team",
     title: "Team Members",
     subtitle: "Manage users and roles",
-    content:
-      "Invite new members, assign roles, and control access permissions for your team.",
+    content: "Invite new members, assign roles, and control access permissions for your team.",
     icon: Users,
     textColor: "text-red-500",
     bgColor: "bg-red-500/10",
@@ -55,8 +58,8 @@ const data: {
 
 const AccordionDemo = () => (
   <div className="flex items-center justify-center max-w-md w-full">
-<Accordion
-      type="single" 
+    <Accordion
+      type="single"
       collapsible
       className="w-full -space-y-px"
       defaultValue={data[0]?.value}
@@ -80,20 +83,16 @@ const AccordionDemo = () => (
                 >
                   <Icon className="h-5 w-5" />
                 </div>
-                
+
                 <div className="flex flex-col items-start text-left">
                   <span className="font-medium">{item.title}</span>
-                  <span className="text-sm font-normal text-muted-foreground">
-                    {item.subtitle}
-                  </span>
+                  <span className="text-sm font-normal text-muted-foreground">{item.subtitle}</span>
                 </div>
               </div>
             </AccordionTrigger>
-            
+
             <AccordionContent className="ps-14 pb-4">
-              <p className="text-muted-foreground leading-relaxed">
-                {item.content}
-              </p>
+              <p className="text-muted-foreground leading-relaxed">{item.content}</p>
             </AccordionContent>
           </AccordionItem>
         );

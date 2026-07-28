@@ -51,7 +51,9 @@ interface PurchaseOrderHistory {
 
 const initialOrders: PurchaseOrderHistory[] = Array.from({ length: 8 }).map((_, i) => ({
   id: `PO-${5000 + i}`,
-  supplier: ["MedPlus Distributors", "Apollo Wholesale", "PharmEasy Bulk", "Wellness Stockists"][i % 4]!,
+  supplier: ["MedPlus Distributors", "Apollo Wholesale", "PharmEasy Bulk", "Wellness Stockists"][
+    i % 4
+  ]!,
   items: 8 + (i % 14),
   total: 12000 + i * 4500,
   status: (["draft", "placed", "shipped", "received"] as const)[i % 4]!,
@@ -177,29 +179,30 @@ function PharmacyOrders() {
     }
 
     // Generate the print content
-    const printWindow = window.open('', '_blank', 'width=1200,height=800');
+    const printWindow = window.open("", "_blank", "width=1200,height=800");
     if (!printWindow) {
       toast.error("Please allow popups to print.");
       return;
     }
 
     const poNumber = `PO-${Date.now().toString().slice(-6)}`;
-    const formattedDate = new Date(orderDate).toLocaleDateString('en-IN', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
+    const formattedDate = new Date(orderDate).toLocaleDateString("en-IN", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
     });
-    const expectedDelivery = new Date(new Date(orderDate).setDate(new Date(orderDate).getDate() + 7))
-      .toLocaleDateString('en-IN', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
-      });
+    const expectedDelivery = new Date(
+      new Date(orderDate).setDate(new Date(orderDate).getDate() + 7)
+    ).toLocaleDateString("en-IN", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
 
     // Calculate totals
     let subtotal = 0;
-    const itemsWithPrices = addedItems.map(item => {
-      const medInfo = medicines.find(m => m.id === item.id);
+    const itemsWithPrices = addedItems.map((item) => {
+      const medInfo = medicines.find((m) => m.id === item.id);
       const unitPrice = medInfo?.pricePerUnit || 10;
       const total = item.totalUnits * unitPrice;
       subtotal += total;
@@ -418,7 +421,9 @@ function PharmacyOrders() {
                 </tr>
               </thead>
               <tbody>
-                ${itemsWithPrices.map(item => `
+                ${itemsWithPrices
+                  .map(
+                    (item) => `
                   <tr>
                     <td><span class="fw-600">${item.medicineName}</span> – strip</td>
                     <td class="text-center">${item.unitsPerStrip}</td>
@@ -426,7 +431,9 @@ function PharmacyOrders() {
                     <td class="text-right">₹${item.unitPrice.toFixed(2)}</td>
                     <td class="text-right">₹${item.total.toFixed(2)}</td>
                   </tr>
-                `).join('')}
+                `
+                  )
+                  .join("")}
               </tbody>
               <tfoot>
                 <tr>
@@ -509,7 +516,9 @@ function PharmacyOrders() {
           <div className="surface-elevated p-6 rounded-2xl flex flex-col gap-4">
             <div className="flex items-center gap-2 border-b border-border pb-3">
               <ShoppingCart className="h-5 w-5 text-primary" />
-              <h2 className="font-display text-lg font-bold text-foreground">Create Purchase Order</h2>
+              <h2 className="font-display text-lg font-bold text-foreground">
+                Create Purchase Order
+              </h2>
             </div>
 
             {/* All fields in one grid */}
@@ -600,18 +609,10 @@ function PharmacyOrders() {
 
             {/* Action Buttons for Add/Clear */}
             <div className="flex gap-2 justify-start mt-2">
-              <Button
-                type="button"
-                onClick={handleAddItem}
-                className="px-5"
-              >
+              <Button type="button" onClick={handleAddItem} className="px-5">
                 <Plus className="mr-1 h-4 w-4" /> Add
               </Button>
-              <Button
-                type="button"
-                onClick={handleClearItemRow}
-                className="px-5"
-              >
+              <Button type="button" onClick={handleClearItemRow} className="px-5">
                 <X className="mr-1 h-4 w-4" /> Clear
               </Button>
             </div>
@@ -623,11 +624,21 @@ function PharmacyOrders() {
               <table className="min-w-full text-sm">
                 <thead className="bg-muted/40 text-muted-foreground border-b border-border">
                   <tr>
-                    <th className="px-4 py-3.5 text-left font-semibold uppercase text-xs">Medicine</th>
-                    <th className="px-4 py-3.5 text-left font-semibold uppercase text-xs">Units/Strip</th>
-                    <th className="px-4 py-3.5 text-left font-semibold uppercase text-xs">No. Of Strips</th>
-                    <th className="px-4 py-3.5 text-left font-semibold uppercase text-xs">Total Units</th>
-                    <th className="px-4 py-3.5 text-center font-semibold uppercase text-xs w-28">Action</th>
+                    <th className="px-4 py-3.5 text-left font-semibold uppercase text-xs">
+                      Medicine
+                    </th>
+                    <th className="px-4 py-3.5 text-left font-semibold uppercase text-xs">
+                      Units/Strip
+                    </th>
+                    <th className="px-4 py-3.5 text-left font-semibold uppercase text-xs">
+                      No. Of Strips
+                    </th>
+                    <th className="px-4 py-3.5 text-left font-semibold uppercase text-xs">
+                      Total Units
+                    </th>
+                    <th className="px-4 py-3.5 text-center font-semibold uppercase text-xs w-28">
+                      Action
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
@@ -655,7 +666,10 @@ function PharmacyOrders() {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={5} className="px-4 py-10 text-center text-muted-foreground italic bg-muted/10">
+                      <td
+                        colSpan={5}
+                        className="px-4 py-10 text-center text-muted-foreground italic bg-muted/10"
+                      >
                         No items added yet. Add medicines using the form above.
                       </td>
                     </tr>
@@ -667,32 +681,16 @@ function PharmacyOrders() {
 
           {/* Action buttons — consistent with theme */}
           <div className="flex flex-wrap gap-3 justify-start mt-2">
-            <Button
-              type="button"
-              onClick={handleSaveOrder}
-              className="px-6 font-semibold"
-            >
+            <Button type="button" onClick={handleSaveOrder} className="px-6 font-semibold">
               <Save className="mr-2 h-4 w-4" /> Save Order
             </Button>
-            <Button
-              type="button"
-              onClick={handlePrint}
-              className="px-6 font-semibold"
-            >
+            <Button type="button" onClick={handlePrint} className="px-6 font-semibold">
               <Printer className="mr-2 h-4 w-4" /> Print
             </Button>
-            <Button
-              type="button"
-              onClick={handleDownload}
-              className="px-6 font-semibold"
-            >
+            <Button type="button" onClick={handleDownload} className="px-6 font-semibold">
               <Download className="mr-2 h-4 w-4" /> Download
             </Button>
-            <Button
-              type="button"
-              onClick={handleCancel}
-              className="px-6 font-semibold"
-            >
+            <Button type="button" onClick={handleCancel} className="px-6 font-semibold">
               <X className="mr-2 h-4 w-4" /> Cancel
             </Button>
           </div>
@@ -704,14 +702,16 @@ function PharmacyOrders() {
             <table className="min-w-full divide-y divide-border text-sm">
               <thead className="bg-muted/40">
                 <tr>
-                  {["Order ID", "Supplier", "Items Count", "Total Value", "Status", "Date"].map((h) => (
-                    <th
-                      key={h}
-                      className="px-4 py-3.5 text-left text-xs font-semibold uppercase text-muted-foreground"
-                    >
-                      {h}
-                    </th>
-                  ))}
+                  {["Order ID", "Supplier", "Items Count", "Total Value", "Status", "Date"].map(
+                    (h) => (
+                      <th
+                        key={h}
+                        className="px-4 py-3.5 text-left text-xs font-semibold uppercase text-muted-foreground"
+                      >
+                        {h}
+                      </th>
+                    )
+                  )}
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
@@ -736,4 +736,4 @@ function PharmacyOrders() {
       )}
     </div>
   );
-} 
+}

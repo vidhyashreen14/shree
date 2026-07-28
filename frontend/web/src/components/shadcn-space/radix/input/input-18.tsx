@@ -12,9 +12,7 @@ const InputDisabledDemo = () => {
         placeholder="ACC-987654321"
         disabled
       />
-      <p className="text-xs text-muted-foreground">
-        This field cannot be edited.
-      </p>
+      <p className="text-xs text-muted-foreground">This field cannot be edited.</p>
     </div>
   );
 };

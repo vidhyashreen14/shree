@@ -1,6 +1,11 @@
 import {
-  type ColumnDef, flexRender, getCoreRowModel, getFilteredRowModel,
-  getPaginationRowModel, getSortedRowModel, useReactTable,
+  type ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
 } from "@tanstack/react-table";
 import { useState } from "react";
 import { ChevronLeft, ChevronRight, Search } from "lucide-react";
@@ -16,7 +21,11 @@ interface Props<T> {
 }
 
 export function DataTable<T>({
-  columns, data, searchKey, searchPlaceholder = "Search…", pageSize = 8,
+  columns,
+  data,
+  searchKey,
+  searchPlaceholder = "Search…",
+  pageSize = 8,
 }: Props<T>) {
   const [filter, setFilter] = useState("");
   const table = useReactTable({
@@ -32,7 +41,9 @@ export function DataTable<T>({
     globalFilterFn: (row, _id, value) => {
       const v = String(value).toLowerCase();
       if (searchKey) {
-        return String(row.getValue(searchKey) ?? "").toLowerCase().includes(v);
+        return String(row.getValue(searchKey) ?? "")
+          .toLowerCase()
+          .includes(v);
       }
       return Object.values(row.original as Record<string, unknown>)
         .map((x) => String(x ?? "").toLowerCase())
@@ -76,7 +87,10 @@ export function DataTable<T>({
           <tbody className="divide-y divide-border">
             {table.getRowModel().rows.length === 0 ? (
               <tr>
-                <td colSpan={columns.length} className="px-4 py-10 text-center text-sm text-muted-foreground">
+                <td
+                  colSpan={columns.length}
+                  className="px-4 py-10 text-center text-sm text-muted-foreground"
+                >
                   No records found.
                 </td>
               </tr>

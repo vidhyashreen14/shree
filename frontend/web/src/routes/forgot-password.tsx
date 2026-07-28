@@ -16,7 +16,10 @@ function ForgotPage() {
   return (
     <div className="grid min-h-screen place-items-center bg-muted/40 px-4">
       <div className="surface-elevated w-full max-w-md p-8">
-        <Link to="/login" className="inline-flex items-center text-xs font-semibold text-muted-foreground hover:text-foreground">
+        <Link
+          to="/login"
+          className="inline-flex items-center text-xs font-semibold text-muted-foreground hover:text-foreground"
+        >
           <ArrowLeft className="mr-1 h-3 w-3" /> Back to sign in
         </Link>
         <div className="mt-6 grid h-12 w-12 place-items-center rounded-xl bg-primary/10 text-primary">
@@ -46,7 +49,9 @@ function ForgotPage() {
               placeholder="you@medicore.io"
             />
           </div>
-          <Button type="submit" className="w-full" size="lg">Send verification code</Button>
+          <Button type="submit" className="w-full" size="lg">
+            Send verification code
+          </Button>
         </form>
       </div>
     </div>

@@ -29,7 +29,7 @@ const SuccessBadgeDemo = () => {
         "gap-2 px-3 py-2",
         "bg-background backdrop-blur-md",
         "text-foreground text-sm font-medium leading-none",
-        "border-teal-400/25",
+        "border-teal-400/25"
       )}
     >
       {/* Top glow */}
