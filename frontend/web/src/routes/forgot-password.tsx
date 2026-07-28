@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft, MailCheck } from "lucide-react";
 import { useState } from "react";
@@ -6,13 +7,22 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { allowOnlyEmailChars, emailSchema } from "@/lib/validations";
+=======
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
+import { ArrowLeft, MailCheck } from 'lucide-react';
+import { useState } from 'react';
+import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+>>>>>>> a821a0c (second update)
 
-export const Route = createFileRoute("/forgot-password")({
+export const Route = createFileRoute('/forgot-password')({
   component: ForgotPage,
 });
 
 function ForgotPage() {
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState('');
   const navigate = useNavigate();
   return (
     <div className="grid min-h-screen place-items-center bg-muted/40 px-4">
@@ -38,7 +48,7 @@ function ForgotPage() {
               return toast.error("Enter a valid email address.");
             }
             toast.success(`Verification code sent to ${email}`);
-            navigate({ to: "/otp", search: { email } });
+            navigate({ to: '/otp', search: { email } });
           }}
         >
           <div>

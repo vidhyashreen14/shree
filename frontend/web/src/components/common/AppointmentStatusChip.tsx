@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import type { AppointmentStatus } from "@/lib/types";
 import {
   CalendarClock,
@@ -68,6 +69,21 @@ const map: Record<
     textClass: "text-red-700 dark:text-red-300",
     dotClass: "bg-red-500",
   },
+=======
+import type { AppointmentStatus } from '@/lib/types';
+import { StatusChip } from './StatusChip';
+
+const map: Record<
+  AppointmentStatus,
+  { tone: Parameters<typeof StatusChip>[0]['tone']; label: string }
+> = {
+  scheduled: { tone: 'info', label: 'Scheduled' },
+  'checked-in': { tone: 'primary', label: 'Checked in' },
+  'in-consultation': { tone: 'warning', label: 'In consultation' },
+  completed: { tone: 'success', label: 'Completed' },
+  cancelled: { tone: 'neutral', label: 'Cancelled' },
+  'no-show': { tone: 'danger', label: 'No show' },
+>>>>>>> a821a0c (second update)
 };
 
 interface AppointmentStatusChipProps {

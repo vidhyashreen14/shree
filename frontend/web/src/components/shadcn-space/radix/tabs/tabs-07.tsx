@@ -1,75 +1,75 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
-import { cn } from "@/lib/utils";
-import { Sparkles, Cpu, Terminal, Layers, CheckCircle2, Circle } from "lucide-react";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { cn } from '@/lib/utils';
+import { Sparkles, Cpu, Terminal, Layers, CheckCircle2, Circle } from 'lucide-react';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const tabs = [
   {
-    id: "product",
-    label: "Product Suite",
+    id: 'product',
+    label: 'Product Suite',
     icon: Sparkles,
     stats: [
-      { label: "Models deployed", value: "14" },
-      { label: "Avg. response", value: "38 ms" },
-      { label: "Monthly runs", value: "2.4 M" },
+      { label: 'Models deployed', value: '14' },
+      { label: 'Avg. response', value: '38 ms' },
+      { label: 'Monthly runs', value: '2.4 M' },
     ],
     features: [
-      { label: "Text generation", done: true },
-      { label: "Image synthesis", done: true },
-      { label: "Fine-tuning UI", done: false },
+      { label: 'Text generation', done: true },
+      { label: 'Image synthesis', done: true },
+      { label: 'Fine-tuning UI', done: false },
     ],
-    status: "Stable",
+    status: 'Stable',
   },
   {
-    id: "services",
-    label: "Core Services",
+    id: 'services',
+    label: 'Core Services',
     icon: Cpu,
     stats: [
-      { label: "Uptime (30 d)", value: "99.97%" },
-      { label: "Edge nodes", value: "42" },
-      { label: "P95 latency", value: "12 ms" },
+      { label: 'Uptime (30 d)', value: '99.97%' },
+      { label: 'Edge nodes', value: '42' },
+      { label: 'P95 latency', value: '12 ms' },
     ],
     features: [
-      { label: "Auto-scaling", done: true },
-      { label: "Global CDN", done: true },
-      { label: "Zero-downtime deploys", done: true },
+      { label: 'Auto-scaling', done: true },
+      { label: 'Global CDN', done: true },
+      { label: 'Zero-downtime deploys', done: true },
     ],
-    status: "Active",
+    status: 'Active',
   },
   {
-    id: "playground",
-    label: "Playground",
+    id: 'playground',
+    label: 'Playground',
     icon: Terminal,
     stats: [
-      { label: "Languages", value: "9" },
-      { label: "Saved snippets", value: "183" },
-      { label: "Avg. exec time", value: "220 ms" },
+      { label: 'Languages', value: '9' },
+      { label: 'Saved snippets', value: '183' },
+      { label: 'Avg. exec time', value: '220 ms' },
     ],
     features: [
-      { label: "Live output stream", done: true },
-      { label: "Memory profiler", done: true },
-      { label: "Collaborative mode", done: false },
+      { label: 'Live output stream', done: true },
+      { label: 'Memory profiler', done: true },
+      { label: 'Collaborative mode', done: false },
     ],
-    status: "Beta",
+    status: 'Beta',
   },
   {
-    id: "content",
-    label: "Asset Hub",
+    id: 'content',
+    label: 'Asset Hub',
     icon: Layers,
     stats: [
-      { label: "Components", value: "312" },
-      { label: "Design tokens", value: "68" },
-      { label: "Last updated", value: "2 d ago" },
+      { label: 'Components', value: '312' },
+      { label: 'Design tokens', value: '68' },
+      { label: 'Last updated', value: '2 d ago' },
     ],
     features: [
-      { label: "Figma export", done: true },
-      { label: "Dark mode variants", done: true },
-      { label: "RTL support", done: false },
+      { label: 'Figma export', done: true },
+      { label: 'Dark mode variants', done: true },
+      { label: 'RTL support', done: false },
     ],
-    status: "v2.4",
+    status: 'v2.4',
   },
 ];
 
@@ -90,7 +90,7 @@ export default function TabsScrollSwitchRadix() {
     exit: (dir: number) => ({ y: dir > 0 ? 48 : -48, opacity: 0 }),
   };
 
-  const transition = { type: "spring" as const, stiffness: 320, damping: 30 };
+  const transition = { type: 'spring' as const, stiffness: 320, damping: 30 };
 
   return (
     <div className="w-full max-w-4xl mx-auto px-4 py-8">
@@ -111,12 +111,12 @@ export default function TabsScrollSwitchRadix() {
                   key={tab.id}
                   value={tab.id}
                   className={cn(
-                    "relative flex items-center cursor-pointer gap-3 px-3.5 py-3 rounded-lg text-sm font-medium transition-all outline-none w-full justify-start select-none whitespace-nowrap",
-                    "hover:bg-muted/60 hover:text-foreground",
-                    isActive ? "border-none" : "border border-border/50",
-                    "data-[state=active]:bg-transparent data-[state=active]:text-foreground",
-                    "shadow-none data-[state=active]:shadow-none ring-0 data-[state=active]:ring-0 after:hidden",
-                    isActive ? "text-foreground" : "text-muted-foreground"
+                    'relative flex items-center cursor-pointer gap-3 px-3.5 py-3 rounded-lg text-sm font-medium transition-all outline-none w-full justify-start select-none whitespace-nowrap',
+                    'hover:bg-muted/60 hover:text-foreground',
+                    isActive ? 'border-none' : 'border border-border/50',
+                    'data-[state=active]:bg-transparent data-[state=active]:text-foreground',
+                    'shadow-none data-[state=active]:shadow-none ring-0 data-[state=active]:ring-0 after:hidden',
+                    isActive ? 'text-foreground' : 'text-muted-foreground',
                   )}
                 >
                   <Icon className="w-4 h-4 z-10 shrink-0" />
@@ -126,7 +126,7 @@ export default function TabsScrollSwitchRadix() {
                       layoutId="radix-tabs-07-active-indicator"
                       className="absolute inset-0 bg-muted rounded-lg pointer-events-none"
                       initial={false}
-                      transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                      transition={{ type: 'spring', stiffness: 300, damping: 25 }}
                     />
                   )}
                 </TabsTrigger>
@@ -197,8 +197,13 @@ export default function TabsScrollSwitchRadix() {
                           )}
                           <span
                             className={cn(
+<<<<<<< HEAD
                               "font-medium",
                               f.done ? "text-foreground" : "text-muted-foreground"
+=======
+                              'font-medium',
+                              f.done ? 'text-foreground' : 'text-muted-foreground',
+>>>>>>> a821a0c (second update)
                             )}
                           >
                             {f.label}

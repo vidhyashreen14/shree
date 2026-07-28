@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import * as React from "react";
+=======
+import * as React from 'react';
+>>>>>>> a821a0c (second update)
 import {
   SearchIcon,
   LayoutDashboardIcon,
@@ -14,9 +18,15 @@ import {
   ArrowUpIcon,
   ArrowDownIcon,
   type LucideIcon,
+<<<<<<< HEAD
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Kbd } from "@/components/ui/kbd";
+=======
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Kbd } from '@/components/ui/kbd';
+>>>>>>> a821a0c (second update)
 import {
   Command,
   CommandDialog,
@@ -26,7 +36,11 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
+<<<<<<< HEAD
 } from "@/components/ui/command";
+=======
+} from '@/components/ui/command';
+>>>>>>> a821a0c (second update)
 
 export interface CommandSearchItem {
   label: string;
@@ -52,28 +66,49 @@ const defaultGroups: CommandSearchGroup[] = [
   {
     heading: "Suggestions",
     items: [
+<<<<<<< HEAD
       { label: "Dashboard", icon: LayoutDashboardIcon },
       { label: "Analytics", icon: TrendingUpIcon },
       { label: "Projects", icon: BriefcaseIcon },
       { label: "Integrations", icon: ZapIcon },
       { label: "Settings", icon: SettingsIcon },
+=======
+      { label: 'Dashboard', icon: LayoutDashboardIcon },
+      { label: 'Analytics', icon: TrendingUpIcon },
+      { label: 'Projects', icon: BriefcaseIcon },
+      { label: 'Integrations', icon: ZapIcon },
+      { label: 'Settings', icon: SettingsIcon },
+>>>>>>> a821a0c (second update)
     ],
   },
   {
     heading: "Recent",
     items: [
+<<<<<<< HEAD
       { label: "Q2 Sales Report", icon: ClockIcon, timestamp: "2m ago" },
       { label: "Sprint Planning", icon: ClockIcon, timestamp: "15m ago" },
       { label: "API Configuration", icon: ClockIcon, timestamp: "1h ago" },
       { label: "Team Permissions", icon: ClockIcon, timestamp: "3h ago" },
+=======
+      { label: 'Q2 Sales Report', icon: ClockIcon, timestamp: '2m ago' },
+      { label: 'Sprint Planning', icon: ClockIcon, timestamp: '15m ago' },
+      { label: 'API Configuration', icon: ClockIcon, timestamp: '1h ago' },
+      { label: 'Team Permissions', icon: ClockIcon, timestamp: '3h ago' },
+>>>>>>> a821a0c (second update)
     ],
   },
   {
     heading: "Quick Links",
     items: [
+<<<<<<< HEAD
       { label: "Documentation", icon: BookOpenIcon },
       { label: "Changelog", icon: ScrollIcon },
       { label: "Community Forum", icon: MessageSquareIcon },
+=======
+      { label: 'Documentation', icon: BookOpenIcon },
+      { label: 'Changelog', icon: ScrollIcon },
+      { label: 'Community Forum', icon: MessageSquareIcon },
+>>>>>>> a821a0c (second update)
     ],
   },
 ];
@@ -89,14 +124,23 @@ const CommandSearchDemo = ({
 
   React.useEffect(() => {
     const down = (event: KeyboardEvent) => {
+<<<<<<< HEAD
       if (event.key === "j" && (event.metaKey || event.ctrlKey)) {
+=======
+      if (event.key === 'j' && (event.metaKey || event.ctrlKey)) {
+>>>>>>> a821a0c (second update)
         event.preventDefault();
         setOpen((open) => !open);
       }
     };
 
+<<<<<<< HEAD
     document.addEventListener("keydown", down);
     return () => document.removeEventListener("keydown", down);
+=======
+    document.addEventListener('keydown', down);
+    return () => document.removeEventListener('keydown', down);
+>>>>>>> a821a0c (second update)
   }, []);
 
   return (

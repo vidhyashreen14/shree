@@ -1,5 +1,6 @@
-"use client";
+'use client';
 
+<<<<<<< HEAD
 import * as React from "react";
 import { useState } from "react";
 import { motion } from "motion/react";
@@ -7,6 +8,15 @@ import { ChevronDown, Plus } from "lucide-react";
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
 
 import { cn } from "@/lib/utils";
+=======
+import * as React from 'react';
+import { useState } from 'react';
+import { motion } from 'motion/react';
+import { ChevronDown, Plus } from 'lucide-react';
+import * as AccordionPrimitive from '@radix-ui/react-accordion';
+
+import { cn } from '@/lib/utils';
+>>>>>>> a821a0c (second update)
 
 const Accordion = AccordionPrimitive.Root;
 
@@ -14,9 +24,15 @@ const AccordionItem = React.forwardRef<
   React.ElementRef<typeof AccordionPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Item>
 >(({ className, ...props }, ref) => (
+<<<<<<< HEAD
   <AccordionPrimitive.Item ref={ref} className={cn("border-b", className)} {...props} />
 ));
 AccordionItem.displayName = "AccordionItem";
+=======
+  <AccordionPrimitive.Item ref={ref} className={cn('border-b', className)} {...props} />
+));
+AccordionItem.displayName = 'AccordionItem';
+>>>>>>> a821a0c (second update)
 
 const AccordionTrigger = React.forwardRef<
   React.ElementRef<typeof AccordionPrimitive.Trigger>,
@@ -26,8 +42,8 @@ const AccordionTrigger = React.forwardRef<
     <AccordionPrimitive.Trigger
       ref={ref}
       className={cn(
-        "flex flex-1 items-center justify-between py-4 font-medium transition-all hover:underline [&[data-state=open]>svg]:rotate-180",
-        className
+        'flex flex-1 items-center justify-between py-4 font-medium transition-all hover:underline [&[data-state=open]>svg]:rotate-180',
+        className,
       )}
       {...props}
     >
@@ -47,7 +63,7 @@ const AccordionContent = React.forwardRef<
     className="overflow-hidden text-sm transition-all data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
     {...props}
   >
-    <div className={cn("pb-4 pt-0", className)}>{children}</div>
+    <div className={cn('pb-4 pt-0', className)}>{children}</div>
   </AccordionPrimitive.Content>
 ));
 
@@ -62,6 +78,7 @@ interface AccordionItemData {
 
 const items: AccordionItemData[] = [
   {
+<<<<<<< HEAD
     id: "discovery",
     number: "01",
     title: "Discovery",
@@ -88,11 +105,43 @@ const items: AccordionItemData[] = [
     title: "Launch",
     content:
       "From staging to production, we handle deployment pipelines, monitoring setup, and rollout strategies so your release day is smooth, stable, and celebrated.",
+=======
+    id: 'discovery',
+    number: '01',
+    title: 'Discovery',
+    content:
+      'We dive deep into your business goals, target audience, and competitive landscape to uncover what truly drives growth and shapes a clear product direction.',
+  },
+  {
+    id: 'design',
+    number: '02',
+    title: 'Design',
+    content:
+      'Our designers craft pixel-perfect interfaces that blend aesthetics with functionality, translating research into intuitive experiences users love at first interaction.',
+  },
+  {
+    id: 'engineering',
+    number: '03',
+    title: 'Engineering',
+    content:
+      'We build robust, performant solutions with modern tech stacks — clean architecture, test coverage, and a codebase that scales as confidently as your product does.',
+  },
+  {
+    id: 'launch',
+    number: '04',
+    title: 'Launch',
+    content:
+      'From staging to production, we handle deployment pipelines, monitoring setup, and rollout strategies so your release day is smooth, stable, and celebrated.',
+>>>>>>> a821a0c (second update)
   },
 ];
 
 const AccordionMotionServices = () => {
+<<<<<<< HEAD
   const [openItem, setOpenItem] = useState<string>("discovery");
+=======
+  const [openItem, setOpenItem] = useState<string>('discovery');
+>>>>>>> a821a0c (second update)
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
   return (
@@ -128,14 +177,23 @@ const AccordionMotionServices = () => {
                           scale: isActive ? 1 : isHovered ? 0.85 : 0,
                           opacity: isActive ? 1 : isHovered ? 0.1 : 0,
                         }}
+<<<<<<< HEAD
                         transition={{ type: "spring", stiffness: 400, damping: 25 }}
+=======
+                        transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+>>>>>>> a821a0c (second update)
                       />
                       <motion.span
                         className="relative z-10 text-sm font-medium tracking-wide"
                         animate={{
                           color: isActive
+<<<<<<< HEAD
                             ? "var(--color-primary-foreground)"
                             : "var(--color-muted-foreground)",
+=======
+                            ? 'var(--color-primary-foreground)'
+                            : 'var(--color-muted-foreground)',
+>>>>>>> a821a0c (second update)
                         }}
                         transition={{ duration: 0.2 }}
                       >
@@ -150,10 +208,17 @@ const AccordionMotionServices = () => {
                         x: isActive || isHovered ? 4 : 0,
                         color:
                           isActive || isHovered
+<<<<<<< HEAD
                             ? "var(--color-foreground)"
                             : "var(--color-muted-foreground)",
                       }}
                       transition={{ type: "spring", stiffness: 400, damping: 30 }}
+=======
+                            ? 'var(--color-foreground)'
+                            : 'var(--color-muted-foreground)',
+                      }}
+                      transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+>>>>>>> a821a0c (second update)
                     >
                       {item.title}
                     </motion.span>
@@ -165,7 +230,11 @@ const AccordionMotionServices = () => {
                         rotate: isActive ? 45 : 0,
                         opacity: isActive || isHovered ? 1 : 0.4,
                       }}
+<<<<<<< HEAD
                       transition={{ type: "spring", stiffness: 300, damping: 20 }}
+=======
+                      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+>>>>>>> a821a0c (second update)
                     >
                       <Plus className="size-4 text-foreground" />
                     </motion.div>
@@ -184,7 +253,11 @@ const AccordionMotionServices = () => {
                   className="absolute bottom-0 left-0 h-px origin-left bg-foreground"
                   initial={{ scaleX: 0 }}
                   animate={{ scaleX: isActive ? 1 : isHovered ? 0.3 : 0 }}
+<<<<<<< HEAD
                   transition={{ type: "spring", stiffness: 300, damping: 30 }}
+=======
+                  transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+>>>>>>> a821a0c (second update)
                 />
               </AccordionItem>
             );

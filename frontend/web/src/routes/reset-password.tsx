@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { KeyRound } from "lucide-react";
 import { useState } from "react";
@@ -6,14 +7,23 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { allowOnlyAlphabets, passwordSchema } from "@/lib/validations";
+=======
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { KeyRound } from 'lucide-react';
+import { useState } from 'react';
+import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+>>>>>>> a821a0c (second update)
 
-export const Route = createFileRoute("/reset-password")({
+export const Route = createFileRoute('/reset-password')({
   component: ResetPage,
 });
 
 function ResetPage() {
-  const [pwd, setPwd] = useState("");
-  const [confirm, setConfirm] = useState("");
+  const [pwd, setPwd] = useState('');
+  const [confirm, setConfirm] = useState('');
   const navigate = useNavigate();
   return (
     <div className="grid min-h-screen place-items-center bg-muted/40 px-4">
@@ -30,12 +40,16 @@ function ResetPage() {
           className="mt-6 space-y-4"
           onSubmit={(e) => {
             e.preventDefault();
+<<<<<<< HEAD
             if (!passwordSchema.safeParse(pwd).success) {
               return toast.error("Password should contain only alphabets.");
             }
+=======
+            if (pwd.length < 8) return toast.error('Password too short');
+>>>>>>> a821a0c (second update)
             if (pwd !== confirm) return toast.error("Passwords don't match");
-            toast.success("Password updated. Please sign in.");
-            navigate({ to: "/login" });
+            toast.success('Password updated. Please sign in.');
+            navigate({ to: '/login' });
           }}
         >
           <div>
@@ -43,9 +57,14 @@ function ResetPage() {
             <Input
               id="pwd"
               type="password"
+<<<<<<< HEAD
               placeholder="Alphabets only (A-Z, a-z)"
               value={pwd}
               onChange={(e) => setPwd(allowOnlyAlphabets(e.target.value))}
+=======
+              value={pwd}
+              onChange={(e) => setPwd(e.target.value)}
+>>>>>>> a821a0c (second update)
               className="mt-1.5"
             />
           </div>
@@ -54,9 +73,14 @@ function ResetPage() {
             <Input
               id="confirm"
               type="password"
+<<<<<<< HEAD
               placeholder="Re-enter password"
               value={confirm}
               onChange={(e) => setConfirm(allowOnlyAlphabets(e.target.value))}
+=======
+              value={confirm}
+              onChange={(e) => setConfirm(e.target.value)}
+>>>>>>> a821a0c (second update)
               className="mt-1.5"
             />
           </div>

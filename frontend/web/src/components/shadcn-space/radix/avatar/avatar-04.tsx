@@ -1,6 +1,6 @@
-"use client";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { CheckIcon } from "lucide-react";
+'use client';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { CheckIcon } from 'lucide-react';
 const BorderAvatarDemo = () => {
   return (
     <div className="flex items-center justify-center px-4">

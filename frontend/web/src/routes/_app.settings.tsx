@@ -1,11 +1,11 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { PageHeader } from "@/components/common/PageHeader";
-import { Switch } from "@/components/ui/switch";
-import { useTheme } from "@/lib/store/theme";
-import { Moon, Sun, Monitor, Bell, Languages, Lock } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { createFileRoute } from '@tanstack/react-router';
+import { PageHeader } from '@/components/common/PageHeader';
+import { Switch } from '@/components/ui/switch';
+import { useTheme } from '@/lib/store/theme';
+import { Moon, Sun, Monitor, Bell, Languages, Lock } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-export const Route = createFileRoute("/_app/settings")({
+export const Route = createFileRoute('/_app/settings')({
   component: Settings,
 });
 
@@ -22,20 +22,33 @@ function Settings() {
           <div className="mt-4 grid grid-cols-3 gap-3">
             {(
               [
+<<<<<<< HEAD
                 { v: "light", label: "Light", icon: Sun },
                 { v: "dark", label: "Dark", icon: Moon },
                 { v: "light", label: "System", icon: Monitor },
+=======
+                { v: 'light', label: 'Light', icon: Sun },
+                { v: 'dark', label: 'Dark', icon: Moon },
+                { v: 'light', label: 'System', icon: Monitor },
+>>>>>>> a821a0c (second update)
               ] as const
             ).map((opt) => {
               const Icon = opt.icon;
-              const active = theme === opt.v && opt.label !== "System";
+              const active = theme === opt.v && opt.label !== 'System';
               return (
                 <button
                   key={opt.label}
                   onClick={() => set(opt.v)}
                   className={cn(
+<<<<<<< HEAD
                     "flex flex-col items-start gap-2 rounded-xl border p-4 text-left transition-all",
                     active ? "border-primary bg-primary/5" : "border-border hover:border-primary/50"
+=======
+                    'flex flex-col items-start gap-2 rounded-xl border p-4 text-left transition-all',
+                    active
+                      ? 'border-primary bg-primary/5'
+                      : 'border-border hover:border-primary/50',
+>>>>>>> a821a0c (second update)
                   )}
                 >
                   <Icon className="h-5 w-5 text-primary" />
@@ -50,10 +63,10 @@ function Settings() {
           <h3 className="font-display font-semibold">Notifications</h3>
           <div className="mt-4 space-y-4">
             {[
-              { icon: Bell, label: "Appointment reminders", desc: "Before patient consults" },
-              { icon: Bell, label: "Lab report ready", desc: "When investigations complete" },
-              { icon: Bell, label: "Low stock alerts", desc: "Pharmacy items below threshold" },
-              { icon: Bell, label: "Daily digest email", desc: "Sent at 8 AM" },
+              { icon: Bell, label: 'Appointment reminders', desc: 'Before patient consults' },
+              { icon: Bell, label: 'Lab report ready', desc: 'When investigations complete' },
+              { icon: Bell, label: 'Low stock alerts', desc: 'Pharmacy items below threshold' },
+              { icon: Bell, label: 'Daily digest email', desc: 'Sent at 8 AM' },
             ].map((row, i) => {
               const Icon = row.icon;
               return (

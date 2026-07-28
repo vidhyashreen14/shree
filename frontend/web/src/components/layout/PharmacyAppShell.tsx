@@ -1,9 +1,18 @@
+<<<<<<< HEAD
 import { useState, useEffect, type ReactNode, type ComponentType } from "react";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useAuth } from "@/lib/store/auth";
 import { useTheme } from "@/lib/store/theme";
 import { useNotifications } from "@/lib/store/notifications";
 import { CommandPalette } from "./CommandPalette";
+=======
+import { useState, type ReactNode } from 'react';
+import { Link, useNavigate, useRouterState, useRouter } from '@tanstack/react-router';
+import { useAuth } from '@/lib/store/auth';
+import { useTheme } from '@/lib/store/theme';
+import { useNotifications } from '@/lib/store/notifications';
+import { CommandPalette } from './CommandPalette';
+>>>>>>> a821a0c (second update)
 import {
   Bell,
   Moon,
@@ -11,12 +20,16 @@ import {
   Sun,
   LogOut,
   Settings as SettingsIcon,
+<<<<<<< HEAD
   UserCog,
+=======
+>>>>>>> a821a0c (second update)
   Receipt,
   PackageSearch,
   FileText,
   Truck,
   BarChart3,
+<<<<<<< HEAD
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Factory,
   X,
@@ -24,6 +37,13 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+=======
+  X,
+  RefreshCw,
+} from 'lucide-react';
+import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
+>>>>>>> a821a0c (second update)
 
 interface Props {
   children: ReactNode;
@@ -34,12 +54,34 @@ export function PharmacyAppShell({ children }: Props) {
   const logout = useAuth((s) => s.logout);
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
+<<<<<<< HEAD
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const unread = useNotifications((s) => s.notifications.filter((n: any) => !n.read).length);
+=======
+  const router = useRouter();
+  const unread = useNotifications(
+    (s) => s.notifications.filter((n: { read: boolean }) => !n.read).length,
+  );
+>>>>>>> a821a0c (second update)
   const [openPalette, setOpenPalette] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [desktopOpen, setDesktopOpen] = useState(true);
   const pathname = useRouterState({ select: (r) => r.location.pathname });
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    try {
+      await router.invalidate();
+      toast.success('Page refreshed successfully');
+    } catch {
+      toast.error('Failed to refresh page');
+    } finally {
+      setTimeout(() => {
+        setIsRefreshing(false);
+      }, 600);
+    }
+  };
 
   const isInventoryActive =
     pathname.startsWith("/pharmacy/inventory") ||
@@ -62,6 +104,7 @@ export function PharmacyAppShell({ children }: Props) {
 
   if (!user) return null;
 
+<<<<<<< HEAD
   const tabs: TabItem[] = [
     { to: "/pharmacy/billing", label: "Billing", icon: Receipt },
     {
@@ -105,6 +148,42 @@ export function PharmacyAppShell({ children }: Props) {
             <Link to="/" className="flex items-center gap-2.5 min-w-0">
               <span className="grid h-9 w-9 place-items-center rounded-xl bg-primary text-primary-foreground overflow-hidden shrink-0 shadow-sm">
                 <img src="/logo.png" alt="MediCore Logo" className="h-5 w-5 object-cover" />
+=======
+  const tabs = [
+    { to: '/pharmacy/billing', label: 'Billing', icon: Receipt },
+    { to: '/pharmacy/inventory', label: 'Inventory', icon: PackageSearch },
+    { to: '/pharmacy/invoices', label: 'Invoice', icon: FileText },
+    { to: '/pharmacy/orders', label: 'Purchase Order', icon: Truck },
+    { to: '/pharmacy/reports', label: 'Reports', icon: BarChart3 },
+  ];
+
+  return (
+    <div className="min-h-screen w-full bg-background text-foreground flex flex-col">
+      {/* Mobile/Desktop Navigation Drawer Backdrop */}
+      {openDrawer && (
+        <div
+          className="fixed inset-0 z-50 bg-foreground/40"
+          onClick={() => setOpenDrawer(false)}
+          aria-hidden
+        />
+      )}
+      {/* Drawer Side Navigation Panel */}
+      <aside
+        className={cn(
+          'fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-border bg-background text-foreground transition-transform duration-200',
+          openDrawer ? 'translate-x-0' : '-translate-x-full',
+        )}
+      >
+        <div className="flex h-16 shrink-0 items-center justify-between border-b border-border px-5">
+          <div className="flex items-center gap-2">
+            <span className="grid h-9 w-9 place-items-center rounded-xl overflow-hidden">
+              <img src="/logo.png" alt="MediCore Logo" className="h-9 w-9 object-cover" />
+            </span>
+            <div className="flex flex-col leading-tight">
+              <span className="font-display text-base font-bold tracking-tight">MediCore</span>
+              <span className="text-[9px] uppercase tracking-widest text-muted-foreground">
+                Pharmacy Suite
+>>>>>>> a821a0c (second update)
               </span>
               <div className="flex flex-col leading-tight min-w-0">
                 <span className="font-display text-sm font-extrabold tracking-tight text-sidebar-foreground truncate">MediCore</span>
@@ -226,10 +305,17 @@ export function PharmacyAppShell({ children }: Props) {
                   to={tab.to!}
                   onClick={() => setMobileOpen(false)}
                   className={cn(
+<<<<<<< HEAD
                     "flex items-center gap-3.5 rounded-full px-4 py-2.5 text-xs font-extrabold uppercase tracking-wider transition-all duration-200",
                     active
                       ? "bg-primary text-primary-foreground shadow-md transform scale-[1.02]"
                       : "text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:translate-x-1"
+=======
+                    'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                    active
+                      ? 'bg-primary text-primary-foreground shadow-sm'
+                      : 'text-muted-foreground hover:bg-accent hover:text-foreground',
+>>>>>>> a821a0c (second update)
                   )}
                 >
                   <Icon className={cn("h-4 w-4 shrink-0 transition-colors", active ? "text-primary-foreground" : "text-muted-foreground")} />
@@ -244,6 +330,7 @@ export function PharmacyAppShell({ children }: Props) {
               Account
             </p>
             <Link
+<<<<<<< HEAD
               to="/profile"
               onClick={() => setMobileOpen(false)}
               className={cn(
@@ -257,13 +344,22 @@ export function PharmacyAppShell({ children }: Props) {
               <span>Profile</span>
             </Link>
             <Link
+=======
+>>>>>>> a821a0c (second update)
               to="/settings"
               onClick={() => setMobileOpen(false)}
               className={cn(
+<<<<<<< HEAD
                 "flex items-center gap-3.5 rounded-full px-4 py-2.5 text-xs font-extrabold uppercase tracking-wider transition-all duration-200",
                 pathname === "/settings"
                   ? "bg-primary text-primary-foreground shadow-md transform scale-[1.02]"
                   : "text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:translate-x-1"
+=======
+                'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                pathname === '/settings'
+                  ? 'bg-primary text-primary-foreground shadow-sm'
+                  : 'text-muted-foreground hover:bg-accent hover:text-foreground',
+>>>>>>> a821a0c (second update)
               )}
             >
               <SettingsIcon className={cn("h-4 w-4 shrink-0 transition-colors", pathname === "/settings" ? "text-primary-foreground" : "text-muted-foreground")} />
@@ -273,6 +369,7 @@ export function PharmacyAppShell({ children }: Props) {
           </div>
         </nav>
 
+<<<<<<< HEAD
         {/* Bottom controls */}
         <div className="border-t border-sidebar-border p-4 space-y-2">
           {/* Theme + Notifications row */}
@@ -299,12 +396,35 @@ export function PharmacyAppShell({ children }: Props) {
                 </span>
               )}
             </button>
+=======
+        <div className="border-t border-border p-4 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-3 rounded-lg bg-accent/60 p-3 flex-1 min-w-0">
+            <div className="grid h-9 w-9 place-items-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
+              {user.name
+                .split(' ')
+                .map((n) => n[0])
+                .slice(0, 2)
+                .join('')}
+            </div>
+            <div className="min-w-0">
+              <p className="truncate text-sm font-semibold">{user.name}</p>
+              <p className="truncate text-xs text-muted-foreground capitalize">{user.role}</p>
+            </div>
+>>>>>>> a821a0c (second update)
           </div>
 
           <button
             type="button"
+<<<<<<< HEAD
             onClick={() => { logout(); navigate({ to: "/login" }); }}
             className="flex w-full items-center justify-center gap-2 rounded-full bg-sidebar-accent px-4 py-2.5 text-xs font-extrabold uppercase tracking-wider text-sidebar-foreground hover:bg-destructive hover:text-destructive-foreground transition-all duration-200 shadow-xs"
+=======
+            onClick={() => {
+              logout();
+              navigate({ to: '/login' });
+            }}
+            className="rounded-lg p-2 text-muted-foreground hover:bg-accent hover:text-destructive transition-colors shrink-0"
+>>>>>>> a821a0c (second update)
             title="Sign out"
           >
             <LogOut className="h-4 w-4" />
@@ -339,10 +459,17 @@ export function PharmacyAppShell({ children }: Props) {
         </div>
       </aside>
 
+<<<<<<< HEAD
       {/* Main content */}
       <div className="flex flex-1 flex-col min-w-0">
         {/* Topbar with hamburger menu toggle */}
         <div className="sticky top-0 z-30 flex h-14 items-center border-b border-border bg-background/80 px-4 backdrop-blur-md">
+=======
+      {/* Horizontal Top Navigation Bar - Matching Project's Soft Teal/Light Theme */}
+      <header className="sticky top-0 z-40 bg-background/80 text-foreground flex h-16 items-center px-4 md:px-6 justify-between border-b border-border backdrop-blur-md shadow-xs">
+        {/* Logo and App Title */}
+        <div className="flex items-center gap-4">
+>>>>>>> a821a0c (second update)
           <button
             type="button"
             className="rounded-md p-2 text-muted-foreground hover:bg-accent transition-colors"
@@ -362,6 +489,7 @@ export function PharmacyAppShell({ children }: Props) {
                 <span />
               </div>
             </div>
+<<<<<<< HEAD
           </button>
           <div className="flex items-center gap-2 ml-3">
             <span className="grid h-7 w-7 place-items-center rounded-lg overflow-hidden bg-primary/10">
@@ -369,6 +497,9 @@ export function PharmacyAppShell({ children }: Props) {
             </span>
             <span className="font-display text-sm font-bold tracking-tight">MediCore Pharmacy</span>
           </div>
+=======
+          </Link>
+>>>>>>> a821a0c (second update)
         </div>
 
         {/* Page content */}
@@ -378,6 +509,7 @@ export function PharmacyAppShell({ children }: Props) {
             className="pointer-events-none fixed inset-0 z-0 flex items-center justify-center"
             aria-hidden="true"
           >
+<<<<<<< HEAD
             <img
               src="/logo.png"
               alt=""
@@ -388,6 +520,69 @@ export function PharmacyAppShell({ children }: Props) {
           <div className="relative z-10 flex flex-col flex-1">{children}</div>
         </main>
       </div>
+=======
+            <Search className="h-3.5 w-3.5" />
+            <span className="hidden md:inline">Search Catalogue…</span>
+            <kbd className="hidden md:inline rounded border border-border px-1 py-0.2 font-mono text-[9px]">
+              ⌘K
+            </kbd>
+          </button>
+
+          {/* Refresh Button */}
+          <button
+            type="button"
+            onClick={handleRefresh}
+            className="rounded-md p-2 text-muted-foreground hover:bg-accent transition-colors"
+            aria-label="Refresh page"
+            title="Refresh page"
+          >
+            <RefreshCw className={cn('h-4 w-4', isRefreshing && 'animate-spin')} />
+          </button>
+
+          {/* Theme Toggle */}
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className="rounded-md p-2 text-muted-foreground hover:bg-accent"
+            aria-label="Toggle theme"
+          >
+            {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          </button>
+
+          {/* Notifications */}
+          <button
+            type="button"
+            onClick={() => navigate({ to: '/notifications' })}
+            className="relative rounded-md p-2 text-muted-foreground hover:bg-accent"
+            aria-label="Notifications"
+          >
+            <Bell className="h-4 w-4" />
+            {unread > 0 && (
+              <span className="absolute right-1 top-1 grid h-3.5 min-w-3.5 place-items-center rounded-full bg-destructive px-0.5 text-[8px] font-bold text-destructive-foreground">
+                {unread}
+              </span>
+            )}
+          </button>
+        </div>
+      </header>
+
+      {/* Main Content Area */}
+      <main className="relative flex-1 w-full max-w-[1600px] mx-auto p-4 md:p-6 lg:p-8 flex flex-col">
+        {/* Watermark */}
+        <div
+          className="pointer-events-none fixed inset-0 z-0 flex items-center justify-center"
+          aria-hidden="true"
+        >
+          <img
+            src="/logo.png"
+            alt=""
+            className="w-[480px] max-w-[70vw] select-none opacity-[0.65]"
+            style={{ filter: 'grayscale(30%)' }}
+          />
+        </div>
+        <div className="relative z-10 flex flex-col flex-1">{children}</div>
+      </main>
+>>>>>>> a821a0c (second update)
 
       <CommandPalette open={openPalette} onOpenChange={setOpenPalette} />
     </div>

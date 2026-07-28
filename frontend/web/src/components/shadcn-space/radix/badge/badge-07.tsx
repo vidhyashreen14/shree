@@ -1,7 +1,7 @@
-import { motion, type Variants } from "motion/react";
-import { CheckCircle } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+import { motion, type Variants } from 'motion/react';
+import { CheckCircle } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 
 const LETTER_VARIANTS: Variants = {
   hidden: { y: -14, opacity: 0 },
@@ -19,17 +19,25 @@ const LETTER_VARIANTS: Variants = {
 const MotionBadge = motion.create(Badge);
 
 const SuccessBadgeDemo = () => {
-  const label = "Success";
+  const label = 'Success';
 
   return (
     <MotionBadge
       variant="outline"
       className={cn(
+<<<<<<< HEAD
         "relative h-auto cursor-default overflow-visible rounded-full",
         "gap-2 px-3 py-2",
         "bg-background backdrop-blur-md",
         "text-foreground text-sm font-medium leading-none",
         "border-teal-400/25"
+=======
+        'relative h-auto cursor-default overflow-visible rounded-full',
+        'gap-2 px-3 py-2',
+        'bg-background backdrop-blur-md',
+        'text-foreground text-sm font-medium leading-none',
+        'border-teal-400/25',
+>>>>>>> a821a0c (second update)
       )}
     >
       {/* Top glow */}
@@ -64,7 +72,7 @@ const SuccessBadgeDemo = () => {
 
       {/* Animated label */}
       <span className="inline-flex overflow-hidden leading-none">
-        {label.split("").map((char, i) => (
+        {label.split('').map((char, i) => (
           <motion.span
             key={i}
             custom={i}

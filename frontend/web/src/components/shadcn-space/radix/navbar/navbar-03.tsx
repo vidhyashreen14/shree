@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import {
   Phone,
   ChevronDown,
@@ -15,13 +15,17 @@ import {
   Sparkles,
   Shield,
   ArrowRight,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 interface ServiceItem {
+<<<<<<< HEAD
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   icon: any;
+=======
+  icon: React.ComponentType<{ className?: string }>;
+>>>>>>> a821a0c (second update)
   title: string;
   description: string;
   href: string;
@@ -30,39 +34,39 @@ interface ServiceItem {
 const medicalServices: ServiceItem[] = [
   {
     icon: Heart,
-    title: "Cardiology",
-    description: "Comprehensive heart care and diagnostic testing.",
-    href: "/services/cardiology",
+    title: 'Cardiology',
+    description: 'Comprehensive heart care and diagnostic testing.',
+    href: '/services/cardiology',
   },
   {
     icon: Brain,
-    title: "Neurology",
-    description: "Expert treatment for brain and nervous system conditions.",
-    href: "/services/neurology",
+    title: 'Neurology',
+    description: 'Expert treatment for brain and nervous system conditions.',
+    href: '/services/neurology',
   },
   {
     icon: Bone,
-    title: "Orthopedics",
-    description: "Bone, joint, and muscle care from top specialists.",
-    href: "/services/orthopedics",
+    title: 'Orthopedics',
+    description: 'Bone, joint, and muscle care from top specialists.',
+    href: '/services/orthopedics',
   },
   {
     icon: Activity,
-    title: "General Medicine",
-    description: "Primary care, health screenings, and annual wellness visits.",
-    href: "/services/general",
+    title: 'General Medicine',
+    description: 'Primary care, health screenings, and annual wellness visits.',
+    href: '/services/general',
   },
   {
     icon: Stethoscope,
-    title: "Pediatrics",
-    description: "Dedicated compassionate healthcare for children and infants.",
-    href: "/services/pediatrics",
+    title: 'Pediatrics',
+    description: 'Dedicated compassionate healthcare for children and infants.',
+    href: '/services/pediatrics',
   },
   {
     icon: Sparkles,
-    title: "Dermatology",
-    description: "Skin checkups, acne treatments, and cosmetic care.",
-    href: "/services/dermatology",
+    title: 'Dermatology',
+    description: 'Skin checkups, acne treatments, and cosmetic care.',
+    href: '/services/dermatology',
   },
 ];
 
@@ -114,8 +118,8 @@ export default function Navbar03() {
                   Services
                   <ChevronDown
                     className={cn(
-                      "size-4 transition-transform duration-200",
-                      isServicesOpen && "rotate-180"
+                      'size-4 transition-transform duration-200',
+                      isServicesOpen && 'rotate-180',
                     )}
                   />
                 </button>
@@ -127,7 +131,7 @@ export default function Navbar03() {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 8 }}
-                      transition={{ duration: 0.15, ease: "easeOut" }}
+                      transition={{ duration: 0.15, ease: 'easeOut' }}
                       className="absolute left-1/2 -translate-x-1/2 top-full z-50 w-[560px] rounded-xl border border-border bg-popover p-5 shadow-lg"
                     >
                       <div className="grid grid-cols-2 gap-4">
@@ -218,9 +222,9 @@ export default function Navbar03() {
         {isOpen && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
+            animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25, ease: "easeInOut" }}
+            transition={{ duration: 0.25, ease: 'easeInOut' }}
             className="md:hidden border-t border-border bg-background overflow-hidden"
           >
             <div className="space-y-1.5 px-4 py-4">
@@ -247,8 +251,8 @@ export default function Navbar03() {
                   Services
                   <ChevronDown
                     className={cn(
-                      "size-4 transition-transform duration-200",
-                      isServicesOpen && "rotate-180"
+                      'size-4 transition-transform duration-200',
+                      isServicesOpen && 'rotate-180',
                     )}
                   />
                 </button>

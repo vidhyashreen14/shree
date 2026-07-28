@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 export type Role = "admin" | "doctor" | "frontdesk" | "nurse" | "pharmacy" | "lab";
+=======
+export type Role = 'admin' | 'doctor' | 'frontdesk' | 'nurse' | 'pharmacy' | 'lab' | 'superadmin';
+>>>>>>> a821a0c (second update)
 
 export interface User {
   id: string;
@@ -8,6 +12,15 @@ export interface User {
   avatarUrl?: string;
   department?: string;
   phone?: string;
+  specialization?: string;
+  superSpecialization?: string;
+  qualification?: string;
+  experience?: string;
+  registrationNumber?: string;
+  registrationCouncil?: string;
+  registrationValidTill?: string;
+  languagesSpoken?: string;
+  biography?: string;
 }
 
 export interface Patient {
@@ -36,8 +49,13 @@ export interface Patient {
 }
 
 export type AppointmentStatus =
+<<<<<<< HEAD
   "scheduled" | "checked-in" | "in-consultation" | "completed" | "cancelled" | "no-show";
 export type AppointmentType = "consultation" | "follow-up" | "walk-in" | "tele";
+=======
+  'scheduled' | 'checked-in' | 'in-consultation' | 'completed' | 'cancelled' | 'no-show';
+export type AppointmentType = 'consultation' | 'follow-up' | 'walk-in' | 'tele';
+>>>>>>> a821a0c (second update)
 
 export interface Appointment {
   id: string;
@@ -169,7 +187,7 @@ export interface Notification {
   title: string;
   body: string;
   at: string;
-  kind: "info" | "success" | "warning" | "error";
+  kind: 'info' | 'success' | 'warning' | 'error';
   read: boolean;
 }
 
@@ -199,9 +217,9 @@ export interface NurseQueueEntry {
   paymentMethod: string;
   totalPaid: number;
   arrivedAt: string;
-  vitalsStatus: "pending" | "in-progress" | "done";
+  vitalsStatus: 'pending' | 'in-progress' | 'done';
   vitals?: NurseVitals;
-  consultStatus?: "waiting" | "in-consultation" | "completed" | "cancelled";
+  consultStatus?: 'waiting' | 'in-consultation' | 'completed' | 'cancelled';
 }
 
 export interface VisitRecord {

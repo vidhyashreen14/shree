@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHeader } from "@/components/common/PageHeader";
 import { StatCard } from "@/components/common/StatCard";
@@ -380,3 +381,13 @@ function AdminOverview() {
     </>
   );
 }
+=======
+import { createFileRoute, redirect } from '@tanstack/react-router';
+
+export const Route = createFileRoute('/_app/admin/')({
+  beforeLoad: () => {
+    throw redirect({ to: '/admin/settings' });
+  },
+  component: () => null,
+});
+>>>>>>> a821a0c (second update)

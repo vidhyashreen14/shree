@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { createFileRoute} from "@tanstack/react-router";
 
 import { StatusChip } from "@/components/common/StatusChip";
@@ -21,11 +22,20 @@ import {
 
 import { useState, ChangeEvent } from "react";
 import { toast } from "sonner";
+=======
+import { createFileRoute, Link } from '@tanstack/react-router';
+import { PageHeader } from '@/components/common/PageHeader';
+import { StatusChip } from '@/components/common/StatusChip';
+import { Button } from '@/components/ui/button';
+import { FilePlus } from 'lucide-react';
+import { patients } from '@/lib/mock/data';
+>>>>>>> a821a0c (second update)
 
-export const Route = createFileRoute("/_app/pharmacy/invoices")({
+export const Route = createFileRoute('/_app/pharmacy/invoices')({
   component: PharmacyInvoices,
 });
 
+<<<<<<< HEAD
 export interface InvoiceMedicineItem {
   id: number;
   medicine: string;
@@ -72,8 +82,19 @@ const stockistOptions = [
   "LifeCare Pharmaceuticals",
   "Wellness Medical Suppliers",
 ];
+=======
+const invoices = Array.from({ length: 10 }).map((_, i) => ({
+  id: `INV-${9000 + i}`,
+  patient: patients[i % patients.length]!.name,
+  mrn: patients[i % patients.length]!.mrn,
+  amount: 850 + ((i * 240) % 2500),
+  tax: 42 + ((i * 12) % 150),
+  status: (['paid', 'pending', 'refunded'] as const)[i % 3],
+  date: new Date(Date.now() - i * 1000 * 60 * 60 * 24).toISOString(),
+}));
+>>>>>>> a821a0c (second update)
 
-const tone = { paid: "success", pending: "warning", refunded: "danger" } as const;
+const tone = { paid: 'success', pending: 'warning', refunded: 'danger' } as const;
 
 function PharmacyInvoices() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -618,6 +639,7 @@ function PharmacyInvoices() {
 
   return (
     <>
+<<<<<<< HEAD
       {/* Add Invoice Form - Displayed directly on the page */}
       <div className="surface-elevated overflow-hidden mt-2">
         <div className="p-6 border-b border-border bg-gradient-to-r from-primary/5 to-primary/10">
@@ -944,6 +966,48 @@ function PharmacyInvoices() {
                   <th className="px-4 py-3 text-left font-semibold text-muted-foreground">
                     Action
                   </th>
+=======
+      <PageHeader
+        title="GST Invoices"
+        description="View and manage pharmaceutical billing records and customer receipts."
+        actions={
+          <Link to="/pharmacy/billing">
+            <Button>
+              <FilePlus className="mr-2 h-4 w-4" /> New Bill
+            </Button>
+          </Link>
+        }
+      />
+      <div className="surface-elevated overflow-hidden mt-6">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-border text-sm">
+            <thead className="bg-muted/40">
+              <tr>
+                {['Invoice ID', 'Patient', 'MRN', 'Amount', 'GST', 'Status', 'Date'].map((h) => (
+                  <th
+                    key={h}
+                    className="px-4 py-3 text-left text-xs font-semibold uppercase text-muted-foreground"
+                  >
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              {invoices.map((inv) => (
+                <tr key={inv.id} className="hover:bg-muted/30">
+                  <td className="px-4 py-3 font-mono text-xs">{inv.id}</td>
+                  <td className="px-4 py-3 font-medium">{inv.patient}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{inv.mrn}</td>
+                  <td className="px-4 py-3">₹{inv.amount.toLocaleString()}</td>
+                  <td className="px-4 py-3">₹{inv.tax}</td>
+                  <td className="px-4 py-3">
+                    <StatusChip tone={tone[inv.status]}>{inv.status}</StatusChip>
+                  </td>
+                  <td className="px-4 py-3 text-muted-foreground">
+                    {new Date(inv.date).toDateString()}
+                  </td>
+>>>>>>> a821a0c (second update)
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">

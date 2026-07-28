@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { CheckCircle2Icon } from "lucide-react";
+import { CheckCircle2Icon } from 'lucide-react';
 import {
   Dialog,
   DialogTrigger,
@@ -9,8 +9,8 @@ import {
   DialogTitle,
   DialogDescription,
   DialogClose,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 
 export default function Dialog05() {
   return (

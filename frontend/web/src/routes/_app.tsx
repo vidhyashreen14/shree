@@ -1,12 +1,13 @@
-import { Outlet, createFileRoute, useNavigate, useRouterState } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { AppShell } from "@/components/layout/AppShell";
-import { PharmacyAppShell } from "@/components/layout/PharmacyAppShell";
-import { useAuth, splashState } from "@/lib/store/auth";
-import { canAccess, ROLE_HOME } from "@/lib/rbac";
-import { SplashScreen } from "@/components/common/SplashScreen";
+import { Outlet, createFileRoute, useNavigate, useRouterState } from '@tanstack/react-router';
+import { useEffect, useState } from 'react';
+import { AppShell } from '@/components/layout/AppShell';
+import { PharmacyAppShell } from '@/components/layout/PharmacyAppShell';
+import { SuperAdminAppShell } from '@/components/layout/SuperAdminAppShell';
+import { useAuth, splashState } from '@/lib/store/auth';
+import { canAccess, ROLE_HOME } from '@/lib/rbac';
+import { SplashScreen } from '@/components/common/SplashScreen';
 
-export const Route = createFileRoute("/_app")({
+export const Route = createFileRoute('/_app')({
   component: AppLayout,
 });
 
@@ -19,7 +20,7 @@ function AppLayout() {
 
   useEffect(() => {
     if (!user) {
-      navigate({ to: "/login" });
+      navigate({ to: '/login' });
       return;
     }
     if (!canAccess(user.role, pathname)) {
@@ -47,13 +48,22 @@ function AppLayout() {
     );
   }
 
-  const isPharmacy = pathname.startsWith("/pharmacy");
+  const isPharmacy = pathname.startsWith('/pharmacy');
+  const isSuperAdmin = user.role === 'superadmin';
 
   if (isPharmacy) {
     return (
       <PharmacyAppShell>
         <Outlet />
       </PharmacyAppShell>
+    );
+  }
+
+  if (isSuperAdmin) {
+    return (
+      <SuperAdminAppShell>
+        <Outlet />
+      </SuperAdminAppShell>
     );
   }
 

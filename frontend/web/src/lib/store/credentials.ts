@@ -1,6 +1,6 @@
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
-import type { Role } from "../types";
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+import type { Role } from '../types';
 
 export interface StaffAccount {
   id: string;
@@ -10,14 +10,14 @@ export interface StaffAccount {
   passwordHash: string;
   role: Role;
   department: string;
-  status: "active" | "suspended";
+  status: 'active' | 'suspended';
   createdAt: string;
   lastLogin?: string;
 }
 
 interface CredentialState {
   accounts: StaffAccount[];
-  addAccount: (account: Omit<StaffAccount, "id" | "createdAt" | "status">) => StaffAccount;
+  addAccount: (account: Omit<StaffAccount, 'id' | 'createdAt' | 'status'>) => StaffAccount;
   updateAccount: (id: string, patch: Partial<StaffAccount>) => void;
   suspendAccount: (id: string) => void;
   reactivateAccount: (id: string) => void;
@@ -36,7 +36,7 @@ export const useCredentials = create<CredentialState>()(
         const account: StaffAccount = {
           ...data,
           id: `staff-${Date.now()}`,
-          status: "active",
+          status: 'active',
           createdAt: new Date().toISOString(),
         };
         set((s) => ({ accounts: [account, ...s.accounts] }));
@@ -50,18 +50,18 @@ export const useCredentials = create<CredentialState>()(
 
       suspendAccount: (id) =>
         set((s) => ({
-          accounts: s.accounts.map((a) => (a.id === id ? { ...a, status: "suspended" } : a)),
+          accounts: s.accounts.map((a) => (a.id === id ? { ...a, status: 'suspended' } : a)),
         })),
 
       reactivateAccount: (id) =>
         set((s) => ({
-          accounts: s.accounts.map((a) => (a.id === id ? { ...a, status: "active" } : a)),
+          accounts: s.accounts.map((a) => (a.id === id ? { ...a, status: 'active' } : a)),
         })),
 
       resetPassword: (id, newPassword) =>
         set((s) => ({
           accounts: s.accounts.map((a) =>
-            a.id === id ? { ...a, passwordHash: btoa(newPassword) } : a
+            a.id === id ? { ...a, passwordHash: btoa(newPassword) } : a,
           ),
         })),
 
@@ -76,12 +76,12 @@ export const useCredentials = create<CredentialState>()(
           account &&
           account.passwordHash === btoa(password) &&
           account.role === role &&
-          account.status === "active"
+          account.status === 'active'
         ) {
           // update last login
           set((s) => ({
             accounts: s.accounts.map((a) =>
-              a.id === account.id ? { ...a, lastLogin: new Date().toISOString() } : a
+              a.id === account.id ? { ...a, lastLogin: new Date().toISOString() } : a,
             ),
           }));
           return account;
@@ -89,6 +89,6 @@ export const useCredentials = create<CredentialState>()(
         return null;
       },
     }),
-    { name: "medicore-credentials" }
-  )
+    { name: 'medicore-credentials' },
+  ),
 );

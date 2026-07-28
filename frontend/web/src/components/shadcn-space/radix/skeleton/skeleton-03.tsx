@@ -1,11 +1,21 @@
+<<<<<<< HEAD
 import { useRef } from "react";
 import { motion, useInView } from "motion/react";
 import { Skeleton } from "@/components/ui/skeleton";
+=======
+import { useRef } from 'react';
+import { motion, useInView } from 'motion/react';
+import { Skeleton } from '@/components/ui/skeleton';
+>>>>>>> a821a0c (second update)
 
 const fadeUp = (inView: boolean, delay: number) => ({
   initial: { opacity: 0, y: 8 },
   animate: inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 },
+<<<<<<< HEAD
   transition: { duration: 0.4, ease: "easeOut" as const, delay },
+=======
+  transition: { duration: 0.4, ease: 'easeOut' as const, delay },
+>>>>>>> a821a0c (second update)
 });
 
 const ListSkeleton = () => {
@@ -17,7 +27,7 @@ const ListSkeleton = () => {
       ref={ref}
       initial={{ opacity: 0, scale: 0.98 }}
       animate={inView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.98 }}
-      transition={{ duration: 0.35, ease: "easeOut" }}
+      transition={{ duration: 0.35, ease: 'easeOut' }}
       className="flex w-full max-w-md flex-col gap-4 rounded-md border p-4"
     >
       {/* List title + action */}

@@ -1,12 +1,12 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
-import { PageHeader } from "@/components/common/PageHeader";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { toast } from "sonner";
-import { useBillingStore, type BillCategory } from "@/lib/store/billing";
+import { createFileRoute } from '@tanstack/react-router';
+import { useState } from 'react';
+import { PageHeader } from '@/components/common/PageHeader';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { toast } from 'sonner';
+import { useBillingStore, type BillCategory } from '@/lib/store/billing';
 import {
   IndianRupee,
   Plus,
@@ -31,14 +31,19 @@ import {
   CreditCard,
   Receipt,
   Package,
+<<<<<<< HEAD
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+=======
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
+>>>>>>> a821a0c (second update)
 
-export const Route = createFileRoute("/_app/admin/billing")({
+export const Route = createFileRoute('/_app/admin/billing')({
   head: () => ({
     meta: [
-      { title: "Billing Configuration · MediCore Admin" },
-      { name: "description", content: "Configure billing amounts for all hospital bill types." },
+      { title: 'Billing Configuration · MediCore Admin' },
+      { name: 'description', content: 'Configure billing amounts for all hospital bill types.' },
     ],
   }),
   component: BillingConfiguration,
@@ -71,20 +76,28 @@ const categoryIcons: Record<string, typeof IndianRupee> = {
 function CategoryCard({ category }: { category: BillCategory }) {
   const { updateItemAmount, toggleItem, addItem, removeItem } = useBillingStore();
   const [expanded, setExpanded] = useState(false);
-  const [newName, setNewName] = useState("");
-  const [newAmount, setNewAmount] = useState("");
+  const [newName, setNewName] = useState('');
+  const [newAmount, setNewAmount] = useState('');
   const Icon = categoryIcons[category.id] ?? IndianRupee;
 
   const total = category.items.filter((i) => i.enabled).reduce((sum, i) => sum + i.amount, 0);
 
   const handleAdd = () => {
     if (!newName.trim()) {
+<<<<<<< HEAD
       toast.error("Enter item name");
+=======
+      toast.error('Enter item name');
+>>>>>>> a821a0c (second update)
       return;
     }
     const amount = Number(newAmount);
     if (isNaN(amount) || amount < 0) {
+<<<<<<< HEAD
       toast.error("Enter valid amount");
+=======
+      toast.error('Enter valid amount');
+>>>>>>> a821a0c (second update)
       return;
     }
     addItem(category.id, {
@@ -93,9 +106,9 @@ function CategoryCard({ category }: { category: BillCategory }) {
       amount,
       enabled: true,
     });
-    setNewName("");
-    setNewAmount("");
-    toast.success("Item added");
+    setNewName('');
+    setNewAmount('');
+    toast.success('Item added');
   };
 
   return (
@@ -128,8 +141,13 @@ function CategoryCard({ category }: { category: BillCategory }) {
             <div
               key={item.id}
               className={cn(
+<<<<<<< HEAD
                 "flex items-center gap-3 rounded-lg border px-3 py-2.5 transition-all",
                 !item.enabled && "opacity-50"
+=======
+                'flex items-center gap-3 rounded-lg border px-3 py-2.5 transition-all',
+                !item.enabled && 'opacity-50',
+>>>>>>> a821a0c (second update)
               )}
             >
               <Switch
@@ -211,12 +229,16 @@ function BillingConfiguration() {
     const r = Number(regFee);
     const c = Number(consFee);
     if (isNaN(r) || isNaN(c) || r < 0 || c < 0) {
+<<<<<<< HEAD
       toast.error("Enter valid amounts");
+=======
+      toast.error('Enter valid amounts');
+>>>>>>> a821a0c (second update)
       return;
     }
     setRegistrationFee(r);
     setConsultationFee(c);
-    toast.success("OPD fees saved", { description: `Registration ₹${r} · Consultation ₹${c}` });
+    toast.success('OPD fees saved', { description: `Registration ₹${r} · Consultation ₹${c}` });
   };
 
   return (
@@ -230,9 +252,15 @@ function BillingConfiguration() {
             variant="outline"
             onClick={() => {
               resetToDefaults();
+<<<<<<< HEAD
               setRegFee("100");
               setConsFee("500");
               toast.success("Reset to defaults");
+=======
+              setRegFee('100');
+              setConsFee('500');
+              toast.success('Reset to defaults');
+>>>>>>> a821a0c (second update)
             }}
           >
             <RotateCcw className="mr-2 h-4 w-4" /> Reset Defaults

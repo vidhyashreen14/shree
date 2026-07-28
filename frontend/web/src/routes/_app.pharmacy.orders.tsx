@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useRef } from "react";
 import { PageHeader } from "@/components/common/PageHeader";
@@ -6,6 +7,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { medicines } from "@/lib/mock/data";
+=======
+import { createFileRoute } from '@tanstack/react-router';
+import { useState } from 'react';
+import { PageHeader } from '@/components/common/PageHeader';
+import { StatusChip } from '@/components/common/StatusChip';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { medicines } from '@/lib/mock/data';
+>>>>>>> a821a0c (second update)
 import {
   Truck,
   Plus,
@@ -14,22 +25,25 @@ import {
   Printer,
   Download,
   Trash2,
+<<<<<<< HEAD
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Calendar,
+=======
+>>>>>>> a821a0c (second update)
   History,
   ShoppingCart,
   Pill,
-} from "lucide-react";
-import { toast } from "sonner";
+} from 'lucide-react';
+import { toast } from 'sonner';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 
-export const Route = createFileRoute("/_app/pharmacy/orders")({
+export const Route = createFileRoute('/_app/pharmacy/orders')({
   component: PharmacyOrders,
 });
 
@@ -46,22 +60,26 @@ interface PurchaseOrderHistory {
   supplier: string;
   items: number;
   total: number;
-  status: "draft" | "placed" | "shipped" | "received";
+  status: 'draft' | 'placed' | 'shipped' | 'received';
   date: string;
 }
 
 const initialOrders: PurchaseOrderHistory[] = Array.from({ length: 8 }).map((_, i) => ({
   id: `PO-${5000 + i}`,
+<<<<<<< HEAD
   supplier: ["MedPlus Distributors", "Apollo Wholesale", "PharmEasy Bulk", "Wellness Stockists"][
+=======
+  supplier: ['MedPlus Distributors', 'Apollo Wholesale', 'PharmEasy Bulk', 'Wellness Stockists'][
+>>>>>>> a821a0c (second update)
     i % 4
   ]!,
   items: 8 + (i % 14),
   total: 12000 + i * 4500,
-  status: (["draft", "placed", "shipped", "received"] as const)[i % 4]!,
+  status: (['draft', 'placed', 'shipped', 'received'] as const)[i % 4]!,
   date: new Date(Date.now() - i * 1000 * 60 * 60 * 36).toISOString(),
 }));
 
-const tone = { draft: "neutral", placed: "info", shipped: "warning", received: "success" } as const;
+const tone = { draft: 'neutral', placed: 'info', shipped: 'warning', received: 'success' } as const;
 
 function PharmacyOrders() {
   const [isCreating, setIsCreating] = useState(true);
@@ -70,11 +88,23 @@ function PharmacyOrders() {
   const printContentRef = useRef<HTMLDivElement>(null);
 
   // Form states
+<<<<<<< HEAD
   const [stockist, setStockist] = useState("");
   const [orderDate, setOrderDate] = useState("");
   const [selectedMed, setSelectedMed] = useState("");
   const [unitsPerStrip, setUnitsPerStrip] = useState<number | "">("");
   const [noOfStrips, setNoOfStrips] = useState<number | "">("");
+=======
+  const [stockist, setStockist] = useState('');
+  const [orderDate, setOrderDate] = useState('');
+
+  // Current item row states
+  const [selectedMed, setSelectedMed] = useState('');
+  const [unitsPerStrip, setUnitsPerStrip] = useState<number | ''>('');
+  const [noOfStrips, setNoOfStrips] = useState<number | ''>('');
+
+  // Added items table state
+>>>>>>> a821a0c (second update)
   const [addedItems, setAddedItems] = useState<AddedItem[]>([]);
 
   const handleAddItem = () => {
@@ -87,15 +117,15 @@ function PharmacyOrders() {
       return;
     }
     if (!selectedMed) {
-      toast.error("Please select a medicine.");
+      toast.error('Please select a medicine.');
       return;
     }
     if (!unitsPerStrip || unitsPerStrip <= 0) {
-      toast.error("Please enter a valid Units/Strip.");
+      toast.error('Please enter a valid Units/Strip.');
       return;
     }
     if (!noOfStrips || noOfStrips <= 0) {
-      toast.error("Please enter a valid number of strips.");
+      toast.error('Please enter a valid number of strips.');
       return;
     }
 
@@ -122,34 +152,42 @@ function PharmacyOrders() {
       ]);
     }
 
+<<<<<<< HEAD
     setSelectedMed("");
     setUnitsPerStrip("");
     setNoOfStrips("");
     toast.success("Medicine added to order.");
+=======
+    // Reset item inputs
+    setSelectedMed('');
+    setUnitsPerStrip('');
+    setNoOfStrips('');
+    toast.success('Medicine added to order.');
+>>>>>>> a821a0c (second update)
   };
 
   const handleRemoveItem = (id: string) => {
     setAddedItems(addedItems.filter((item) => item.id !== id));
-    toast.info("Item removed.");
+    toast.info('Item removed.');
   };
 
   const handleClearItemRow = () => {
-    setSelectedMed("");
-    setUnitsPerStrip("");
-    setNoOfStrips("");
+    setSelectedMed('');
+    setUnitsPerStrip('');
+    setNoOfStrips('');
   };
 
   const handleSaveOrder = () => {
     if (!stockist) {
-      toast.error("Please select a stockist.");
+      toast.error('Please select a stockist.');
       return;
     }
     if (!orderDate) {
-      toast.error("Please select an order date.");
+      toast.error('Please select an order date.');
       return;
     }
     if (addedItems.length === 0) {
-      toast.error("Please add at least one medicine to the purchase order.");
+      toast.error('Please add at least one medicine to the purchase order.');
       return;
     }
 
@@ -161,24 +199,31 @@ function PharmacyOrders() {
         const price = medicines.find((m) => m.id === curr.id)?.pricePerUnit || 10;
         return acc + curr.totalUnits * price;
       }, 0),
-      status: "placed",
+      status: 'placed',
       date: new Date(orderDate).toISOString(),
     };
 
     setOrderHistory([newOrder, ...orderHistory]);
     toast.success(`Purchase Order ${newOrder.id} saved successfully!`);
 
+<<<<<<< HEAD
     setStockist("");
     setOrderDate("");
+=======
+    // Reset full form
+    setStockist('');
+    setOrderDate('');
+>>>>>>> a821a0c (second update)
     setAddedItems([]);
     setIsCreating(false);
   };
 
   const handlePrint = () => {
     if (addedItems.length === 0) {
-      toast.error("No items in order to print.");
+      toast.error('No items in order to print.');
       return;
     }
+<<<<<<< HEAD
 
     // Generate the print content
     const printWindow = window.open("", "_blank", "width=1200,height=800");
@@ -473,19 +518,23 @@ function PharmacyOrders() {
     printWindow.document.close();
 
     toast.success("Purchase Order sent to printer.");
+=======
+    toast.success('Sending Purchase Order to printer...');
+    window.print();
+>>>>>>> a821a0c (second update)
   };
 
   const handleDownload = () => {
     if (addedItems.length === 0) {
-      toast.error("No items in order to download.");
+      toast.error('No items in order to download.');
       return;
     }
-    toast.success("Downloading Purchase Order PDF...");
+    toast.success('Downloading Purchase Order PDF...');
   };
 
   const handleCancel = () => {
-    setStockist("");
-    setOrderDate("");
+    setStockist('');
+    setOrderDate('');
     setAddedItems([]);
     setIsCreating(false);
   };
@@ -493,11 +542,11 @@ function PharmacyOrders() {
   return (
     <div className="flex flex-col gap-6">
       <PageHeader
-        title={isCreating ? "Create Purchase Order" : "Purchase orders"}
+        title={isCreating ? 'Create Purchase Order' : 'Purchase orders'}
         description={
           isCreating
-            ? "Generate and draft restock requests for pharmaceutical suppliers."
-            : "Restock requests sent to stockists and suppliers."
+            ? 'Generate and draft restock requests for pharmaceutical suppliers.'
+            : 'Restock requests sent to stockists and suppliers.'
         }
         actions={
           isCreating ? (
@@ -523,8 +572,12 @@ function PharmacyOrders() {
               </h2>
             </div>
 
+<<<<<<< HEAD
             {/* All fields in one grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+=======
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+>>>>>>> a821a0c (second update)
               <div>
                 <Label htmlFor="stockist" className="flex items-center gap-1">
                   Stockist Name <span className="text-destructive">*</span>
@@ -557,6 +610,25 @@ function PharmacyOrders() {
                 </div>
               </div>
 
+<<<<<<< HEAD
+=======
+            <div className="flex justify-start">
+              <Button
+                type="button"
+                onClick={() =>
+                  toast.success('Feature to register custom stockist medicine is coming soon')
+                }
+                className="bg-success text-success-foreground hover:bg-success/90 rounded-full px-5"
+              >
+                <Plus className="mr-1.5 h-4 w-4" /> Add New Medicine
+              </Button>
+            </div>
+          </div>
+
+          {/* Mockup Card 2: Medicine selection row */}
+          <div className="surface-elevated p-6 rounded-2xl flex flex-col gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+>>>>>>> a821a0c (second update)
               <div>
                 <Label htmlFor="medicine" className="flex items-center gap-1">
                   Medicine <span className="text-destructive">*</span>
@@ -587,7 +659,7 @@ function PharmacyOrders() {
                   type="number"
                   placeholder="Enter units per strip"
                   value={unitsPerStrip}
-                  onChange={(e) => setUnitsPerStrip(e.target.value ? Number(e.target.value) : "")}
+                  onChange={(e) => setUnitsPerStrip(e.target.value ? Number(e.target.value) : '')}
                   className="mt-1.5 bg-background"
                   min="1"
                 />
@@ -602,7 +674,7 @@ function PharmacyOrders() {
                   type="number"
                   placeholder="Enter number of strips"
                   value={noOfStrips}
-                  onChange={(e) => setNoOfStrips(e.target.value ? Number(e.target.value) : "")}
+                  onChange={(e) => setNoOfStrips(e.target.value ? Number(e.target.value) : '')}
                   className="mt-1.5 bg-background"
                   min="1"
                 />
@@ -639,7 +711,11 @@ function PharmacyOrders() {
                       Total Units
                     </th>
                     <th className="px-4 py-3.5 text-center font-semibold uppercase text-xs w-28">
+<<<<<<< HEAD
                       Action
+=======
+                      Edit/Delete
+>>>>>>> a821a0c (second update)
                     </th>
                   </tr>
                 </thead>
@@ -704,7 +780,11 @@ function PharmacyOrders() {
             <table className="min-w-full divide-y divide-border text-sm">
               <thead className="bg-muted/40">
                 <tr>
+<<<<<<< HEAD
                   {["Order ID", "Supplier", "Items Count", "Total Value", "Status", "Date"].map(
+=======
+                  {['Order ID', 'Supplier', 'Items Count', 'Total Value', 'Status', 'Date'].map(
+>>>>>>> a821a0c (second update)
                     (h) => (
                       <th
                         key={h}
@@ -712,7 +792,11 @@ function PharmacyOrders() {
                       >
                         {h}
                       </th>
+<<<<<<< HEAD
                     )
+=======
+                    ),
+>>>>>>> a821a0c (second update)
                   )}
                 </tr>
               </thead>

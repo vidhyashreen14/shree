@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader } from "@/components/common/PageHeader";
 import { StatCard } from "@/components/common/StatCard";
@@ -15,10 +16,17 @@ import {
   PolarAngleAxis,
 } from "recharts";
 import { monthlyRevenue } from "@/lib/mock/data";
+=======
+import { createFileRoute, redirect } from '@tanstack/react-router';
+>>>>>>> a821a0c (second update)
 
-export const Route = createFileRoute("/_app/admin/analytics")({
-  component: AdminAnalytics,
+export const Route = createFileRoute('/_app/admin/analytics')({
+  beforeLoad: () => {
+    throw redirect({ to: '/admin/settings' });
+  },
+  component: () => null,
 });
+<<<<<<< HEAD
 
 const kpis = [
   { name: "Capacity", value: 78, fill: "var(--color-chart-1)" },
@@ -143,3 +151,5 @@ function AdminAnalytics() {
     </>
   );
 }
+=======
+>>>>>>> a821a0c (second update)

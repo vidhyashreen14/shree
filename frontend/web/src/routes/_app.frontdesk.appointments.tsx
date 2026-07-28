@@ -1,16 +1,16 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useMemo } from "react";
-import type { ColumnDef } from "@tanstack/react-table";
-import { PageHeader } from "@/components/common/PageHeader";
-import { DataTable } from "@/components/common/DataTable";
-import { AppointmentStatusChip } from "@/components/common/AppointmentStatusChip";
-import { appointments, patients, doctors } from "@/lib/mock/data";
-import type { Appointment } from "@/lib/types";
-import { format } from "date-fns";
-import { Button } from "@/components/ui/button";
-import { CalendarPlus } from "lucide-react";
+import { createFileRoute } from '@tanstack/react-router';
+import { useMemo } from 'react';
+import type { ColumnDef } from '@tanstack/react-table';
+import { PageHeader } from '@/components/common/PageHeader';
+import { DataTable } from '@/components/common/DataTable';
+import { AppointmentStatusChip } from '@/components/common/AppointmentStatusChip';
+import { appointments, patients, doctors } from '@/lib/mock/data';
+import type { Appointment } from '@/lib/types';
+import { format } from 'date-fns';
+import { Button } from '@/components/ui/button';
+import { CalendarPlus } from 'lucide-react';
 
-export const Route = createFileRoute("/_app/frontdesk/appointments")({
+export const Route = createFileRoute('/_app/frontdesk/appointments')({
   component: FdAppts,
 });
 
@@ -18,13 +18,19 @@ function FdAppts() {
   const columns = useMemo<ColumnDef<Appointment>[]>(
     () => [
       {
+<<<<<<< HEAD
         header: "Token",
         accessorKey: "token",
+=======
+        header: 'Token',
+        accessorKey: 'token',
+>>>>>>> a821a0c (second update)
         cell: ({ getValue }) => (
           <span className="font-mono font-semibold">#{String(getValue())}</span>
         ),
       },
       {
+<<<<<<< HEAD
         header: "Patient",
         accessorKey: "patientId",
         cell: ({ getValue }) => patients.find((p) => p.id === getValue())?.name,
@@ -49,6 +55,32 @@ function FdAppts() {
       },
     ],
     []
+=======
+        header: 'Patient',
+        accessorKey: 'patientId',
+        cell: ({ getValue }) => patients.find((p) => p.id === getValue())?.name,
+      },
+      {
+        header: 'Doctor',
+        accessorKey: 'doctorId',
+        cell: ({ getValue }) => [...doctors].find((d) => d.id === getValue())?.name,
+      },
+      { header: 'Reason', accessorKey: 'reason' },
+      {
+        header: 'When',
+        accessorKey: 'date',
+        cell: ({ getValue }) => format(new Date(String(getValue())), 'MMM d, p'),
+      },
+      {
+        header: 'Status',
+        accessorKey: 'status',
+        cell: ({ getValue }) => (
+          <AppointmentStatusChip status={getValue() as Appointment['status']} />
+        ),
+      },
+    ],
+    [],
+>>>>>>> a821a0c (second update)
   );
 
   return (

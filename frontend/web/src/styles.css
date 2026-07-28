@@ -1,19 +1,19 @@
-@import "tailwindcss";
-@import "tw-animate-css";
-@import "@fontsource/inter/400.css";
-@import "@fontsource/inter/500.css";
-@import "@fontsource/inter/600.css";
-@import "@fontsource/inter/700.css";
-@import "@fontsource/plus-jakarta-sans/500.css";
-@import "@fontsource/plus-jakarta-sans/600.css";
-@import "@fontsource/plus-jakarta-sans/700.css";
-@import "@fontsource/plus-jakarta-sans/800.css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/500.css';
+@import '@fontsource/inter/600.css';
+@import '@fontsource/inter/700.css';
+@import '@fontsource/plus-jakarta-sans/500.css';
+@import '@fontsource/plus-jakarta-sans/600.css';
+@import '@fontsource/plus-jakarta-sans/700.css';
+@import '@fontsource/plus-jakarta-sans/800.css';
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-sans: "Inter", system-ui, sans-serif;
-  --font-display: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-display: 'Plus Jakarta Sans', system-ui, sans-serif;
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -195,6 +195,12 @@
     font-family: var(--font-display);
     letter-spacing: -0.01em;
   }
+
+  /* Hide Edge/IE default password reveal and clear buttons */
+  input[type='password']::-ms-reveal,
+  input[type='password']::-ms-clear {
+    display: none;
+  }
 }
 
 @utility surface-elevated {
@@ -212,6 +218,7 @@
   background-clip: text;
   color: transparent;
 }
+<<<<<<< HEAD
 
 /* ─── Animated Hamburger Menu Button (Uiverse.io / ArturCodeCraft) ─────────
    Adapted to respect the app's CSS-variable theme (light + dark).          */
@@ -451,3 +458,5 @@
 .cir-tabs__t:focus-visible {
   box-shadow: 0 0 0 3px rgba(46, 125, 239, 0.32);
 }
+=======
+>>>>>>> a821a0c (second update)

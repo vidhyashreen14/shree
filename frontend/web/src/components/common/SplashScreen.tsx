@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from 'react';
 
 interface SplashScreenProps {
   onDone?: () => void;
@@ -10,7 +10,7 @@ interface SplashScreenProps {
  * Covers half the page width in the middle.
  */
 export function SplashScreen({ onDone }: SplashScreenProps) {
-  const [phase, setPhase] = useState<"visible" | "out">("visible");
+  const [phase, setPhase] = useState<'visible' | 'out'>('visible');
   const onDoneRef = useRef(onDone);
 
   // Keep ref updated with latest callback
@@ -20,7 +20,7 @@ export function SplashScreen({ onDone }: SplashScreenProps) {
 
   useEffect(() => {
     // Start fading out at 4.5s, signal completion at 5s
-    const outTimer = setTimeout(() => setPhase("out"), 4500);
+    const outTimer = setTimeout(() => setPhase('out'), 4500);
     const doneTimer = setTimeout(() => onDoneRef.current?.(), 5000);
     return () => {
       clearTimeout(outTimer);
@@ -32,8 +32,8 @@ export function SplashScreen({ onDone }: SplashScreenProps) {
     <div
       className="fixed inset-0 z-[999] flex flex-col items-center justify-center bg-background"
       style={{
-        opacity: phase === "out" ? 0 : 1,
-        transition: "opacity 0.5s ease-in-out",
+        opacity: phase === 'out' ? 0 : 1,
+        transition: 'opacity 0.5s ease-in-out',
       }}
     >
       <div className="flex w-1/2 max-w-[500px] flex-col items-center gap-8">
@@ -97,7 +97,7 @@ export function SplashScreen({ onDone }: SplashScreenProps) {
         /* Earpieces fade in first */
         .animate-fade-in-delayed {
           opacity: 0;
-          animation: sp-fade 0.4s ease 0.2s forwards;
+          animation: sp-fade 0.4s ease 0.3s forwards;
         }
 
         /* Primary stethoscope tube and ECG line draw sequentially */

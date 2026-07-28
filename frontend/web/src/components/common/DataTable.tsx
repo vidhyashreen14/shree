@@ -6,11 +6,19 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
+<<<<<<< HEAD
 } from "@tanstack/react-table";
 import { useState } from "react";
 import { ChevronLeft, ChevronRight, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+=======
+} from '@tanstack/react-table';
+import { useState } from 'react';
+import { ChevronLeft, ChevronRight, Search } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+>>>>>>> a821a0c (second update)
 
 interface Props<T> {
   columns: ColumnDef<T, unknown>[];
@@ -24,10 +32,14 @@ export function DataTable<T>({
   columns,
   data,
   searchKey,
+<<<<<<< HEAD
   searchPlaceholder = "Search…",
+=======
+  searchPlaceholder = 'Search…',
+>>>>>>> a821a0c (second update)
   pageSize = 8,
 }: Props<T>) {
-  const [filter, setFilter] = useState("");
+  const [filter, setFilter] = useState('');
   const table = useReactTable({
     data,
     columns,
@@ -41,12 +53,16 @@ export function DataTable<T>({
     globalFilterFn: (row, _id, value) => {
       const v = String(value).toLowerCase();
       if (searchKey) {
+<<<<<<< HEAD
         return String(row.getValue(searchKey) ?? "")
+=======
+        return String(row.getValue(searchKey) ?? '')
+>>>>>>> a821a0c (second update)
           .toLowerCase()
           .includes(v);
       }
       return Object.values(row.original as Record<string, unknown>)
-        .map((x) => String(x ?? "").toLowerCase())
+        .map((x) => String(x ?? '').toLowerCase())
         .some((s) => s.includes(v));
     },
   });

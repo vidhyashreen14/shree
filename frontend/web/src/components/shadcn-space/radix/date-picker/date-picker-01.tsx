@@ -1,24 +1,36 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { format } from "date-fns";
-import { CalendarIcon, Clock, ChevronDown, Check } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { useState } from 'react';
+import { format } from 'date-fns';
+import { CalendarIcon, Clock, ChevronDown, Check } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
+<<<<<<< HEAD
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+=======
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+>>>>>>> a821a0c (second update)
 
 const DateAndTimePickerDemo = () => {
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState<Date | undefined>(undefined);
+<<<<<<< HEAD
   const [bookingStatus, setBookingStatus] = useState<"idle" | "loading" | "success">("idle");
+=======
+  const [bookingStatus, setBookingStatus] = useState<'idle' | 'loading' | 'success'>('idle');
+>>>>>>> a821a0c (second update)
 
   const handleBooking = () => {
-    setBookingStatus("loading");
-    setTimeout(() => setBookingStatus("success"), 1500);
+    setBookingStatus('loading');
+    setTimeout(() => setBookingStatus('success'), 1500);
   };
 
   return (
@@ -29,17 +41,26 @@ const DateAndTimePickerDemo = () => {
             Select Date
           </Label>
           <Popover open={open} onOpenChange={setOpen}>
+<<<<<<< HEAD
             <PopoverTrigger asChild onPointerDown={() => setBookingStatus("idle")}>
+=======
+            <PopoverTrigger asChild onPointerDown={() => setBookingStatus('idle')}>
+>>>>>>> a821a0c (second update)
               <Button
                 variant="outline"
                 id="date"
                 className={cn(
+<<<<<<< HEAD
                   "w-full justify-start text-left font-normal h-10 transition-all hover:bg-muted/50 cursor-pointer",
                   !date && "text-muted-foreground"
+=======
+                  'w-full justify-start text-left font-normal h-10 transition-all hover:bg-muted/50 cursor-pointer',
+                  !date && 'text-muted-foreground',
+>>>>>>> a821a0c (second update)
                 )}
               >
                 <CalendarIcon className="mr-2 h-4 w-4 opacity-70" />
-                {date ? format(date, "PPP") : <span>Select a date</span>}
+                {date ? format(date, 'PPP') : <span>Select a date</span>}
                 <ChevronDown className="ml-auto h-4 w-4 opacity-50" />
               </Button>
             </PopoverTrigger>
@@ -94,18 +115,18 @@ const DateAndTimePickerDemo = () => {
         <Button
           className="w-full h-11 font-semibold transition-all group overflow-hidden relative hover:bg-primary/80"
           onClick={handleBooking}
-          disabled={!date || bookingStatus !== "idle"}
+          disabled={!date || bookingStatus !== 'idle'}
         >
-          {bookingStatus === "idle" && (
+          {bookingStatus === 'idle' && (
             <span className="flex items-center gap-2">Confirm Meet</span>
           )}
-          {bookingStatus === "loading" && (
+          {bookingStatus === 'loading' && (
             <div className="flex items-center gap-2">
               <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
               Processing...
             </div>
           )}
-          {bookingStatus === "success" && (
+          {bookingStatus === 'success' && (
             <span className="flex items-center gap-2 animate-in zoom-in-50 duration-300">
               <Check className="h-4 w-4" />
               Meet Scheduled!

@@ -1,5 +1,5 @@
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 interface FeeSettings {
   registrationFee: number;
@@ -18,6 +18,6 @@ export const useFeeSettings = create<FeeSettings>()(
       setConsultationFee: (fee) => set({ consultationFee: fee }),
       setFees: (reg, consult) => set({ registrationFee: reg, consultationFee: consult }),
     }),
-    { name: "medicore-fee-settings" }
-  )
+    { name: 'medicore-fee-settings' },
+  ),
 );

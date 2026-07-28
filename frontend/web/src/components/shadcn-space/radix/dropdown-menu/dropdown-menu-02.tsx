@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import type { ReactElement } from "react";
+import type { ReactElement } from 'react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,16 +8,24 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuTrigger,
+<<<<<<< HEAD
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { BellRing, Headset, LucideIcon, Salad, ScanText, Star, Video } from "lucide-react";
+=======
+} from '@/components/ui/dropdown-menu';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { BellRing, Headset, LucideIcon, Salad, ScanText, Star, Video } from 'lucide-react';
+>>>>>>> a821a0c (second update)
 
 type Props = {
   trigger: ReactElement;
   defaultOpen?: boolean;
-  align?: "start" | "center" | "end";
+  align?: 'start' | 'center' | 'end';
 };
 
 type MenuItem = {
@@ -31,48 +39,48 @@ type MenuItem = {
 
 const PROFILE_ITEMS: MenuItem[] = [
   {
-    iconColor: "stroke-blue-500",
-    bgColor: "bg-blue-500/10",
+    iconColor: 'stroke-blue-500',
+    bgColor: 'bg-blue-500/10',
     icon: Star,
-    title: "Event Today",
-    desc: "Just reminder that you have to",
-    time: "9:00 AM",
+    title: 'Event Today',
+    desc: 'Just reminder that you have to',
+    time: '9:00 AM',
   },
   {
-    iconColor: "stroke-orange-400",
-    bgColor: "bg-orange-400/10",
+    iconColor: 'stroke-orange-400',
+    bgColor: 'bg-orange-400/10',
     icon: Video,
-    title: "Team Meeting",
-    desc: "Discuss project updates and next steps",
-    time: "10:00 AM",
+    title: 'Team Meeting',
+    desc: 'Discuss project updates and next steps',
+    time: '10:00 AM',
   },
   {
-    iconColor: "stroke-teal-400",
-    bgColor: "bg-teal-400/10",
+    iconColor: 'stroke-teal-400',
+    bgColor: 'bg-teal-400/10',
     icon: Salad,
-    title: "Lunch Break",
-    desc: "Take a break and recharge",
-    time: "12:30 PM",
+    title: 'Lunch Break',
+    desc: 'Take a break and recharge',
+    time: '12:30 PM',
   },
   {
-    iconColor: "stroke-red-500",
-    bgColor: "bg-red-500/10",
+    iconColor: 'stroke-red-500',
+    bgColor: 'bg-red-500/10',
     icon: Headset,
-    title: "Client Call",
-    desc: "Monthly check-in with the client",
-    time: "3:00 PM",
+    title: 'Client Call',
+    desc: 'Monthly check-in with the client',
+    time: '3:00 PM',
   },
   {
-    iconColor: "stroke-sky-400",
-    bgColor: "bg-sky-400/10",
+    iconColor: 'stroke-sky-400',
+    bgColor: 'bg-sky-400/10',
     icon: ScanText,
-    title: "Project Review",
-    desc: "Review project deliverables with client",
-    time: "4:00 PM",
+    title: 'Project Review',
+    desc: 'Review project deliverables with client',
+    time: '4:00 PM',
   },
 ];
 
-const Dropdown = ({ trigger, defaultOpen, align = "end" }: Props) => {
+const Dropdown = ({ trigger, defaultOpen, align = 'end' }: Props) => {
   return (
     <div className="flex items-start justify-center p-4 sm:p-8">
       <DropdownMenu defaultOpen={defaultOpen}>
@@ -92,11 +100,19 @@ const Dropdown = ({ trigger, defaultOpen, align = "end" }: Props) => {
             {PROFILE_ITEMS.map(({ bgColor, iconColor, icon: Icon, title, desc, time }) => (
               <DropdownMenuItem
                 key={title}
+<<<<<<< HEAD
                 className={"mx-1.5 my-1 p-2 flex items-center justify-between cursor-pointer"}
               >
                 <div className="flex items-center gap-3">
                   <div className={cn("p-2.5 rounded-xl", bgColor)}>
                     <Icon size={20} className={cn("size-5", iconColor)} />
+=======
+                className={'mx-1.5 my-1 p-2 flex items-center justify-between cursor-pointer'}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={cn('p-2.5 rounded-xl', bgColor)}>
+                    <Icon size={20} className={cn('size-5', iconColor)} />
+>>>>>>> a821a0c (second update)
                   </div>
                   <div>
                     <p className="text-sm font-medium text-popover-foreground">{title}</p>

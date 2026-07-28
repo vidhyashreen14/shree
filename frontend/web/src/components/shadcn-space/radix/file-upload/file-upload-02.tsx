@@ -1,5 +1,6 @@
-"use client";
+'use client';
 
+<<<<<<< HEAD
 import { useState, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { CloudUpload, FileIcon, X, CheckCircle2, Trash2, FileImage, Loader2 } from "lucide-react";
@@ -8,12 +9,22 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
+=======
+import { useState, useCallback } from 'react';
+import { useDropzone } from 'react-dropzone';
+import { CloudUpload, FileIcon, X, CheckCircle2, Trash2, FileImage, Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Progress } from '@/components/ui/progress';
+import { cn } from '@/lib/utils';
+>>>>>>> a821a0c (second update)
 
 interface FileWithProgress {
   id: string;
   file: File;
   progress: number;
-  status: "uploading" | "completed" | "error";
+  status: 'uploading' | 'completed' | 'error';
   errorMessage?: string;
   totalSizeText?: string;
 }
@@ -21,35 +32,35 @@ interface FileWithProgress {
 const FileUpload = () => {
   const [files, setFiles] = useState<FileWithProgress[]>([
     {
-      id: "demo-1",
+      id: 'demo-1',
       file: {
-        name: "my-cv.pdf",
+        name: 'my-cv.pdf',
         size: 122880,
-        type: "application/pdf",
+        type: 'application/pdf',
       } as File,
       progress: 45,
-      status: "uploading",
-      totalSizeText: "120 KB",
+      status: 'uploading',
+      totalSizeText: '120 KB',
     },
     {
-      id: "demo-2",
+      id: 'demo-2',
       file: {
-        name: "google-certificate.pdf",
+        name: 'google-certificate.pdf',
         size: 96256,
-        type: "application/pdf",
+        type: 'application/pdf',
       } as File,
       progress: 100,
-      status: "completed",
-      totalSizeText: "94 KB",
+      status: 'completed',
+      totalSizeText: '94 KB',
     },
   ]);
 
   const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return "0 Bytes";
+    if (bytes === 0) return '0 Bytes';
     const k = 1024;
-    const sizes = ["Bytes", "KB", "MB", "GB"];
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -57,7 +68,7 @@ const FileUpload = () => {
       id: Math.random().toString(36).substring(7),
       file,
       progress: 0,
-      status: "uploading" as const,
+      status: 'uploading' as const,
       totalSizeText: formatFileSize(file.size),
     }));
 
@@ -73,12 +84,21 @@ const FileUpload = () => {
           clearInterval(interval);
           setFiles((prev) =>
             prev.map((f) =>
+<<<<<<< HEAD
               f.id === fileObj.id ? { ...f, progress: 100, status: "completed" as const } : f
             )
           );
         } else {
           setFiles((prev) =>
             prev.map((f) => (f.id === fileObj.id ? { ...f, progress: currentProgress } : f))
+=======
+              f.id === fileObj.id ? { ...f, progress: 100, status: 'completed' as const } : f,
+            ),
+          );
+        } else {
+          setFiles((prev) =>
+            prev.map((f) => (f.id === fileObj.id ? { ...f, progress: currentProgress } : f)),
+>>>>>>> a821a0c (second update)
           );
         }
       }, 400);
@@ -88,9 +108,9 @@ const FileUpload = () => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
-      "image/*": [".jpeg", ".png"],
-      "application/pdf": [".pdf"],
-      "video/mp4": [".mp4"],
+      'image/*': ['.jpeg', '.png'],
+      'application/pdf': ['.pdf'],
+      'video/mp4': ['.mp4'],
     },
     maxSize: 52428800, // 50MB
   });
@@ -100,7 +120,7 @@ const FileUpload = () => {
   };
 
   const getFileIcon = (type: string) => {
-    if (type.includes("pdf"))
+    if (type.includes('pdf'))
       return (
         <div className="relative">
           <FileIcon className="size-10 text-muted-foreground/30" strokeWidth={1} />
@@ -109,7 +129,11 @@ const FileUpload = () => {
           </span>
         </div>
       );
+<<<<<<< HEAD
     if (type.includes("image")) return <FileImage size={24} className="text-blue-500" />;
+=======
+    if (type.includes('image')) return <FileImage size={24} className="text-blue-500" />;
+>>>>>>> a821a0c (second update)
     return <FileIcon size={24} className="text-muted-foreground" />;
   };
 
@@ -122,9 +146,15 @@ const FileUpload = () => {
             <div
               {...getRootProps()}
               className={cn(
+<<<<<<< HEAD
                 "relative group cursor-pointer overflow-hidden rounded-xl border-2 border-dashed transition-all duration-200",
                 "flex flex-col items-center justify-center p-8 gap-4 text-center",
                 isDragActive && "border-primary bg-primary/5 shadow-inner"
+=======
+                'relative group cursor-pointer overflow-hidden rounded-xl border-2 border-dashed transition-all duration-200',
+                'flex flex-col items-center justify-center p-8 gap-4 text-center',
+                isDragActive && 'border-primary bg-primary/5 shadow-inner',
+>>>>>>> a821a0c (second update)
               )}
             >
               <Input {...getInputProps()} />
@@ -134,7 +164,11 @@ const FileUpload = () => {
 
               <div className="space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">
+<<<<<<< HEAD
                   {isDragActive ? "Drop files here" : "Choose a file or drag & drop it here"}
+=======
+                  {isDragActive ? 'Drop files here' : 'Choose a file or drag & drop it here'}
+>>>>>>> a821a0c (second update)
                 </p>
                 <p className="text-xs text-muted-foreground">
                   JPEG, PNG, PDF, and MP4 formats, up to 50 MB.
@@ -161,8 +195,13 @@ const FileUpload = () => {
 
                     <div
                       className={cn(
+<<<<<<< HEAD
                         "flex-1 min-w-0",
                         fileObj.status === "uploading" && "space-y-1"
+=======
+                        'flex-1 min-w-0',
+                        fileObj.status === 'uploading' && 'space-y-1',
+>>>>>>> a821a0c (second update)
                       )}
                     >
                       <div className="flex flex-col gap-1">
@@ -173,31 +212,42 @@ const FileUpload = () => {
                         </div>
                         <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                           <span>
-                            {fileObj.status === "uploading"
+                            {fileObj.status === 'uploading'
                               ? `${formatFileSize(Math.round(fileObj.file.size * (fileObj.progress / 100)))} of ${fileObj.totalSizeText}`
                               : `${fileObj.totalSizeText} of ${fileObj.totalSizeText}`}
                           </span>
                           <span className="text-muted-foreground">·</span>
                           <span
                             className={cn(
+<<<<<<< HEAD
                               "flex items-center gap-1.5 font-medium leading-normal",
                               fileObj.status === "completed"
                                 ? "text-teal-400"
                                 : "text-muted-foreground"
+=======
+                              'flex items-center gap-1.5 font-medium leading-normal',
+                              fileObj.status === 'completed'
+                                ? 'text-teal-400'
+                                : 'text-muted-foreground',
+>>>>>>> a821a0c (second update)
                             )}
                           >
-                            {fileObj.status === "uploading" && (
+                            {fileObj.status === 'uploading' && (
                               <Loader2 className="size-3 animate-spin text-blue-500" />
                             )}
-                            {fileObj.status === "completed" && (
+                            {fileObj.status === 'completed' && (
                               <CheckCircle2 className="size-3.5 fill-teal-400/20 text-teal-400" />
                             )}
+<<<<<<< HEAD
                             {fileObj.status === "uploading" ? "Uploading..." : "Completed"}
+=======
+                            {fileObj.status === 'uploading' ? 'Uploading...' : 'Completed'}
+>>>>>>> a821a0c (second update)
                           </span>
                         </div>
                       </div>
 
-                      {fileObj.status === "uploading" && (
+                      {fileObj.status === 'uploading' && (
                         <div className="w-full">
                           <Progress
                             value={fileObj.progress}
@@ -208,11 +258,15 @@ const FileUpload = () => {
                     </div>
 
                     <Button
-                      variant={"ghost"}
+                      variant={'ghost'}
                       onClick={() => removeFile(fileObj.id)}
                       className="absolute right-3.5 top-4 p-1.5 rounded-full dark:hover:bg-muted cursor-pointer"
                     >
+<<<<<<< HEAD
                       {fileObj.status === "completed" ? <Trash2 size={16} /> : <X size={16} />}
+=======
+                      {fileObj.status === 'completed' ? <Trash2 size={16} /> : <X size={16} />}
+>>>>>>> a821a0c (second update)
                     </Button>
                   </div>
                 ))}

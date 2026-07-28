@@ -1,14 +1,14 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { PageHeader } from "@/components/common/PageHeader";
-import { AppointmentStatusChip } from "@/components/common/AppointmentStatusChip";
-import { appointments, patients, doctors } from "@/lib/mock/data";
-import { isToday, format } from "date-fns";
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { CheckCircle2 } from "lucide-react";
-import { toast } from "sonner";
+import { createFileRoute } from '@tanstack/react-router';
+import { PageHeader } from '@/components/common/PageHeader';
+import { AppointmentStatusChip } from '@/components/common/AppointmentStatusChip';
+import { appointments, patients, doctors } from '@/lib/mock/data';
+import { isToday, format } from 'date-fns';
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { CheckCircle2 } from 'lucide-react';
+import { toast } from 'sonner';
 
-export const Route = createFileRoute("/_app/frontdesk/queue")({
+export const Route = createFileRoute('/_app/frontdesk/queue')({
   component: FdQueue,
 });
 
@@ -39,16 +39,24 @@ function FdQueue() {
                   {p.name} <span className="text-xs text-muted-foreground">· {p.mrn}</span>
                 </p>
                 <p className="text-xs text-muted-foreground">
+<<<<<<< HEAD
                   {d?.name} · {format(new Date(a.date), "p")}
+=======
+                  {d?.name} · {format(new Date(a.date), 'p')}
+>>>>>>> a821a0c (second update)
                 </p>
               </div>
               <AppointmentStatusChip status={a.status} />
-              {a.status === "scheduled" && (
+              {a.status === 'scheduled' && (
                 <Button
                   size="sm"
                   onClick={() => {
                     setRows((r) =>
+<<<<<<< HEAD
                       r.map((x) => (x.id === a.id ? { ...x, status: "checked-in" } : x))
+=======
+                      r.map((x) => (x.id === a.id ? { ...x, status: 'checked-in' } : x)),
+>>>>>>> a821a0c (second update)
                     );
                     toast.success(`${p.name} checked in`);
                   }}

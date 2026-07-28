@@ -1,35 +1,36 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useMemo } from "react";
-import type { ColumnDef } from "@tanstack/react-table";
-import { PageHeader } from "@/components/common/PageHeader";
-import { DataTable } from "@/components/common/DataTable";
-import { StatusChip } from "@/components/common/StatusChip";
-import { Button } from "@/components/ui/button";
-import { labOrders, patients, doctors } from "@/lib/mock/data";
-import type { LabOrder } from "@/lib/types";
-import { format } from "date-fns";
-import { useAuth } from "@/lib/store/auth";
-import { FlaskConical, Download } from "lucide-react";
+import { createFileRoute } from '@tanstack/react-router';
+import { useMemo } from 'react';
+import type { ColumnDef } from '@tanstack/react-table';
+import { PageHeader } from '@/components/common/PageHeader';
+import { DataTable } from '@/components/common/DataTable';
+import { StatusChip } from '@/components/common/StatusChip';
+import { Button } from '@/components/ui/button';
+import { labOrders, patients } from '@/lib/mock/data';
+import type { LabOrder } from '@/lib/types';
+import { format } from 'date-fns';
+import { FlaskConical, Download } from 'lucide-react';
 
-const toneFor: Record<LabOrder["status"], Parameters<typeof StatusChip>[0]["tone"]> = {
-  ordered: "info",
-  "sample-collected": "primary",
-  "in-progress": "warning",
-  completed: "success",
+const toneFor: Record<LabOrder['status'], Parameters<typeof StatusChip>[0]['tone']> = {
+  ordered: 'info',
+  'sample-collected': 'primary',
+  'in-progress': 'warning',
+  completed: 'success',
 };
 
-export const Route = createFileRoute("/_app/doctor/lab-orders")({
+import { useCurrentDoctorId } from '@/lib/store/doctors';
+
+export const Route = createFileRoute('/_app/doctor/lab-orders')({
   component: DoctorLabs,
 });
 
 function DoctorLabs() {
-  const user = useAuth((s) => s.user);
-  const doctorId = user?.role === "doctor" ? user.id : doctors[0]!.id;
+  const doctorId = useCurrentDoctorId();
   const data = labOrders.filter((l) => l.doctorId === doctorId);
 
   const columns = useMemo<ColumnDef<LabOrder>[]>(
     () => [
       {
+<<<<<<< HEAD
         header: "Order",
         accessorKey: "id",
         cell: ({ getValue }) => <code className="font-mono text-xs">{String(getValue())}</code>,
@@ -54,22 +55,59 @@ function DoctorLabs() {
         accessorKey: "status",
         cell: ({ getValue }) => (
           <StatusChip tone={toneFor[getValue() as LabOrder["status"]]}>
+=======
+        header: 'Order',
+        accessorKey: 'id',
+        cell: ({ getValue }) => <code className="font-mono text-xs">{String(getValue())}</code>,
+      },
+      {
+        header: 'Patient',
+        accessorKey: 'patientId',
+        cell: ({ getValue }) => patients.find((p) => p.id === getValue())?.name,
+      },
+      {
+        header: 'Tests',
+        accessorKey: 'tests',
+        cell: ({ getValue }) => (getValue() as string[]).join(', '),
+      },
+      {
+        header: 'Ordered',
+        accessorKey: 'orderedOn',
+        cell: ({ getValue }) => format(new Date(String(getValue())), 'MMM d, yyyy'),
+      },
+      {
+        header: 'Status',
+        accessorKey: 'status',
+        cell: ({ getValue }) => (
+          <StatusChip tone={toneFor[getValue() as LabOrder['status']]}>
+>>>>>>> a821a0c (second update)
             {String(getValue())}
           </StatusChip>
         ),
       },
       {
+<<<<<<< HEAD
         header: "",
         id: "a",
         cell: ({ row }) =>
           row.original.status === "completed" ? (
+=======
+        header: '',
+        id: 'a',
+        cell: ({ row }) =>
+          row.original.status === 'completed' ? (
+>>>>>>> a821a0c (second update)
             <Button size="sm" variant="outline">
               <Download className="mr-1 h-3.5 w-3.5" /> Report
             </Button>
           ) : null,
       },
     ],
+<<<<<<< HEAD
     []
+=======
+    [],
+>>>>>>> a821a0c (second update)
   );
 
   return (

@@ -10,16 +10,20 @@ import type {
   Prescription,
   VisitStatus,
   Vitals,
-} from "../types";
+} from '../types';
 
 const today = new Date();
 const iso = (d: Date) => d.toISOString();
+<<<<<<< HEAD
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const at = (h: number, m = 0) => {
   const d = new Date(today);
   d.setHours(h, m, 0, 0);
   return iso(d);
 };
+=======
+
+>>>>>>> a821a0c (second update)
 const daysAgo = (n: number) => {
   const d = new Date(today);
   d.setDate(d.getDate() - n);
@@ -31,6 +35,7 @@ const monthsFromNow = (n: number) => {
   return iso(d);
 };
 
+<<<<<<< HEAD
 export const departments: Department[] = [
   { id: "d-card", name: "Cardiology", head: "Dr. Vikram Shah", doctorCount: 6, patientsToday: 42 },
   { id: "d-neu", name: "Neurology", head: "Dr. Lin Park", doctorCount: 4, patientsToday: 28 },
@@ -170,6 +175,113 @@ const patientNames = [
   "Daniel Cohen",
   "Sofia Rossi",
   "Hiroshi Tanaka",
+=======
+import { useStaffProfiles, DEMO_STAFF, type StaffProfile } from '../store/staffProfiles';
+import { useDepartments } from '../store/departments';
+
+export const departments: Department[] = [];
+
+export const doctors: Doctor[] = [];
+
+export function mapProfileToDoctor(p: StaffProfile): Doctor {
+  return {
+    id: p.id,
+    name: `Dr. ${p.firstName} ${p.lastName}`,
+    specialization:
+      p.department === 'Cardiology'
+        ? 'Interventional Cardiologist'
+        : p.department === 'Neurology'
+          ? 'Neurologist'
+          : p.department === 'Pediatrics'
+            ? 'Pediatrician'
+            : p.department === 'Orthopedics'
+              ? 'Orthopedic Surgeon'
+              : p.department === 'Gynecology'
+                ? 'OB-GYN'
+                : p.department === 'Dermatology'
+                  ? 'Dermatologist'
+                  : p.department === 'Emergency'
+                    ? 'Emergency Physician'
+                    : 'General Physician',
+    department: p.department || 'Unassigned',
+    email: p.email,
+    phone: p.mobile,
+    experienceYears: 10,
+    fee: p.department === 'Emergency' ? 0 : 1000,
+    rating: 4.8,
+    available: p.status === 'active',
+  };
+}
+
+function updateDoctorsAndDepartments() {
+  const profiles = useStaffProfiles.getState().profiles;
+  const docProfiles = (profiles && profiles.length > 0 ? profiles : DEMO_STAFF).filter(
+    (p) => p.role === 'doctor',
+  );
+  const mapped = docProfiles.map(mapProfileToDoctor);
+
+  doctors.length = 0;
+  doctors.push(...mapped);
+
+  const depts = useDepartments.getState().departments;
+  departments.length = 0;
+  departments.push(
+    ...depts.map((dept) => {
+      const count = doctors.filter((d) => d.department === dept.name).length;
+      return { ...dept, doctorCount: count };
+    }),
+  );
+}
+
+// Initial sync
+updateDoctorsAndDepartments();
+
+// Subscribe to store updates
+useStaffProfiles.subscribe(() => {
+  updateDoctorsAndDepartments();
+});
+
+useDepartments.subscribe(() => {
+  updateDoctorsAndDepartments();
+});
+
+const allergyPool = ['Penicillin', 'Peanuts', 'Latex', 'Sulfa', 'Aspirin', 'Shellfish', 'Dust'];
+const meds = [
+  'Atorvastatin 20mg',
+  'Metformin 500mg',
+  'Amlodipine 5mg',
+  'Levothyroxine 50mcg',
+  'Salbutamol inhaler',
+  'Omeprazole 20mg',
+];
+
+const patientNames = [
+  'Aarav Sharma',
+  'Saanvi Patel',
+  'Vihaan Iyer',
+  'Diya Kapoor',
+  'Arjun Mehta',
+  'Anaya Reddy',
+  'Reyansh Khanna',
+  'Ishaani Rao',
+  'Kabir Joshi',
+  'Aadhya Nair',
+  'Ayaan Bose',
+  'Myra Sen',
+  'Krishna Gupta',
+  'Sara Williams',
+  'Liam Carter',
+  'Olivia Bennett',
+  'Noah Kim',
+  'Emma Zhang',
+  'Ethan Wright',
+  'Mia Hassan',
+  'Yusuf Ahmed',
+  'Zoya Khan',
+  'Daniel Cohen',
+  'Sofia Rossi',
+  'Hiroshi Tanaka',
+>>>>>>> a821a0c (second update)
 ];
 
 export const patients: Patient[] = patientNames.map((name, i) => ({
@@ -177,8 +289,9 @@ export const patients: Patient[] = patientNames.map((name, i) => ({
   mrn: `MRN-${10200 + i}`,
   name,
   age: 12 + ((i * 7) % 70),
-  gender: i % 3 === 0 ? "Male" : i % 3 === 1 ? "Female" : "Other",
+  gender: i % 3 === 0 ? 'Male' : i % 3 === 1 ? 'Female' : 'Other',
   phone: `+91 90${String(10000000 + i * 13).slice(0, 8)}`,
+<<<<<<< HEAD
   email: `${name.split(" ")[0]!.toLowerCase()}@mail.com`,
   bloodGroup: ["A+", "B+", "O+", "AB+", "O-", "A-"][i % 6]!,
   address: ["12 Maple Ave, Mumbai", "5 Lotus Rd, Bengaluru", "8 Oak St, Pune", "21 Rose Ln, Delhi"][
@@ -188,15 +301,27 @@ export const patients: Patient[] = patientNames.map((name, i) => ({
     name: `${name.split(" ")[0]} Family`,
     phone: "+91 99999 88888",
     relation: i % 2 ? "Spouse" : "Parent",
+=======
+  email: `${name.split(' ')[0]!.toLowerCase()}@mail.com`,
+  bloodGroup: ['A+', 'B+', 'O+', 'AB+', 'O-', 'A-'][i % 6]!,
+  address: ['12 Maple Ave, Mumbai', '5 Lotus Rd, Bengaluru', '8 Oak St, Pune', '21 Rose Ln, Delhi'][
+    i % 4
+  ]!,
+  emergencyContact: {
+    name: `${name.split(' ')[0]} Family`,
+    phone: '+91 99999 88888',
+    relation: i % 2 ? 'Spouse' : 'Parent',
+>>>>>>> a821a0c (second update)
   },
   allergies: i % 4 === 0 ? [] : [allergyPool[i % allergyPool.length]!],
   medications: i % 3 === 0 ? [] : [meds[i % meds.length]!],
-  insurance: i % 2 === 0 ? { provider: "Star Health", policyNo: `SH-${5000 + i}` } : undefined,
+  insurance: i % 2 === 0 ? { provider: 'Star Health', policyNo: `SH-${5000 + i}` } : undefined,
   registeredOn: daysAgo(i * 9 + 5),
   assignedDoctorId: doctors[i % doctors.length]!.id,
 }));
 
 const reasons = [
+<<<<<<< HEAD
   "Routine checkup",
   "Chest pain",
   "Follow-up",
@@ -214,6 +339,25 @@ const statuses: Appointment["status"][] = [
   "completed",
   "cancelled",
   "no-show",
+=======
+  'Routine checkup',
+  'Chest pain',
+  'Follow-up',
+  'Headache',
+  'Fever & cough',
+  'Back pain',
+  'Skin rash',
+  'Diabetes review',
+];
+const types: Appointment['type'][] = ['consultation', 'follow-up', 'walk-in', 'tele'];
+const statuses: Appointment['status'][] = [
+  'scheduled',
+  'checked-in',
+  'in-consultation',
+  'completed',
+  'cancelled',
+  'no-show',
+>>>>>>> a821a0c (second update)
 ];
 
 export const appointments: Appointment[] = Array.from({ length: 48 }).map((_, i) => {
@@ -231,7 +375,7 @@ export const appointments: Appointment[] = Array.from({ length: 48 }).map((_, i)
     durationMin: 15 + (i % 3) * 15,
     reason: reasons[i % reasons.length]!,
     type: types[i % types.length]!,
-    status: dayOffset < 0 ? "completed" : statuses[i % statuses.length]!,
+    status: dayOffset < 0 ? 'completed' : statuses[i % statuses.length]!,
     token: (i % 30) + 1,
   };
 });
@@ -255,7 +399,7 @@ export const vitals: Vitals[] = patients.slice(0, 15).map((p, i) => ({
   bmi: +(20 + (i % 8) + Math.random()).toFixed(1),
   spo2: 95 + (i % 5),
   bloodSugar: 85 + (i % 60),
-  notes: i % 3 === 0 ? "Patient appears stable." : undefined,
+  notes: i % 3 === 0 ? 'Patient appears stable.' : undefined,
 }));
 
 export const prescriptions: Prescription[] = patients.slice(0, 12).map((p, i) => ({
@@ -264,6 +408,7 @@ export const prescriptions: Prescription[] = patients.slice(0, 12).map((p, i) =>
   doctorId: p.assignedDoctorId!,
   date: daysAgo(i * 2 + 1),
   diagnosis: [
+<<<<<<< HEAD
     "Hypertension",
     "Type 2 Diabetes",
     "Migraine",
@@ -279,22 +424,40 @@ export const prescriptions: Prescription[] = patients.slice(0, 12).map((p, i) =>
       frequency: "BD",
       duration: "30 days",
       notes: "After meals",
+=======
+    'Hypertension',
+    'Type 2 Diabetes',
+    'Migraine',
+    'URTI',
+    'Lower back strain',
+    'Anxiety',
+  ][i % 6]!,
+  medicines: [
+    { name: 'Amlodipine 5mg', dose: '1 tab', frequency: 'OD', duration: '30 days' },
+    {
+      name: 'Metformin 500mg',
+      dose: '1 tab',
+      frequency: 'BD',
+      duration: '30 days',
+      notes: 'After meals',
+>>>>>>> a821a0c (second update)
     },
   ],
-  advice: "Adequate hydration. Low salt diet. Follow up in 4 weeks.",
+  advice: 'Adequate hydration. Low salt diet. Follow up in 4 weeks.',
 }));
 
 export const labOrders: LabOrder[] = patients.slice(0, 10).map((p, i) => ({
   id: `lo-${4000 + i}`,
   patientId: p.id,
   doctorId: p.assignedDoctorId!,
-  tests: [["CBC", "Lipid panel", "HbA1c", "TSH", "Urinalysis"][i % 5]!],
-  status: (["ordered", "sample-collected", "in-progress", "completed"] as const)[i % 4]!,
+  tests: [['CBC', 'Lipid panel', 'HbA1c', 'TSH', 'Urinalysis'][i % 5]!],
+  status: (['ordered', 'sample-collected', 'in-progress', 'completed'] as const)[i % 4]!,
   orderedOn: daysAgo(i),
 }));
 
-const medCats = ["Antibiotics", "Cardiac", "Diabetes", "Analgesic", "Respiratory", "Dermatology"];
+const medCats = ['Antibiotics', 'Cardiac', 'Diabetes', 'Analgesic', 'Respiratory', 'Dermatology'];
 const medNames = [
+<<<<<<< HEAD
   "Amoxicillin 500mg",
   "Azithromycin 250mg",
   "Atorvastatin 20mg",
@@ -311,13 +474,31 @@ const medNames = [
   "Pantoprazole 40mg",
   "Amlodipine 5mg",
   "Losartan 50mg",
+=======
+  'Amoxicillin 500mg',
+  'Azithromycin 250mg',
+  'Atorvastatin 20mg',
+  'Aspirin 75mg',
+  'Metformin 500mg',
+  'Glimepiride 2mg',
+  'Paracetamol 650mg',
+  'Ibuprofen 400mg',
+  'Salbutamol Inhaler',
+  'Budesonide 200mcg',
+  'Hydrocortisone 1% cream',
+  'Cetirizine 10mg',
+  'Omeprazole 20mg',
+  'Pantoprazole 40mg',
+  'Amlodipine 5mg',
+  'Losartan 50mg',
+>>>>>>> a821a0c (second update)
 ];
 
 export const medicines: Medicine[] = medNames.map((name, i) => ({
   id: `m-${5000 + i}`,
   name,
   category: medCats[i % medCats.length]!,
-  manufacturer: ["Cipla", "Sun Pharma", "Dr. Reddy's", "Pfizer", "GSK"][i % 5]!,
+  manufacturer: ['Cipla', 'Sun Pharma', "Dr. Reddy's", 'Pfizer', 'GSK'][i % 5]!,
   stock: [120, 15, 8, 240, 0, 56, 320, 12][i % 8]!,
   minStock: 20,
   expiry: i % 5 === 0 ? daysAgo(10) : monthsFromNow((i % 12) + 1),
@@ -329,6 +510,7 @@ export const medicines: Medicine[] = medNames.map((name, i) => ({
 export const auditLogs: AuditLog[] = Array.from({ length: 24 }).map((_, i) => ({
   id: `al-${i}`,
   user: [
+<<<<<<< HEAD
     "Dr. Anika Rao",
     "Priya Menon",
     "Sister Joan",
@@ -346,21 +528,40 @@ export const auditLogs: AuditLog[] = Array.from({ length: 24 }).map((_, i) => ({
     "Logged in",
   ][i % 6]!,
   target: ["MRN-10231", "a-2034", "Amoxicillin 500mg", "lo-4002", "Role: Nurse", "—"][i % 6]!,
+=======
+    'Dr. Anika Rao',
+    'Priya Menon',
+    'Sister Joan',
+    'Rahul Verma',
+    'Mei Chen',
+    'Dr. Vikram Shah',
+  ][i % 6]!,
+  role: (['doctor', 'frontdesk', 'nurse', 'pharmacy', 'lab', 'admin'] as const)[i % 6]!,
+  action: [
+    'Updated patient',
+    'Created appointment',
+    'Dispensed medicine',
+    'Uploaded lab report',
+    'Changed permissions',
+    'Logged in',
+  ][i % 6]!,
+  target: ['MRN-10231', 'a-2034', 'Amoxicillin 500mg', 'lo-4002', 'Role: Nurse', '—'][i % 6]!,
+>>>>>>> a821a0c (second update)
   at: daysAgo(i / 3),
   ip: `10.0.${i % 256}.${(i * 7) % 256}`,
 }));
 
 // Charts helpers
 export const monthlyRevenue = [
-  { month: "Jan", revenue: 480_000, opd: 320_000, pharmacy: 120_000, lab: 40_000 },
-  { month: "Feb", revenue: 520_000, opd: 350_000, pharmacy: 130_000, lab: 40_000 },
-  { month: "Mar", revenue: 610_000, opd: 410_000, pharmacy: 150_000, lab: 50_000 },
-  { month: "Apr", revenue: 580_000, opd: 380_000, pharmacy: 140_000, lab: 60_000 },
-  { month: "May", revenue: 690_000, opd: 460_000, pharmacy: 170_000, lab: 60_000 },
-  { month: "Jun", revenue: 720_000, opd: 470_000, pharmacy: 180_000, lab: 70_000 },
-  { month: "Jul", revenue: 760_000, opd: 500_000, pharmacy: 190_000, lab: 70_000 },
-  { month: "Aug", revenue: 740_000, opd: 490_000, pharmacy: 180_000, lab: 70_000 },
-  { month: "Sep", revenue: 810_000, opd: 540_000, pharmacy: 195_000, lab: 75_000 },
+  { month: 'Jan', revenue: 480_000, opd: 320_000, pharmacy: 120_000, lab: 40_000 },
+  { month: 'Feb', revenue: 520_000, opd: 350_000, pharmacy: 130_000, lab: 40_000 },
+  { month: 'Mar', revenue: 610_000, opd: 410_000, pharmacy: 150_000, lab: 50_000 },
+  { month: 'Apr', revenue: 580_000, opd: 380_000, pharmacy: 140_000, lab: 60_000 },
+  { month: 'May', revenue: 690_000, opd: 460_000, pharmacy: 170_000, lab: 60_000 },
+  { month: 'Jun', revenue: 720_000, opd: 470_000, pharmacy: 180_000, lab: 70_000 },
+  { month: 'Jul', revenue: 760_000, opd: 500_000, pharmacy: 190_000, lab: 70_000 },
+  { month: 'Aug', revenue: 740_000, opd: 490_000, pharmacy: 180_000, lab: 70_000 },
+  { month: 'Sep', revenue: 810_000, opd: 540_000, pharmacy: 195_000, lab: 75_000 },
 ];
 
 export const dailyVisits = Array.from({ length: 14 }).map((_, i) => ({

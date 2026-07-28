@@ -1,7 +1,7 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { zodValidator, fallback } from "@tanstack/zod-adapter";
-import { z } from "zod";
-import { useEffect, useMemo, useState } from "react";
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { zodValidator, fallback } from '@tanstack/zod-adapter';
+import { z } from 'zod';
+import { useEffect, useMemo, useState } from 'react';
 import {
   type ColumnDef,
   type PaginationState,
@@ -10,14 +10,14 @@ import {
   flexRender,
   getCoreRowModel,
   useReactTable,
-} from "@tanstack/react-table";
-import { PageHeader } from "@/components/common/PageHeader";
-import { StatusChip } from "@/components/common/StatusChip";
-import { EmptyState } from "@/components/common/EmptyState";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
+} from '@tanstack/react-table';
+import { PageHeader } from '@/components/common/PageHeader';
+import { StatusChip } from '@/components/common/StatusChip';
+import { EmptyState } from '@/components/common/EmptyState';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Dialog,
   DialogContent,
@@ -25,21 +25,21 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "@/components/ui/sheet";
+} from '@/components/ui/sheet';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -49,11 +49,19 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
+<<<<<<< HEAD
 } from "@/components/ui/alert-dialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { medicines as seedMedicines } from "@/lib/mock/data";
 import type { Medicine } from "@/lib/types";
+=======
+} from '@/components/ui/alert-dialog';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { medicines as seedMedicines } from '@/lib/mock/data';
+import type { Medicine } from '@/lib/types';
+>>>>>>> a821a0c (second update)
 import {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Plus,
@@ -78,44 +86,50 @@ import {
   SlidersHorizontal,
   RotateCcw,
   Gauge,
+<<<<<<< HEAD
   Factory,
 } from "lucide-react";
 import { format, formatDistanceToNow, differenceInDays } from "date-fns";
 import { toast } from "sonner";
+=======
+} from 'lucide-react';
+import { format, formatDistanceToNow, differenceInDays } from 'date-fns';
+import { toast } from 'sonner';
+>>>>>>> a821a0c (second update)
 
-const stockFilters = ["all", "ok", "low", "out", "expired"] as const;
+const stockFilters = ['all', 'ok', 'low', 'out', 'expired'] as const;
 const sortableIds = [
-  "name",
-  "category",
-  "stock",
-  "expiry",
-  "batch",
-  "gst",
-  "pricePerUnit",
+  'name',
+  'category',
+  'stock',
+  'expiry',
+  'batch',
+  'gst',
+  'pricePerUnit',
 ] as const;
 
 const searchSchema = z.object({
-  q: fallback(z.string(), "").default(""),
-  cat: fallback(z.string(), "all").default("all"),
-  stock: fallback(z.enum(stockFilters), "all").default("all"),
-  sort: fallback(z.enum(sortableIds), "name").default("name"),
+  q: fallback(z.string(), '').default(''),
+  cat: fallback(z.string(), 'all').default('all'),
+  stock: fallback(z.enum(stockFilters), 'all').default('all'),
+  sort: fallback(z.enum(sortableIds), 'name').default('name'),
   desc: fallback(z.boolean(), false).default(false),
   page: fallback(z.number().int().min(1), 1).default(1),
   size: fallback(z.number().int().min(1), 8).default(8),
 });
 
-export const Route = createFileRoute("/_app/pharmacy/inventory")({
+export const Route = createFileRoute('/_app/pharmacy/inventory')({
   validateSearch: zodValidator(searchSchema),
   component: PharmacyInventory,
 });
 
-type StockAction = "add" | "remove" | "set";
+type StockAction = 'add' | 'remove' | 'set';
 
 interface StockHistoryEntry {
   id: string;
   medicineId: string;
   at: string;
-  action: StockAction | "bulk-restock" | "bulk-undo";
+  action: StockAction | 'bulk-restock' | 'bulk-undo';
   delta: number;
   before: number;
   after: number;
@@ -124,7 +138,7 @@ interface StockHistoryEntry {
   batchId?: string;
 }
 
-const THRESHOLD_KEY = "hms.pharmacy.thresholds.v1";
+const THRESHOLD_KEY = 'hms.pharmacy.thresholds.v1';
 
 interface ThresholdConfig {
   categories: Record<string, number>;
@@ -132,7 +146,7 @@ interface ThresholdConfig {
 }
 
 const loadThresholds = (): ThresholdConfig => {
-  if (typeof window === "undefined") return { categories: {}, overrides: {} };
+  if (typeof window === 'undefined') return { categories: {}, overrides: {} };
   try {
     const raw = window.localStorage.getItem(THRESHOLD_KEY);
     if (!raw) return { categories: {}, overrides: {} };
@@ -169,7 +183,7 @@ function highlight(text: string, term: string) {
 
 const seedHistory = (): StockHistoryEntry[] => {
   const now = Date.now();
-  const users = ["Priya Menon", "Rahul Verma", "Mei Chen"];
+  const users = ['Priya Menon', 'Rahul Verma', 'Mei Chen'];
   const entries: StockHistoryEntry[] = [];
   seedMedicines.forEach((m, i) => {
     for (let k = 0; k < 3; k++) {
@@ -179,12 +193,12 @@ const seedHistory = (): StockHistoryEntry[] => {
         id: `h-${m.id}-${k}`,
         medicineId: m.id,
         at: new Date(now - (i * 3 + k) * 6 * 3600 * 1000).toISOString(),
-        action: delta > 0 ? "add" : "remove",
+        action: delta > 0 ? 'add' : 'remove',
         delta,
         before,
         after: before + delta,
         by: users[(i + k) % users.length]!,
-        note: delta > 0 ? "Restocked from PO" : "Dispensed to OPD",
+        note: delta > 0 ? 'Restocked from PO' : 'Dispensed to OPD',
       });
     }
   });
@@ -213,10 +227,10 @@ function PharmacyInventory() {
       search: (prev: SearchParams) => {
         const next = { ...prev, ...patch };
         const defaults: Record<string, unknown> = {
-          q: "",
-          cat: "all",
-          stock: "all",
-          sort: "name",
+          q: '',
+          cat: 'all',
+          stock: 'all',
+          sort: 'name',
           desc: false,
           page: 1,
           size: 8,
@@ -259,16 +273,16 @@ function PharmacyInventory() {
   const [isFetching, setIsFetching] = useState(false);
 
   const [editing, setEditing] = useState<Medicine | null>(null);
-  const [action, setAction] = useState<StockAction>("add");
-  const [qty, setQty] = useState<string>("");
+  const [action, setAction] = useState<StockAction>('add');
+  const [qty, setQty] = useState<string>('');
 
   const [bulkOpen, setBulkOpen] = useState(false);
-  const [bulkQty, setBulkQty] = useState<string>("50");
+  const [bulkQty, setBulkQty] = useState<string>('50');
 
   const [historyFor, setHistoryFor] = useState<Medicine | null>(null);
   const [thresholdsOpen, setThresholdsOpen] = useState(false);
   const [thresholdEditing, setThresholdEditing] = useState<Medicine | null>(null);
-  const [thresholdInput, setThresholdInput] = useState<string>("");
+  const [thresholdInput, setThresholdInput] = useState<string>('');
 
   const categories = useMemo(
     () => Array.from(new Set(items.map((m) => m.category))).sort(),
@@ -276,21 +290,26 @@ function PharmacyInventory() {
   );
 
   const effectiveMin = (m: Medicine): number => {
+<<<<<<< HEAD
     if (thresholds.overrides[m.id] !== null) return thresholds.overrides[m.id]!;
     if (thresholds.categories[m.category] !== null) return thresholds.categories[m.category]!;
+=======
+    if (thresholds.overrides[m.id] != null) return thresholds.overrides[m.id]!;
+    if (thresholds.categories[m.category] != null) return thresholds.categories[m.category]!;
+>>>>>>> a821a0c (second update)
     return m.minStock;
   };
 
   const filtered = useMemo(() => {
     const q = search.q.trim().toLowerCase();
     return items.filter((m) => {
-      if (search.cat !== "all" && m.category !== search.cat) return false;
+      if (search.cat !== 'all' && m.category !== search.cat) return false;
       const expired = new Date(m.expiry) < new Date();
       const min = effectiveMin(m);
-      if (search.stock === "low" && !(m.stock > 0 && m.stock <= min)) return false;
-      if (search.stock === "out" && m.stock !== 0) return false;
-      if (search.stock === "expired" && !expired) return false;
-      if (search.stock === "ok" && (m.stock <= min || expired)) return false;
+      if (search.stock === 'low' && !(m.stock > 0 && m.stock <= min)) return false;
+      if (search.stock === 'out' && m.stock !== 0) return false;
+      if (search.stock === 'expired' && !expired) return false;
+      if (search.stock === 'ok' && (m.stock <= min || expired)) return false;
       if (q) {
         const hay = `${m.name} ${m.manufacturer} ${m.batch} ${m.category}`.toLowerCase();
         if (!hay.includes(q)) return false;
@@ -309,7 +328,7 @@ function PharmacyInventory() {
       const bv = b[s.id as keyof Medicine] as string | number;
       if (av === bv) return 0;
       const dir = s.desc ? -1 : 1;
-      if (typeof av === "number" && typeof bv === "number") return (av - bv) * dir;
+      if (typeof av === 'number' && typeof bv === 'number') return (av - bv) * dir;
       return String(av).localeCompare(String(bv)) * dir;
     });
     return copy;
@@ -336,10 +355,10 @@ function PharmacyInventory() {
   const openStockDialog = (m: Medicine, a: StockAction) => {
     setEditing(m);
     setAction(a);
-    setQty(a === "set" ? String(m.stock) : "");
+    setQty(a === 'set' ? String(m.stock) : '');
   };
 
-  const recordHistory = (entry: Omit<StockHistoryEntry, "id" | "at">) => {
+  const recordHistory = (entry: Omit<StockHistoryEntry, 'id' | 'at'>) => {
     setHistory((prev) => [
       {
         ...entry,
@@ -354,13 +373,13 @@ function PharmacyInventory() {
     if (!editing) return;
     const n = Number(qty);
     if (!Number.isFinite(n) || n < 0) {
-      toast.error("Enter a valid quantity");
+      toast.error('Enter a valid quantity');
       return;
     }
     const before = editing.stock;
     let after = before;
-    if (action === "add") after = before + n;
-    else if (action === "remove") after = Math.max(0, before - n);
+    if (action === 'add') after = before + n;
+    else if (action === 'remove') after = Math.max(0, before - n);
     else after = n;
 
     setItems((prev) => prev.map((m) => (m.id === editing.id ? { ...m, stock: after } : m)));
@@ -370,27 +389,35 @@ function PharmacyInventory() {
       delta: after - before,
       before,
       after,
-      by: "You",
+      by: 'You',
       note:
-        action === "add"
-          ? "Manual restock"
-          : action === "remove"
-            ? "Manual deduction"
-            : "Stock recount",
+        action === 'add'
+          ? 'Manual restock'
+          : action === 'remove'
+            ? 'Manual deduction'
+            : 'Stock recount',
     });
     toast.success(
-      action === "set"
+      action === 'set'
         ? `Stock set to ${n} for ${editing.name}`
+<<<<<<< HEAD
         : `${action === "add" ? "Added" : "Removed"} ${n} units · ${editing.name}`
+=======
+        : `${action === 'add' ? 'Added' : 'Removed'} ${n} units · ${editing.name}`,
+>>>>>>> a821a0c (second update)
     );
     setEditing(null);
-    setQty("");
+    setQty('');
   };
 
   const openThresholdDialog = (m: Medicine) => {
     const current = thresholds.overrides[m.id];
     setThresholdEditing(m);
+<<<<<<< HEAD
     setThresholdInput(current !== null ? String(current) : "");
+=======
+    setThresholdInput(current != null ? String(current) : '');
+>>>>>>> a821a0c (second update)
   };
 
   const applyThresholdOverride = () => {
@@ -398,7 +425,7 @@ function PharmacyInventory() {
     const trimmed = thresholdInput.trim();
     setThresholds((prev) => {
       const next = { ...prev.overrides };
-      if (trimmed === "") {
+      if (trimmed === '') {
         delete next[thresholdEditing.id];
       } else {
         const n = Number(trimmed);
@@ -408,18 +435,18 @@ function PharmacyInventory() {
       return { ...prev, overrides: next };
     });
     toast.success(
-      trimmed === ""
+      trimmed === ''
         ? `Cleared override for ${thresholdEditing.name}`
         : `Low-stock threshold for ${thresholdEditing.name} set to ${trimmed}`
     );
     setThresholdEditing(null);
-    setThresholdInput("");
+    setThresholdInput('');
   };
 
   const columns = useMemo<ColumnDef<Medicine>[]>(
     () => [
       {
-        id: "select",
+        id: 'select',
         enableSorting: false,
         header: ({ table }) => (
           <Checkbox
@@ -427,7 +454,7 @@ function PharmacyInventory() {
               table.getIsAllPageRowsSelected()
                 ? true
                 : table.getIsSomePageRowsSelected()
-                  ? "indeterminate"
+                  ? 'indeterminate'
                   : false
             }
             onCheckedChange={(v) => table.toggleAllPageRowsSelected(!!v)}
@@ -443,8 +470,8 @@ function PharmacyInventory() {
         ),
       },
       {
-        header: "Medicine",
-        accessorKey: "name",
+        header: 'Medicine',
+        accessorKey: 'name',
         cell: ({ row }) => (
           <div>
             <p className="font-medium">{highlight(row.original.name, search.q.toLowerCase())}</p>
@@ -455,24 +482,30 @@ function PharmacyInventory() {
         ),
       },
       {
-        header: "Category",
-        accessorKey: "category",
+        header: 'Category',
+        accessorKey: 'category',
         cell: ({ getValue }) => <StatusChip tone="primary">{String(getValue())}</StatusChip>,
       },
       {
-        header: "Stock",
-        accessorKey: "stock",
+        header: 'Stock',
+        accessorKey: 'stock',
         cell: ({ row }) => {
           const s = row.original.stock;
           const min = effectiveMin(row.original);
+<<<<<<< HEAD
           const tone = s === 0 ? "danger" : s <= min ? "warning" : "success";
           const overridden = thresholds.overrides[row.original.id] !== null;
           const catSet = thresholds.categories[row.original.category] !== null;
+=======
+          const tone = s === 0 ? 'danger' : s <= min ? 'warning' : 'success';
+          const overridden = thresholds.overrides[row.original.id] != null;
+          const catSet = thresholds.categories[row.original.category] != null;
+>>>>>>> a821a0c (second update)
           const source = overridden
-            ? "Per-medicine override"
+            ? 'Per-medicine override'
             : catSet
-              ? "Category threshold"
-              : "Default minimum";
+              ? 'Category threshold'
+              : 'Default minimum';
           const tooltipLabel = overridden
             ? `Per-medicine override: ${min} units`
             : catSet
@@ -485,7 +518,7 @@ function PharmacyInventory() {
                 <TooltipTrigger asChild>
                   <span className="cursor-help text-[11px] text-muted-foreground underline decoration-dotted underline-offset-2">
                     min {min}
-                    {overridden ? "*" : catSet ? "ᶜ" : ""}
+                    {overridden ? '*' : catSet ? 'ᶜ' : ''}
                   </span>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -498,39 +531,43 @@ function PharmacyInventory() {
         },
       },
       {
-        header: "Expiry",
-        accessorKey: "expiry",
+        header: 'Expiry',
+        accessorKey: 'expiry',
         cell: ({ getValue }) => {
           const d = new Date(String(getValue()));
           const days = differenceInDays(d, new Date());
           return (
             <span
+<<<<<<< HEAD
               className={days < 0 ? "text-destructive" : days < 60 ? "text-warning-foreground" : ""}
+=======
+              className={days < 0 ? 'text-destructive' : days < 60 ? 'text-warning-foreground' : ''}
+>>>>>>> a821a0c (second update)
             >
-              {format(d, "MMM yyyy")}
+              {format(d, 'MMM yyyy')}
             </span>
           );
         },
       },
       {
-        header: "Batch",
-        accessorKey: "batch",
+        header: 'Batch',
+        accessorKey: 'batch',
         cell: ({ getValue }) => (
           <code className="font-mono text-xs">
             {highlight(String(getValue()), search.q.toLowerCase())}
           </code>
         ),
       },
-      { header: "GST", accessorKey: "gst", cell: ({ getValue }) => `${getValue()}%` },
+      { header: 'GST', accessorKey: 'gst', cell: ({ getValue }) => `${getValue()}%` },
       {
-        header: "Price",
-        accessorKey: "pricePerUnit",
+        header: 'Price',
+        accessorKey: 'pricePerUnit',
         cell: ({ getValue }) => `₹${getValue()}`,
       },
       {
-        id: "actions",
+        id: 'actions',
         enableSorting: false,
-        header: "",
+        header: '',
         cell: ({ row }) => (
           <div className="flex justify-end gap-1">
             <Button
@@ -553,7 +590,7 @@ function PharmacyInventory() {
               size="icon"
               variant="ghost"
               title="Add stock"
-              onClick={() => openStockDialog(row.original, "add")}
+              onClick={() => openStockDialog(row.original, 'add')}
             >
               <PackagePlus className="h-4 w-4" />
             </Button>
@@ -561,7 +598,7 @@ function PharmacyInventory() {
               size="icon"
               variant="ghost"
               title="Remove stock"
-              onClick={() => openStockDialog(row.original, "remove")}
+              onClick={() => openStockDialog(row.original, 'remove')}
             >
               <PackageMinus className="h-4 w-4" />
             </Button>
@@ -569,7 +606,7 @@ function PharmacyInventory() {
               size="icon"
               variant="ghost"
               title="Set stock"
-              onClick={() => openStockDialog(row.original, "set")}
+              onClick={() => openStockDialog(row.original, 'set')}
             >
               <Pencil className="h-4 w-4" />
             </Button>
@@ -589,17 +626,17 @@ function PharmacyInventory() {
     manualSorting: true,
     pageCount,
     onSortingChange: (updater) => {
-      const next = typeof updater === "function" ? updater(sorting) : updater;
+      const next = typeof updater === 'function' ? updater(sorting) : updater;
       const s = next[0];
       updateSearch({
-        sort: (s?.id as (typeof sortableIds)[number]) ?? "name",
+        sort: (s?.id as (typeof sortableIds)[number]) ?? 'name',
         desc: !!s?.desc,
         page: 1,
       });
       simulateFetch();
     },
     onPaginationChange: (updater) => {
-      const next = typeof updater === "function" ? updater(pagination) : updater;
+      const next = typeof updater === 'function' ? updater(pagination) : updater;
       updateSearch({ page: next.pageIndex + 1, size: next.pageSize });
       simulateFetch();
     },
@@ -622,12 +659,12 @@ function PharmacyInventory() {
           id: `h-${Date.now()}-${Math.random().toString(36).slice(2, 7)}-${h.medicineId}`,
           medicineId: h.medicineId,
           at: new Date().toISOString(),
-          action: "bulk-undo",
+          action: 'bulk-undo',
           delta: -h.delta,
           before: h.after,
           after: h.before,
-          by: "You",
-          note: "Undid bulk restock",
+          by: 'You',
+          note: 'Undid bulk restock',
         }));
       return [...reversed, ...prev.filter((h) => h.batchId !== batchId)];
     });
@@ -637,11 +674,11 @@ function PharmacyInventory() {
   const applyBulkRestock = () => {
     const n = Number(bulkQty);
     if (!Number.isFinite(n) || n <= 0) {
-      toast.error("Enter a quantity greater than zero");
+      toast.error('Enter a quantity greater than zero');
       return;
     }
     if (selectedItems.length === 0) {
-      toast.error("Select at least one medicine");
+      toast.error('Select at least one medicine');
       return;
     }
     const snapshot = selectedItems.map((m) => ({ id: m.id, stock: m.stock }));
@@ -652,18 +689,18 @@ function PharmacyInventory() {
     selectedItems.forEach((m) =>
       recordHistory({
         medicineId: m.id,
-        action: "bulk-restock",
+        action: 'bulk-restock',
         delta: n,
         before: m.stock,
         after: m.stock + n,
-        by: "You",
+        by: 'You',
         note: `Bulk restock (+${n})`,
         batchId,
       })
     );
     toast.success(`Restocked ${selectedItems.length} medicine(s) by ${n} units`, {
       action: {
-        label: "Undo",
+        label: 'Undo',
         onClick: () => undoBulkRestock(batchId, snapshot),
       },
       duration: 8000,
@@ -674,22 +711,22 @@ function PharmacyInventory() {
 
   const exportCsv = () => {
     if (sorted.length === 0) {
-      toast.error("Nothing to export");
+      toast.error('Nothing to export');
       return;
     }
     const headers = [
-      "Name",
-      "Manufacturer",
-      "Category",
-      "Stock",
-      "Min stock",
-      "Batch",
-      "Expiry",
-      "GST %",
-      "Price (INR)",
+      'Name',
+      'Manufacturer',
+      'Category',
+      'Stock',
+      'Min stock',
+      'Batch',
+      'Expiry',
+      'GST %',
+      'Price (INR)',
     ];
     const esc = (v: unknown) => {
-      const s = String(v ?? "");
+      const s = String(v ?? '');
       return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
     };
     const rows = sorted.map((m) =>
@@ -700,19 +737,23 @@ function PharmacyInventory() {
         m.stock,
         effectiveMin(m),
         m.batch,
-        format(new Date(m.expiry), "yyyy-MM-dd"),
+        format(new Date(m.expiry), 'yyyy-MM-dd'),
         m.gst,
         m.pricePerUnit,
       ]
         .map(esc)
+<<<<<<< HEAD
         .join(",")
+=======
+        .join(','),
+>>>>>>> a821a0c (second update)
     );
-    const csv = [headers.join(","), ...rows].join("\n");
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const csv = [headers.join(','), ...rows].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
+    const a = document.createElement('a');
     a.href = url;
-    a.download = `inventory-${format(new Date(), "yyyyMMdd-HHmm")}.csv`;
+    a.download = `inventory-${format(new Date(), 'yyyyMMdd-HHmm')}.csv`;
     document.body.appendChild(a);
     a.click();
     a.remove();
@@ -724,7 +765,11 @@ function PharmacyInventory() {
 
   const historyEntries = historyFor ? history.filter((h) => h.medicineId === historyFor.id) : [];
 
+<<<<<<< HEAD
   const hasActiveFilters = search.cat !== "all" || search.stock !== "all" || search.q !== "";
+=======
+  const hasActiveFilters = search.cat !== 'all' || search.stock !== 'all' || search.q !== '';
+>>>>>>> a821a0c (second update)
 
   return (
     <TooltipProvider delayDuration={150}>
@@ -759,21 +804,29 @@ function PharmacyInventory() {
               <div>
                 <p className="font-display text-sm font-semibold">Inventory needs attention</p>
                 <p className="text-xs text-muted-foreground">
+<<<<<<< HEAD
                   {outOfStock.length} out of stock · {lowStock.length} low stock · {expired.length}{" "}
+=======
+                  {outOfStock.length} out of stock · {lowStock.length} low stock · {expired.length}{' '}
+>>>>>>> a821a0c (second update)
                   expired batch(es)
                 </p>
                 <div className="mt-2 flex flex-wrap gap-1.5">
                   {alerts.map((m) => {
                     const isExpired = new Date(m.expiry) < new Date();
+<<<<<<< HEAD
                     const tone = m.stock === 0 || isExpired ? "danger" : ("warning" as const);
+=======
+                    const tone = m.stock === 0 || isExpired ? 'danger' : ('warning' as const);
+>>>>>>> a821a0c (second update)
                     const min = effectiveMin(m);
                     const overridden = thresholds.overrides[m.id] !== null;
                     const catSet = thresholds.categories[m.category] !== null;
                     const source = overridden
-                      ? "Per-medicine override"
+                      ? 'Per-medicine override'
                       : catSet
                         ? `${m.category} category threshold`
-                        : "Default minimum";
+                        : 'Default minimum';
                     const tip = isExpired
                       ? `Expired · stock ${m.stock}`
                       : `Stock ${m.stock} · threshold ${min} (${source})`;
@@ -781,12 +834,12 @@ function PharmacyInventory() {
                       <Tooltip key={m.id}>
                         <TooltipTrigger asChild>
                           <button
-                            onClick={() => openStockDialog(m, "add")}
+                            onClick={() => openStockDialog(m, 'add')}
                             className="rounded-full border border-border bg-background px-2.5 py-1 text-[11px] font-medium hover:border-primary hover:text-primary"
                           >
                             <span className="mr-1.5 inline-block">
                               <StatusChip tone={tone}>
-                                {isExpired ? "EXP" : m.stock === 0 ? "OUT" : "LOW"}
+                                {isExpired ? 'EXP' : m.stock === 0 ? 'OUT' : 'LOW'}
                               </StatusChip>
                             </span>
                             {m.name}
@@ -799,7 +852,15 @@ function PharmacyInventory() {
                 </div>
               </div>
             </div>
+<<<<<<< HEAD
             <Button size="sm" onClick={() => updateSearch({ stock: "low", page: 1 })}>
+=======
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => updateSearch({ stock: 'low', page: 1 })}
+            >
+>>>>>>> a821a0c (second update)
               <PackageX className="mr-2 h-4 w-4" /> Review low stock
             </Button>
           </div>
@@ -861,8 +922,8 @@ function PharmacyInventory() {
             variant="ghost"
             size="sm"
             onClick={() => {
-              setSearchInput("");
-              updateSearch({ q: "", cat: "all", stock: "all", page: 1 });
+              setSearchInput('');
+              updateSearch({ q: '', cat: 'all', stock: 'all', page: 1 });
             }}
           >
             Clear
@@ -909,7 +970,7 @@ function PharmacyInventory() {
                       <th
                         key={h.id}
                         className={`px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground ${
-                          canSort ? "cursor-pointer select-none hover:text-foreground" : ""
+                          canSort ? 'cursor-pointer select-none hover:text-foreground' : ''
                         }`}
                         onClick={canSort ? h.column.getToggleSortingHandler() : undefined}
                       >
@@ -917,9 +978,9 @@ function PharmacyInventory() {
                           {flexRender(h.column.columnDef.header, h.getContext())}
                           {canSort && (
                             <>
-                              {dir === "asc" ? (
+                              {dir === 'asc' ? (
                                 <ArrowUp className="h-3 w-3" />
-                              ) : dir === "desc" ? (
+                              ) : dir === 'desc' ? (
                                 <ArrowDown className="h-3 w-3" />
                               ) : (
                                 <ArrowUpDown className="h-3 w-3 opacity-40" />
@@ -948,7 +1009,7 @@ function PharmacyInventory() {
                 table.getRowModel().rows.map((row) => (
                   <tr
                     key={row.id}
-                    data-state={row.getIsSelected() ? "selected" : undefined}
+                    data-state={row.getIsSelected() ? 'selected' : undefined}
                     className="transition-colors hover:bg-muted/30 data-[state=selected]:bg-primary/5"
                   >
                     {row.getVisibleCells().map((cell) => (
@@ -1034,19 +1095,23 @@ function PharmacyInventory() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {action === "add"
-                ? "Add stock"
-                : action === "remove"
-                  ? "Remove stock"
-                  : "Set stock level"}
+              {action === 'add'
+                ? 'Add stock'
+                : action === 'remove'
+                  ? 'Remove stock'
+                  : 'Set stock level'}
             </DialogTitle>
             <DialogDescription>
-              {editing?.name} · batch {editing?.batch} · current stock{" "}
+              {editing?.name} · batch {editing?.batch} · current stock{' '}
               <span className="font-semibold text-foreground">{editing?.stock}</span>
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-3 py-2">
+<<<<<<< HEAD
             <Label htmlFor="qty">{action === "set" ? "New stock level" : "Quantity"}</Label>
+=======
+            <Label htmlFor="qty">{action === 'set' ? 'New stock level' : 'Quantity'}</Label>
+>>>>>>> a821a0c (second update)
             <Input
               id="qty"
               type="number"
@@ -1146,11 +1211,11 @@ function PharmacyInventory() {
                       <div
                         className={`rounded-full p-2 ${
                           positive
-                            ? "bg-success/15 text-success-foreground"
-                            : "bg-destructive/10 text-destructive"
+                            ? 'bg-success/15 text-success-foreground'
+                            : 'bg-destructive/10 text-destructive'
                         }`}
                       >
-                        {h.action === "bulk-undo" ? (
+                        {h.action === 'bulk-undo' ? (
                           <Undo2 className="h-4 w-4" />
                         ) : positive ? (
                           <PackagePlus className="h-4 w-4" />
@@ -1160,13 +1225,13 @@ function PharmacyInventory() {
                       </div>
                       <div className="min-w-0">
                         <p className="text-sm font-medium capitalize">
-                          {h.action.replace("-", " ")}
+                          {h.action.replace('-', ' ')}
                           <span
                             className={`ml-2 text-xs font-bold ${
-                              positive ? "text-success-foreground" : "text-destructive"
+                              positive ? 'text-success-foreground' : 'text-destructive'
                             }`}
                           >
-                            {positive ? "+" : ""}
+                            {positive ? '+' : ''}
                             {h.delta}
                           </span>
                         </p>
@@ -1178,7 +1243,7 @@ function PharmacyInventory() {
                     </div>
                     <span
                       className="shrink-0 text-[11px] text-muted-foreground"
-                      title={format(new Date(h.at), "PPpp")}
+                      title={format(new Date(h.at), 'PPpp')}
                     >
                       {formatDistanceToNow(new Date(h.at), { addSuffix: true })}
                     </span>
@@ -1207,7 +1272,7 @@ function PharmacyInventory() {
         onOpenChange={(o) => {
           if (!o) {
             setThresholdEditing(null);
-            setThresholdInput("");
+            setThresholdInput('');
           }
         }}
       >
@@ -1215,7 +1280,11 @@ function PharmacyInventory() {
           <DialogHeader>
             <DialogTitle>Set low-stock threshold</DialogTitle>
             <DialogDescription>
+<<<<<<< HEAD
               {thresholdEditing?.name} · current stock{" "}
+=======
+              {thresholdEditing?.name} · current stock{' '}
+>>>>>>> a821a0c (second update)
               <span className="font-semibold text-foreground">{thresholdEditing?.stock}</span>.
               Leave empty to fall back to the category or default minimum.
             </DialogDescription>
@@ -1224,17 +1293,21 @@ function PharmacyInventory() {
             {thresholdEditing && (
               <div className="rounded-md bg-muted/40 px-3 py-2 text-xs text-muted-foreground">
                 <div>
-                  Category threshold:{" "}
+                  Category threshold:{' '}
                   <span className="font-medium text-foreground">
-                    {thresholds.categories[thresholdEditing.category] ?? "—"}
+                    {thresholds.categories[thresholdEditing.category] ?? '—'}
                   </span>
                 </div>
                 <div>
+<<<<<<< HEAD
                   Default minimum:{" "}
+=======
+                  Default minimum:{' '}
+>>>>>>> a821a0c (second update)
                   <span className="font-medium text-foreground">{thresholdEditing.minStock}</span>
                 </div>
                 <div>
-                  Current effective:{" "}
+                  Current effective:{' '}
                   <span className="font-medium text-foreground">
                     {effectiveMin(thresholdEditing)}
                   </span>
@@ -1255,8 +1328,8 @@ function PharmacyInventory() {
           <DialogFooter>
             <Button
               variant="ghost"
-              onClick={() => setThresholdInput("")}
-              disabled={thresholdInput === ""}
+              onClick={() => setThresholdInput('')}
+              disabled={thresholdInput === ''}
             >
               Clear override
             </Button>
@@ -1292,7 +1365,7 @@ function ThresholdsDrawer({
   setThresholds,
   effectiveMin,
 }: ThresholdsDrawerProps) {
-  const [overrideQuery, setOverrideQuery] = useState("");
+  const [overrideQuery, setOverrideQuery] = useState('');
   const [bulkTarget, setBulkTarget] = useState<{
     category: string;
     value: number;
@@ -1302,10 +1375,10 @@ function ThresholdsDrawer({
   const [bulkReplace, setBulkReplace] = useState<Record<string, boolean>>({});
 
   const openBulkConfirm = (cat: string) => {
-    const raw = bulkValueInput[cat] ?? String(thresholds.categories[cat] ?? "");
+    const raw = bulkValueInput[cat] ?? String(thresholds.categories[cat] ?? '');
     const n = Number(raw);
-    if (!Number.isFinite(n) || n < 0 || raw.trim() === "") {
-      toast.error("Enter a threshold value first");
+    if (!Number.isFinite(n) || n < 0 || raw.trim() === '') {
+      toast.error('Enter a threshold value first');
       return;
     }
     setBulkTarget({
@@ -1337,7 +1410,7 @@ function ThresholdsDrawer({
     const trimmed = valueRaw.trim();
     setThresholds((prev) => {
       const next = { ...prev.categories };
-      if (trimmed === "") {
+      if (trimmed === '') {
         delete next[cat];
       } else {
         const n = Number(trimmed);
@@ -1352,7 +1425,7 @@ function ThresholdsDrawer({
     const trimmed = valueRaw.trim();
     setThresholds((prev) => {
       const next = { ...prev.overrides };
-      if (trimmed === "") {
+      if (trimmed === '') {
         delete next[id];
       } else {
         const n = Number(trimmed);
@@ -1365,7 +1438,7 @@ function ThresholdsDrawer({
 
   const resetAll = () => {
     setThresholds({ categories: {}, overrides: {} });
-    toast.success("All thresholds reset to defaults");
+    toast.success('All thresholds reset to defaults');
   };
 
   const filteredItems = useMemo(() => {
@@ -1410,7 +1483,11 @@ function ThresholdsDrawer({
               const overriddenInCat = catItems.filter(
                 (m) => thresholds.overrides[m.id] !== null
               ).length;
+<<<<<<< HEAD
               const bulkVal = bulkValueInput[cat] ?? (value !== null ? String(value) : "");
+=======
+              const bulkVal = bulkValueInput[cat] ?? (value != null ? String(value) : '');
+>>>>>>> a821a0c (second update)
               const replace = !!bulkReplace[cat];
               return (
                 <div
@@ -1422,14 +1499,18 @@ function ThresholdsDrawer({
                       <p className="text-sm font-medium">{cat}</p>
                       <p className="text-[11px] text-muted-foreground">
                         {catItems.length} medicine(s) · {overriddenInCat} with override
+<<<<<<< HEAD
                         {value === null && " · using per-item defaults"}
+=======
+                        {value == null && ' · using per-item defaults'}
+>>>>>>> a821a0c (second update)
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
                       <Input
                         type="number"
                         min={0}
-                        value={value ?? ""}
+                        value={value ?? ''}
                         onChange={(e) => setCategory(cat, e.target.value)}
                         placeholder="—"
                         className="h-8 w-24 text-sm"
@@ -1439,7 +1520,7 @@ function ThresholdsDrawer({
                           size="icon"
                           variant="ghost"
                           title="Clear category threshold"
-                          onClick={() => setCategory(cat, "")}
+                          onClick={() => setCategory(cat, '')}
                         >
                           <RotateCcw className="h-3.5 w-3.5" />
                         </Button>
@@ -1510,7 +1591,7 @@ function ThresholdsDrawer({
                       <Input
                         type="number"
                         min={0}
-                        value={override ?? ""}
+                        value={override ?? ''}
                         onChange={(e) => setOverride(m.id, e.target.value)}
                         placeholder="—"
                         className="h-8 w-24 text-sm"
@@ -1520,7 +1601,7 @@ function ThresholdsDrawer({
                           size="icon"
                           variant="ghost"
                           title="Clear override"
-                          onClick={() => setOverride(m.id, "")}
+                          onClick={() => setOverride(m.id, '')}
                         >
                           <RotateCcw className="h-3.5 w-3.5" />
                         </Button>
@@ -1540,7 +1621,7 @@ function ThresholdsDrawer({
 
         <div className="mt-6 flex items-center justify-between border-t border-border pt-4">
           <p className="text-xs text-muted-foreground">
-            {Object.keys(thresholds.categories).length} category rule(s) ·{" "}
+            {Object.keys(thresholds.categories).length} category rule(s) ·{' '}
             {Object.keys(thresholds.overrides).length} override(s)
           </p>
           <div className="flex gap-2">
@@ -1561,23 +1642,41 @@ function ThresholdsDrawer({
             <AlertDialogDescription>
               {bulkTarget && (
                 <>
+<<<<<<< HEAD
                   This will set an override low-stock threshold of{" "}
                   <span className="font-semibold text-foreground">{bulkTarget.value}</span> on{" "}
+=======
+                  This will set an override low-stock threshold of{' '}
+                  <span className="font-semibold text-foreground">{bulkTarget.value}</span> on{' '}
+>>>>>>> a821a0c (second update)
                   <span className="font-semibold text-foreground">
                     {
                       items.filter((m) => {
                         if (m.category !== bulkTarget.category) return false;
+<<<<<<< HEAD
                         if (!bulkTarget.replaceExisting && thresholds.overrides[m.id] !== null)
+=======
+                        if (!bulkTarget.replaceExisting && thresholds.overrides[m.id] != null)
+>>>>>>> a821a0c (second update)
                           return false;
                         return true;
                       }).length
                     }
+<<<<<<< HEAD
                   </span>{" "}
                   medicine(s) in{" "}
                   <span className="font-semibold text-foreground">{bulkTarget.category}</span>.{" "}
                   {bulkTarget.replaceExisting
                     ? "Existing overrides will be replaced."
                     : "Medicines that already have an override are skipped."}
+=======
+                  </span>{' '}
+                  medicine(s) in{' '}
+                  <span className="font-semibold text-foreground">{bulkTarget.category}</span>.{' '}
+                  {bulkTarget.replaceExisting
+                    ? 'Existing overrides will be replaced.'
+                    : 'Medicines that already have an override are skipped.'}
+>>>>>>> a821a0c (second update)
                 </>
               )}
             </AlertDialogDescription>

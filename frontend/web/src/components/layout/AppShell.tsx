@@ -1,9 +1,10 @@
-import { useState, type ReactNode } from "react";
-import { Sidebar } from "./Sidebar";
-import { Topbar } from "./Topbar";
+import { useState, type ReactNode } from 'react';
+import { Sidebar } from './Sidebar';
+import { Topbar } from './Topbar';
 
 export function AppShell({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
+<<<<<<< HEAD
   const [desktopOpen, setDesktopOpen] = useState(true);
 
   return (
@@ -29,6 +30,15 @@ export function AppShell({ children }: { children: ReactNode }) {
           />
         </div>
         <main className="relative flex-1 p-4 sm:p-6 lg:p-8 print:p-0">
+=======
+
+  return (
+    <div className="flex min-h-screen w-full bg-background text-foreground flex-col">
+      <Sidebar open={open} onClose={() => setOpen(false)} />
+      <div className="flex min-w-0 flex-1 flex-col relative">
+        <Topbar onMenu={() => setOpen(true)} />
+        <main className="relative flex-1 p-4 sm:p-6 lg:p-8">
+>>>>>>> a821a0c (second update)
           {/* Watermark — stethoscope logo in background */}
           <div
             className="pointer-events-none fixed inset-0 z-0 flex items-center justify-center"
@@ -39,8 +49,13 @@ export function AppShell({ children }: { children: ReactNode }) {
               alt=""
               className="w-[520px] max-w-[72vw] select-none"
               style={{
+<<<<<<< HEAD
                 opacity: 0.2,
                 filter: "var(--watermark-filter, grayscale(1) brightness(0))",
+=======
+                opacity: 0.4,
+                filter: 'var(--watermark-filter, grayscale(1) brightness(0))',
+>>>>>>> a821a0c (second update)
               }}
             />
           </div>

@@ -1,10 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { PageHeader } from "@/components/common/PageHeader";
-import { appointments, patients, doctors } from "@/lib/mock/data";
-import { isToday, format } from "date-fns";
-import { AppointmentStatusChip } from "@/components/common/AppointmentStatusChip";
+import { createFileRoute } from '@tanstack/react-router';
+import { PageHeader } from '@/components/common/PageHeader';
+import { appointments, patients, doctors } from '@/lib/mock/data';
+import { isToday, format } from 'date-fns';
+import { AppointmentStatusChip } from '@/components/common/AppointmentStatusChip';
 
-export const Route = createFileRoute("/_app/nurse/queue")({
+export const Route = createFileRoute('/_app/nurse/queue')({
   component: NurseQueue,
 });
 
@@ -25,7 +25,11 @@ function NurseQueue() {
               <div className="min-w-0 flex-1">
                 <p className="font-semibold">{p.name}</p>
                 <p className="text-xs text-muted-foreground">
+<<<<<<< HEAD
                   {p.age}y · {d?.name} · {format(new Date(a.date), "p")}
+=======
+                  {p.age}y · {d?.name} · {format(new Date(a.date), 'p')}
+>>>>>>> a821a0c (second update)
                 </p>
               </div>
               <AppointmentStatusChip status={a.status} />

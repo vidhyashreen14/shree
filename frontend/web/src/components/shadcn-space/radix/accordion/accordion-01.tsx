@@ -3,9 +3,15 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
+<<<<<<< HEAD
 } from "@/components/ui/accordion";
 import { cn } from "@/lib/utils";
 import { FileText, Folder, LucideIcon, Settings, Users } from "lucide-react";
+=======
+} from '@/components/ui/accordion';
+import { cn } from '@/lib/utils';
+import { FileText, Folder, LucideIcon, Settings, Users } from 'lucide-react';
+>>>>>>> a821a0c (second update)
 
 const data: {
   value: string;
@@ -17,42 +23,56 @@ const data: {
   bgColor: string;
 }[] = [
   {
-    value: "documents",
-    title: "Documents",
-    subtitle: "Manage your files",
+    value: 'documents',
+    title: 'Documents',
+    subtitle: 'Manage your files',
     content:
-      "View, upload, and organize all your documents in one place. Keep everything structured and easy to find.",
+      'View, upload, and organize all your documents in one place. Keep everything structured and easy to find.',
     icon: FileText,
-    textColor: "text-blue-500",
-    bgColor: "bg-blue-500/10",
+    textColor: 'text-blue-500',
+    bgColor: 'bg-blue-500/10',
   },
   {
-    value: "projects",
-    title: "Projects",
-    subtitle: "Organize your work",
+    value: 'projects',
+    title: 'Projects',
+    subtitle: 'Organize your work',
     content:
-      "Group related files and tasks into projects to keep your workflow clean and efficient.",
+      'Group related files and tasks into projects to keep your workflow clean and efficient.',
     icon: Folder,
-    textColor: "text-orange-400",
-    bgColor: "bg-orange-400/10",
+    textColor: 'text-orange-400',
+    bgColor: 'bg-orange-400/10',
   },
   {
+<<<<<<< HEAD
     value: "settings",
     title: "Settings",
     subtitle: "Customize your experience",
     content: "Adjust preferences, update account details, and configure application behavior.",
+=======
+    value: 'settings',
+    title: 'Settings',
+    subtitle: 'Customize your experience',
+    content: 'Adjust preferences, update account details, and configure application behavior.',
+>>>>>>> a821a0c (second update)
     icon: Settings,
-    textColor: "text-teal-400",
-    bgColor: "bg-teal-400/10",
+    textColor: 'text-teal-400',
+    bgColor: 'bg-teal-400/10',
   },
   {
+<<<<<<< HEAD
     value: "team",
     title: "Team Members",
     subtitle: "Manage users and roles",
     content: "Invite new members, assign roles, and control access permissions for your team.",
+=======
+    value: 'team',
+    title: 'Team Members',
+    subtitle: 'Manage users and roles',
+    content: 'Invite new members, assign roles, and control access permissions for your team.',
+>>>>>>> a821a0c (second update)
     icon: Users,
-    textColor: "text-red-500",
-    bgColor: "bg-red-500/10",
+    textColor: 'text-red-500',
+    bgColor: 'bg-red-500/10',
   },
 ];
 
@@ -76,9 +96,9 @@ const AccordionDemo = () => (
               <div className="flex items-center gap-3">
                 <div
                   className={cn(
-                    "p-2.5 rounded-xl flex items-center justify-center",
+                    'p-2.5 rounded-xl flex items-center justify-center',
                     item.bgColor,
-                    item.textColor
+                    item.textColor,
                   )}
                 >
                   <Icon className="h-5 w-5" />

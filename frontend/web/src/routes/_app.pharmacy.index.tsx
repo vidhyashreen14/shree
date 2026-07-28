@@ -1,9 +1,18 @@
+<<<<<<< HEAD
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHeader } from "@/components/common/PageHeader";
 import { StatCard } from "@/components/common/StatCard";
 import { Button } from "@/components/ui/button";
 import { medicines } from "@/lib/mock/data";
 import { Pill, PackageSearch, AlertTriangle, Receipt, Truck } from "lucide-react";
+=======
+import { createFileRoute, Link } from '@tanstack/react-router';
+import { PageHeader } from '@/components/common/PageHeader';
+import { StatCard } from '@/components/common/StatCard';
+import { Button } from '@/components/ui/button';
+import { medicines } from '@/lib/mock/data';
+import { Pill, PackageSearch, AlertTriangle, Receipt, Truck } from 'lucide-react';
+>>>>>>> a821a0c (second update)
 import {
   Area,
   AreaChart,
@@ -12,9 +21,13 @@ import {
   Tooltip,
   XAxis,
   YAxis,
+<<<<<<< HEAD
 } from "recharts";
+=======
+} from 'recharts';
+>>>>>>> a821a0c (second update)
 
-export const Route = createFileRoute("/_app/pharmacy/")({
+export const Route = createFileRoute('/_app/pharmacy/')({
   component: PharmacyOverview,
 });
 
@@ -96,8 +109,13 @@ function PharmacyOverview() {
                 />
                 <Tooltip
                   contentStyle={{
+<<<<<<< HEAD
                     background: "hsl(var(--popover))",
                     border: "1px solid hsl(var(--border))",
+=======
+                    background: 'hsl(var(--popover))',
+                    border: '1px solid hsl(var(--border))',
+>>>>>>> a821a0c (second update)
                     borderRadius: 12,
                   }}
                 />

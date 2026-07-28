@@ -1,50 +1,64 @@
-"use client";
+'use client';
 
+<<<<<<< HEAD
 import { useState, useId } from "react";
 import { CircleIcon } from "lucide-react";
 import { Label } from "@/components/ui/label";
+=======
+import { useState, useId } from 'react';
+import { CircleIcon } from 'lucide-react';
+import { Label } from '@/components/ui/label';
+>>>>>>> a821a0c (second update)
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
+<<<<<<< HEAD
 } from "@/components/ui/select";
+=======
+} from '@/components/ui/select';
+>>>>>>> a821a0c (second update)
 
 const statuses = [
   {
-    value: "In Progress",
-    label: "In Progress",
-    color: "text-violet-500 fill-violet-500",
+    value: 'In Progress',
+    label: 'In Progress',
+    color: 'text-violet-500 fill-violet-500',
   },
   {
-    value: "Pending",
-    label: "Pending",
-    color: "text-amber-300 fill-amber-300",
+    value: 'Pending',
+    label: 'Pending',
+    color: 'text-amber-300 fill-amber-300',
   },
   {
-    value: "Completed",
-    label: "Completed",
-    color: "text-teal-600 fill-teal-600",
+    value: 'Completed',
+    label: 'Completed',
+    color: 'text-teal-600 fill-teal-600',
   },
   {
-    value: "Cancelled",
-    label: "Cancelled",
-    color: "text-gray-500 fill-gray-500",
+    value: 'Cancelled',
+    label: 'Cancelled',
+    color: 'text-gray-500 fill-gray-500',
   },
   {
-    value: "Rejected",
-    label: "Rejected",
-    color: "text-red-500 fill-red-500",
+    value: 'Rejected',
+    label: 'Rejected',
+    color: 'text-red-500 fill-red-500',
   },
 ];
 
 const SelectStatusDemo = () => {
   const id = useId();
+<<<<<<< HEAD
   const [value, setValue] = useState("In Progress");
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const selectedStatus = statuses.find((s) => s.value === value);
+=======
+  const [value, setValue] = useState('In Progress');
+>>>>>>> a821a0c (second update)
 
   return (
     <div className="w-full max-w-xs space-y-2">

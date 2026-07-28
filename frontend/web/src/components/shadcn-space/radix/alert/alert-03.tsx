@@ -1,7 +1,7 @@
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-import { ConfettiButton } from "@/components/ui/confetti";
-import { Check, X } from "lucide-react";
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { ConfettiButton } from '@/components/ui/confetti';
+import { Check, X } from 'lucide-react';
 
 export default function AlertSocialComponent() {
   return (
@@ -14,7 +14,11 @@ export default function AlertSocialComponent() {
           <Check className="text-teal-400" />
           <span>Accept</span>
         </ConfettiButton>
+<<<<<<< HEAD
         <Button variant={"destructive"} className="cursor-pointer">
+=======
+        <Button variant={'destructive'} className="cursor-pointer">
+>>>>>>> a821a0c (second update)
           <X />
         </Button>
       </div>

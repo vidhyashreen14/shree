@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { AnimatePresence, motion, type Variants } from "motion/react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Collapsible, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Separator } from "@/components/ui/separator";
+import { useState } from 'react';
+import { AnimatePresence, motion, type Variants } from 'motion/react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Collapsible, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Separator } from '@/components/ui/separator';
 import {
   ArrowRight,
   ChevronRightIcon,
@@ -12,7 +12,7 @@ import {
   LucideIcon,
   MapPinIcon,
   MessageSquareIcon,
-} from "lucide-react";
+} from 'lucide-react';
 
 export type StatRow = {
   icon: LucideIcon;
@@ -32,7 +32,7 @@ export type Collapsible04Props = {
 const containerVariants: Variants = {
   hidden: { height: 0, opacity: 0 },
   visible: {
-    height: "auto",
+    height: 'auto',
     opacity: 1,
     transition: {
       duration: 0.3,
@@ -44,7 +44,7 @@ const containerVariants: Variants = {
   exit: {
     height: 0,
     opacity: 0,
-    transition: { duration: 0.25, ease: "easeInOut" },
+    transition: { duration: 0.25, ease: 'easeInOut' },
   },
 };
 
@@ -53,30 +53,30 @@ const itemVariants: Variants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.22, ease: "easeOut" },
+    transition: { duration: 0.22, ease: 'easeOut' },
   },
   exit: { opacity: 0, y: -4, transition: { duration: 0.15 } },
 };
 
 const defaultStats: StatRow[] = [
-  { icon: MessageSquareIcon, label: "Last activity", value: "2 hours ago" },
-  { icon: ClockIcon, label: "Member since", value: "Mar 2022" },
-  { icon: MapPinIcon, label: "Location", value: "New York, US" },
+  { icon: MessageSquareIcon, label: 'Last activity', value: '2 hours ago' },
+  { icon: ClockIcon, label: 'Member since', value: 'Mar 2022' },
+  { icon: MapPinIcon, label: 'Location', value: 'New York, US' },
 ];
 
 const UserProfileDemo = ({
-  name = "Jessica Thompson",
-  avatar = "https://images.shadcnspace.com/assets/profiles/jessica.webp",
-  status = "Online",
+  name = 'Jessica Thompson',
+  avatar = 'https://images.shadcnspace.com/assets/profiles/jessica.webp',
+  status = 'Online',
   stats = defaultStats,
-  profileHref = "#",
+  profileHref = '#',
 }: Collapsible04Props) => {
   const [open, setOpen] = useState(false);
 
   const initials = name
-    .split(" ")
+    .split(' ')
     .map((n) => n[0])
-    .join("")
+    .join('')
     .toUpperCase();
 
   return (
@@ -102,7 +102,7 @@ const UserProfileDemo = ({
               </div>
               <motion.span
                 animate={{ rotate: open ? 90 : 0 }}
-                transition={{ duration: 0.25, ease: "easeInOut" }}
+                transition={{ duration: 0.25, ease: 'easeInOut' }}
                 className="inline-flex"
               >
                 <ChevronRightIcon aria-hidden="true" className="text-muted-foreground size-4" />
@@ -118,7 +118,7 @@ const UserProfileDemo = ({
                 initial="hidden"
                 animate="visible"
                 exit="exit"
-                style={{ overflow: "hidden" }}
+                style={{ overflow: 'hidden' }}
               >
                 <motion.div variants={itemVariants}>
                   <Separator />
@@ -152,7 +152,11 @@ const UserProfileDemo = ({
                     href={profileHref}
                     className="group flex gap-1 items-center text-muted-foreground hover:text-primary text-xs font-medium transition-colors"
                   >
+<<<<<<< HEAD
                     View full profile{" "}
+=======
+                    View full profile{' '}
+>>>>>>> a821a0c (second update)
                     <ArrowRight size={14} className="group-hover:translate-x-1 duration-300" />
                   </a>
                 </motion.div>

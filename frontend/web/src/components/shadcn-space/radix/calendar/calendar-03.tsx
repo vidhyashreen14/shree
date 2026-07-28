@@ -1,32 +1,32 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
 
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
-export const title = "Calendar as Appointment Picker";
+export const title = 'Calendar as Appointment Picker';
 
 const CalendarThree = () => {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
 
   const availableTimes = [
-    "09:00 AM",
-    "09:30 AM",
-    "10:00 AM",
-    "10:30 AM",
-    "11:00 AM",
-    "11:30 AM",
-    "01:00 PM",
-    "01:30 PM",
-    "02:00 PM",
-    "02:30 PM",
-    "03:00 PM",
-    "03:30 PM",
-    "04:00 PM",
-    "04:30 PM",
+    '09:00 AM',
+    '09:30 AM',
+    '10:00 AM',
+    '10:30 AM',
+    '11:00 AM',
+    '11:30 AM',
+    '01:00 PM',
+    '01:30 PM',
+    '02:00 PM',
+    '02:30 PM',
+    '03:00 PM',
+    '03:30 PM',
+    '04:00 PM',
+    '04:30 PM',
   ];
   return (
     <div className="flex items-center justify-center px-4">
@@ -44,7 +44,7 @@ const CalendarThree = () => {
                     key={time}
                     onClick={() => setSelectedTime(time)}
                     size="sm"
-                    variant={selectedTime === time ? "default" : "outline"}
+                    variant={selectedTime === time ? 'default' : 'outline'}
                   >
                     {time}
                   </Button>

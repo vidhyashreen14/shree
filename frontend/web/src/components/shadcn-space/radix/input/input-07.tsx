@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { Minus, Plus } from "lucide-react";
-import { useState } from "react";
+import { Minus, Plus } from 'lucide-react';
+import { useState } from 'react';
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
-export const title = "Number Input with Controls";
+export const title = 'Number Input with Controls';
 
 const InputWithControlsDemo = () => {
   const [value, setValue] = useState(1);
@@ -18,7 +18,7 @@ const InputWithControlsDemo = () => {
       <div className="flex gap-2">
         <Button
           onClick={() => setValue(Math.max(1, value - 1))}
-          size={"sm"}
+          size={'sm'}
           type="button"
           variant="outline"
           className="h-8 cursor-pointer"
@@ -35,7 +35,7 @@ const InputWithControlsDemo = () => {
         />
         <Button
           onClick={() => setValue(value + 1)}
-          size={"sm"}
+          size={'sm'}
           type="button"
           variant="outline"
           className="h-8 cursor-pointer"

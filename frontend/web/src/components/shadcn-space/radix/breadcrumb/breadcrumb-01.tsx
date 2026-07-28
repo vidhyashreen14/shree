@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import { HomeIcon } from "lucide-react";
+=======
+import { HomeIcon } from 'lucide-react';
+>>>>>>> a821a0c (second update)
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -6,7 +10,11 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
+<<<<<<< HEAD
 } from "@/components/ui/breadcrumb";
+=======
+} from '@/components/ui/breadcrumb';
+>>>>>>> a821a0c (second update)
 
 const BreadcrumbOutlineDemo = () => {
   return (

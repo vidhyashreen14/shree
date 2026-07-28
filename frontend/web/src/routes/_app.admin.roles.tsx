@@ -1,15 +1,16 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { PageHeader } from "@/components/common/PageHeader";
-import { Check, Shield } from "lucide-react";
-import { ROLES } from "@/lib/rbac";
-import { cn } from "@/lib/utils";
+import { createFileRoute } from '@tanstack/react-router';
+import { PageHeader } from '@/components/common/PageHeader';
+import { Check, Shield } from 'lucide-react';
+import { ROLES } from '@/lib/rbac';
+import { cn } from '@/lib/utils';
 
-export const Route = createFileRoute("/_app/admin/roles")({
+export const Route = createFileRoute('/_app/admin/roles')({
   component: AdminRoles,
 });
 
 const matrix: { permission: string; group: string; roles: Record<string, boolean> }[] = [
   {
+<<<<<<< HEAD
     permission: "View dashboard",
     group: "General",
     roles: { admin: true, doctor: true, frontdesk: true, nurse: true, pharmacy: true, lab: true },
@@ -17,6 +18,15 @@ const matrix: { permission: string; group: string; roles: Record<string, boolean
   {
     permission: "Manage users",
     group: "Admin",
+=======
+    permission: 'View dashboard',
+    group: 'General',
+    roles: { admin: true, doctor: true, frontdesk: true, nurse: true, pharmacy: true, lab: true },
+  },
+  {
+    permission: 'Manage users',
+    group: 'Admin',
+>>>>>>> a821a0c (second update)
     roles: {
       admin: true,
       doctor: false,
@@ -27,8 +37,13 @@ const matrix: { permission: string; group: string; roles: Record<string, boolean
     },
   },
   {
+<<<<<<< HEAD
     permission: "Manage departments",
     group: "Admin",
+=======
+    permission: 'Manage departments',
+    group: 'Admin',
+>>>>>>> a821a0c (second update)
     roles: {
       admin: true,
       doctor: false,
@@ -39,8 +54,13 @@ const matrix: { permission: string; group: string; roles: Record<string, boolean
     },
   },
   {
+<<<<<<< HEAD
     permission: "Register patients",
     group: "Patients",
+=======
+    permission: 'Register patients',
+    group: 'Patients',
+>>>>>>> a821a0c (second update)
     roles: {
       admin: true,
       doctor: false,
@@ -51,6 +71,7 @@ const matrix: { permission: string; group: string; roles: Record<string, boolean
     },
   },
   {
+<<<<<<< HEAD
     permission: "View patient records",
     group: "Patients",
     roles: { admin: true, doctor: true, frontdesk: true, nurse: true, pharmacy: false, lab: true },
@@ -58,6 +79,15 @@ const matrix: { permission: string; group: string; roles: Record<string, boolean
   {
     permission: "Create prescriptions",
     group: "Clinical",
+=======
+    permission: 'View patient records',
+    group: 'Patients',
+    roles: { admin: true, doctor: true, frontdesk: true, nurse: true, pharmacy: false, lab: true },
+  },
+  {
+    permission: 'Create prescriptions',
+    group: 'Clinical',
+>>>>>>> a821a0c (second update)
     roles: {
       admin: false,
       doctor: true,
@@ -68,8 +98,13 @@ const matrix: { permission: string; group: string; roles: Record<string, boolean
     },
   },
   {
+<<<<<<< HEAD
     permission: "Record vitals",
     group: "Clinical",
+=======
+    permission: 'Record vitals',
+    group: 'Clinical',
+>>>>>>> a821a0c (second update)
     roles: {
       admin: false,
       doctor: true,
@@ -80,8 +115,13 @@ const matrix: { permission: string; group: string; roles: Record<string, boolean
     },
   },
   {
+<<<<<<< HEAD
     permission: "Order lab tests",
     group: "Clinical",
+=======
+    permission: 'Order lab tests',
+    group: 'Clinical',
+>>>>>>> a821a0c (second update)
     roles: {
       admin: false,
       doctor: true,
@@ -92,8 +132,13 @@ const matrix: { permission: string; group: string; roles: Record<string, boolean
     },
   },
   {
+<<<<<<< HEAD
     permission: "Manage inventory",
     group: "Pharmacy",
+=======
+    permission: 'Manage inventory',
+    group: 'Pharmacy',
+>>>>>>> a821a0c (second update)
     roles: {
       admin: true,
       doctor: false,
@@ -104,8 +149,13 @@ const matrix: { permission: string; group: string; roles: Record<string, boolean
     },
   },
   {
+<<<<<<< HEAD
     permission: "Upload lab reports",
     group: "Lab",
+=======
+    permission: 'Upload lab reports',
+    group: 'Lab',
+>>>>>>> a821a0c (second update)
     roles: {
       admin: false,
       doctor: false,
@@ -116,8 +166,13 @@ const matrix: { permission: string; group: string; roles: Record<string, boolean
     },
   },
   {
+<<<<<<< HEAD
     permission: "View audit logs",
     group: "System",
+=======
+    permission: 'View audit logs',
+    group: 'System',
+>>>>>>> a821a0c (second update)
     roles: {
       admin: true,
       doctor: false,
@@ -166,10 +221,17 @@ function AdminRoles() {
                     <td key={r.value} className="px-3 py-3 text-center">
                       <span
                         className={cn(
+<<<<<<< HEAD
                           "inline-grid h-7 w-7 place-items-center rounded-full",
                           row.roles[r.value]
                             ? "bg-success/15 text-success"
                             : "bg-muted text-muted-foreground/50"
+=======
+                          'inline-grid h-7 w-7 place-items-center rounded-full',
+                          row.roles[r.value]
+                            ? 'bg-success/15 text-success'
+                            : 'bg-muted text-muted-foreground/50',
+>>>>>>> a821a0c (second update)
                         )}
                       >
                         {row.roles[r.value] ? (

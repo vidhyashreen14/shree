@@ -1,7 +1,7 @@
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
-type Theme = "light" | "dark";
+type Theme = 'light' | 'dark';
 
 interface ThemeState {
   theme: Theme;
@@ -13,30 +13,35 @@ interface ThemeState {
 export const useTheme = create<ThemeState>()(
   persist(
     (set) => ({
-      theme: "light",
+      theme: 'light',
       toggle: () =>
         set((s) => {
-          const next: Theme = s.theme === "light" ? "dark" : "light";
-          if (typeof document !== "undefined") {
-            document.documentElement.classList.toggle("dark", next === "dark");
+          const next: Theme = s.theme === 'light' ? 'dark' : 'light';
+          if (typeof document !== 'undefined') {
+            document.documentElement.classList.toggle('dark', next === 'dark');
           }
           return { theme: next };
         }),
       toggleTheme: () =>
         set((s) => {
-          const next: Theme = s.theme === "light" ? "dark" : "light";
-          if (typeof document !== "undefined") {
-            document.documentElement.classList.toggle("dark", next === "dark");
+          const next: Theme = s.theme === 'light' ? 'dark' : 'light';
+          if (typeof document !== 'undefined') {
+            document.documentElement.classList.toggle('dark', next === 'dark');
           }
           return { theme: next };
         }),
       set: (t) => {
-        if (typeof document !== "undefined") {
-          document.documentElement.classList.toggle("dark", t === "dark");
+        if (typeof document !== 'undefined') {
+          document.documentElement.classList.toggle('dark', t === 'dark');
         }
         set({ theme: t });
       },
     }),
+<<<<<<< HEAD
     { name: "medicore-theme" }
   )
+=======
+    { name: 'medicore-theme' },
+  ),
+>>>>>>> a821a0c (second update)
 );

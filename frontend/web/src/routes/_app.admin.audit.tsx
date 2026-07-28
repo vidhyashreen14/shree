@@ -1,31 +1,49 @@
+<<<<<<< HEAD
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { PageHeader } from "@/components/common/PageHeader";
 import { DataTable } from "@/components/common/DataTable";
 import { StatusChip } from "@/components/common/StatusChip";
+=======
+import { createFileRoute } from '@tanstack/react-router';
+import { useMemo, useState } from 'react';
+import type { ColumnDef } from '@tanstack/react-table';
+import { PageHeader } from '@/components/common/PageHeader';
+import { DataTable } from '@/components/common/DataTable';
+import { StatusChip } from '@/components/common/StatusChip';
+>>>>>>> a821a0c (second update)
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
+<<<<<<< HEAD
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Filter, RotateCcw } from "lucide-react";
 import { useAudit } from "@/lib/store/audit";
 import type { AuditLog } from "@/lib/types";
 import { formatDistanceToNow, differenceInDays } from "date-fns";
+=======
+} from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { Filter, RotateCcw } from 'lucide-react';
+import { useAudit } from '@/lib/store/audit';
+import type { AuditLog } from '@/lib/types';
+import { formatDistanceToNow, differenceInDays } from 'date-fns';
+>>>>>>> a821a0c (second update)
 
-export const Route = createFileRoute("/_app/admin/audit")({
+export const Route = createFileRoute('/_app/admin/audit')({
   component: AdminAudit,
 });
 
 function AdminAudit() {
   const auditLogs = useAudit((s) => s.logs);
-  const [roleFilter, setRoleFilter] = useState("all");
-  const [actionFilter, setActionFilter] = useState("all");
-  const [timeframeFilter, setTimeframeFilter] = useState("all");
+  const [roleFilter, setRoleFilter] = useState('all');
+  const [actionFilter, setActionFilter] = useState('all');
+  const [timeframeFilter, setTimeframeFilter] = useState('all');
 
   const uniqueActions = useMemo(() => {
     const actions = new Set(auditLogs.map((log) => log.action));
@@ -35,28 +53,28 @@ function AdminAudit() {
   const filteredLogs = useMemo(() => {
     return auditLogs.filter((item) => {
       // Role filter
-      if (roleFilter !== "all" && item.role !== roleFilter) {
+      if (roleFilter !== 'all' && item.role !== roleFilter) {
         return false;
       }
       // Action filter
-      if (actionFilter !== "all" && item.action !== actionFilter) {
+      if (actionFilter !== 'all' && item.action !== actionFilter) {
         return false;
       }
       // Timeframe filter
-      if (timeframeFilter !== "all") {
+      if (timeframeFilter !== 'all') {
         const date = new Date(item.at);
         const now = new Date();
         const diffDays = differenceInDays(now, date);
-        if (timeframeFilter === "today" && diffDays !== 0) {
+        if (timeframeFilter === 'today' && diffDays !== 0) {
           return false;
         }
-        if (timeframeFilter === "last-3-days" && diffDays > 3) {
+        if (timeframeFilter === 'last-3-days' && diffDays > 3) {
           return false;
         }
-        if (timeframeFilter === "last-7-days" && diffDays > 7) {
+        if (timeframeFilter === 'last-7-days' && diffDays > 7) {
           return false;
         }
-        if (timeframeFilter === "last-30-days" && diffDays > 30) {
+        if (timeframeFilter === 'last-30-days' && diffDays > 30) {
           return false;
         }
       }
@@ -65,16 +83,21 @@ function AdminAudit() {
   }, [auditLogs, roleFilter, actionFilter, timeframeFilter]);
 
   const hasActiveFilters =
+<<<<<<< HEAD
     roleFilter !== "all" || actionFilter !== "all" || timeframeFilter !== "all";
+=======
+    roleFilter !== 'all' || actionFilter !== 'all' || timeframeFilter !== 'all';
+>>>>>>> a821a0c (second update)
 
   const resetFilters = () => {
-    setRoleFilter("all");
-    setActionFilter("all");
-    setTimeframeFilter("all");
+    setRoleFilter('all');
+    setActionFilter('all');
+    setTimeframeFilter('all');
   };
 
   const columns = useMemo<ColumnDef<AuditLog>[]>(
     () => [
+<<<<<<< HEAD
       { header: "User", accessorKey: "user" },
       {
         header: "Role",
@@ -85,11 +108,27 @@ function AdminAudit() {
       {
         header: "When",
         accessorKey: "at",
+=======
+      { header: 'User', accessorKey: 'user' },
+      {
+        header: 'Role',
+        accessorKey: 'role',
+        cell: ({ getValue }) => <StatusChip tone="primary">{String(getValue())}</StatusChip>,
+      },
+      { header: 'Action', accessorKey: 'action' },
+      {
+        header: 'When',
+        accessorKey: 'at',
+>>>>>>> a821a0c (second update)
         cell: ({ getValue }) =>
           formatDistanceToNow(new Date(String(getValue())), { addSuffix: true }),
       },
     ],
+<<<<<<< HEAD
     []
+=======
+    [],
+>>>>>>> a821a0c (second update)
   );
 
   return (

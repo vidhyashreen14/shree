@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
 
 import { StatusChip } from "@/components/common/StatusChip";
@@ -16,6 +17,26 @@ import { format } from "date-fns";
 import { useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { jsPDF } from "jspdf";
+=======
+import { createFileRoute, Link, notFound, useNavigate } from '@tanstack/react-router';
+import { StatusChip } from '@/components/common/StatusChip';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { usePatients } from '@/lib/store/patients';
+import { useNurseQueue } from '@/lib/store/nurseQueue';
+import { useClinicalStore } from '@/lib/store/clinical';
+import { useAuth } from '@/lib/store/auth';
+import { useHospitalSettings } from '@/lib/store/hospitalSettings';
+import { useCurrentDoctorId } from '@/lib/store/doctors';
+import { useStaffProfiles, type StaffProfile } from '@/lib/store/staffProfiles';
+import { doctors, vitals, appointments } from '@/lib/mock/data';
+import { format } from 'date-fns';
+import { useState, useRef, useMemo } from 'react';
+import { cn } from '@/lib/utils';
+import { jsPDF } from 'jspdf';
+>>>>>>> a821a0c (second update)
 import {
   ArrowLeft,
   Phone,
@@ -26,8 +47,11 @@ import {
   FlaskConical,
   ClipboardPlus,
   HeartPulse,
+<<<<<<< HEAD
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   FileText,
+=======
+>>>>>>> a821a0c (second update)
   Activity,
   Calendar,
   Printer,
@@ -36,6 +60,7 @@ import {
   Trash2,
   X,
   CheckCircle2,
+<<<<<<< HEAD
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Send,
   MessageSquare,
@@ -43,9 +68,16 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import type { Prescription, LabOrder, NurseVitals } from "@/lib/types";
+=======
+  MessageSquare,
+  Heart,
+} from 'lucide-react';
+import { toast } from 'sonner';
+import type { Prescription, LabOrder, NurseVitals, User } from '@/lib/types';
+>>>>>>> a821a0c (second update)
 
-export const Route = createFileRoute("/_app/doctor/patients/$id")({
-  loader: ({ params }): { patient: import("@/lib/types").Patient } => {
+export const Route = createFileRoute('/_app/doctor/patients/$id')({
+  loader: ({ params }): { patient: import('@/lib/types').Patient } => {
     const patient = usePatients.getState().patients.find((p) => p.id === params.id);
     if (!patient) throw notFound();
     return { patient };
@@ -53,7 +85,11 @@ export const Route = createFileRoute("/_app/doctor/patients/$id")({
   component: PatientProfile,
   notFoundComponent: () => (
     <div className="p-10 text-center text-sm text-muted-foreground">
+<<<<<<< HEAD
       Patient not found.{" "}
+=======
+      Patient not found.{' '}
+>>>>>>> a821a0c (second update)
       <Link to="/doctor/patients" className="text-primary underline">
         Back to list
       </Link>
@@ -62,14 +98,69 @@ export const Route = createFileRoute("/_app/doctor/patients/$id")({
 });
 
 export const doctorCredentials: Record<string, { qualification: string; kmc: string }> = {
-  "u-doc-1": { qualification: "MD, DM (Cardiology)", kmc: "KMC-12345" },
-  "u-doc-2": { qualification: "MD, DNB (Neurology)", kmc: "KMC-23456" },
-  "u-doc-3": { qualification: "MD, DCH (Pediatrics)", kmc: "KMC-34567" },
-  "u-doc-4": { qualification: "MS, MCh (Orthopedics)", kmc: "KMC-45678" },
-  "u-doc-5": { qualification: "MD, DGO (OB-GYN)", kmc: "KMC-56789" },
-  "u-doc-6": { qualification: "MD, DVD (Dermatology)", kmc: "KMC-67890" },
-  "u-doc-7": { qualification: "MBBS, MD (Emergency)", kmc: "KMC-78901" },
+  'u-doc-1': { qualification: 'MD, DM (Cardiology)', kmc: 'KMC-12345' },
+  'u-doc-2': { qualification: 'MD, DNB (Neurology)', kmc: 'KMC-23456' },
+  'u-doc-3': { qualification: 'MD, DCH (Pediatrics)', kmc: 'KMC-34567' },
+  'u-doc-4': { qualification: 'MS, MCh (Orthopedics)', kmc: 'KMC-45678' },
+  'u-doc-5': { qualification: 'MD, DGO (OB-GYN)', kmc: 'KMC-56789' },
+  'u-doc-6': { qualification: 'MD, DVD (Dermatology)', kmc: 'KMC-67890' },
+  'u-doc-7': { qualification: 'MBBS, MD (Emergency)', kmc: 'KMC-78901' },
 };
+
+export function getDoctorDetails(
+  docId: string,
+  loggedInUser: User | null,
+  staffProfiles: StaffProfile[],
+): { name: string; specialization: string; qualification: string; kmcNo: string } {
+  // 1. If it's the logged-in user
+  if (
+    loggedInUser &&
+    (loggedInUser.id === docId || loggedInUser.name === docId) &&
+    loggedInUser.role === 'doctor'
+  ) {
+    return {
+      name: loggedInUser.name.startsWith('Dr.') ? loggedInUser.name : `Dr. ${loggedInUser.name}`,
+      specialization: loggedInUser.specialization || loggedInUser.department || 'General Physician',
+      qualification: loggedInUser.qualification || 'MBBS, MD',
+      kmcNo: loggedInUser.registrationNumber || 'KMC-99999',
+    };
+  }
+
+  // 2. Check staff profiles store
+  const profile = staffProfiles.find(
+    (p) => p.id === docId || p.staffId === docId || `${p.firstName} ${p.lastName}` === docId,
+  );
+  if (profile) {
+    return {
+      name: `${profile.firstName} ${profile.lastName}`.startsWith('Dr.')
+        ? `${profile.firstName} ${profile.lastName}`
+        : `Dr. ${profile.firstName} ${profile.lastName}`,
+      specialization: profile.specialization || profile.department || 'General Physician',
+      qualification: profile.qualification || 'MBBS, MD',
+      kmcNo: profile.registrationNumber || 'KMC-99999',
+    };
+  }
+
+  // 3. Check mock doctors
+  const mockDoc = doctors.find((d) => d.id === docId || d.name === docId);
+  if (mockDoc) {
+    const creds = doctorCredentials[mockDoc.id] || { qualification: 'MBBS, MD', kmc: 'KMC-99999' };
+    return {
+      name: mockDoc.name.startsWith('Dr.') ? mockDoc.name : `Dr. ${mockDoc.name}`,
+      specialization: mockDoc.specialization,
+      qualification: creds.qualification,
+      kmcNo: creds.kmc,
+    };
+  }
+
+  // Fallback
+  return {
+    name: docId.startsWith('Dr.') ? docId : `Dr. ${docId}`,
+    specialization: 'General Physician',
+    qualification: 'MBBS, MD',
+    kmcNo: 'KMC-99999',
+  };
+}
 
 // ─── Prescription Print Pad Modal ─────────────────────────────────────────────
 
@@ -104,10 +195,17 @@ export function PrescriptionPrintModal({
   const { logoUrl, name, phone, email, address } = useHospitalSettings();
 
   const handlePrint = () => {
+<<<<<<< HEAD
     const content = printRef.current?.innerHTML ?? "";
     const win = window.open("", "_blank");
     if (!win) {
       toast.error("Pop-up blocked. Please allow pop-ups and try again.");
+=======
+    const content = printRef.current?.innerHTML ?? '';
+    const win = window.open('', '_blank');
+    if (!win) {
+      toast.error('Pop-up blocked. Please allow pop-ups and try again.');
+>>>>>>> a821a0c (second update)
       return;
     }
     win.document.write(`
@@ -135,7 +233,7 @@ export function PrescriptionPrintModal({
             th { border-bottom: 2px solid #e2e8f0; color: #0d9488; font-size: 11px; font-weight: 700; text-transform: uppercase; padding: 8px 6px; text-align: left; }
             td { padding: 8px 6px; border-bottom: 1px solid #f1f5f9; font-size: 12px; }
             .follow-up-bar { background: #fffbeb; border: 1px solid #fef3c7; border-radius: 6px; padding: 10px; margin-top: 16px; font-size: 12px; }
-            .footer { margin-top: 48px; display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px dashed #e2e8f0; padding-top: 16px; font-size: 11px; color: #666; }
+            .footer { margin-top: 48px; display: flex; justify-content: space-between; align-items: flex-end; padding-top: 16px; font-size: 11px; color: #666; }
             .signature { text-align: right; }
             .sig-line { width: 150px; border-bottom: 1px solid #94a3b8; margin-bottom: 4px; }
           </style>
@@ -153,21 +251,26 @@ export function PrescriptionPrintModal({
     const doc = new jsPDF();
 
     // Hospital Title block
-    doc.setFont("helvetica", "bold");
+    doc.setFont('helvetica', 'bold');
     doc.setFontSize(20);
     doc.setTextColor(13, 148, 136); // #0d9488
     doc.text(name, 20, 20);
 
+<<<<<<< HEAD
     doc.setFont("helvetica", "normal");
+=======
+    doc.setFont('helvetica', 'normal');
+>>>>>>> a821a0c (second update)
     doc.setFontSize(9);
     doc.setTextColor(100, 116, 139);
     doc.text(address, 20, 26);
     doc.text(`Phone: ${phone} | ${email}`, 20, 31);
 
     // Doctor block
-    doc.setFont("helvetica", "bold");
+    doc.setFont('helvetica', 'bold');
     doc.setFontSize(13);
     doc.setTextColor(17, 24, 39);
+<<<<<<< HEAD
     doc.text(data.doctorName, 190, 20, { align: "right" });
 
     doc.setFont("helvetica", "normal");
@@ -176,6 +279,16 @@ export function PrescriptionPrintModal({
     doc.text(data.specialization, 190, 26, { align: "right" });
     doc.text(data.qualification, 190, 31, { align: "right" });
     doc.text(`KMC No: ${data.kmcNo}`, 190, 36, { align: "right" });
+=======
+    doc.text(data.doctorName, 190, 20, { align: 'right' });
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.setTextColor(71, 85, 105);
+    doc.text(data.specialization, 190, 26, { align: 'right' });
+    doc.text(data.qualification, 190, 31, { align: 'right' });
+    doc.text(`KMC No: ${data.kmcNo}`, 190, 36, { align: 'right' });
+>>>>>>> a821a0c (second update)
 
     // Divider
     doc.setDrawColor(13, 148, 136);
@@ -184,12 +297,18 @@ export function PrescriptionPrintModal({
 
     // Patient Details
     doc.setFillColor(248, 250, 252);
-    doc.rect(20, 48, 170, 26, "F");
+    doc.rect(20, 48, 170, 26, 'F');
     doc.setDrawColor(226, 232, 240);
     doc.setLineWidth(0.5);
+<<<<<<< HEAD
     doc.rect(20, 48, 170, 26, "S");
 
     doc.setFont("helvetica", "bold");
+=======
+    doc.rect(20, 48, 170, 26, 'S');
+
+    doc.setFont('helvetica', 'bold');
+>>>>>>> a821a0c (second update)
     doc.setFontSize(9);
     doc.setTextColor(17, 24, 39);
     doc.text(`Patient: ${data.patientName}`, 25, 54);
@@ -203,8 +322,9 @@ export function PrescriptionPrintModal({
     // Triage Vitals
     if (data.vitals) {
       doc.setFillColor(240, 253, 250);
-      doc.rect(20, 78, 170, 14, "F");
+      doc.rect(20, 78, 170, 14, 'F');
       doc.setDrawColor(204, 251, 241);
+<<<<<<< HEAD
       doc.rect(20, 78, 170, 14, "S");
 
       doc.setFont("helvetica", "bold");
@@ -213,6 +333,16 @@ export function PrescriptionPrintModal({
       doc.text("TRIAGE VITALS", 25, 83);
 
       doc.setFont("helvetica", "normal");
+=======
+      doc.rect(20, 78, 170, 14, 'S');
+
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(13, 148, 136);
+      doc.setFontSize(8);
+      doc.text('TRIAGE VITALS', 25, 83);
+
+      doc.setFont('helvetica', 'normal');
+>>>>>>> a821a0c (second update)
       doc.setTextColor(15, 118, 110);
       doc.setFontSize(9);
       const vitalsText = `BP: ${data.vitals.bp}   Pulse: ${data.vitals.pulse} bpm   Temp: ${data.vitals.tempF}°F   Weight: ${data.vitals.weight} kg   SpO2: ${data.vitals.spo2}%`;
@@ -221,40 +351,51 @@ export function PrescriptionPrintModal({
     }
 
     // Clinical Findings
-    doc.setFont("helvetica", "bold");
+    doc.setFont('helvetica', 'bold');
     doc.setFontSize(10);
     doc.setTextColor(17, 24, 39);
 
     if (data.vitals?.chiefComplaint) {
-      doc.text("Chief Complaint:", 20, currentY);
-      doc.setFont("helvetica", "italic");
+      doc.text('Chief Complaint:', 20, currentY);
+      doc.setFont('helvetica', 'italic');
       doc.setTextColor(71, 85, 105);
       doc.text(`"${data.vitals.chiefComplaint}"`, 52, currentY);
       currentY += 8;
     }
 
+<<<<<<< HEAD
     doc.setFont("helvetica", "bold");
+=======
+    doc.setFont('helvetica', 'bold');
+>>>>>>> a821a0c (second update)
     doc.setTextColor(17, 24, 39);
-    doc.text("Diagnosis:", 20, currentY);
-    doc.setFont("helvetica", "normal");
+    doc.text('Diagnosis:', 20, currentY);
+    doc.setFont('helvetica', 'normal');
     doc.setTextColor(17, 24, 39);
     doc.text(data.diagnosis, 42, currentY);
     currentY += 14;
 
     // Rx symbol
-    doc.setFont("helvetica", "bold");
+    doc.setFont('helvetica', 'bold');
     doc.setFontSize(20);
     doc.setTextColor(13, 148, 136);
-    doc.text("Rx", 20, currentY);
+    doc.text('Rx', 20, currentY);
     currentY += 6;
 
     // Medicines list
     doc.setFontSize(9);
     doc.setTextColor(13, 148, 136);
+<<<<<<< HEAD
     doc.text("Medicine Name", 20, currentY);
     doc.text("Dose", 100, currentY);
     doc.text("Frequency", 130, currentY);
     doc.text("Duration", 160, currentY);
+=======
+    doc.text('Medicine Name', 20, currentY);
+    doc.text('Dose', 100, currentY);
+    doc.text('Frequency', 130, currentY);
+    doc.text('Duration', 160, currentY);
+>>>>>>> a821a0c (second update)
 
     doc.setDrawColor(226, 232, 240);
     doc.setLineWidth(1);
@@ -263,16 +404,16 @@ export function PrescriptionPrintModal({
 
     doc.setTextColor(17, 24, 39);
     data.medicines.forEach((m, idx) => {
-      doc.setFont("helvetica", "bold");
+      doc.setFont('helvetica', 'bold');
       doc.text(`${idx + 1}. ${m.name}`, 20, currentY);
-      doc.setFont("helvetica", "normal");
+      doc.setFont('helvetica', 'normal');
       doc.text(m.dose, 100, currentY);
       doc.text(m.frequency, 130, currentY);
       doc.text(m.duration, 160, currentY);
 
       if (m.notes) {
         currentY += 4.5;
-        doc.setFont("helvetica", "italic");
+        doc.setFont('helvetica', 'italic');
         doc.setFontSize(8);
         doc.setTextColor(100, 116, 139);
         doc.text(`   * Notes: ${m.notes}`, 20, currentY);
@@ -285,9 +426,9 @@ export function PrescriptionPrintModal({
     // Investigations
     if (data.labTests && data.labTests.length > 0) {
       currentY += 4;
-      doc.setFont("helvetica", "bold");
-      doc.text("Recommended Lab / Radiology Investigations:", 20, currentY);
-      doc.setFont("helvetica", "normal");
+      doc.setFont('helvetica', 'bold');
+      doc.text('Recommended Lab / Radiology Investigations:', 20, currentY);
+      doc.setFont('helvetica', 'normal');
       data.labTests.forEach((test) => {
         currentY += 6;
         doc.text(`- ${test}`, 25, currentY);
@@ -298,17 +439,27 @@ export function PrescriptionPrintModal({
     if (data.followUp) {
       currentY += 10;
       doc.setFillColor(255, 251, 235);
-      doc.rect(20, currentY, 170, 10, "F");
+      doc.rect(20, currentY, 170, 10, 'F');
       doc.setDrawColor(254, 243, 199);
+<<<<<<< HEAD
       doc.rect(20, currentY, 170, 10, "S");
 
       doc.setFont("helvetica", "bold");
+=======
+      doc.rect(20, currentY, 170, 10, 'S');
+
+      doc.setFont('helvetica', 'bold');
+>>>>>>> a821a0c (second update)
       doc.setTextColor(180, 83, 9);
       doc.setFontSize(9);
       doc.text(
         `📅 Follow-up: Please consult again on or before ${data.followUp}`,
         25,
+<<<<<<< HEAD
         currentY + 6.5
+=======
+        currentY + 6.5,
+>>>>>>> a821a0c (second update)
       );
     }
 
@@ -316,21 +467,28 @@ export function PrescriptionPrintModal({
     currentY = 250;
     doc.setDrawColor(148, 163, 184);
     doc.line(140, currentY, 190, currentY);
-    doc.setFont("helvetica", "bold");
+    doc.setFont('helvetica', 'bold');
     doc.setFontSize(8.5);
     doc.setTextColor(17, 24, 39);
     doc.text(data.doctorName, 140, currentY + 4.5);
+<<<<<<< HEAD
     doc.setFont("helvetica", "normal");
     doc.text("Authorized Signatory", 140, currentY + 8.5);
 
     return doc.output("blob");
+=======
+    doc.setFont('helvetica', 'normal');
+    doc.text('Authorized Signatory', 140, currentY + 8.5);
+
+    return doc.output('blob');
+>>>>>>> a821a0c (second update)
   };
 
-  const handleSharePDF = async (method: "whatsapp" | "email" | "sms" | "generic") => {
+  const handleSharePDF = async (method: 'whatsapp' | 'email' | 'sms' | 'generic') => {
     try {
       const blob = generatePDFBlob();
       const fileName = `Rx_${data.uhid}_Prescription.pdf`;
-      const file = new File([blob], fileName, { type: "application/pdf" });
+      const file = new File([blob], fileName, { type: 'application/pdf' });
 
       // 1. Check if browser supports direct file sharing (e.g. mobile/modern web share)
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
@@ -339,13 +497,13 @@ export function PrescriptionPrintModal({
           title: `${name} Prescription - ${data.patientName}`,
           text: `Prescription PDF for ${data.patientName} (${data.uhid}) from ${name}.`,
         });
-        toast.success("Prescription PDF sent successfully via system share!");
+        toast.success('Prescription PDF sent successfully via system share!');
         return;
       }
 
       // 2. Otherwise download PDF first and then open native dispatch URLs
       const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
+      const link = document.createElement('a');
       link.href = url;
       link.download = fileName;
       document.body.appendChild(link);
@@ -353,25 +511,42 @@ export function PrescriptionPrintModal({
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
 
+<<<<<<< HEAD
       if (method === "whatsapp") {
         const phoneNum = data.patientPhone.replace(/\D/g, "");
         const medsText = data.medicines
           .map((m, i) => `${i + 1}. ${m.name} (${m.dose}) - ${m.frequency} for ${m.duration}`)
           .join("\n");
+=======
+      if (method === 'whatsapp') {
+        const phoneNum = data.patientPhone.replace(/\D/g, '');
+        const medsText = data.medicines
+          .map((m, i) => `${i + 1}. ${m.name} (${m.dose}) - ${m.frequency} for ${m.duration}`)
+          .join('\n');
+>>>>>>> a821a0c (second update)
         const msg = encodeURIComponent(
-          `*${name} — Rx Prescription*\n\nDoctor: ${data.doctorName}\nPatient: ${data.patientName} (${data.uhid})\nDiagnosis: ${data.diagnosis}\n\n*Medicines Prescribed:*\n${medsText}\n\n${data.followUp ? `*Follow-up Date:* ${data.followUp}\n` : ""}\nThank you for choosing ${name}! (Prescription PDF downloaded to your device)`
+          `*${name} — Rx Prescription*\n\nDoctor: ${data.doctorName}\nPatient: ${data.patientName} (${data.uhid})\nDiagnosis: ${data.diagnosis}\n\n*Medicines Prescribed:*\n${medsText}\n\n${data.followUp ? `*Follow-up Date:* ${data.followUp}\n` : ''}\nThank you for choosing ${name}! (Prescription PDF downloaded to your device)`,
         );
+<<<<<<< HEAD
         window.open(`https://wa.me/${phoneNum}?text=${msg}`, "_blank");
         toast.success("Prescription PDF Downloaded! WhatsApp chat opened to send notification.", {
           duration: 6000,
         });
       } else if (method === "email") {
+=======
+        window.open(`https://wa.me/${phoneNum}?text=${msg}`, '_blank');
+        toast.success('Prescription PDF Downloaded! WhatsApp chat opened to send notification.', {
+          duration: 6000,
+        });
+      } else if (method === 'email') {
+>>>>>>> a821a0c (second update)
         const subject = encodeURIComponent(`Prescription PDF — ${data.rxNo} — ${data.patientName}`);
         const body = encodeURIComponent(
-          `Dear ${data.patientName},\n\nYour prescription PDF has been downloaded to your device. Please find it attached.\n\nDoctor: ${data.doctorName} (${data.specialization})\nDate: ${data.date}\nDiagnosis: ${data.diagnosis}\n\n${name}`
+          `Dear ${data.patientName},\n\nYour prescription PDF has been downloaded to your device. Please find it attached.\n\nDoctor: ${data.doctorName} (${data.specialization})\nDate: ${data.date}\nDiagnosis: ${data.diagnosis}\n\n${name}`,
         );
         window.location.href = `mailto:${data.patientEmail}?subject=${subject}&body=${body}`;
         toast.success(
+<<<<<<< HEAD
           "Prescription PDF Downloaded! Email client opened. Please attach the downloaded PDF file.",
           { duration: 6000 }
         );
@@ -379,17 +554,26 @@ export function PrescriptionPrintModal({
         toast.info(
           "Prescription PDF Downloaded! Please send/attach it to the patient via SMS gateway.",
           { duration: 5000 }
+=======
+          'Prescription PDF Downloaded! Email client opened. Please attach the downloaded PDF file.',
+          { duration: 6000 },
+        );
+      } else if (method === 'sms') {
+        toast.info(
+          'Prescription PDF Downloaded! Please send/attach it to the patient via SMS gateway.',
+          { duration: 5000 },
+>>>>>>> a821a0c (second update)
         );
       }
     } catch (err) {
-      console.error("Failed to share PDF: ", err);
-      toast.error("Failed to compile or share PDF.");
+      console.error('Failed to share PDF: ', err);
+      toast.error('Failed to compile or share PDF.');
     }
   };
 
-  const handleWhatsApp = () => handleSharePDF("whatsapp");
-  const handleEmail = () => handleSharePDF("email");
-  const handleSMS = () => handleSharePDF("sms");
+  const handleWhatsApp = () => handleSharePDF('whatsapp');
+  const handleEmail = () => handleSharePDF('email');
+  const handleSMS = () => handleSharePDF('sms');
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
@@ -441,42 +625,73 @@ export function PrescriptionPrintModal({
             <div
               className="header"
               style={{
+<<<<<<< HEAD
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
                 borderBottom: "2px solid #0d9488",
+=======
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                borderBottom: '2px solid #0d9488',
+>>>>>>> a821a0c (second update)
                 paddingBottom: 12,
                 marginBottom: 16,
               }}
             >
               <div
                 className="hospital-info"
+<<<<<<< HEAD
                 style={{ display: "flex", gap: 12, alignItems: "center" }}
+=======
+                style={{ display: 'flex', gap: 12, alignItems: 'center' }}
+>>>>>>> a821a0c (second update)
               >
                 {logoUrl ? (
                   <img
                     src={logoUrl}
                     alt="Logo"
+<<<<<<< HEAD
                     style={{ maxHeight: 50, maxWidth: 80, objectFit: "contain" }}
+=======
+                    style={{ maxHeight: 50, maxWidth: 80, objectFit: 'contain' }}
+>>>>>>> a821a0c (second update)
                   />
                 ) : (
                   <span style={{ fontSize: 28 }}>🏥</span>
                 )}
                 <div>
+<<<<<<< HEAD
                   <h2 style={{ fontSize: 20, fontWeight: 800, color: "#0d9488", marginBottom: 2 }}>
                     {name}
                   </h2>
                   <p style={{ fontSize: 11, color: "#555" }}>{address}</p>
                   <p style={{ fontSize: 11, color: "#555" }}>
+=======
+                  <h2 style={{ fontSize: 20, fontWeight: 800, color: '#0d9488', marginBottom: 2 }}>
+                    {name}
+                  </h2>
+                  <p style={{ fontSize: 11, color: '#555' }}>{address}</p>
+                  <p style={{ fontSize: 11, color: '#555' }}>
+>>>>>>> a821a0c (second update)
                     Phone: {phone} · {email}
                   </p>
                 </div>
               </div>
+<<<<<<< HEAD
               <div className="doctor-info" style={{ textAlign: "right" }}>
                 <h3 style={{ fontSize: 15, fontWeight: 700, color: "#111" }}>{data.doctorName}</h3>
                 <p style={{ fontSize: 11, color: "#555" }}>{data.specialization}</p>
                 <p style={{ fontSize: 11, color: "#555" }}>{data.qualification}</p>
                 <p style={{ fontSize: 11, color: "#555" }}>
+=======
+              <div className="doctor-info" style={{ textAlign: 'right' }}>
+                <h3 style={{ fontSize: 15, fontWeight: 700, color: '#111' }}>{data.doctorName}</h3>
+                <p style={{ fontSize: 11, color: '#555' }}>{data.specialization}</p>
+                <p style={{ fontSize: 11, color: '#555' }}>{data.qualification}</p>
+                <p style={{ fontSize: 11, color: '#555' }}>
+>>>>>>> a821a0c (second update)
                   <strong>KMC No:</strong> {data.kmcNo}
                 </p>
               </div>
@@ -486,8 +701,13 @@ export function PrescriptionPrintModal({
             <div
               className="patient-bar"
               style={{
+<<<<<<< HEAD
                 background: "#f8fafc",
                 border: "1px solid #e2e8f0",
+=======
+                background: '#f8fafc',
+                border: '1px solid #e2e8f0',
+>>>>>>> a821a0c (second update)
                 borderRadius: 8,
                 padding: 12,
                 marginBottom: 16,
@@ -496,7 +716,11 @@ export function PrescriptionPrintModal({
             >
               <div
                 className="patient-grid"
+<<<<<<< HEAD
                 style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10 }}
+=======
+                style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}
+>>>>>>> a821a0c (second update)
               >
                 <div>
                   <strong>Patient Name:</strong> {data.patientName}
@@ -518,6 +742,7 @@ export function PrescriptionPrintModal({
               <div
                 className="vitals-bar"
                 style={{
+<<<<<<< HEAD
                   display: "flex",
                   gap: 16,
                   flexWrap: "wrap",
@@ -525,6 +750,15 @@ export function PrescriptionPrintModal({
                   border: "1px solid #ccfbf1",
                   borderRadius: 6,
                   padding: "8px 12px",
+=======
+                  display: 'flex',
+                  gap: 16,
+                  flexWrap: 'wrap',
+                  background: '#f0fdfa',
+                  border: '1px solid #ccfbf1',
+                  borderRadius: 6,
+                  padding: '8px 12px',
+>>>>>>> a821a0c (second update)
                   marginBottom: 16,
                   fontSize: 11,
                 }}
@@ -555,31 +789,46 @@ export function PrescriptionPrintModal({
             {/* Chief Complaint */}
             {data.vitals?.chiefComplaint && (
               <div style={{ marginBottom: 12, fontSize: 12 }}>
+<<<<<<< HEAD
                 <strong>Chief Complaint:</strong>{" "}
                 <span style={{ fontStyle: "italic" }}>"{data.vitals.chiefComplaint}"</span>
+=======
+                <strong>Chief Complaint:</strong>{' '}
+                <span style={{ fontStyle: 'italic' }}>"{data.vitals.chiefComplaint}"</span>
+>>>>>>> a821a0c (second update)
               </div>
             )}
 
             {/* Diagnosis */}
             <div style={{ marginBottom: 16, fontSize: 12 }}>
+<<<<<<< HEAD
               <strong>Diagnosis:</strong>{" "}
               <span style={{ textDecoration: "underline", fontWeight: 600 }}>{data.diagnosis}</span>
+=======
+              <strong>Diagnosis:</strong>{' '}
+              <span style={{ textDecoration: 'underline', fontWeight: 600 }}>{data.diagnosis}</span>
+>>>>>>> a821a0c (second update)
             </div>
 
             {/* Rx Symbol */}
             <div
               className="rx-symbol"
+<<<<<<< HEAD
               style={{ fontSize: 24, fontWeight: 700, color: "#0d9488", margin: "12px 0 6px" }}
+=======
+              style={{ fontSize: 24, fontWeight: 700, color: '#0d9488', margin: '12px 0 6px' }}
+>>>>>>> a821a0c (second update)
             >
               Rₓ
             </div>
 
             {/* Treatment list */}
-            <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: 16 }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 16 }}>
               <thead>
                 <tr>
                   <th
                     style={{
+<<<<<<< HEAD
                       borderBottom: "2px solid #e2e8f0",
                       color: "#0d9488",
                       fontSize: 11,
@@ -587,12 +836,22 @@ export function PrescriptionPrintModal({
                       textTransform: "uppercase",
                       padding: "8px 6px",
                       textAlign: "left",
+=======
+                      borderBottom: '2px solid #e2e8f0',
+                      color: '#0d9488',
+                      fontSize: 11,
+                      fontWeight: 700,
+                      textTransform: 'uppercase',
+                      padding: '8px 6px',
+                      textAlign: 'left',
+>>>>>>> a821a0c (second update)
                     }}
                   >
                     Medicine Name
                   </th>
                   <th
                     style={{
+<<<<<<< HEAD
                       borderBottom: "2px solid #e2e8f0",
                       color: "#0d9488",
                       fontSize: 11,
@@ -600,12 +859,22 @@ export function PrescriptionPrintModal({
                       textTransform: "uppercase",
                       padding: "8px 6px",
                       textAlign: "left",
+=======
+                      borderBottom: '2px solid #e2e8f0',
+                      color: '#0d9488',
+                      fontSize: 11,
+                      fontWeight: 700,
+                      textTransform: 'uppercase',
+                      padding: '8px 6px',
+                      textAlign: 'left',
+>>>>>>> a821a0c (second update)
                     }}
                   >
                     Dose
                   </th>
                   <th
                     style={{
+<<<<<<< HEAD
                       borderBottom: "2px solid #e2e8f0",
                       color: "#0d9488",
                       fontSize: 11,
@@ -613,12 +882,22 @@ export function PrescriptionPrintModal({
                       textTransform: "uppercase",
                       padding: "8px 6px",
                       textAlign: "left",
+=======
+                      borderBottom: '2px solid #e2e8f0',
+                      color: '#0d9488',
+                      fontSize: 11,
+                      fontWeight: 700,
+                      textTransform: 'uppercase',
+                      padding: '8px 6px',
+                      textAlign: 'left',
+>>>>>>> a821a0c (second update)
                     }}
                   >
                     Frequency
                   </th>
                   <th
                     style={{
+<<<<<<< HEAD
                       borderBottom: "2px solid #e2e8f0",
                       color: "#0d9488",
                       fontSize: 11,
@@ -626,6 +905,15 @@ export function PrescriptionPrintModal({
                       textTransform: "uppercase",
                       padding: "8px 6px",
                       textAlign: "left",
+=======
+                      borderBottom: '2px solid #e2e8f0',
+                      color: '#0d9488',
+                      fontSize: 11,
+                      fontWeight: 700,
+                      textTransform: 'uppercase',
+                      padding: '8px 6px',
+                      textAlign: 'left',
+>>>>>>> a821a0c (second update)
                     }}
                   >
                     Duration
@@ -637,23 +925,37 @@ export function PrescriptionPrintModal({
                   <tr key={index}>
                     <td
                       style={{
+<<<<<<< HEAD
                         padding: "8px 6px",
                         borderBottom: "1px solid #f1f5f9",
+=======
+                        padding: '8px 6px',
+                        borderBottom: '1px solid #f1f5f9',
+>>>>>>> a821a0c (second update)
                         fontSize: 12,
                         fontWeight: 600,
                       }}
                     >
                       {med.name}
                       {med.notes && (
+<<<<<<< HEAD
                         <div style={{ fontSize: 10, color: "#666", fontWeight: "normal" }}>
+=======
+                        <div style={{ fontSize: 10, color: '#666', fontWeight: 'normal' }}>
+>>>>>>> a821a0c (second update)
                           {med.notes}
                         </div>
                       )}
                     </td>
                     <td
                       style={{
+<<<<<<< HEAD
                         padding: "8px 6px",
                         borderBottom: "1px solid #f1f5f9",
+=======
+                        padding: '8px 6px',
+                        borderBottom: '1px solid #f1f5f9',
+>>>>>>> a821a0c (second update)
                         fontSize: 12,
                       }}
                     >
@@ -661,8 +963,13 @@ export function PrescriptionPrintModal({
                     </td>
                     <td
                       style={{
+<<<<<<< HEAD
                         padding: "8px 6px",
                         borderBottom: "1px solid #f1f5f9",
+=======
+                        padding: '8px 6px',
+                        borderBottom: '1px solid #f1f5f9',
+>>>>>>> a821a0c (second update)
                         fontSize: 12,
                       }}
                     >
@@ -670,8 +977,13 @@ export function PrescriptionPrintModal({
                     </td>
                     <td
                       style={{
+<<<<<<< HEAD
                         padding: "8px 6px",
                         borderBottom: "1px solid #f1f5f9",
+=======
+                        padding: '8px 6px',
+                        borderBottom: '1px solid #f1f5f9',
+>>>>>>> a821a0c (second update)
                         fontSize: 12,
                       }}
                     >
@@ -686,7 +998,7 @@ export function PrescriptionPrintModal({
             {data.labTests.length > 0 && (
               <div style={{ marginTop: 12, fontSize: 12 }}>
                 <strong>Recommended Investigations (Lab/Radiology):</strong>
-                <ul style={{ listStyleType: "square", paddingLeft: 20, marginTop: 4 }}>
+                <ul style={{ listStyleType: 'square', paddingLeft: 20, marginTop: 4 }}>
                   {data.labTests.map((test, index) => (
                     <li key={index}>{test}</li>
                   ))}
@@ -699,15 +1011,24 @@ export function PrescriptionPrintModal({
               <div
                 className="follow-up-bar"
                 style={{
+<<<<<<< HEAD
                   background: "#fffbeb",
                   border: "1px solid #fef3c7",
+=======
+                  background: '#fffbeb',
+                  border: '1px solid #fef3c7',
+>>>>>>> a821a0c (second update)
                   borderRadius: 6,
                   padding: 10,
                   marginTop: 16,
                   fontSize: 12,
                 }}
               >
+<<<<<<< HEAD
                 📅 <strong>Follow-up Consultation:</strong> Please return for a review on or before{" "}
+=======
+                📅 <strong>Follow-up Consultation:</strong> Please return for a review on or before{' '}
+>>>>>>> a821a0c (second update)
                 <strong>{data.followUp}</strong>.
               </div>
             )}
@@ -717,6 +1038,7 @@ export function PrescriptionPrintModal({
               className="footer"
               style={{
                 marginTop: 48,
+<<<<<<< HEAD
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "flex-end",
@@ -724,15 +1046,30 @@ export function PrescriptionPrintModal({
                 paddingTop: 16,
                 fontSize: 11,
                 color: "#666",
+=======
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-end',
+                paddingTop: 16,
+                fontSize: 11,
+                color: '#666',
+>>>>>>> a821a0c (second update)
               }}
             >
               <div>
                 <em>Please keep this prescription safe for future reference.</em>
               </div>
+<<<<<<< HEAD
               <div className="signature" style={{ textAlign: "right" }}>
                 <div
                   className="sig-line"
                   style={{ width: 150, borderBottom: "1px solid #94a3b8", marginBottom: 4 }}
+=======
+              <div className="signature" style={{ textAlign: 'right' }}>
+                <div
+                  className="sig-line"
+                  style={{ width: 150, borderBottom: '1px solid #94a3b8', marginBottom: 4 }}
+>>>>>>> a821a0c (second update)
                 ></div>
                 <strong>{data.doctorName}</strong>
                 <div>Authorized Signatory</div>
@@ -757,16 +1094,15 @@ function PatientProfile() {
   const markConsultStatus = useNurseQueue((s) => s.markConsultStatus);
   const { prescriptions, labOrders, addPrescription, addLabOrder } = useClinicalStore();
 
-  const doctorId = user?.role === "doctor" ? user.id : doctors[0]!.id;
-  const currentDoctor = doctors.find((d) => d.id === doctorId);
+  const doctorId = useCurrentDoctorId();
 
   // Active nurse queue entry
   const activeConsult = queue.find(
     (entry) =>
       entry.patientId === patient.id &&
-      entry.vitalsStatus === "done" &&
-      entry.consultStatus !== "completed" &&
-      entry.consultStatus !== "cancelled"
+      entry.vitalsStatus === 'done' &&
+      entry.consultStatus !== 'completed' &&
+      entry.consultStatus !== 'cancelled',
   );
 
   // Local consult panel toggle
@@ -775,17 +1111,25 @@ function PatientProfile() {
   const [printData, setPrintData] = useState<PrescriptionPrintData | null>(null);
 
   // Diagnosis, Prescription and Labs forms
+<<<<<<< HEAD
   const [diagnosis, setDiagnosis] = useState("");
   const [medsList, setMedsList] = useState<
     { name: string; dose: string; frequency: string; duration: string; notes: string }[]
   >([{ name: "", dose: "1 tab", frequency: "1-0-1", duration: "5 days", notes: "After food" }]);
+=======
+  const [diagnosis, setDiagnosis] = useState('');
+  const [medsList, setMedsList] = useState<
+    { name: string; dose: string; frequency: string; duration: string; notes: string }[]
+  >([{ name: '', dose: '1 tab', frequency: '1-0-1', duration: '5 days', notes: 'After food' }]);
+>>>>>>> a821a0c (second update)
   const [selectedLabs, setSelectedLabs] = useState<string[]>([]);
-  const [followUpDate, setFollowUpDate] = useState("");
+  const [followUpDate, setFollowUpDate] = useState('');
 
   const myRx = prescriptions.filter((r) => r.patientId === patient.id);
   const myLabs = labOrders.filter((l) => l.patientId === patient.id);
 
   // Extract vitals list dynamically (mock + live)
+<<<<<<< HEAD
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [myVitals, setMyVitals] = useState<any[]>([]);
 
@@ -793,8 +1137,15 @@ function PatientProfile() {
     // Combine static mock vitals with live queue entries vitals
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const mockV = vitals.filter((v: any) => v.patientId === patient.id);
+=======
+  const myVitals = useMemo(() => {
+    // Combine static mock vitals with live queue entries vitals
+    const mockV = vitals.filter(
+      (v: unknown) => (v as { patientId: string }).patientId === patient.id,
+    );
+>>>>>>> a821a0c (second update)
     const liveV = queue
-      .filter((e) => e.patientId === patient.id && e.vitalsStatus === "done" && e.vitals)
+      .filter((e) => e.patientId === patient.id && e.vitalsStatus === 'done' && e.vitals)
       .map((e) => ({
         id: `v-live-${e.id}`,
         patientId: e.patientId,
@@ -809,6 +1160,7 @@ function PatientProfile() {
         bloodSugar: Number(e.vitals!.sugar) || 100,
         notes: `Chief Complaint: ${e.vitals!.chiefComplaint}`,
       }));
+<<<<<<< HEAD
 
     setMyVitals([...liveV, ...mockV]);
   }, [queue, patient.id]);
@@ -820,11 +1172,23 @@ function PatientProfile() {
     qualification: "MBBS, MD",
     kmc: "KMC-99999",
   };
+=======
+    return [...liveV, ...mockV];
+  }, [queue, patient.id]);
+
+  const myAppts = appointments.filter(
+    (a: unknown) => (a as { patientId: string }).patientId === patient.id,
+  );
+>>>>>>> a821a0c (second update)
 
   const handleAddMedRow = () => {
     setMedsList((prev) => [
       ...prev,
+<<<<<<< HEAD
       { name: "", dose: "1 tab", frequency: "1-0-1", duration: "5 days", notes: "After food" },
+=======
+      { name: '', dose: '1 tab', frequency: '1-0-1', duration: '5 days', notes: 'After food' },
+>>>>>>> a821a0c (second update)
     ]);
   };
 
@@ -838,18 +1202,18 @@ function PatientProfile() {
 
   const handleLabToggle = (test: string) => {
     setSelectedLabs((prev) =>
-      prev.includes(test) ? prev.filter((t) => t !== test) : [...prev, test]
+      prev.includes(test) ? prev.filter((t) => t !== test) : [...prev, test],
     );
   };
 
   const handleCompleteConsultation = () => {
     if (!diagnosis.trim()) {
-      toast.error("Please enter a diagnosis to complete consultation.");
+      toast.error('Please enter a diagnosis to complete consultation.');
       return;
     }
-    const filledMeds = medsList.filter((m) => m.name.trim() !== "");
+    const filledMeds = medsList.filter((m) => m.name.trim() !== '');
     if (filledMeds.length === 0) {
-      toast.error("Please prescribe at least one medicine.");
+      toast.error('Please prescribe at least one medicine.');
       return;
     }
 
@@ -863,7 +1227,7 @@ function PatientProfile() {
       date: dateStr,
       diagnosis: diagnosis.trim(),
       medicines: filledMeds,
-      advice: `Follow up: ${followUpDate ? format(new Date(followUpDate), "dd MMM yyyy") : "None"}.`,
+      advice: `Follow up: ${followUpDate ? format(new Date(followUpDate), 'dd MMM yyyy') : 'None'}.`,
     };
 
     addPrescription(newPrescription);
@@ -874,7 +1238,7 @@ function PatientProfile() {
         patientId: patient.id,
         doctorId,
         tests: selectedLabs,
-        status: "ordered",
+        status: 'ordered',
         orderedOn: dateStr,
       };
       addLabOrder(newLabOrder);
@@ -882,26 +1246,27 @@ function PatientProfile() {
 
     // Complete active queue entry
     if (activeConsult) {
-      markConsultStatus(activeConsult.id, "completed");
+      markConsultStatus(activeConsult.id, 'completed');
     }
 
     // Assemble print payload
+    const docDetails = getDoctorDetails(doctorId, user, useStaffProfiles.getState().profiles);
     setPrintData({
       rxNo: `RX-${Date.now().toString().slice(-6)}`,
-      date: format(new Date(), "dd MMM yyyy, hh:mm a"),
+      date: format(new Date(), 'dd MMM yyyy, hh:mm a'),
       patientName: patient.name,
       uhid: patient.mrn,
       age: patient.age,
       gender: patient.gender,
-      doctorName: currentDoctor?.name ?? "Doctor",
-      specialization: currentDoctor?.specialization ?? "General Physician",
-      qualification: credentials.qualification,
-      kmcNo: credentials.kmc,
+      doctorName: docDetails.name,
+      specialization: docDetails.specialization,
+      qualification: docDetails.qualification,
+      kmcNo: docDetails.kmcNo,
       vitals: activeConsult?.vitals,
       diagnosis: diagnosis.trim(),
       medicines: filledMeds,
       labTests: selectedLabs,
-      followUp: followUpDate ? format(new Date(followUpDate), "dd MMM yyyy") : undefined,
+      followUp: followUpDate ? format(new Date(followUpDate), 'dd MMM yyyy') : undefined,
       patientPhone: patient.phone,
       patientEmail: patient.email,
     });
@@ -909,8 +1274,8 @@ function PatientProfile() {
     setShowPrescriptionModal(true);
     setShowConsultPanel(false);
 
-    toast.success("Consultation Completed!", {
-      description: "Prescription successfully recorded and ready to print.",
+    toast.success('Consultation Completed!', {
+      description: 'Prescription successfully recorded and ready to print.',
       duration: 6000,
     });
   };
@@ -923,7 +1288,7 @@ function PatientProfile() {
           onClose={() => {
             setShowPrescriptionModal(false);
             setPrintData(null);
-            navigate({ to: "/doctor/queue" });
+            navigate({ to: '/doctor/queue' });
           }}
         />
       )}
@@ -991,9 +1356,15 @@ function PatientProfile() {
                   SpO₂: <span className="font-bold">{activeConsult.vitals.spo2}%</span>
                 </div>
                 <div>
+<<<<<<< HEAD
                   BMI:{" "}
                   <span className="font-bold">
                     {activeConsult.vitals.bmi} ({activeConsult.vitals.weight}kg /{" "}
+=======
+                  BMI:{' '}
+                  <span className="font-bold">
+                    {activeConsult.vitals.bmi} ({activeConsult.vitals.weight}kg /{' '}
+>>>>>>> a821a0c (second update)
                     {activeConsult.vitals.height}cm)
                   </span>
                 </div>
@@ -1042,7 +1413,7 @@ function PatientProfile() {
                       <Input
                         placeholder="Drug name (e.g. Paracetamol 650mg)"
                         value={med.name}
-                        onChange={(e) => handleMedChange(index, "name", e.target.value)}
+                        onChange={(e) => handleMedChange(index, 'name', e.target.value)}
                         className="h-9 text-sm"
                       />
                     </div>
@@ -1050,7 +1421,7 @@ function PatientProfile() {
                       <Input
                         placeholder="Dose (1 tab)"
                         value={med.dose}
-                        onChange={(e) => handleMedChange(index, "dose", e.target.value)}
+                        onChange={(e) => handleMedChange(index, 'dose', e.target.value)}
                         className="h-9 text-sm"
                       />
                     </div>
@@ -1058,7 +1429,7 @@ function PatientProfile() {
                       <Input
                         placeholder="Frequency (1-0-1)"
                         value={med.frequency}
-                        onChange={(e) => handleMedChange(index, "frequency", e.target.value)}
+                        onChange={(e) => handleMedChange(index, 'frequency', e.target.value)}
                         className="h-9 text-sm"
                       />
                     </div>
@@ -1066,7 +1437,7 @@ function PatientProfile() {
                       <Input
                         placeholder="Duration (5 days)"
                         value={med.duration}
-                        onChange={(e) => handleMedChange(index, "duration", e.target.value)}
+                        onChange={(e) => handleMedChange(index, 'duration', e.target.value)}
                         className="h-9 text-sm"
                       />
                     </div>
@@ -1074,7 +1445,7 @@ function PatientProfile() {
                       <Input
                         placeholder="Notes (e.g. after food)"
                         value={med.notes}
-                        onChange={(e) => handleMedChange(index, "notes", e.target.value)}
+                        onChange={(e) => handleMedChange(index, 'notes', e.target.value)}
                         className="h-9 text-sm"
                       />
                     </div>
@@ -1101,6 +1472,7 @@ function PatientProfile() {
                 <Label className="font-semibold text-sm">Recommended Labs / Radiology</Label>
                 <div className="mt-1.5 grid grid-cols-2 gap-2 rounded-lg border p-3 bg-muted/10">
                   {[
+<<<<<<< HEAD
                     "CBC Test",
                     "Urine Profile",
                     "Thyroid TSH",
@@ -1108,6 +1480,15 @@ function PatientProfile() {
                     "Chest X-Ray",
                     "Ultrasound USG",
                     "ECG Monitor",
+=======
+                    'CBC Test',
+                    'Urine Profile',
+                    'Thyroid TSH',
+                    'Lipid Panel',
+                    'Chest X-Ray',
+                    'Ultrasound USG',
+                    'ECG Monitor',
+>>>>>>> a821a0c (second update)
                   ].map((test) => {
                     const isChecked = selectedLabs.includes(test);
                     return (
@@ -1116,10 +1497,10 @@ function PatientProfile() {
                         type="button"
                         onClick={() => handleLabToggle(test)}
                         className={cn(
-                          "flex items-center gap-2 rounded-md border px-2.5 py-1.5 text-left text-xs transition-all",
+                          'flex items-center gap-2 rounded-md border px-2.5 py-1.5 text-left text-xs transition-all',
                           isChecked
-                            ? "border-primary bg-primary/5 text-primary font-semibold"
-                            : "border-border hover:bg-accent/40 text-muted-foreground"
+                            ? 'border-primary bg-primary/5 text-primary font-semibold'
+                            : 'border-border hover:bg-accent/40 text-muted-foreground',
                         )}
                       >
                         {test}
@@ -1141,7 +1522,7 @@ function PatientProfile() {
                       type="date"
                       value={followUpDate}
                       onChange={(e) => setFollowUpDate(e.target.value)}
-                      min={new Date().toISOString().split("T")[0]}
+                      min={new Date().toISOString().split('T')[0]}
                     />
                   </div>
                 </div>
@@ -1171,10 +1552,17 @@ function PatientProfile() {
           <div className="flex min-w-0 items-center gap-4">
             <span className="grid h-16 w-16 shrink-0 place-items-center rounded-2xl bg-primary text-2xl font-bold text-primary-foreground">
               {patient.name
+<<<<<<< HEAD
                 .split(" ")
                 .map((n: string) => n[0])
                 .slice(0, 2)
                 .join("")}
+=======
+                .split(' ')
+                .map((n: string) => n[0])
+                .slice(0, 2)
+                .join('')}
+>>>>>>> a821a0c (second update)
             </span>
             <div className="min-w-0">
               <p className="text-xs font-semibold uppercase tracking-widest text-primary">
@@ -1216,7 +1604,7 @@ function PatientProfile() {
             <AlertTriangle className="mt-0.5 h-4 w-4 text-warning-foreground" />
             <div>
               <p className="font-semibold text-warning-foreground">Known allergies</p>
-              <p className="text-muted-foreground">{patient.allergies.join(", ")}</p>
+              <p className="text-muted-foreground">{patient.allergies.join(', ')}</p>
             </div>
           </div>
         )}
@@ -1276,10 +1664,17 @@ function PatientProfile() {
             <div className="mt-3 flex items-center gap-3">
               <span className="grid h-10 w-10 place-items-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
                 {doctors[0]?.name
+<<<<<<< HEAD
                   .split(" ")
                   .map((n) => n[0])
                   .slice(0, 2)
                   .join("")}
+=======
+                  .split(' ')
+                  .map((n) => n[0])
+                  .slice(0, 2)
+                  .join('')}
+>>>>>>> a821a0c (second update)
               </span>
               <div>
                 <p className="text-sm font-semibold">{doctors[0]?.name}</p>
@@ -1288,7 +1683,11 @@ function PatientProfile() {
             </div>
             <h3 className="mt-5 font-display font-semibold">Registered</h3>
             <p className="mt-1 text-sm text-muted-foreground">
+<<<<<<< HEAD
               {format(new Date(patient.registeredOn), "MMM d, yyyy")}
+=======
+              {format(new Date(patient.registeredOn), 'MMM d, yyyy')}
+>>>>>>> a821a0c (second update)
             </p>
           </div>
         </TabsContent>
@@ -1297,6 +1696,7 @@ function PatientProfile() {
           <div className="surface-elevated p-5">
             <h3 className="font-display font-semibold">Visit timeline</h3>
             <ol className="relative mt-6 border-l-2 border-border pl-6">
+<<<<<<< HEAD
               {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
               {myAppts.slice(0, 8).map((a: any) => (
                 <li key={a.id} className="mb-6 last:mb-0">
@@ -1311,6 +1711,30 @@ function PatientProfile() {
                   </p>
                 </li>
               ))}
+=======
+              {myAppts.slice(0, 8).map((a: unknown) => {
+                const appt = a as {
+                  id: string;
+                  reason: string;
+                  type: string;
+                  date: string;
+                  docName?: string;
+                };
+                return (
+                  <li key={appt.id} className="mb-6 last:mb-0">
+                    <span className="absolute -left-[7px] mt-1.5 h-3 w-3 rounded-full bg-primary ring-4 ring-background" />
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="text-sm font-semibold">{appt.reason}</p>
+                      <StatusChip tone="primary">{appt.type}</StatusChip>
+                    </div>
+                    <p className="mt-0.5 text-xs text-muted-foreground">
+                      <Calendar className="mr-1 inline h-3 w-3" />
+                      {format(new Date(appt.date), 'MMM d, yyyy · p')}
+                    </p>
+                  </li>
+                );
+              })}
+>>>>>>> a821a0c (second update)
             </ol>
           </div>
         </TabsContent>
@@ -1330,34 +1754,51 @@ function PatientProfile() {
                         {r.diagnosis}
                       </p>
                       <p className="text-xs text-muted-foreground">
+<<<<<<< HEAD
                         {format(new Date(r.date), "dd MMM yyyy, hh:mm a")} · {r.id}
+=======
+                        {format(new Date(r.date), 'dd MMM yyyy, hh:mm a')} · {r.id}
+>>>>>>> a821a0c (second update)
                       </p>
                     </div>
                     <Button
                       size="sm"
                       variant="outline"
                       onClick={() => {
+<<<<<<< HEAD
                         const dr = doctors.find((d) => d.id === r.doctorId) || doctors[0];
                         const creds = doctorCredentials[dr!.id] || {
                           qualification: "MBBS, MD",
                           kmc: "KMC-99999",
                         };
+=======
+                        const docDetails = getDoctorDetails(
+                          r.doctorId,
+                          user,
+                          useStaffProfiles.getState().profiles,
+                        );
+>>>>>>> a821a0c (second update)
                         setPrintData({
                           rxNo: `RX-${r.id.slice(-6)}`,
-                          date: format(new Date(r.date), "dd MMM yyyy, hh:mm a"),
+                          date: format(new Date(r.date), 'dd MMM yyyy, hh:mm a'),
                           patientName: patient.name,
                           uhid: patient.mrn,
                           age: patient.age,
                           gender: patient.gender,
-                          doctorName: dr!.name,
-                          specialization: dr!.specialization,
-                          qualification: creds.qualification,
-                          kmcNo: creds.kmc,
+                          doctorName: docDetails.name,
+                          specialization: docDetails.specialization,
+                          qualification: docDetails.qualification,
+                          kmcNo: docDetails.kmcNo,
                           diagnosis: r.diagnosis,
                           medicines: r.medicines,
                           labTests: [],
+<<<<<<< HEAD
                           followUp: r.advice.includes("Follow up: ")
                             ? r.advice.replace("Follow up: ", "").replace(".", "")
+=======
+                          followUp: r.advice.includes('Follow up: ')
+                            ? r.advice.replace('Follow up: ', '').replace('.', '')
+>>>>>>> a821a0c (second update)
                             : undefined,
                           patientPhone: patient.phone,
                           patientEmail: patient.email,
@@ -1417,7 +1858,11 @@ function PatientProfile() {
             {myVitals.map((v) => (
               <div key={v.id} className="surface-elevated p-5">
                 <p className="text-xs text-muted-foreground">
+<<<<<<< HEAD
                   {format(new Date(v.recordedAt), "dd MMM yyyy, hh:mm a")}
+=======
+                  {format(new Date(v.recordedAt), 'dd MMM yyyy, hh:mm a')}
+>>>>>>> a821a0c (second update)
                 </p>
                 <div className="mt-3 grid grid-cols-2 gap-3 text-sm">
                   <Vital label="BP" value={v.bp} />
@@ -1450,6 +1895,7 @@ function PatientProfile() {
                   className="surface-elevated flex flex-wrap items-center justify-between gap-3 p-4"
                 >
                   <div>
+<<<<<<< HEAD
                     <p className="font-semibold">{l.tests.join(", ")}</p>
                     <p className="text-xs text-muted-foreground">
                       {l.id} · {format(new Date(l.orderedOn), "dd MMM yyyy, hh:mm a")}
@@ -1460,6 +1906,18 @@ function PatientProfile() {
                       {l.status}
                     </StatusChip>
                     {l.status === "completed" && (
+=======
+                    <p className="font-semibold">{l.tests.join(', ')}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {l.id} · {format(new Date(l.orderedOn), 'dd MMM yyyy, hh:mm a')}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <StatusChip tone={l.status === 'completed' ? 'success' : 'warning'}>
+                      {l.status}
+                    </StatusChip>
+                    {l.status === 'completed' && (
+>>>>>>> a821a0c (second update)
                       <Button size="sm" variant="outline">
                         <Download className="mr-1 h-4 w-4" /> Download
                       </Button>

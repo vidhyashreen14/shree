@@ -1,13 +1,23 @@
+<<<<<<< HEAD
 import js from "@eslint/js";
 import tsPlugin from "@typescript-eslint/eslint-plugin";
 import tsParser from "@typescript-eslint/parser";
 import reactPlugin from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
 import globals from "globals";
+=======
+import js from '@eslint/js';
+import tseslint from 'typescript-eslint';
+import reactHooks from 'eslint-plugin-react-hooks';
+import reactRefresh from 'eslint-plugin-react-refresh';
+import globals from 'globals';
+import eslintConfigPrettier from 'eslint-config-prettier';
+>>>>>>> a821a0c (second update)
 
 export default [
   // ── Global ignores ────────────────────────────────────────────────────────
   {
+<<<<<<< HEAD
     ignores: ["node_modules", "dist", "build", "src/routeTree.gen.ts", ".tanstack"],
   },
 
@@ -78,4 +88,36 @@ export default [
       },
     },
   },
+=======
+    ignores: ['node_modules', 'dist', 'routeTree.gen.ts'],
+  },
+
+  js.configs.recommended,
+
+  ...tseslint.configs.recommended,
+
+  {
+    files: ['**/*.{ts,tsx}'],
+
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      globals: globals.browser,
+    },
+
+    plugins: {
+      'react-hooks': reactHooks,
+      'react-refresh': reactRefresh,
+    },
+
+    rules: {
+      ...reactHooks.configs.recommended.rules,
+
+      'react-refresh/only-export-components': 'off',
+      'react-hooks/incompatible-library': 'off',
+    },
+  },
+
+  eslintConfigPrettier,
+>>>>>>> a821a0c (second update)
 ];
