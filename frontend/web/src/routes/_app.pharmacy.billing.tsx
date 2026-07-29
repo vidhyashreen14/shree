@@ -12,6 +12,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { allowOnlyAlphabetsAndSpaces, allowOnlyNumbers } from "@/lib/validations";
+import { MobileInput } from "@/components/common/ValidatedInputs";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/pharmacy/billing")({
@@ -82,38 +84,17 @@ function PharmacyBilling() {
     setActiveIndex(-1);
   };
 
-  // Validate patient name - only characters (letters, spaces, dots, hyphens)
-  const validatePatientName = (value: string) => {
-    // Allow only letters, spaces, dots, hyphens, and apostrophes
-    const nameRegex = /^[A-Za-z\s\.\-']*$/;
-    return nameRegex.test(value);
-  };
-
-  // Validate phone number - exactly 10 digits
-  const validatePhone = (value: string) => {
-    const phoneRegex = /^\d{0,10}$/;
-    return phoneRegex.test(value);
-  };
-
   const handleNameChange = (val: string) => {
-    // Only allow characters (letters, spaces, dots, hyphens, apostrophes)
-    if (validatePatientName(val) || val === "") {
-      setPatientName(val);
-      setPatientId(""); // Clear Patient ID to handle manual entry if name is edited
-      setShowSuggestions(true);
-      setActiveIndex(-1);
-    } else {
-      toast.error("Patient name can only contain letters, spaces, dots, hyphens, and apostrophes.");
-    }
+    const cleaned = allowOnlyAlphabetsAndSpaces(val).slice(0, 50);
+    setPatientName(cleaned);
+    setPatientId(""); // Clear Patient ID to handle manual entry if name is edited
+    setShowSuggestions(true);
+    setActiveIndex(-1);
   };
 
   const handlePhoneChange = (val: string) => {
-    // Only allow digits and max 10 digits
-    if (validatePhone(val) || val === "") {
-      setPhone(val);
-    } else {
-      toast.error("Phone number must be exactly 10 digits.");
-    }
+    const cleanDigits = allowOnlyNumbers(val).slice(0, 10);
+    setPhone(cleanDigits);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -305,7 +286,7 @@ function PharmacyBilling() {
         <p className="text-sm text-gray-700 mt-0.5">
           C.K.PURA, KELAGOTE, BESIDE SBI BANK, CHITRADURGA
         </p>
-        <p className="text-sm text-gray-700">PH NO : 9108453470</p>
+        <p className="text-sm text-gray-700">PH NO : (+91) 9108453470</p>
       </div>
 
       {/* Pharmacy Billing Main Header */}
@@ -430,18 +411,14 @@ function PharmacyBilling() {
 
               <div className="md:col-span-1">
                 <Label htmlFor="patPhone" className="text-xs font-semibold">
-                  Patient Phone no{" "}
-                  <span className="text-xs text-muted-foreground">(10 digits)</span>
+                  Patient Phone no
                 </Label>
-                <Input
+                <MobileInput
                   id="patPhone"
-                  placeholder="Enter 10 digits"
+                  placeholder="(+91) Mobile Number"
                   value={phone}
-                  onChange={(e) => handlePhoneChange(e.target.value)}
-                  maxLength={10}
+                  onChange={setPhone}
                   className="mt-1 bg-background h-10 text-sm"
-                  pattern="\d{10}"
-                  title="Please enter exactly 10 digits"
                 />
               </div>
 

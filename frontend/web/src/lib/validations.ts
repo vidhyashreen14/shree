@@ -9,7 +9,8 @@ export const sanitizeText = (val: string) => {
   if (!val) return val;
   return val
     .replace(/<[^>]*>?/gm, "") // Remove HTML tags
-    .replace(/script|javascript|eval|on\w+/gi, "") // Basic XSS mitigation
+    .replace(/script|javascript|eval|on\w+/gi, "") // Basic XSS & SQLi character mitigation
+    .replace(/['";-]/g, "") // Basic SQL injection prevention
     .replace(/\s{2,}/g, " ") // Remove consecutive spaces
     .trim();
 };
@@ -19,24 +20,36 @@ export const sanitizeText = (val: string) => {
  * to be typed in an input field (used for onChange events).
  */
 export const allowOnly = (allowedPattern: RegExp) => (val: string) => {
-  // Strip out anything that doesn't match the allowed pattern globally
   const matches = val.match(allowedPattern);
   return matches ? matches.join("") : "";
 };
 
 // Character blockers for onChange handlers
-export const allowOnlyAlphabetsAndSpaces = allowOnly(/[a-zA-Z\s]/g);
-export const allowOnlyNumbers = allowOnly(/[0-9]/g);
+export const allowOnlyAlphabetsAndSpaces = (val: string) => {
+  let cleaned = val.replace(/[^a-zA-Z\s]/g, "").replace(/\s{2,}/g, " ");
+  if (cleaned.startsWith(" ")) cleaned = cleaned.trimStart();
+  return cleaned;
+};
+
+export const allowOnlyAlphabets = (val: string) => {
+  return val.replace(/[^a-zA-Z]/g, "");
+};
+
+export const allowOnlyNumbers = (val: string) => {
+  return val.replace(/[^0-9]/g, "");
+};
+
+export const allowOnlyAlphanumericAndHyphen = (val: string) => {
+  return val.replace(/[^a-zA-Z0-9-]/g, "").toUpperCase();
+};
+
 export const allowOnlyHospitalNameChars = allowOnly(/[a-zA-Z0-9\s.,\-&()]/g);
 export const allowOnlyAddressChars = allowOnly(/[a-zA-Z0-9\s.,\-/#()]/g);
 export const allowOnlyTestNameChars = allowOnly(/[a-zA-Z0-9\s\-/&()]/g);
-export const allowOnlyResultChars = allowOnly(/[a-zA-Z0-9\s.,\-+%]/g); // Numbers, decimals, basic units
+export const allowOnlyResultChars = allowOnly(/[a-zA-Z0-9\s.,\-+%]/g);
 export const allowOnlyReferenceChars = allowOnly(/[0-9\s.,\-/<>&]/g);
 
 // ─── Zod Schemas ─────────────────────────────────────────────────────────────
-
-const noEmojiRegex =
-  /^(\p{Emoji_Presentation}|\p{Emoji}\uFE0F)*[^\p{Emoji_Presentation}\p{Emoji}\uFE0F]*$/u;
 
 const baseString = z.string().trim();
 const refineString = (schema: z.ZodString) =>
@@ -46,14 +59,36 @@ const refineString = (schema: z.ZodString) =>
 
 export const patientNameSchema = refineString(
   baseString
-    .min(2, "Name must be at least 2 characters")
-    .max(50, "Name cannot exceed 50 characters")
-    .regex(/^[a-zA-Z\s]+$/, "Patient name should contain only alphabets.")
+    .min(1, "Patient name should contain only alphabets.")
+    .max(50, "Patient name cannot exceed 50 characters.")
+    .regex(/^[a-zA-Z]+(\s[a-zA-Z]+)*$/, "Patient name should contain only alphabets.")
+);
+
+export const firstNameSchema = refineString(
+  baseString
+    .min(1, "First name should contain only alphabets.")
+    .max(50, "First name cannot exceed 50 characters.")
+    .regex(/^[a-zA-Z]+(\s[a-zA-Z]+)*$/, "First name should contain only alphabets.")
+);
+
+export const middleNameSchema = refineString(
+  baseString
+    .max(50, "Middle name cannot exceed 50 characters.")
+    .regex(/^[a-zA-Z]*(\s[a-zA-Z]+)*$/, "Middle name should contain only alphabets.")
+)
+  .optional()
+  .or(z.literal(""));
+
+export const lastNameSchema = refineString(
+  baseString
+    .min(1, "Last name should contain only alphabets.")
+    .max(50, "Last name cannot exceed 50 characters.")
+    .regex(/^[a-zA-Z]+(\s[a-zA-Z]+)*$/, "Last name should contain only alphabets.")
 );
 
 export const doctorNameSchema = refineString(
   baseString
-    .max(100, "Doctor name cannot exceed 100 characters")
+    .max(100, "Doctor name cannot exceed 100 characters.")
     .regex(/^[a-zA-Z\s]*$/, "Only alphabets and spaces allowed")
 )
   .optional()
@@ -61,7 +96,7 @@ export const doctorNameSchema = refineString(
 
 export const hospitalNameSchema = refineString(
   baseString
-    .max(150, "Hospital name cannot exceed 150 characters")
+    .max(150, "Hospital name cannot exceed 150 characters.")
     .regex(/^[a-zA-Z0-9\s.,\-&()]*$/, "Invalid characters in hospital name")
 );
 
@@ -70,23 +105,25 @@ export const mobileSchema = refineString(
 );
 
 export const alternateMobileSchema = refineString(
-  baseString.regex(/^\d{10}$/, "Mobile number must be exactly 10 digits")
+  baseString.regex(/^\d{10}$/, "Enter a valid 10-digit mobile number.")
 )
   .optional()
   .or(z.literal(""));
 
 export const emailSchema = refineString(
-  baseString.email("Enter a valid email address.").max(100, "Email cannot exceed 100 characters")
+  baseString
+    .max(100, "Email cannot exceed 100 characters.")
+    .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Enter a valid email address.")
 )
   .optional()
   .or(z.literal(""));
 
 export const labIdSchema = refineString(
   baseString
-    .max(20, "Lab ID / Specimen ID cannot exceed 20 characters")
+    .max(20, "Lab ID / Specimen ID cannot exceed 20 characters.")
     .regex(
-      /^[a-zA-Z0-9\-]+$/,
-      "Lab ID / Specimen ID can only contain alphanumeric characters and hyphens"
+      /^[A-Z0-9-]+$/,
+      "Lab ID / Specimen ID can only contain alphanumeric characters and hyphens."
     )
 )
   .optional()

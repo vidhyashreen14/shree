@@ -3,7 +3,11 @@ import { Input, InputProps } from "@/components/ui/input";
 import {
   allowOnlyAlphabetsAndSpaces,
   allowOnlyNumbers,
+  allowOnlyAlphanumericAndHyphen,
   patientNameSchema,
+  firstNameSchema,
+  middleNameSchema,
+  lastNameSchema,
   mobileSchema,
   emailSchema,
   labIdSchema,
@@ -22,19 +26,25 @@ export function PatientNameInput({
   onChange,
   onErrorChange,
   required,
+  placeholder = "Patient Name",
   ...props
 }: ValidatedInputProps) {
   const [error, setError] = useState<string>();
 
   useEffect(() => {
-    if (!value && !required) {
-      setError(undefined);
-      onErrorChange?.(false);
+    if (!value) {
+      if (required) {
+        setError("Patient name should contain only alphabets.");
+        onErrorChange?.(true);
+      } else {
+        setError(undefined);
+        onErrorChange?.(false);
+      }
       return;
     }
     const res = patientNameSchema.safeParse(value);
     if (!res.success) {
-      setError(res.error.errors[0].message);
+      setError("Patient name should contain only alphabets.");
       onErrorChange?.(true);
     } else {
       setError(undefined);
@@ -43,16 +53,191 @@ export function PatientNameInput({
   }, [value, required, onErrorChange]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange(allowOnlyAlphabetsAndSpaces(e.target.value));
+    onChange(allowOnlyAlphabetsAndSpaces(e.target.value).slice(0, 50));
+  };
+
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    props.onBlur?.(e);
+    const trimmed = value.trim();
+    if (trimmed !== value) {
+      onChange(trimmed);
+    }
   };
 
   return (
     <Input
       value={value}
       onChange={handleChange}
+      onBlur={handleBlur}
       error={error}
       maxLength={50}
-      placeholder="Patient Name"
+      placeholder={placeholder}
+      {...props}
+    />
+  );
+}
+
+// ─── First Name Input ────────────────────────────────────────────────────────
+export function FirstNameInput({
+  value,
+  onChange,
+  onErrorChange,
+  required,
+  placeholder = "First Name",
+  ...props
+}: ValidatedInputProps) {
+  const [error, setError] = useState<string>();
+
+  useEffect(() => {
+    if (!value) {
+      if (required) {
+        setError("First name should contain only alphabets.");
+        onErrorChange?.(true);
+      } else {
+        setError(undefined);
+        onErrorChange?.(false);
+      }
+      return;
+    }
+    const res = firstNameSchema.safeParse(value);
+    if (!res.success) {
+      setError("First name should contain only alphabets.");
+      onErrorChange?.(true);
+    } else {
+      setError(undefined);
+      onErrorChange?.(false);
+    }
+  }, [value, required, onErrorChange]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChange(allowOnlyAlphabetsAndSpaces(e.target.value).slice(0, 50));
+  };
+
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    props.onBlur?.(e);
+    const trimmed = value.trim();
+    if (trimmed !== value) {
+      onChange(trimmed);
+    }
+  };
+
+  return (
+    <Input
+      value={value}
+      onChange={handleChange}
+      onBlur={handleBlur}
+      error={error}
+      maxLength={50}
+      placeholder={placeholder}
+      {...props}
+    />
+  );
+}
+
+// ─── Middle Name Input ───────────────────────────────────────────────────────
+export function MiddleNameInput({
+  value,
+  onChange,
+  onErrorChange,
+  required,
+  placeholder = "Middle Name",
+  ...props
+}: ValidatedInputProps) {
+  const [error, setError] = useState<string>();
+
+  useEffect(() => {
+    if (!value) {
+      setError(undefined);
+      onErrorChange?.(false);
+      return;
+    }
+    const res = middleNameSchema.safeParse(value);
+    if (!res.success) {
+      setError("Middle name should contain only alphabets.");
+      onErrorChange?.(true);
+    } else {
+      setError(undefined);
+      onErrorChange?.(false);
+    }
+  }, [value, required, onErrorChange]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChange(allowOnlyAlphabetsAndSpaces(e.target.value).slice(0, 50));
+  };
+
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    props.onBlur?.(e);
+    const trimmed = value.trim();
+    if (trimmed !== value) {
+      onChange(trimmed);
+    }
+  };
+
+  return (
+    <Input
+      value={value}
+      onChange={handleChange}
+      onBlur={handleBlur}
+      error={error}
+      maxLength={50}
+      placeholder={placeholder}
+      {...props}
+    />
+  );
+}
+
+// ─── Last Name Input ─────────────────────────────────────────────────────────
+export function LastNameInput({
+  value,
+  onChange,
+  onErrorChange,
+  required,
+  placeholder = "Last Name",
+  ...props
+}: ValidatedInputProps) {
+  const [error, setError] = useState<string>();
+
+  useEffect(() => {
+    if (!value) {
+      if (required) {
+        setError("Last name should contain only alphabets.");
+        onErrorChange?.(true);
+      } else {
+        setError(undefined);
+        onErrorChange?.(false);
+      }
+      return;
+    }
+    const res = lastNameSchema.safeParse(value);
+    if (!res.success) {
+      setError("Last name should contain only alphabets.");
+      onErrorChange?.(true);
+    } else {
+      setError(undefined);
+      onErrorChange?.(false);
+    }
+  }, [value, required, onErrorChange]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChange(allowOnlyAlphabetsAndSpaces(e.target.value).slice(0, 50));
+  };
+
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    props.onBlur?.(e);
+    const trimmed = value.trim();
+    if (trimmed !== value) {
+      onChange(trimmed);
+    }
+  };
+
+  return (
+    <Input
+      value={value}
+      onChange={handleChange}
+      onBlur={handleBlur}
+      error={error}
+      maxLength={50}
+      placeholder={placeholder}
       {...props}
     />
   );
@@ -64,42 +249,56 @@ export function MobileInput({
   onChange,
   onErrorChange,
   required,
+  placeholder = "(+91) Mobile Number",
   ...props
 }: ValidatedInputProps) {
   const [error, setError] = useState<string>();
 
   useEffect(() => {
-    if (!value && !required) {
-      setError(undefined);
-      onErrorChange?.(false);
+    if (!value) {
+      if (required) {
+        setError("Enter a valid 10-digit mobile number.");
+        onErrorChange?.(true);
+      } else {
+        setError(undefined);
+        onErrorChange?.(false);
+      }
       return;
     }
-    const res = mobileSchema.safeParse(value);
-    if (!res.success) {
-      setError(res.error.errors[0].message);
+    if (value.length !== 10) {
+      setError("Enter a valid 10-digit mobile number.");
       onErrorChange?.(true);
     } else {
-      setError(undefined);
-      onErrorChange?.(false);
+      const res = mobileSchema.safeParse(value);
+      if (!res.success) {
+        setError("Enter a valid 10-digit mobile number.");
+        onErrorChange?.(true);
+      } else {
+        setError(undefined);
+        onErrorChange?.(false);
+      }
     }
   }, [value, required, onErrorChange]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let val = e.target.value;
+    if (val.startsWith("(+91) ")) val = val.substring(6);
+    if (val.startsWith("(+91)")) val = val.substring(5);
     if (val.startsWith("+91 ")) val = val.substring(4);
     if (val.startsWith("+91")) val = val.substring(3);
-    onChange(allowOnlyNumbers(val));
+    const cleanDigits = allowOnlyNumbers(val).slice(0, 10);
+    onChange(cleanDigits);
   };
 
-  const displayValue = value ? `+91 ${value}` : "";
+  const displayValue = value ? `(+91) ${value}` : "";
 
   return (
     <Input
       value={displayValue}
       onChange={handleChange}
       error={error}
-      maxLength={14}
-      placeholder="+91 Mobile Number"
+      maxLength={16}
+      placeholder={placeholder}
       {...props}
     />
   );
@@ -111,19 +310,25 @@ export function EmailInput({
   onChange,
   onErrorChange,
   required,
+  placeholder = "Email Address",
   ...props
 }: ValidatedInputProps) {
   const [error, setError] = useState<string>();
 
   useEffect(() => {
-    if (!value && !required) {
-      setError(undefined);
-      onErrorChange?.(false);
+    if (!value) {
+      if (required) {
+        setError("Enter a valid email address.");
+        onErrorChange?.(true);
+      } else {
+        setError(undefined);
+        onErrorChange?.(false);
+      }
       return;
     }
     const res = emailSchema.safeParse(value);
     if (!res.success) {
-      setError(res.error.errors[0].message);
+      setError("Enter a valid email address.");
       onErrorChange?.(true);
     } else {
       setError(undefined);
@@ -131,14 +336,23 @@ export function EmailInput({
     }
   }, [value, required, onErrorChange]);
 
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    props.onBlur?.(e);
+    const trimmed = value.trim();
+    if (trimmed !== value) {
+      onChange(trimmed);
+    }
+  };
+
   return (
     <Input
       type="email"
       value={value}
-      onChange={(e) => onChange(e.target.value)}
+      onChange={(e) => onChange(e.target.value.trim())}
+      onBlur={handleBlur}
       error={error}
       maxLength={100}
-      placeholder="Email Address"
+      placeholder={placeholder}
       {...props}
     />
   );
@@ -150,19 +364,25 @@ export function LabIdInput({
   onChange,
   onErrorChange,
   required,
+  placeholder = "Lab / Specimen ID",
   ...props
 }: ValidatedInputProps) {
   const [error, setError] = useState<string>();
 
   useEffect(() => {
-    if (!value && !required) {
-      setError(undefined);
-      onErrorChange?.(false);
+    if (!value) {
+      if (required) {
+        setError("Lab ID / Specimen ID can only contain alphanumeric characters and hyphens.");
+        onErrorChange?.(true);
+      } else {
+        setError(undefined);
+        onErrorChange?.(false);
+      }
       return;
     }
     const res = labIdSchema.safeParse(value);
     if (!res.success) {
-      setError(res.error.errors[0].message);
+      setError("Lab ID / Specimen ID can only contain alphanumeric characters and hyphens.");
       onErrorChange?.(true);
     } else {
       setError(undefined);
@@ -171,8 +391,7 @@ export function LabIdInput({
   }, [value, required, onErrorChange]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const raw = e.target.value;
-    const cleaned = raw.replace(/[^a-zA-Z0-9\-]/g, "").toUpperCase();
+    const cleaned = allowOnlyAlphanumericAndHyphen(e.target.value).slice(0, 20);
     onChange(cleaned);
   };
 
@@ -182,24 +401,24 @@ export function LabIdInput({
       onChange={handleChange}
       error={error}
       maxLength={20}
-      placeholder="Lab / Specimen ID"
+      placeholder={placeholder}
       {...props}
     />
   );
 }
 
-// ─── Search Mobile Input (+91 prefix, 10 digits, real-time validation) ────────
+// ─── Search Mobile Input ─────────────────────────────────────────────────────
 export function SearchMobileInput({
   value,
   onChange,
   onErrorChange,
   className,
+  placeholder = "(+91) Search mobile...",
   ...props
 }: Omit<ValidatedInputProps, "required">) {
   const [error, setError] = useState<string>();
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Validate the raw 10-digit value
   useEffect(() => {
     if (!value) {
       setError(undefined);
@@ -212,7 +431,7 @@ export function SearchMobileInput({
     } else {
       const res = mobileSchema.safeParse(value);
       if (!res.success) {
-        setError(res.error.errors[0].message);
+        setError("Enter a valid 10-digit mobile number.");
         onErrorChange?.(true);
       } else {
         setError(undefined);
@@ -221,7 +440,6 @@ export function SearchMobileInput({
     }
   }, [value, onErrorChange]);
 
-  // Block non-numeric keypresses
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     const allowed = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab", "Home", "End"];
     if (!allowed.includes(e.key) && !/^[0-9]$/.test(e.key)) {
@@ -229,33 +447,40 @@ export function SearchMobileInput({
     }
   };
 
-  // Block invalid paste
   const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
     e.preventDefault();
-    const pasted = e.clipboardData.getData("text");
-    const digitsOnly = pasted.replace(/\D/g, "");
-    const remaining = 10 - value.length;
-    if (remaining > 0) {
-      onChange((value + digitsOnly).slice(0, 10));
-    }
+    let pasted = e.clipboardData.getData("text");
+    if (pasted.startsWith("(+91) ")) pasted = pasted.substring(6);
+    if (pasted.startsWith("(+91)")) pasted = pasted.substring(5);
+    if (pasted.startsWith("+91 ")) pasted = pasted.substring(4);
+    if (pasted.startsWith("+91")) pasted = pasted.substring(3);
+    const digitsOnly = allowOnlyNumbers(pasted);
+    const merged = (value + digitsOnly).slice(0, 10);
+    onChange(merged);
   };
 
-  // onChange: strip non-digits, cap at 10
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const digits = allowOnlyNumbers(e.target.value).slice(0, 10);
+    let val = e.target.value;
+    if (val.startsWith("(+91) ")) val = val.substring(6);
+    if (val.startsWith("(+91)")) val = val.substring(5);
+    if (val.startsWith("+91 ")) val = val.substring(4);
+    if (val.startsWith("+91")) val = val.substring(3);
+    const digits = allowOnlyNumbers(val).slice(0, 10);
     onChange(digits);
   };
+
+  const displayValue = value ? `(+91) ${value}` : "";
 
   return (
     <div className="w-full">
       <input
         ref={inputRef}
-        value={value}
+        value={displayValue}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
         onPaste={handlePaste}
-        maxLength={10}
-        placeholder="Search mobile..."
+        maxLength={16}
+        placeholder={placeholder}
         className={className}
         {...(props as React.InputHTMLAttributes<HTMLInputElement>)}
       />
@@ -268,24 +493,23 @@ export function SearchMobileInput({
   );
 }
 
-// ─── Search Patient Name Input (alphabets + single spaces, real-time validation)
+// ─── Search Patient Name Input ───────────────────────────────────────────────
 export function SearchPatientNameInput({
   value,
   onChange,
   onErrorChange,
   className,
+  placeholder = "Search patient name...",
   ...props
 }: Omit<ValidatedInputProps, "required">) {
   const [error, setError] = useState<string>();
 
-  // Validate
   useEffect(() => {
     if (!value) {
       setError(undefined);
       onErrorChange?.(false);
       return;
     }
-    // Only allow letters and single internal spaces
     if (!/^[a-zA-Z]+(\s[a-zA-Z]+)*$/.test(value)) {
       setError("Patient name should contain only alphabets.");
       onErrorChange?.(true);
@@ -295,23 +519,18 @@ export function SearchPatientNameInput({
     }
   }, [value, onErrorChange]);
 
-  // Block invalid keypresses: only letters, space, navigation keys
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     const allowed = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab", "Home", "End"];
     if (!allowed.includes(e.key) && !/^[a-zA-Z ]$/.test(e.key)) {
       e.preventDefault();
     }
-    // Block leading space
     if (e.key === " " && value.length === 0) e.preventDefault();
-    // Block consecutive spaces
     if (e.key === " " && value.endsWith(" ")) e.preventDefault();
   };
 
-  // Block invalid paste
   const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
     e.preventDefault();
     const pasted = e.clipboardData.getData("text");
-    // Strip anything that isn't letters or spaces, collapse multiple spaces
     const cleaned = pasted
       .replace(/[^a-zA-Z ]/g, "")
       .replace(/\s{2,}/g, " ")
@@ -321,7 +540,6 @@ export function SearchPatientNameInput({
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // Strip invalid chars, collapse multiple spaces, prevent leading space
     let val = e.target.value.replace(/[^a-zA-Z ]/g, "").replace(/\s{2,}/g, " ");
     if (val.startsWith(" ")) val = val.trimStart();
     onChange(val.slice(0, 50));
@@ -335,7 +553,7 @@ export function SearchPatientNameInput({
         onKeyDown={handleKeyDown}
         onPaste={handlePaste}
         maxLength={50}
-        placeholder="Search patient name..."
+        placeholder={placeholder}
         className={className}
         {...(props as React.InputHTMLAttributes<HTMLInputElement>)}
       />

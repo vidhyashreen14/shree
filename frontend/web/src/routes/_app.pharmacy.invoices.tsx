@@ -549,7 +549,7 @@ function PharmacyInvoices() {
                 window.close();
               };
             };
-          <\/script>
+          </script>
         </body>
       </html>
     `;

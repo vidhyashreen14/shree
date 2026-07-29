@@ -38,13 +38,6 @@ export const Route = createFileRoute("/_app/lab/reports")({
 
 // ─── Filter Options ────────────────────────────────────────────────────────────
 const BRANCH_OPTIONS = ["Select Branch", "Koramangala", "Indiranagar", "Whitefield", "Jayanagar"];
-const B2B_OPTIONS = [
-  "Select B2B",
-  "Apollo Hospitals",
-  "Fortis Healthcare",
-  "Manipal Group",
-  "Narayana Health",
-];
 const TEST_FILTER_OPTIONS = [
   "Select Service",
   "CBC (Complete Blood Count)",
@@ -146,18 +139,12 @@ function LabReports() {
   const [layoutMode, setLayoutMode] = useState<"grid" | "list">("list");
   const [showFilterPanel, setShowFilterPanel] = useState(true);
 
-  // Row 1 Filters
+  // Filters
   const [branch, setBranch] = useState("Select Branch");
   const [date, setDate] = useState("");
   const [labId, setLabId] = useState("");
-  const [specimenId, setSpecimenId] = useState("");
   const [mobile, setMobile] = useState("");
-
-  // Row 2 Filters
-  const [firstName, setFirstName] = useState("");
-  const [middleName, setMiddleName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [b2b, setB2b] = useState("Select B2B");
+  const [patientName, setPatientName] = useState("");
   const [consultingDoctor, setConsultingDoctor] = useState("Select Consulting Doctor");
   const [testFilter, setTestFilter] = useState("Select Service");
 
@@ -168,12 +155,8 @@ function LabReports() {
     setBranch("Select Branch");
     setDate("");
     setLabId("");
-    setSpecimenId("");
     setMobile("");
-    setFirstName("");
-    setMiddleName("");
-    setLastName("");
-    setB2b("Select B2B");
+    setPatientName("");
     setConsultingDoctor("Select Consulting Doctor");
     setTestFilter("Select Service");
     setHasSearched(false);
@@ -200,14 +183,17 @@ function LabReports() {
       if (labId.trim() && !order.id.toLowerCase().includes(labId.toLowerCase())) {
         return false;
       }
-      // Specimen ID filter
-      if (specimenId.trim() && !order.id.toLowerCase().includes(specimenId.toLowerCase())) {
-        return false;
-      }
       // Mobile filter
       if (mobile.trim()) {
         const p = patients.find((pat) => pat.id === order.patientId);
         if (!p || !p.phone.includes(mobile.trim())) {
+          return false;
+        }
+      }
+      // Patient Name filter
+      if (patientName.trim()) {
+        const p = patients.find((pat) => pat.id === order.patientId);
+        if (!p || !p.name.toLowerCase().includes(patientName.trim().toLowerCase())) {
           return false;
         }
       }
@@ -228,7 +214,7 @@ function LabReports() {
       }
       return true;
     });
-  }, [branch, labId, specimenId, mobile, consultingDoctor, testFilter]);
+  }, [branch, labId, mobile, patientName, consultingDoctor, testFilter]);
 
   const handlePrintReport = (report: any, p: any, doc: any) => {
     const printWindow = window.open("", "_blank");
@@ -500,8 +486,7 @@ function LabReports() {
         {/* ─── Advanced Search Filter Grid ──────────────────────────────────── */}
         {showFilterPanel && (
           <div className="surface-elevated p-5 space-y-4 print:hidden">
-            {/* Row 1 */}
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
               {/* Branch */}
               <div className="flex flex-col gap-1.5">
                 <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
@@ -547,83 +532,30 @@ function LabReports() {
                 <LabIdInput value={labId} onChange={setLabId} className="h-9 text-xs" />
               </div>
 
-              {/* Specimen ID */}
+              {/* Mobile Number */}
               <div className="flex flex-col gap-1.5">
                 <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                  Specimen ID
+                  Mobile Number
                 </label>
-                <LabIdInput value={specimenId} onChange={setSpecimenId} className="h-9 text-xs" />
-              </div>
-
-              {/* Mobile */}
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                  Mobile
-                </label>
-                <SearchMobileInput value={mobile} onChange={setMobile} className="h-9 text-xs" />
-              </div>
-            </div>
-
-            {/* Row 2 */}
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-              {/* First Name */}
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                  First Name
-                </label>
-                <SearchPatientNameInput
-                  value={firstName}
-                  onChange={setFirstName}
-                  className="h-9 text-xs"
-                  placeholder="First Name"
+                <SearchMobileInput
+                  value={mobile}
+                  onChange={setMobile}
+                  className="w-full rounded-lg border border-border bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition-all h-9"
+                  placeholder="Enter 10-digit mobile"
                 />
               </div>
 
-              {/* Middle Name */}
+              {/* Name */}
               <div className="flex flex-col gap-1.5">
                 <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                  Middle Name
+                  Name
                 </label>
                 <SearchPatientNameInput
-                  value={middleName}
-                  onChange={setMiddleName}
-                  className="h-9 text-xs"
-                  placeholder="Middle Name"
+                  value={patientName}
+                  onChange={setPatientName}
+                  className="w-full rounded-lg border border-border bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition-all h-9"
+                  placeholder="Patient Name"
                 />
-              </div>
-
-              {/* Last Name */}
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                  Last Name
-                </label>
-                <SearchPatientNameInput
-                  value={lastName}
-                  onChange={setLastName}
-                  className="h-9 text-xs"
-                  placeholder="Last Name"
-                />
-              </div>
-
-              {/* B2B Dropdown */}
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                  B2B Partner
-                </label>
-                <div className="relative">
-                  <select
-                    value={b2b}
-                    onChange={(e) => setB2b(e.target.value)}
-                    className="w-full appearance-none rounded-lg border border-border bg-background px-3 py-2 text-xs text-foreground outline-none pr-8 h-9"
-                  >
-                    {B2B_OPTIONS.map((o) => (
-                      <option key={o} value={o}>
-                        {o}
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-                </div>
               </div>
 
               {/* Consulting Doctor */}

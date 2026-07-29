@@ -1,4 +1,3 @@
-import type { ReactNode } from "react";
 import React, {
   createContext,
   forwardRef,
@@ -7,13 +6,13 @@ import React, {
   useImperativeHandle,
   useMemo,
   useRef,
+  type ReactNode,
 } from "react";
-import type {
-  GlobalOptions as ConfettiGlobalOptions,
-  CreateTypes as ConfettiInstance,
-  Options as ConfettiOptions,
+import confetti, {
+  type GlobalOptions as ConfettiGlobalOptions,
+  type CreateTypes as ConfettiInstance,
+  type Options as ConfettiOptions,
 } from "canvas-confetti";
-import confetti from "canvas-confetti";
 
 import { Button } from "@/components/ui/button";
 

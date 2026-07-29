@@ -489,7 +489,7 @@ function StepRegistration({
               id="reg-medications"
               value={form.medications}
               onChange={(e) =>
-                update("medications", e.target.value.replace(/[^a-zA-Z0-9\s.,\-]/g, ""))
+                update("medications", e.target.value.replace(/[^a-zA-Z0-9\s.,-]/g, ""))
               }
               placeholder="e.g. Metformin 500mg, Amlodipine 5mg"
             />

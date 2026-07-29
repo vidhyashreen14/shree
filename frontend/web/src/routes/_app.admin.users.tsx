@@ -28,6 +28,8 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 
+import { PatientNameInput, EmailInput } from "@/components/common/ValidatedInputs";
+
 export const Route = createFileRoute("/_app/admin/users")({
   component: AdminUsers,
 });
@@ -185,21 +187,24 @@ function AdminUsers() {
               </DialogHeader>
               <div className="grid gap-4">
                 <div>
-                  <Label htmlFor="n">Full name</Label>
-                  <Input
+                  <Label htmlFor="n">Full name *</Label>
+                  <PatientNameInput
                     id="n"
                     value={form.name}
-                    onChange={(e) => setForm({ ...form, name: e.target.value })}
+                    onChange={(v) => setForm({ ...form, name: v })}
+                    placeholder="User full name"
+                    required
                     className="mt-1.5"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="e">Email</Label>
-                  <Input
+                  <Label htmlFor="e">Email *</Label>
+                  <EmailInput
                     id="e"
-                    type="email"
                     value={form.email}
-                    onChange={(e) => setForm({ ...form, email: e.target.value })}
+                    onChange={(v) => setForm({ ...form, email: v })}
+                    placeholder="user@example.com"
+                    required
                     className="mt-1.5"
                   />
                 </div>

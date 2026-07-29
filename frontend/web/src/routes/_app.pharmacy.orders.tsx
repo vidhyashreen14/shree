@@ -462,7 +462,7 @@ function PharmacyOrders() {
                 window.close();
               };
             };
-          <\/script>
+          </script>
         </body>
       </html>
     `;

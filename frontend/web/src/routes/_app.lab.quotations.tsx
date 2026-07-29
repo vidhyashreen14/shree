@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
 import { PageHeader } from "@/components/common/PageHeader";
+import { MobileInput } from "@/components/common/ValidatedInputs";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -620,17 +621,13 @@ function LabQuotations() {
                 <label className="text-xs font-semibold text-foreground" htmlFor="modal-mobile">
                   Mobile
                 </label>
-                <div className="relative">
-                  <Phone className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-                  <input
-                    id="modal-mobile"
-                    type="tel"
-                    value={mobile}
-                    onChange={(e) => setMobile(e.target.value)}
-                    placeholder="+91 XXXXX XXXXX"
-                    className="w-full rounded-lg border border-border bg-background pl-9 pr-3 py-2 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary/30"
-                  />
-                </div>
+                <MobileInput
+                  id="modal-mobile"
+                  value={mobile}
+                  onChange={setMobile}
+                  placeholder="(+91) Mobile Number"
+                  className="h-9 text-xs"
+                />
               </div>
               <div className="flex flex-col gap-1">
                 <label className="text-xs font-semibold text-foreground" htmlFor="modal-email">
