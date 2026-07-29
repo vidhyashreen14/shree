@@ -172,16 +172,18 @@ function LoginPage() {
       <div className="relative z-10 grid min-h-screen lg:grid-cols-[1.05fr_1fr]">
         {/* ── Left: Form ── */}
         <div className="flex flex-col px-6 py-10 sm:px-12 lg:px-16">
-          <Link to="/" className="flex items-center gap-2">
-            <span className="grid h-9 w-9 place-items-center rounded-xl bg-primary overflow-hidden">
-              <img
-                src="/logo.svg"
-                alt="MediCore"
-                className="h-6 w-6 object-contain"
-                style={{ filter: "invert(1)" }}
-              />
+          <Link to="/" className="inline-flex items-center gap-3.5 group">
+            <span className="grid h-12 w-12 sm:h-14 sm:w-14 place-items-center rounded-2xl bg-primary shadow-lg shadow-primary/25 overflow-hidden transition-transform duration-300 group-hover:scale-105">
+              <img src="/logo.svg" alt="MediCore" className="h-7 w-7 sm:h-8 sm:w-8 object-contain" style={{ filter: "invert(1)" }} />
             </span>
-            <span className="font-display text-lg font-bold tracking-tight">MediCore</span>
+            <div className="flex flex-col leading-tight">
+              <span className="font-display text-2xl sm:text-3xl font-black tracking-tight text-foreground">
+                Medi<span className="text-primary">Core</span>
+              </span>
+              <span className="text-[11px] font-bold uppercase tracking-widest text-primary">
+                Health Systems
+              </span>
+            </div>
           </Link>
 
           <div className="my-auto w-full max-w-md py-12">

@@ -113,7 +113,6 @@ export const NAV: Record<Role, NavItem[]> = {
 };
 
 export const SHARED_NAV: NavItem[] = [
-  { to: "/notifications", label: "Notifications", icon: Bell },
   { to: "/profile", label: "Profile", icon: UserCog },
   { to: "/settings", label: "Settings", icon: Settings },
 ];

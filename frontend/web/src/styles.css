@@ -267,7 +267,7 @@
   position: relative;
 }
 
-.menu__icon span + span {
+.menu__icon span+span {
   margin-top: 0.3rem;
 }
 
@@ -275,9 +275,11 @@
 .menu__icon span:nth-child(1) {
   animation: ease 0.8s menu-icon-top-2 forwards;
 }
+
 .menu__icon span:nth-child(2) {
   animation: ease 0.8s menu-icon-scaled-2 forwards;
 }
+
 .menu__icon span:nth-child(3) {
   animation: ease 0.8s menu-icon-bottom-2 forwards;
 }
@@ -287,10 +289,12 @@
 .menu__icon:hover span:nth-child(1) {
   animation: ease 0.8s menu-icon-top forwards;
 }
+
 .menu__background:hover .menu__icon span:nth-child(2),
 .menu__icon:hover span:nth-child(2) {
   animation: ease 0.8s menu-icon-scaled forwards;
 }
+
 .menu__background:hover .menu__icon span:nth-child(3),
 .menu__icon:hover span:nth-child(3) {
   animation: ease 0.8s menu-icon-bottom forwards;
@@ -302,73 +306,77 @@
     top: 0;
     transform: rotate(0);
   }
+
   50% {
     top: 0.45rem;
     transform: rotate(0);
   }
+
   100% {
     top: 0.45rem;
     transform: rotate(45deg);
   }
 }
+
 @keyframes menu-icon-top-2 {
   0% {
     top: 0.45rem;
     transform: rotate(45deg);
   }
+
   50% {
     top: 0.45rem;
     transform: rotate(0);
   }
+
   100% {
     top: 0;
     transform: rotate(0);
   }
 }
+
 @keyframes menu-icon-bottom {
   0% {
     bottom: 0;
     transform: rotate(0);
   }
+
   50% {
     bottom: 0.45rem;
     transform: rotate(0);
   }
+
   100% {
     bottom: 0.45rem;
     transform: rotate(135deg);
   }
 }
+
 @keyframes menu-icon-bottom-2 {
   0% {
     bottom: 0.45rem;
     transform: rotate(135deg);
   }
-  50% {
-    bottom: 0.45rem;
-    transform: rotate(0);
-  }
-  100% {
-    bottom: 0;
-    transform: rotate(0);
-  }
+
+  background-color 220ms cubic-bezier(0.22, 1, 0.36, 1),
+  color 220ms cubic-bezier(0.22, 1, 0.36, 1),
+  box-shadow 220ms cubic-bezier(0.22, 1, 0.36, 1);
 }
-@keyframes menu-icon-scaled {
-  50% {
-    transform: scale(0);
-  }
-  100% {
-    transform: scale(0);
-  }
+
+.cir-tabs__t:hover {
+  color: var(--color-foreground, #0e1116);
 }
-@keyframes menu-icon-scaled-2 {
-  0% {
-    transform: scale(0);
-  }
-  50% {
-    transform: scale(0);
-  }
-  100% {
-    transform: scale(1);
-  }
+
+.cir-tabs__r:checked+.cir-tabs__t,
+.cir-tabs__t[data-state="active"] {
+  background: var(--color-primary, #0e1116);
+  color: var(--color-primary-foreground, #ffffff);
+  box-shadow:
+    0 1px 1px rgba(14, 17, 22, 0.06),
+    0 8px 18px -10px rgba(14, 17, 22, 0.5);
+}
+
+.cir-tabs__r:focus-visible+.cir-tabs__t,
+.cir-tabs__t:focus-visible {
+  box-shadow: 0 0 0 3px rgba(46, 125, 239, 0.32);
 }

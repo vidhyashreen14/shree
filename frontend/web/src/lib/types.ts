@@ -97,6 +97,29 @@ export interface LabOrder {
   reportUrl?: string;
 }
 
+export type VisitStatus = "Pending" | "Collected" | "In Progress" | "Cancelled" | "Completed";
+
+export interface HomeVisit {
+  id: string;
+  visitId: string;
+  patientName: string;
+  mobile: string;
+  age: number;
+  gender: "Male" | "Female" | "Other";
+  address: string;
+  sbu: string;
+  branch: string;
+  phlebo: string;
+  tests: string[];
+  regDate: string;
+  regTime: string;
+  collDate: string;
+  collTimeFrom: string;
+  collTimeTo: string;
+  status: VisitStatus;
+  remarks?: string;
+}
+
 export interface Medicine {
   id: string;
   name: string;

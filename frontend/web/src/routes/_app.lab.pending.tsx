@@ -83,20 +83,13 @@ function LabPending() {
 
   return (
     <>
-      <PageHeader
-        title="Pending tests"
-        description="Sample collection and in-progress investigations."
-      />
-      <Tabs
-        value={tab}
-        onValueChange={(v) => setTab(v as LabOrder["status"] | "all")}
-        className="mb-4"
-      >
-        <TabsList>
-          <TabsTrigger value="all">All pending</TabsTrigger>
-          <TabsTrigger value="ordered">Ordered</TabsTrigger>
-          <TabsTrigger value="sample-collected">Sample collected</TabsTrigger>
-          <TabsTrigger value="in-progress">In progress</TabsTrigger>
+      <PageHeader title="Pending tests" description="Sample collection and in-progress investigations." />
+      <Tabs value={tab} onValueChange={(v) => setTab(v as LabOrder["status"] | "all")} className="mb-4">
+        <TabsList className="cir-tabs h-auto p-1.5 border border-border bg-card">
+          <TabsTrigger value="all" className="cir-tabs__t">All pending</TabsTrigger>
+          <TabsTrigger value="ordered" className="cir-tabs__t">Ordered</TabsTrigger>
+          <TabsTrigger value="sample-collected" className="cir-tabs__t">Sample collected</TabsTrigger>
+          <TabsTrigger value="in-progress" className="cir-tabs__t">In progress</TabsTrigger>
         </TabsList>
       </Tabs>
       <DataTable columns={columns} data={filtered} searchPlaceholder="Search by patient, test…" />

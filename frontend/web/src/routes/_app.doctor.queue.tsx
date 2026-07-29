@@ -505,14 +505,20 @@ function DoctorQueue() {
         onValueChange={(v) => setTab(v as AppointmentStatus | "all")}
         className="mt-4 mb-3"
       >
-        <TabsList className="flex-wrap">
-          <TabsTrigger value="all">All ({combinedRows.length})</TabsTrigger>
-          <TabsTrigger value="checked-in">⏳ Waiting ({counts["checked-in"] ?? 0})</TabsTrigger>
-          <TabsTrigger value="in-consultation">
+        <TabsList className="cir-tabs flex-wrap h-auto p-1.5 border border-border bg-card">
+          <TabsTrigger value="all" className="cir-tabs__t">All ({combinedRows.length})</TabsTrigger>
+          <TabsTrigger value="checked-in" className="cir-tabs__t">
+            ⏳ Waiting ({counts["checked-in"] ?? 0})
+          </TabsTrigger>
+          <TabsTrigger value="in-consultation" className="cir-tabs__t">
             🩺 In consult ({counts["in-consultation"] ?? 0})
           </TabsTrigger>
-          <TabsTrigger value="completed">✅ Completed ({counts["completed"] ?? 0})</TabsTrigger>
-          <TabsTrigger value="cancelled">🚫 Cancelled ({counts["cancelled"] ?? 0})</TabsTrigger>
+          <TabsTrigger value="completed" className="cir-tabs__t">
+            ✅ Completed ({counts["completed"] ?? 0})
+          </TabsTrigger>
+          <TabsTrigger value="cancelled" className="cir-tabs__t">
+            🚫 Cancelled ({counts["cancelled"] ?? 0})
+          </TabsTrigger>
         </TabsList>
       </Tabs>
 

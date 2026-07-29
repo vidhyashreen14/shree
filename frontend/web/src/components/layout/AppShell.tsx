@@ -9,7 +9,12 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-screen w-full bg-background text-foreground">
       <div className="print:hidden">
-        <Sidebar open={open} onClose={() => setOpen(false)} desktopOpen={desktopOpen} />
+        <Sidebar
+          open={open}
+          onClose={() => setOpen(false)}
+          desktopOpen={desktopOpen}
+          onToggleDesktop={() => setDesktopOpen(!desktopOpen)}
+        />
       </div>
       <div className="flex min-w-0 flex-1 flex-col">
         <div className="print:hidden">

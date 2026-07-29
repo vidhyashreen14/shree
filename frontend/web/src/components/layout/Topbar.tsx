@@ -1,42 +1,9 @@
-import { Bell, Moon, Search, Sun} from "lucide-react";
-import { useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/lib/store/auth";
-import { useTheme } from "@/lib/store/theme";
-import { useNotifications } from "@/lib/store/notifications";
 import { useHospitalSettings } from "@/lib/store/hospitalSettings";
-import { useState } from "react";
-import { CommandPalette } from "./CommandPalette";
-import {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  DropdownMenu,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  DropdownMenuContent,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  DropdownMenuItem,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  DropdownMenuLabel,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  DropdownMenuSeparator,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 export function Topbar({ onMenu }: { onMenu: () => void }) {
   const user = useAuth((s) => s.user);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const logout = useAuth((s) => s.logout);
-  const { theme, toggleTheme } = useTheme();
-  const navigate = useNavigate();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const unread = useNotifications((s) => s.notifications.filter((n: any) => !n.read).length);
   const { logoUrl, name } = useHospitalSettings();
-  const [openPalette, setOpenPalette] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setOpenPalette(true);
-  };
 
   if (!user) return null;
 
@@ -61,63 +28,9 @@ export function Topbar({ onMenu }: { onMenu: () => void }) {
         </span>
         <div className="flex flex-col leading-tight hidden sm:flex min-w-0">
           <span className="font-bold text-sm tracking-tight truncate">{name}</span>
-          <span className="text-[9px] uppercase tracking-widest text-muted-foreground truncate">
-            Hospital Suite
-          </span>
+          <span className="text-[9px] uppercase tracking-widest text-muted-foreground truncate">Hospital Suite</span>
         </div>
       </div>
-
-      <div className="flex-1" />
-
-      <div className="flex items-center gap-3">
-        <form onSubmit={handleSearchSubmit} className="morph-search-wrapper hidden sm:flex">
-          <button type="submit" className="morph-search-icon">
-            <Search className="h-4 w-4 shrink-0" />
-          </button>
-          <input
-            placeholder="Search workspace…"
-            className="morph-search-input"
-            name="text"
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </form>
-
-        <button
-          type="button"
-          onClick={() => setOpenPalette(true)}
-          className="rounded-md p-2 text-muted-foreground hover:bg-accent sm:hidden"
-          aria-label="Search"
-        >
-          <Search className="h-5 w-5" />
-        </button>
-
-        <button
-          type="button"
-          onClick={toggleTheme}
-          className="rounded-md p-2 text-muted-foreground hover:bg-accent"
-          aria-label="Toggle theme"
-        >
-          {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-        </button>
-
-        <button
-          type="button"
-          onClick={() => navigate({ to: "/notifications" })}
-          className="relative rounded-md p-2 text-muted-foreground hover:bg-accent"
-          aria-label="Notifications"
-        >
-          <Bell className="h-5 w-5" />
-          {unread > 0 && (
-            <span className="absolute right-1.5 top-1.5 grid h-4 min-w-4 place-items-center rounded-full bg-destructive px-1 text-[10px] font-bold text-destructive-foreground">
-              {unread}
-            </span>
-          )}
-        </button>
-      </div>
-
-      <CommandPalette open={openPalette} onOpenChange={setOpenPalette} />
     </header>
   );
 }
