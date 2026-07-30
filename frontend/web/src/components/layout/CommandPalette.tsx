@@ -78,6 +78,7 @@ export function CommandPalette({
         </CommandGroup>
 
         <CommandGroup heading="Medicines">
+          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
           {medicines.slice(0, 5).map((m: any) => (
             <CommandItem key={m.id} onSelect={() => go("/pharmacy/inventory")}>
               <Pill className="mr-2 h-4 w-4" />

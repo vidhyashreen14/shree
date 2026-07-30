@@ -270,6 +270,7 @@ const getMockReturns = () => [
 interface SummaryStat {
   label: string;
   value: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   icon: any;
   tone: "success" | "primary" | "warning" | "danger";
 }
@@ -299,6 +300,7 @@ const generateReportData = (
     case "sales-tax-report": {
       let totalTaxable = 0;
       let totalTax = 0;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
       let totalGrand = 0;
 
       let rows = "";

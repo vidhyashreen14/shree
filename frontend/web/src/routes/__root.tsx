@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Outlet, Link, createRootRouteWithContext, useRouter } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { useEffect } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { useTheme } from "@/lib/store/theme";
 
@@ -67,6 +67,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const theme = useTheme((s: { theme: any }) => s.theme);
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");

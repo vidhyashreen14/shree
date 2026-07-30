@@ -2,8 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { allowOnlyAlphabetsAndSpaces, allowOnlyNumbers } from "@/lib/validations";
+
+
 import {
   LabIdInput,
   SearchMobileInput,
@@ -12,14 +12,19 @@ import {
 import {
   LayoutGrid,
   List,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Filter,
   ChevronDown,
   Search,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   X,
   CalendarDays,
   FileCheck2,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Printer,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Download,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Building2,
   User,
   Activity,
@@ -137,6 +142,7 @@ const toneFor: Record<string, "info" | "primary" | "warning" | "success" | "dang
 function LabReports() {
   // Layout toggles
   const [layoutMode, setLayoutMode] = useState<"grid" | "list">("list");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [showFilterPanel, setShowFilterPanel] = useState(true);
 
   // Filters
@@ -216,6 +222,8 @@ function LabReports() {
     });
   }, [branch, labId, mobile, patientName, consultingDoctor, testFilter]);
 
+   
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
   const handlePrintReport = (report: any, p: any, doc: any) => {
     const printWindow = window.open("", "_blank");
     if (!printWindow) {
@@ -356,6 +364,8 @@ function LabReports() {
     toast.success("Report sent to printer.");
   };
 
+   
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
   const handleDownloadReport = (report: any, p: any, doc: any) => {
     let csv = "Lab Report Details\n";
     csv += `Lab ID,${report.id}\n`;
@@ -441,42 +451,6 @@ function LabReports() {
                   >
                     <LayoutGrid className="h-4 w-4" />
                   </button>
-                </div>
-
-                {/* Filter toggle */}
-                <button
-                  onClick={() => setShowFilterPanel(!showFilterPanel)}
-                  className={`grid h-9 w-9 place-items-center rounded-lg border transition-colors ${
-                    showFilterPanel
-                      ? "border-primary bg-primary/10 text-primary"
-                      : "border-border bg-background text-muted-foreground hover:bg-muted"
-                  }`}
-                  aria-label="Toggle advanced search"
-                  aria-pressed={showFilterPanel}
-                >
-                  <Filter className="h-4 w-4" />
-                </button>
-
-                {/* Dropdown Action Button */}
-                <div className="relative group">
-                  <Button size="sm" variant="outline" className="flex items-center gap-1">
-                    Actions
-                    <ChevronDown className="h-3 w-3" />
-                  </Button>
-                  <div className="absolute right-0 mt-1 hidden group-hover:block w-40 rounded-lg border border-border bg-popover py-1.5 shadow-md z-20 text-xs">
-                    <button
-                      onClick={() => toast.info("Exporting all visible reports")}
-                      className="w-full text-left px-3 py-1.5 hover:bg-muted"
-                    >
-                      Export All
-                    </button>
-                    <button
-                      onClick={() => toast.info("Printing selected reports")}
-                      className="w-full text-left px-3 py-1.5 hover:bg-muted"
-                    >
-                      Print Selected
-                    </button>
-                  </div>
                 </div>
               </div>
             }
@@ -652,9 +626,6 @@ function LabReports() {
                     <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground">
                       Status
                     </th>
-                    <th className="px-4 py-3 text-center text-xs font-semibold text-muted-foreground print:hidden">
-                      Actions
-                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
@@ -676,49 +647,6 @@ function LabReports() {
                           <StatusChip tone={toneFor[report.status] || "neutral"}>
                             {report.status.replace("-", " ")}
                           </StatusChip>
-                        </td>
-                        <td className="px-4 py-3 print:hidden">
-                          {report.status === "completed" ? (
-                            <div className="flex justify-center gap-1">
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                className="h-8 w-8 p-0"
-                                title="Print Report"
-                                onClick={() =>
-                                  handlePrintReport(
-                                    report,
-                                    p,
-                                    doctors.find((d) => d.id === report.doctorId)
-                                  )
-                                }
-                              >
-                                <Printer className="h-3.5 w-3.5" />
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                className="h-8 w-8 p-0"
-                                title="Download CSV"
-                                onClick={() =>
-                                  handleDownloadReport(
-                                    report,
-                                    p,
-                                    doctors.find((d) => d.id === report.doctorId)
-                                  )
-                                }
-                              >
-                                <Download className="h-3.5 w-3.5" />
-                              </Button>
-                            </div>
-                          ) : (
-                            <span
-                              className="text-xs text-muted-foreground block text-center"
-                              title="Available when completed"
-                            >
-                              -
-                            </span>
-                          )}
                         </td>
                       </tr>
                     );
@@ -771,28 +699,6 @@ function LabReports() {
                       <span className="text-[10px] text-muted-foreground">
                         {format(new Date(report.orderedOn), "dd-MMM-yyyy")}
                       </span>
-                      <div className="flex gap-1.5 print:hidden">
-                        {report.status === "completed" && (
-                          <>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="h-8 px-2.5 text-xs"
-                              onClick={() => handlePrintReport(report, p, doc)}
-                            >
-                              <Printer className="mr-1 h-3 w-3" /> Print
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="h-8 px-2.5 text-xs"
-                              onClick={() => handleDownloadReport(report, p, doc)}
-                            >
-                              <Download className="mr-1 h-3 w-3" /> CSV
-                            </Button>
-                          </>
-                        )}
-                      </div>
                     </div>
                   </div>
                 );

@@ -14,6 +14,7 @@ import {
   Printer,
   Download,
   Trash2,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Calendar,
   History,
   ShoppingCart,
@@ -65,6 +66,7 @@ const tone = { draft: "neutral", placed: "info", shipped: "warning", received: "
 function PharmacyOrders() {
   const [isCreating, setIsCreating] = useState(true);
   const [orderHistory, setOrderHistory] = useState<PurchaseOrderHistory[]>(initialOrders);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const printContentRef = useRef<HTMLDivElement>(null);
 
   // Form states

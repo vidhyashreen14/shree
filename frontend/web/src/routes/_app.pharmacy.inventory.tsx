@@ -55,6 +55,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { medicines as seedMedicines } from "@/lib/mock/data";
 import type { Medicine } from "@/lib/types";
 import {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Plus,
   AlertTriangle,
   PackageX,
@@ -275,8 +276,8 @@ function PharmacyInventory() {
   );
 
   const effectiveMin = (m: Medicine): number => {
-    if (thresholds.overrides[m.id] != null) return thresholds.overrides[m.id]!;
-    if (thresholds.categories[m.category] != null) return thresholds.categories[m.category]!;
+    if (thresholds.overrides[m.id] !== null) return thresholds.overrides[m.id]!;
+    if (thresholds.categories[m.category] !== null) return thresholds.categories[m.category]!;
     return m.minStock;
   };
 
@@ -389,7 +390,7 @@ function PharmacyInventory() {
   const openThresholdDialog = (m: Medicine) => {
     const current = thresholds.overrides[m.id];
     setThresholdEditing(m);
-    setThresholdInput(current != null ? String(current) : "");
+    setThresholdInput(current !== null ? String(current) : "");
   };
 
   const applyThresholdOverride = () => {
@@ -465,8 +466,8 @@ function PharmacyInventory() {
           const s = row.original.stock;
           const min = effectiveMin(row.original);
           const tone = s === 0 ? "danger" : s <= min ? "warning" : "success";
-          const overridden = thresholds.overrides[row.original.id] != null;
-          const catSet = thresholds.categories[row.original.category] != null;
+          const overridden = thresholds.overrides[row.original.id] !== null;
+          const catSet = thresholds.categories[row.original.category] !== null;
           const source = overridden
             ? "Per-medicine override"
             : catSet
@@ -766,8 +767,8 @@ function PharmacyInventory() {
                     const isExpired = new Date(m.expiry) < new Date();
                     const tone = m.stock === 0 || isExpired ? "danger" : ("warning" as const);
                     const min = effectiveMin(m);
-                    const overridden = thresholds.overrides[m.id] != null;
-                    const catSet = thresholds.categories[m.category] != null;
+                    const overridden = thresholds.overrides[m.id] !== null;
+                    const catSet = thresholds.categories[m.category] !== null;
                     const source = overridden
                       ? "Per-medicine override"
                       : catSet
@@ -1322,7 +1323,7 @@ function ThresholdsDrawer({
     setThresholds((prev) => {
       const next = { ...prev.overrides };
       for (const m of catItems) {
-        if (!replaceExisting && next[m.id] != null) continue;
+        if (!replaceExisting && next[m.id] !== null) continue;
         next[m.id] = value;
         touched++;
       }
@@ -1407,9 +1408,9 @@ function ThresholdsDrawer({
               const value = thresholds.categories[cat];
               const catItems = items.filter((m) => m.category === cat);
               const overriddenInCat = catItems.filter(
-                (m) => thresholds.overrides[m.id] != null
+                (m) => thresholds.overrides[m.id] !== null
               ).length;
-              const bulkVal = bulkValueInput[cat] ?? (value != null ? String(value) : "");
+              const bulkVal = bulkValueInput[cat] ?? (value !== null ? String(value) : "");
               const replace = !!bulkReplace[cat];
               return (
                 <div
@@ -1421,7 +1422,7 @@ function ThresholdsDrawer({
                       <p className="text-sm font-medium">{cat}</p>
                       <p className="text-[11px] text-muted-foreground">
                         {catItems.length} medicine(s) · {overriddenInCat} with override
-                        {value == null && " · using per-item defaults"}
+                        {value === null && " · using per-item defaults"}
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
@@ -1433,7 +1434,7 @@ function ThresholdsDrawer({
                         placeholder="—"
                         className="h-8 w-24 text-sm"
                       />
-                      {value != null && (
+                      {value !== null && (
                         <Button
                           size="icon"
                           variant="ghost"
@@ -1514,7 +1515,7 @@ function ThresholdsDrawer({
                         placeholder="—"
                         className="h-8 w-24 text-sm"
                       />
-                      {override != null && (
+                      {override !== null && (
                         <Button
                           size="icon"
                           variant="ghost"
@@ -1566,7 +1567,7 @@ function ThresholdsDrawer({
                     {
                       items.filter((m) => {
                         if (m.category !== bulkTarget.category) return false;
-                        if (!bulkTarget.replaceExisting && thresholds.overrides[m.id] != null)
+                        if (!bulkTarget.replaceExisting && thresholds.overrides[m.id] !== null)
                           return false;
                         return true;
                       }).length

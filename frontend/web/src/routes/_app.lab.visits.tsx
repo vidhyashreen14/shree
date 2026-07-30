@@ -31,6 +31,7 @@ import {
   CalendarDays,
 } from "lucide-react";
 import {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   allowOnlyAlphabetsAndSpaces,
   allowOnlyNumbers,
   allowOnlyAddressChars,
@@ -39,6 +40,7 @@ import {
 import {
   PatientNameInput,
   MobileInput,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   SearchMobileInput,
   SearchPatientNameInput,
 } from "@/components/common/ValidatedInputs";
@@ -97,6 +99,7 @@ const PHLEBO_OPTIONS = [
   "Arjun Naik",
   "Meena Rao",
 ];
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const STATUS_OPTIONS: VisitStatus[] = [
   "Pending",
   "Collected",
@@ -244,6 +247,7 @@ function StatusBadge({ status }: { status: VisitStatus }) {
       icon: CheckCircle2,
     },
   }[status];
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const Icon = cfg.icon;
   return (
     <span
@@ -269,11 +273,10 @@ function AddVisitModal({
     age: "",
     gender: "Male",
     address: "",
-    sbu: SBU_OPTIONS[1],
     branch: BRANCH_OPTIONS[1],
     phlebo: PHLEBO_OPTIONS[1],
     tests: [] as string[],
-    collDate: "",
+    collDate: new Date().toISOString().split("T")[0],
     collTimeFrom: "08:00",
     collTimeTo: "10:00",
     remarks: "",
@@ -295,8 +298,8 @@ function AddVisitModal({
       toast.error("Please fix the validation errors before saving.");
       return;
     }
-    if (!form.patientName || !form.mobile || !form.collDate || form.tests.length === 0) {
-      toast.warning("Please fill in Patient Name, Mobile, Collection Date, and at least one test.");
+    if (!form.patientName || !form.mobile || form.tests.length === 0) {
+      toast.warning("Please fill in Patient Name, Mobile, and at least one test.");
       return;
     }
     setSaving(true);
@@ -310,7 +313,7 @@ function AddVisitModal({
         age: parseInt(form.age) || 30,
         gender: form.gender as "Male" | "Female" | "Other",
         address: form.address,
-        sbu: form.sbu,
+        sbu: "",
         branch: form.branch,
         phlebo: form.phlebo,
         tests: form.tests,
@@ -428,19 +431,7 @@ function AddVisitModal({
             <p className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-teal-600 mb-3">
               <Building2 className="h-3.5 w-3.5" /> Assignment
             </p>
-            <div className="grid grid-cols-3 gap-3">
-              <div>
-                <label className={labelCls}>SBU</label>
-                <select
-                  className={inputCls}
-                  value={form.sbu}
-                  onChange={(e) => setForm((p) => ({ ...p, sbu: e.target.value }))}
-                >
-                  {SBU_OPTIONS.slice(1).map((s) => (
-                    <option key={s}>{s}</option>
-                  ))}
-                </select>
-              </div>
+            <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className={labelCls}>Branch</label>
                 <select
@@ -702,23 +693,41 @@ function RegisteredDateTimePicker({ value, onChange, inputCls }: RegisteredDateT
   }
 
   function handleTimeUnit(unit: "hh" | "mm" | "ss", raw: string) {
-    const n = parseInt(raw);
-    const clamped = isNaN(n)
-      ? ""
-      : String(unit === "hh" ? Math.min(23, Math.max(0, n)) : Math.min(59, Math.max(0, n)));
+    const cleanDigits = allowOnlyNumbers(raw).slice(0, 2);
+    if (!cleanDigits) {
+      if (unit === "hh") {
+        setHhLocal("");
+        onChange(buildValue(datePart, "", mm, ss));
+      } else if (unit === "mm") {
+        setMmLocal("");
+        onChange(buildValue(datePart, hh, "", ss));
+      } else if (unit === "ss") {
+        setSsLocal("");
+        onChange(buildValue(datePart, hh, mm, ""));
+      }
+      return;
+    }
+    const maxVal = unit === "hh" ? 23 : 59;
+    const n = parseInt(cleanDigits, 10);
+    const clamped = String(Math.min(maxVal, Math.max(0, n)));
     if (unit === "hh") {
       setHhLocal(clamped);
       onChange(buildValue(datePart, clamped, mm, ss));
-    }
-    if (unit === "mm") {
+    } else if (unit === "mm") {
       setMmLocal(clamped);
       onChange(buildValue(datePart, hh, clamped, ss));
-    }
-    if (unit === "ss") {
+    } else if (unit === "ss") {
       setSsLocal(clamped);
       onChange(buildValue(datePart, hh, mm, clamped));
     }
   }
+
+  const handleTimeKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const allowed = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab", "Home", "End"];
+    if (!allowed.includes(e.key) && !/^[0-9]$/.test(e.key)) {
+      e.preventDefault();
+    }
+  };
 
   function handleClear() {
     onChange("");
@@ -786,11 +795,13 @@ function RegisteredDateTimePicker({ value, onChange, inputCls }: RegisteredDateT
                   HH
                 </p>
                 <input
-                  type="number"
-                  min={0}
-                  max={23}
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  maxLength={2}
                   value={hhLocal}
                   placeholder="0"
+                  onKeyDown={handleTimeKeyDown}
                   onChange={(e) => handleTimeUnit("hh", e.target.value)}
                   className={`${inputCls} text-center`}
                 />
@@ -802,11 +813,13 @@ function RegisteredDateTimePicker({ value, onChange, inputCls }: RegisteredDateT
                   MM
                 </p>
                 <input
-                  type="number"
-                  min={0}
-                  max={59}
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  maxLength={2}
                   value={mmLocal}
                   placeholder="0"
+                  onKeyDown={handleTimeKeyDown}
                   onChange={(e) => handleTimeUnit("mm", e.target.value)}
                   className={`${inputCls} text-center`}
                 />
@@ -818,11 +831,13 @@ function RegisteredDateTimePicker({ value, onChange, inputCls }: RegisteredDateT
                   SS
                 </p>
                 <input
-                  type="number"
-                  min={0}
-                  max={59}
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  maxLength={2}
                   value={ssLocal}
                   placeholder="0"
+                  onKeyDown={handleTimeKeyDown}
                   onChange={(e) => handleTimeUnit("ss", e.target.value)}
                   className={`${inputCls} text-center`}
                 />
@@ -1037,13 +1052,24 @@ function LabVisits() {
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             <div>
               <label className={labelCls}>Mobile No</label>
-              <div className="relative">
-                <Phone className="absolute left-2.5 top-[9px] h-3.5 w-3.5 text-muted-foreground z-10" />
-                <SearchMobileInput
-                  className={`${inputCls} pl-8`}
-                  value={filters.mobile}
-                  onChange={(v) => setFilter("mobile", v)}
-                />
+              <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1.5 h-9 px-2.5 rounded-lg border border-border bg-background text-xs font-medium text-foreground shrink-0 shadow-xs">
+                  <Phone className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                  <span>+91</span>
+                </div>
+                <div className="relative flex-1 min-w-0">
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    className={inputCls}
+                    placeholder="Enter 10-digit mobile"
+                    maxLength={10}
+                    value={filters.mobile}
+                    onChange={(e) =>
+                      setFilter("mobile", allowOnlyNumbers(e.target.value).slice(0, 10))
+                    }
+                  />
+                </div>
               </div>
             </div>
             <div>
@@ -1102,6 +1128,12 @@ function LabVisits() {
               >
                 <Search className="h-3.5 w-3.5" /> Search
               </button>
+              <button
+                onClick={() => setShowAddModal(true)}
+                className="flex items-center gap-1.5 rounded-lg bg-teal-600 px-4 py-2 text-sm font-bold text-white hover:bg-teal-700 transition-colors shadow-sm"
+              >
+                <Plus className="h-3.5 w-3.5" /> Add Visit
+              </button>
             </div>
           </div>
         </div>
@@ -1121,12 +1153,6 @@ function LabVisits() {
                 {filtered.length}
               </span>
             </div>
-            <button
-              onClick={() => setShowAddModal(true)}
-              className="flex items-center gap-1.5 rounded-lg bg-teal-600 px-4 py-1.5 text-xs font-bold text-white hover:bg-teal-700 transition-colors shadow-sm"
-            >
-              <Plus className="h-3.5 w-3.5" /> Add Visit
-            </button>
           </div>
 
           {/* Table */}

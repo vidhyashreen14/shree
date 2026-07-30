@@ -37,6 +37,7 @@ function NurseOverview() {
   const today = appointments.filter((a) => isToday(new Date(a.date)));
   const awaiting = today.filter((a) => a.status === "scheduled" || a.status === "checked-in");
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { queue, markVitalsStatus } = useNurseQueue();
   const pendingQueue = queue.filter((e) => e.vitalsStatus === "pending");
   const inProgressQueue = queue.filter((e) => e.vitalsStatus === "in-progress");

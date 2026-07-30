@@ -39,6 +39,12 @@ export const allowOnlyNumbers = (val: string) => {
   return val.replace(/[^0-9]/g, "");
 };
 
+export const allowOnlyEmailChars = (val: string) => {
+  // Allows only letters, numbers, @, dot, underscore, and hyphen.
+  // Rejects special characters like #, $, %, &, *, !, +, =, etc.
+  return val.replace(/[^a-zA-Z0-9@._-]/g, "");
+};
+
 export const allowOnlyAlphanumericAndHyphen = (val: string) => {
   return val.replace(/[^a-zA-Z0-9-]/g, "").toUpperCase();
 };
@@ -86,6 +92,13 @@ export const lastNameSchema = refineString(
     .regex(/^[a-zA-Z]+(\s[a-zA-Z]+)*$/, "Last name should contain only alphabets.")
 );
 
+export const passwordSchema = refineString(
+  baseString
+    .min(6, "Password should be at least 6 characters.")
+    .max(50, "Password cannot exceed 50 characters.")
+    .regex(/^[a-zA-Z]+$/, "Password should contain only alphabets.")
+);
+
 export const doctorNameSchema = refineString(
   baseString
     .max(100, "Doctor name cannot exceed 100 characters.")
@@ -113,7 +126,7 @@ export const alternateMobileSchema = refineString(
 export const emailSchema = refineString(
   baseString
     .max(100, "Email cannot exceed 100 characters.")
-    .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Enter a valid email address.")
+    .regex(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Enter a valid email address.")
 )
   .optional()
   .or(z.literal(""));

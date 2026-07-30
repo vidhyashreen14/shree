@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { allowOnlyAlphabets, passwordSchema } from "@/lib/validations";
 
 export const Route = createFileRoute("/reset-password")({
   component: ResetPage,
@@ -22,14 +23,16 @@ function ResetPage() {
         </div>
         <h1 className="mt-4 font-display text-2xl font-bold tracking-tight">Set a new password</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Use at least 8 characters with one number and a symbol.
+          Password should contain only alphabetic characters (A-Z, a-z).
         </p>
 
         <form
           className="mt-6 space-y-4"
           onSubmit={(e) => {
             e.preventDefault();
-            if (pwd.length < 8) return toast.error("Password too short");
+            if (!passwordSchema.safeParse(pwd).success) {
+              return toast.error("Password should contain only alphabets.");
+            }
             if (pwd !== confirm) return toast.error("Passwords don't match");
             toast.success("Password updated. Please sign in.");
             navigate({ to: "/login" });
@@ -40,8 +43,9 @@ function ResetPage() {
             <Input
               id="pwd"
               type="password"
+              placeholder="Alphabets only (A-Z, a-z)"
               value={pwd}
-              onChange={(e) => setPwd(e.target.value)}
+              onChange={(e) => setPwd(allowOnlyAlphabets(e.target.value))}
               className="mt-1.5"
             />
           </div>
@@ -50,8 +54,9 @@ function ResetPage() {
             <Input
               id="confirm"
               type="password"
+              placeholder="Re-enter password"
               value={confirm}
-              onChange={(e) => setConfirm(e.target.value)}
+              onChange={(e) => setConfirm(allowOnlyAlphabets(e.target.value))}
               className="mt-1.5"
             />
           </div>

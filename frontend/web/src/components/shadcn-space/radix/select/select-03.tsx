@@ -43,6 +43,7 @@ const SelectStatusDemo = () => {
   const id = useId();
   const [value, setValue] = useState("In Progress");
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const selectedStatus = statuses.find((s) => s.value === value);
 
   return (

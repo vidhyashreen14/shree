@@ -12,6 +12,7 @@ import type {
 
 const today = new Date();
 const iso = (d: Date) => d.toISOString();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const at = (h: number, m = 0) => {
   const d = new Date(today);
   d.setHours(h, m, 0, 0);

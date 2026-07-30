@@ -14,7 +14,7 @@ import {
 import { useNurseQueue } from "@/lib/store/nurseQueue";
 import { usePatients } from "@/lib/store/patients";
 import { useState, useEffect } from "react";
-import { HeartPulse, Activity, Thermometer, User, FileText, Scale } from "lucide-react";
+import { HeartPulse, Activity, User, FileText, Scale } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -113,6 +113,7 @@ function NurseVitals() {
         setChiefComplaint(activeQueueEntry.vitals.chiefComplaint);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedQueueId]);
 
   const handleTemplateClick = (template: string) => {

@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute} from "@tanstack/react-router";
 import { useState, useMemo } from "react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { PageHeader } from "@/components/common/PageHeader";
@@ -31,8 +31,16 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
 import {
+  allowOnlyAlphabets,
+  allowOnlyEmailChars,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  emailSchema,
+  passwordSchema,
+} from "@/lib/validations";
+import {
   KeyRound,
   UserPlus,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Monitor,
   Eye,
   EyeOff,
@@ -47,14 +55,17 @@ import {
   Pill,
   FlaskConical,
   Shield,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ArrowRight,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   X,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ExternalLink,
 } from "lucide-react";
 import { useCredentials, type StaffAccount } from "@/lib/store/credentials";
 import { useAuth } from "@/lib/store/auth";
 import { useAudit } from "@/lib/store/audit";
-import { ROLE_HOME } from "@/lib/rbac";
+
 import type { Role } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { departments } from "@/lib/mock/data";
@@ -115,6 +126,7 @@ const STAFF_ROLES: {
   },
 ];
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ALL_MONITOR_ROLES: {
   value: Role;
   label: string;
@@ -314,29 +326,47 @@ function CreateAccountModal({ open, onClose }: CreateModalProps) {
             {STAFF_ROLES.find((r) => r.value === form.role)?.description}
           </p>
         </div>
+        <div className="grid gap-3.5">
+          {/* Staff Member Name */}
+          <div>
+            <Label htmlFor="ac-name">Staff Name</Label>
+            <Input
+              id="ac-name"
+              placeholder="e.g. Dr. Rajesh Sharma"
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
+              className="mt-1.5"
+            />
+          </div>
 
-        <div className="grid gap-4">
-          {/* Name + Department row */}
-          <div className={cn("grid gap-3", form.role === "doctor" ? "grid-cols-2" : "grid-cols-1")}>
+          {/* Role & Department */}
+          <div className="grid grid-cols-2 gap-3">
             <div>
-              <Label htmlFor="ac-name">Full name</Label>
-              <Input
-                id="ac-name"
-                placeholder={form.role === "doctor" ? "e.g. Dr. Arjun Nair" : "e.g. Arjun Nair"}
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-                className="mt-1.5"
-              />
+              <Label>Role</Label>
+              <Select value={form.role} onValueChange={(r: Role) => setForm({ ...form, role: r })}>
+                <SelectTrigger className="mt-1.5">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="doctor">Doctor</SelectItem>
+                  <SelectItem value="nurse">Nurse</SelectItem>
+                  <SelectItem value="frontdesk">Front Desk</SelectItem>
+                  <SelectItem value="lab">Lab Technician</SelectItem>
+                  <SelectItem value="pharmacy">Pharmacist</SelectItem>
+                  <SelectItem value="admin">Administrator</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
+
             {form.role === "doctor" && (
               <div>
-                <Label htmlFor="ac-dept">Department</Label>
+                <Label>Department</Label>
                 <Select
                   value={form.department}
-                  onValueChange={(val) => setForm({ ...form, department: val })}
+                  onValueChange={(d) => setForm({ ...form, department: d })}
                 >
-                  <SelectTrigger id="ac-dept" className="mt-1.5 bg-background">
-                    <SelectValue placeholder="Select Department" />
+                  <SelectTrigger className="mt-1.5">
+                    <SelectValue placeholder="Select" />
                   </SelectTrigger>
                   <SelectContent>
                     {departments.map((d) => (
@@ -358,7 +388,7 @@ function CreateAccountModal({ open, onClose }: CreateModalProps) {
               type="email"
               placeholder="staff@hospital.io"
               value={form.email}
-              onChange={(e) => setForm({ ...form, email: e.target.value })}
+              onChange={(e) => setForm({ ...form, email: allowOnlyEmailChars(e.target.value) })}
               className="mt-1.5"
             />
           </div>
@@ -370,9 +400,9 @@ function CreateAccountModal({ open, onClose }: CreateModalProps) {
               <Input
                 id="ac-pwd"
                 type={showPwd ? "text" : "password"}
-                placeholder="Min 6 characters"
+                placeholder="Alphabets only (A-Z, a-z)"
                 value={form.password}
-                onChange={(e) => setForm({ ...form, password: e.target.value })}
+                onChange={(e) => setForm({ ...form, password: allowOnlyAlphabets(e.target.value) })}
               />
               <button
                 type="button"
@@ -416,7 +446,7 @@ function CreateAccountModal({ open, onClose }: CreateModalProps) {
                 type={showConfirm ? "text" : "password"}
                 placeholder="Re-enter password"
                 value={form.confirm}
-                onChange={(e) => setForm({ ...form, confirm: e.target.value })}
+                onChange={(e) => setForm({ ...form, confirm: allowOnlyAlphabets(e.target.value) })}
                 className={cn(
                   form.confirm && form.confirm !== form.password ? "border-destructive" : ""
                 )}
@@ -458,22 +488,30 @@ function ResetPasswordModal({
   onClose: () => void;
 }) {
   const resetPassword = useCredentials((s) => s.resetPassword);
-  const addLog = useAudit((s) => s.addLog);
-  const adminUser = useAuth((s) => s.user);
+  const logAuditAction = useAudit((s) => s.addLog);
+  const currentUser = useAuth((s) => s.user);
   const [pwd, setPwd] = useState("");
   const [confirm, setConfirm] = useState("");
   const [show, setShow] = useState(false);
   const strength = getPasswordStrength(pwd);
   const valid = pwd.length >= 6 && pwd === confirm;
 
-  const handle = () => {
-    if (!valid || !account) return;
+  const handleSave = () => {
+    if (!account) return;
+    if (!passwordSchema.safeParse(pwd).success) {
+      toast.error("Password should contain only alphabets.");
+      return;
+    }
+    if (pwd !== confirm) {
+      toast.error("Passwords do not match");
+      return;
+    }
     resetPassword(account.id, pwd);
-    addLog({
-      user: adminUser?.name || "System Admin",
-      role: adminUser?.role || "admin",
+    logAuditAction({
+      user: currentUser?.name || "Admin",
+      role: currentUser?.role || "admin",
       action: "Reset password",
-      target: `${account.name} (${account.role})`,
+      target: account.name,
     });
     toast.success(`Password reset for ${account.name}`);
     setPwd("");
@@ -495,8 +533,9 @@ function ResetPasswordModal({
               <Input
                 id="rp-pwd"
                 type={show ? "text" : "password"}
+                placeholder="Alphabets only (A-Z, a-z)"
                 value={pwd}
-                onChange={(e) => setPwd(e.target.value)}
+                onChange={(e) => setPwd(allowOnlyAlphabets(e.target.value))}
               />
               <button
                 type="button"
@@ -528,8 +567,9 @@ function ResetPasswordModal({
             <Input
               id="rp-confirm"
               type="password"
+              placeholder="Re-enter password"
               value={confirm}
-              onChange={(e) => setConfirm(e.target.value)}
+              onChange={(e) => setConfirm(allowOnlyAlphabets(e.target.value))}
               className="mt-1.5"
             />
             {confirm && confirm !== pwd && (
@@ -541,7 +581,7 @@ function ResetPasswordModal({
           <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
-          <Button onClick={handle} disabled={!valid}>
+          <Button onClick={handleSave} disabled={!valid}>
             <RefreshCw className="mr-2 h-4 w-4" />
             Reset Password
           </Button>
@@ -688,6 +728,7 @@ function StaffAccountsTab({ onCreateClick }: { onCreateClick: () => void }) {
         },
       },
     ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [suspendAccount, reactivateAccount]
   );
 

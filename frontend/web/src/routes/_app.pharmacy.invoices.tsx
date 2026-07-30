@@ -1,7 +1,7 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { PageHeader } from "@/components/common/PageHeader";
+import { createFileRoute} from "@tanstack/react-router";
+
 import { StatusChip } from "@/components/common/StatusChip";
-import { Button } from "@/components/ui/button";
+
 import {
   FilePlus,
   Plus,
@@ -11,13 +11,14 @@ import {
   Download,
   Trash2,
   Edit2,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Eye,
   ChevronDown,
   ChevronUp,
   Pill,
   PackageOpen,
 } from "lucide-react";
-import { patients } from "@/lib/mock/data";
+
 import { useState, ChangeEvent } from "react";
 import { toast } from "sonner";
 
@@ -75,6 +76,7 @@ const stockistOptions = [
 const tone = { paid: "success", pending: "warning", refunded: "danger" } as const;
 
 function PharmacyInvoices() {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [showAddInvoice, setShowAddInvoice] = useState(false);
   const [showMedicineForm, setShowMedicineForm] = useState(false);
   const [invoiceNumber, setInvoiceNumber] = useState("");
@@ -583,6 +585,7 @@ function PharmacyInvoices() {
     toast.success("Invoice downloaded as CSV!");
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleViewInvoice = (invoice: SavedInvoice) => {
     setViewInvoice(invoice);
   };

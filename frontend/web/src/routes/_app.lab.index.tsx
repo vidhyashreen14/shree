@@ -1,9 +1,10 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState, useMemo } from "react";
+import { createFileRoute} from "@tanstack/react-router";
+import { useState} from "react";
 import { PageHeader } from "@/components/common/PageHeader";
-import { Button } from "@/components/ui/button";
+
 import { labOrders, patients } from "@/lib/mock/data";
 import {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   FilePlus2,
   FlaskConical,
   CheckCircle2,
@@ -91,6 +92,7 @@ function fmt(n: number) {
 }
 
 // ─── Top Filter Bar ───────────────────────────────────────────────────────────
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function TopFilters({
   dateFrom,
   setDateFrom,

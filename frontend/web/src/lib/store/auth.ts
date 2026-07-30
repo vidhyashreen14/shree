@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import type { Role, User } from "../types";
-import { ROLES } from "../rbac";
+
 import { useCredentials } from "./credentials";
 
 const DEMO_USERS: Record<Role, User> = {

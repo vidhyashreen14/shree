@@ -2,12 +2,15 @@ import React, { useEffect, useRef, useState } from "react";
 import { Input, InputProps } from "@/components/ui/input";
 import {
   allowOnlyAlphabetsAndSpaces,
+  allowOnlyAlphabets,
   allowOnlyNumbers,
+  allowOnlyEmailChars,
   allowOnlyAlphanumericAndHyphen,
   patientNameSchema,
   firstNameSchema,
   middleNameSchema,
   lastNameSchema,
+  passwordSchema,
   mobileSchema,
   emailSchema,
   labIdSchema,
@@ -34,7 +37,7 @@ export function PatientNameInput({
   useEffect(() => {
     if (!value) {
       if (required) {
-        setError("Patient name should contain only alphabets.");
+        setError("Patient name is required.");
         onErrorChange?.(true);
       } else {
         setError(undefined);
@@ -336,6 +339,13 @@ export function EmailInput({
     }
   }, [value, required, onErrorChange]);
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Only allow letters, numbers, @, dot, underscore, hyphen.
+    // Disallow all other special characters (#, $, %, &, *, !, +, =, etc.) while typing.
+    const cleaned = allowOnlyEmailChars(e.target.value.trim());
+    onChange(cleaned);
+  };
+
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     props.onBlur?.(e);
     const trimmed = value.trim();
@@ -348,10 +358,61 @@ export function EmailInput({
     <Input
       type="email"
       value={value}
-      onChange={(e) => onChange(e.target.value.trim())}
+      onChange={handleChange}
       onBlur={handleBlur}
       error={error}
       maxLength={100}
+      placeholder={placeholder}
+      {...props}
+    />
+  );
+}
+
+// ─── Password Input (Alphabets Only) ─────────────────────────────────────────
+export function PasswordInput({
+  value,
+  onChange,
+  onErrorChange,
+  required,
+  placeholder = "Password",
+  ...props
+}: ValidatedInputProps) {
+  const [error, setError] = useState<string>();
+
+  useEffect(() => {
+    if (!value) {
+      if (required) {
+        setError("Password should contain only alphabets.");
+        onErrorChange?.(true);
+      } else {
+        setError(undefined);
+        onErrorChange?.(false);
+      }
+      return;
+    }
+    const res = passwordSchema.safeParse(value);
+    if (!res.success) {
+      setError("Password should contain only alphabets.");
+      onErrorChange?.(true);
+    } else {
+      setError(undefined);
+      onErrorChange?.(false);
+    }
+  }, [value, required, onErrorChange]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Allow only alphabetic characters (A-Z, a-z). Block numbers (0-9) and special characters.
+    const cleaned = allowOnlyAlphabets(e.target.value).slice(0, 50);
+    onChange(cleaned);
+  };
+
+  return (
+    <Input
+      type="password"
+      value={value}
+      onChange={handleChange}
+      error={error}
+      maxLength={50}
       placeholder={placeholder}
       {...props}
     />

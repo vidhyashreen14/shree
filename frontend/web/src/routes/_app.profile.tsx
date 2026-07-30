@@ -9,6 +9,8 @@ import { toast } from "sonner";
 import { useState } from "react";
 import { StatusChip } from "@/components/common/StatusChip";
 
+import { allowOnlyAlphabets, passwordSchema } from "@/lib/validations";
+
 export const Route = createFileRoute("/_app/profile")({
   component: Profile,
 });
@@ -108,6 +110,9 @@ function Profile() {
             className="mt-4 space-y-3"
             onSubmit={(e) => {
               e.preventDefault();
+              if (!passwordSchema.safeParse(pwd.next).success) {
+                return toast.error("Password should contain only alphabets.");
+              }
               if (pwd.next !== pwd.confirm) return toast.error("Passwords don't match");
               toast.success("Password updated");
               setPwd({ current: "", next: "", confirm: "" });
@@ -118,7 +123,7 @@ function Profile() {
               <Input
                 type="password"
                 value={pwd.current}
-                onChange={(e) => setPwd({ ...pwd, current: e.target.value })}
+                onChange={(e) => setPwd({ ...pwd, current: allowOnlyAlphabets(e.target.value) })}
                 className="mt-1.5"
               />
             </div>
@@ -126,8 +131,9 @@ function Profile() {
               <Label>New password</Label>
               <Input
                 type="password"
+                placeholder="Alphabets only (A-Z, a-z)"
                 value={pwd.next}
-                onChange={(e) => setPwd({ ...pwd, next: e.target.value })}
+                onChange={(e) => setPwd({ ...pwd, next: allowOnlyAlphabets(e.target.value) })}
                 className="mt-1.5"
               />
             </div>
@@ -135,8 +141,9 @@ function Profile() {
               <Label>Confirm</Label>
               <Input
                 type="password"
+                placeholder="Re-enter password"
                 value={pwd.confirm}
-                onChange={(e) => setPwd({ ...pwd, confirm: e.target.value })}
+                onChange={(e) => setPwd({ ...pwd, confirm: allowOnlyAlphabets(e.target.value) })}
                 className="mt-1.5"
               />
             </div>

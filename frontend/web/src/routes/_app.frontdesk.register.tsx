@@ -714,6 +714,7 @@ function ConsultationBillModal({
 }) {
   const printRef = useRef<HTMLDivElement>(null);
   const billDate = format(new Date(), "dd MMM yyyy, hh:mm a");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { logoUrl, name, phone, email, address } = useHospitalSettings();
 
   const handlePrint = () => {

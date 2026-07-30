@@ -1,28 +1,38 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, useMemo } from "react";
+import { useState} from "react";
 import { PageHeader } from "@/components/common/PageHeader";
-import { MobileInput } from "@/components/common/ValidatedInputs";
+import { PatientNameInput, MobileInput, EmailInput } from "@/components/common/ValidatedInputs";
+import { patientNameSchema, mobileSchema, emailSchema } from "@/lib/validations";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
   Plus,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Building2,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   SlidersHorizontal,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Search,
   X,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   CalendarDays,
   ChevronDown,
   FileText,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   User,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Phone,
   Beaker,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   IndianRupee,
   Clock,
   CheckCircle2,
   CircleDot,
   Ban,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Maximize2,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Minimize2,
   Info,
   Trash2,
@@ -31,7 +41,7 @@ import {
   Printer,
   FlaskConical,
 } from "lucide-react";
-import { format } from "date-fns";
+
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/lab/quotations")({
@@ -245,6 +255,7 @@ function TypeBadge({ type }: { type: QuotationType }) {
 }
 
 // ─── Branch Details toast placeholder ───────────────────────────────────────
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function handleBranchDetails() {
   toast.info("Branch details panel coming soon");
 }
@@ -294,10 +305,23 @@ interface ServiceRow {
   net: number;
 }
 
+// ─── Mock visit detail lookup (per quotation) ─────────────────────────────────
+const MOCK_VISIT_DETAILS: Record<string, { patientName: string; mobile: string; email: string }> = {
+  "q-1": { patientName: "Aarav Sharma", mobile: "9010001234", email: "aarav.sharma@email.com" },
+  "q-2": { patientName: "Apollo Hospitals", mobile: "8020056789", email: "billing@apollo.com" },
+  "q-3": { patientName: "Diya Kapoor", mobile: "9730011111", email: "diya.kapoor@email.com" },
+  "q-4": { patientName: "Fortis Healthcare", mobile: "9840022222", email: "billing@fortis.com" },
+  "q-5": { patientName: "Arjun Mehta", mobile: "9950033333", email: "arjun.mehta@email.com" },
+  "q-6": { patientName: "Saanvi Patel", mobile: "9160044444", email: "saanvi.patel@email.com" },
+  "q-7": { patientName: "Manipal Group", mobile: "9270055555", email: "billing@manipal.com" },
+  "q-8": { patientName: "Liam Carter", mobile: "9380066666", email: "liam.carter@email.com" },
+};
+
 function LabQuotations() {
   const [infoOpen, setInfoOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [infoService, setInfoService] = useState("");
+  const [loadedRefNo, setLoadedRefNo] = useState<string | null>(null);
 
   // Section 2 — Branch & Client
   const [modalBranch, setModalBranch] = useState(BRANCHES[0]!);
@@ -308,6 +332,7 @@ function LabQuotations() {
   const [selectedService, setSelectedService] = useState(SERVICE_OPTIONS[0]!);
   const [serviceRows, setServiceRows] = useState<ServiceRow[]>([]);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleServiceInfo = (serviceName?: string | any) => {
     const target = typeof serviceName === "string" ? serviceName : selectedService;
     if (!target || target === SERVICE_OPTIONS[0]) {
@@ -369,11 +394,68 @@ function LabQuotations() {
     setPrintOn(false);
     setSmsOn(false);
     setEmailOn(false);
+    setLoadedRefNo(null);
+  };
+
+  // Auto-fetch visit details from history and populate the form
+  const handleLoadFromHistory = (q: Quotation) => {
+    const detail = MOCK_VISIT_DETAILS[q.id];
+    // Branch
+    const matchBranch = BRANCHES.find((b) => b === q.branch);
+    setModalBranch(matchBranch ?? BRANCHES[0]!);
+    // B2B
+    const matchB2b = B2B_OPTIONS.find((o) => o === q.patientOrOrg);
+    setB2b(matchB2b ?? B2B_OPTIONS[0]!);
+    // Services — map short names back to full SERVICE_OPTIONS labels
+    const mapped: ServiceRow[] = q.tests.map((t) => {
+      const fullName = SERVICE_OPTIONS.find((s) => s.includes(t)) ?? t;
+      const price = MOCK_PRICES[fullName] ?? MOCK_PRICES[t] ?? 500;
+      return { id: crypto.randomUUID(), service: fullName, price, discount: 0, net: price };
+    });
+    setServiceRows(mapped);
+    setSelectedService(SERVICE_OPTIONS[0]!);
+    // Patient info
+    if (detail) {
+      setPatientName(detail.patientName);
+      setMobile(detail.mobile);
+      setEmail(detail.email);
+    } else {
+      setPatientName(q.patientOrOrg);
+      setMobile(q.phone.replace(/[^0-9]/g, "").slice(-10));
+      setEmail("");
+    }
+    setRemarks("");
+    setLoadedRefNo(q.refNo);
+    setHistoryOpen(false);
+    toast.success(`Visit ${q.refNo} loaded — review and save.`);
   };
 
   const handleSave = () => {
     if (!patientName.trim()) {
       toast.error("Patient name is required");
+      return;
+    }
+    const nameRes = patientNameSchema.safeParse(patientName);
+    if (!nameRes.success) {
+      toast.error("Patient name should contain only alphabets.");
+      return;
+    }
+    if (!mobile.trim()) {
+      toast.error("Enter a valid 10-digit mobile number.");
+      return;
+    }
+    const mobileRes = mobileSchema.safeParse(mobile);
+    if (!mobileRes.success) {
+      toast.error("Enter a valid 10-digit mobile number.");
+      return;
+    }
+    if (!email.trim()) {
+      toast.error("Enter a valid email address.");
+      return;
+    }
+    const emailRes = emailSchema.safeParse(email);
+    if (!emailRes.success) {
+      toast.error("Enter a valid email address.");
       return;
     }
     if (serviceRows.length === 0) {
@@ -391,16 +473,31 @@ function LabQuotations() {
         title="Create Quotation"
         description="Create and manage a new lab service quotation."
         actions={
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setHistoryOpen(true)}
-            id="btn-view-history"
-            className="flex items-center gap-1.5"
-          >
-            <Clock className="h-4 w-4 text-muted-foreground" />
-            View History
-          </Button>
+          <div className="flex items-center gap-2">
+            {loadedRefNo && (
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary border border-primary/20">
+                <FlaskConical className="h-3 w-3" />
+                Loaded: {loadedRefNo}
+                <button
+                  onClick={resetForm}
+                  className="ml-1 rounded-full hover:bg-primary/20 p-0.5 transition-colors"
+                  aria-label="Clear loaded quotation"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </span>
+            )}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setHistoryOpen(true)}
+              id="btn-view-history"
+              className="flex items-center gap-1.5"
+            >
+              <Clock className="h-4 w-4 text-muted-foreground" />
+              View History
+            </Button>
+          </div>
         }
       />
 
@@ -605,45 +702,40 @@ function LabQuotations() {
                 >
                   Patient Name <span className="text-destructive">*</span>
                 </label>
-                <div className="relative">
-                  <User className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-                  <input
-                    id="modal-patient-name"
-                    type="text"
-                    value={patientName}
-                    onChange={(e) => setPatientName(e.target.value)}
-                    placeholder="Enter patient name"
-                    className="w-full rounded-lg border border-border bg-background pl-9 pr-3 py-2 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary/30"
-                  />
-                </div>
+                <PatientNameInput
+                  id="modal-patient-name"
+                  value={patientName}
+                  onChange={setPatientName}
+                  required
+                  placeholder="Enter patient name"
+                  className="h-9 text-xs"
+                />
               </div>
               <div className="flex flex-col gap-1">
                 <label className="text-xs font-semibold text-foreground" htmlFor="modal-mobile">
-                  Mobile
+                  Mobile <span className="text-destructive">*</span>
                 </label>
                 <MobileInput
                   id="modal-mobile"
                   value={mobile}
                   onChange={setMobile}
+                  required
                   placeholder="(+91) Mobile Number"
                   className="h-9 text-xs"
                 />
               </div>
               <div className="flex flex-col gap-1">
                 <label className="text-xs font-semibold text-foreground" htmlFor="modal-email">
-                  Email
+                  Email <span className="text-destructive">*</span>
                 </label>
-                <div className="relative">
-                  <Mail className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-                  <input
-                    id="modal-email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="patient@email.com"
-                    className="w-full rounded-lg border border-border bg-background pl-9 pr-3 py-2 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary/30"
-                  />
-                </div>
+                <EmailInput
+                  id="modal-email"
+                  value={email}
+                  onChange={setEmail}
+                  required
+                  placeholder="example@domain.com"
+                  className="h-9 text-xs"
+                />
               </div>
             </div>
 
@@ -786,7 +878,7 @@ function LabQuotations() {
                 {MOCK_QUOTATIONS.map((q) => (
                   <div
                     key={q.id}
-                    className="flex items-center justify-between rounded-xl border border-border bg-background p-4 shadow-sm hover:shadow-md transition-shadow"
+                    className="flex items-center justify-between rounded-xl border border-border bg-background p-4 shadow-sm hover:shadow-md transition-shadow group"
                   >
                     <div className="flex items-center gap-4">
                       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
@@ -794,7 +886,15 @@ function LabQuotations() {
                       </div>
                       <div>
                         <div className="flex items-center gap-2 mb-1">
-                          <p className="font-semibold text-foreground text-sm">{q.refNo}</p>
+                          {/* Clickable Ref No — auto-fetches the visit */}
+                          <button
+                            id={`btn-load-visit-${q.id}`}
+                            onClick={() => handleLoadFromHistory(q)}
+                            title="Click to load this quotation into the form"
+                            className="font-semibold text-primary text-sm underline underline-offset-2 decoration-dotted hover:decoration-solid hover:text-primary/80 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 rounded cursor-pointer"
+                          >
+                            {q.refNo}
+                          </button>
                           <TypeBadge type={q.type} />
                           <StatusBadge status={q.status} />
                         </div>
@@ -814,6 +914,13 @@ function LabQuotations() {
                       <p className="text-[10px] text-muted-foreground">
                         {new Date(q.date).toLocaleDateString()}
                       </p>
+                      <button
+                        id={`btn-load-visit-action-${q.id}`}
+                        onClick={() => handleLoadFromHistory(q)}
+                        className="mt-1 text-[10px] font-semibold text-primary/70 hover:text-primary underline underline-offset-1 decoration-dotted hover:decoration-solid transition-colors"
+                      >
+                        Load into form ↗
+                      </button>
                     </div>
                   </div>
                 ))}

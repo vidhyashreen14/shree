@@ -7,6 +7,7 @@ interface Props {
   label?: string;
   title?: string;
   value: string | number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   icon: any;
   trend?: number; // % change
   hint?: string;
@@ -43,6 +44,7 @@ export function StatCard({
     if (React.isValidElement(icon)) {
       return icon;
     }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const IconComponent = icon as ComponentType<any>;
     return <IconComponent className="h-5 w-5" />;
   };
