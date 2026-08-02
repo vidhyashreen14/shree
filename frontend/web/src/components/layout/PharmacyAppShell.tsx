@@ -20,6 +20,7 @@ import {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Factory,
   X,
+  Menu,
   ChevronDown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";

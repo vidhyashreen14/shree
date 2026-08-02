@@ -358,16 +358,87 @@
     transform: rotate(135deg);
   }
 
-  background-color 220ms cubic-bezier(0.22, 1, 0.36, 1),
-  color 220ms cubic-bezier(0.22, 1, 0.36, 1),
-  box-shadow 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  50% {
+    bottom: 0.45rem;
+    transform: rotate(0);
+  }
+
+  100% {
+    bottom: 0;
+    transform: rotate(0);
+  }
+}
+
+@keyframes menu-icon-scaled {
+  50% {
+    transform: scale(0);
+  }
+
+  100% {
+    transform: scale(0);
+  }
+}
+
+@keyframes menu-icon-scaled-2 {
+  0% {
+    transform: scale(0);
+  }
+
+  50% {
+    transform: scale(0);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* ─── Circular Tabs Component ────────────────────────────────────────────── */
+.cir-tabs {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border-radius: 9999px;
+  background-color: var(--color-muted);
+  border: 1px solid var(--color-border);
+}
+
+.cir-tabs__r {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.cir-tabs__t {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  padding: 0.375rem 0.875rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-muted-foreground);
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background-color 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    color 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 220ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .cir-tabs__t:hover {
   color: var(--color-foreground, #0e1116);
 }
 
-.cir-tabs__r:checked+.cir-tabs__t,
+.cir-tabs__r:checked + .cir-tabs__t,
 .cir-tabs__t[data-state="active"] {
   background: var(--color-primary, #0e1116);
   color: var(--color-primary-foreground, #ffffff);
@@ -376,7 +447,7 @@
     0 8px 18px -10px rgba(14, 17, 22, 0.5);
 }
 
-.cir-tabs__r:focus-visible+.cir-tabs__t,
+.cir-tabs__r:focus-visible + .cir-tabs__t,
 .cir-tabs__t:focus-visible {
   box-shadow: 0 0 0 3px rgba(46, 125, 239, 0.32);
 }

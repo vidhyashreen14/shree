@@ -10,7 +10,6 @@ import { useState } from "react";
 import { CommandPalette } from "./CommandPalette";
 
 interface Props {
-interface Props {
     open: boolean;
     onClose: () => void;
     desktopOpen?: boolean;
