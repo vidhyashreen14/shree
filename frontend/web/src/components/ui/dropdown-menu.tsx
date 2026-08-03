@@ -1,16 +1,8 @@
-<<<<<<< HEAD
-import * as React from "react";
-import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
-import { Check, ChevronRight, Circle } from "lucide-react";
-
-import { cn } from "@/lib/utils";
-=======
 import * as React from 'react';
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import { Check, ChevronRight, Circle } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
->>>>>>> a821a0c (second update)
 
 const DropdownMenu = DropdownMenuPrimitive.Root;
 
@@ -149,11 +141,7 @@ const DropdownMenuLabel = React.forwardRef<
 >(({ className, inset, ...props }, ref) => (
   <DropdownMenuPrimitive.Label
     ref={ref}
-<<<<<<< HEAD
-    className={cn("px-2 py-1.5 text-sm font-semibold", inset && "pl-8", className)}
-=======
     className={cn('px-2 py-1.5 text-sm font-semibold', inset && 'pl-8', className)}
->>>>>>> a821a0c (second update)
     {...props}
   />
 ));
@@ -173,17 +161,10 @@ DropdownMenuSeparator.displayName = DropdownMenuPrimitive.Separator.displayName;
 
 const DropdownMenuShortcut = ({ className, ...props }: React.HTMLAttributes<HTMLSpanElement>) => {
   return (
-<<<<<<< HEAD
-    <span className={cn("ml-auto text-xs tracking-widest opacity-60", className)} {...props} />
-  );
-};
-DropdownMenuShortcut.displayName = "DropdownMenuShortcut";
-=======
     <span className={cn('ml-auto text-xs tracking-widest opacity-60', className)} {...props} />
   );
 };
 DropdownMenuShortcut.displayName = 'DropdownMenuShortcut';
->>>>>>> a821a0c (second update)
 
 export {
   DropdownMenu,

@@ -21,13 +21,8 @@ function DoctorPatients() {
   const columns = useMemo<ColumnDef<Patient>[]>(
     () => [
       {
-<<<<<<< HEAD
-        header: "Patient",
-        accessorKey: "name",
-=======
         header: 'Patient',
         accessorKey: 'name',
->>>>>>> a821a0c (second update)
         cell: ({ row }) => (
           <Link
             to="/doctor/patients/$id"
@@ -36,17 +31,10 @@ function DoctorPatients() {
           >
             <span className="grid h-9 w-9 place-items-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
               {row.original.name
-<<<<<<< HEAD
-                .split(" ")
-                .map((n) => n[0])
-                .slice(0, 2)
-                .join("")}
-=======
                 .split(' ')
                 .map((n) => n[0])
                 .slice(0, 2)
                 .join('')}
->>>>>>> a821a0c (second update)
             </span>
             <div>
               <p className="font-medium group-hover:text-primary group-hover:underline">
@@ -57,22 +45,6 @@ function DoctorPatients() {
           </Link>
         ),
       },
-<<<<<<< HEAD
-      { header: "Age / Sex", cell: ({ row }) => `${row.original.age}y · ${row.original.gender}` },
-      {
-        header: "Blood",
-        accessorKey: "bloodGroup",
-        cell: ({ getValue }) => <StatusChip tone="danger">{String(getValue())}</StatusChip>,
-      },
-      { header: "Phone", accessorKey: "phone" },
-      {
-        header: "Allergies",
-        accessorKey: "allergies",
-        cell: ({ getValue }) => {
-          const a = getValue() as string[];
-          return a.length ? (
-            <StatusChip tone="warning">{a.join(", ")}</StatusChip>
-=======
       { header: 'Age / Sex', cell: ({ row }) => `${row.original.age}y · ${row.original.gender}` },
       {
         header: 'Blood',
@@ -87,20 +59,14 @@ function DoctorPatients() {
           const a = getValue() as string[];
           return a.length ? (
             <StatusChip tone="warning">{a.join(', ')}</StatusChip>
->>>>>>> a821a0c (second update)
           ) : (
             <span className="text-xs text-muted-foreground">None</span>
           );
         },
       },
       {
-<<<<<<< HEAD
-        header: "",
-        id: "a",
-=======
         header: '',
         id: 'a',
->>>>>>> a821a0c (second update)
         cell: ({ row }) => (
           <Link
             to="/doctor/patients/$id"
@@ -112,11 +78,7 @@ function DoctorPatients() {
         ),
       },
     ],
-<<<<<<< HEAD
-    []
-=======
     [],
->>>>>>> a821a0c (second update)
   );
 
   return (

@@ -1,37 +1,22 @@
-<<<<<<< HEAD
-import { createFileRoute } from "@tanstack/react-router";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { medicines, patients, doctors } from "@/lib/mock/data";
-import { useState, useEffect, useRef } from "react";
-import { Plus, Trash2, Receipt} from "lucide-react";
-=======
 import { createFileRoute } from '@tanstack/react-router';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { medicines } from '@/lib/mock/data';
-import { useState, useEffect } from 'react';
+import { medicines, patients } from '@/lib/mock/data';
+import { useState, useEffect, useRef } from 'react';
 import { Plus, Trash2, Receipt } from 'lucide-react';
->>>>>>> a821a0c (second update)
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-<<<<<<< HEAD
-} from "@/components/ui/select";
-import { allowOnlyAlphabetsAndSpaces, allowOnlyNumbers } from "@/lib/validations";
-import { MobileInput } from "@/components/common/ValidatedInputs";
-import { toast } from "sonner";
-=======
 } from '@/components/ui/select';
+import { allowOnlyAlphabetsAndSpaces } from '@/lib/validations';
+import { MobileInput } from '@/components/common/ValidatedInputs';
 import { toast } from 'sonner';
 import { useAuth } from '@/lib/store/auth';
 import { useAudit } from '@/lib/store/audit';
->>>>>>> a821a0c (second update)
 
 export const Route = createFileRoute('/_app/pharmacy/billing')({
   component: PharmacyBilling,
@@ -53,18 +38,10 @@ function PharmacyBilling() {
     return today.toISOString().split('T')[0]; // YYYY-MM-DD
   });
 
-<<<<<<< HEAD
-  const [patientName, setPatientName] = useState("");
-  const [patientId, setPatientId] = useState("");
-  const [phone, setPhone] = useState("");
-  const [referredDoctor, setReferredDoctor] = useState("");
-=======
   const [patientName, setPatientName] = useState('');
-  const [gender, setGender] = useState('Male');
+  const [patientId, setPatientId] = useState('');
   const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
   const [referredDoctor, setReferredDoctor] = useState('');
->>>>>>> a821a0c (second update)
 
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
@@ -80,71 +57,62 @@ function PharmacyBilling() {
         setShowSuggestions(false);
       }
     }
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
 
   const filteredPatients =
-    patientName.trim() === ""
+    patientName.trim() === ''
       ? []
       : patients.filter(
           (p) =>
             p.name.toLowerCase().includes(patientName.toLowerCase()) ||
             p.id.toLowerCase().includes(patientName.toLowerCase()) ||
-            p.phone.toLowerCase().includes(patientName.toLowerCase())
+            p.phone.toLowerCase().includes(patientName.toLowerCase()),
         );
 
   const selectPatient = (p: (typeof patients)[0]) => {
     setPatientName(p.name);
     setPatientId(p.id);
     setPhone(p.phone);
-
-    // Find doctor name
-    const doc = doctors.find((d) => d.id === p.assignedDoctorId);
-    setReferredDoctor(doc ? doc.name : "Not Assigned");
-
     setShowSuggestions(false);
     setActiveIndex(-1);
   };
 
   const handleNameChange = (val: string) => {
-    const cleaned = allowOnlyAlphabetsAndSpaces(val).slice(0, 50);
-    setPatientName(cleaned);
-    setPatientId(""); // Clear Patient ID to handle manual entry if name is edited
+    const sanitized = allowOnlyAlphabetsAndSpaces(val);
+    setPatientName(sanitized);
     setShowSuggestions(true);
     setActiveIndex(-1);
-  };
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handlePhoneChange = (val: string) => {
-    const cleanDigits = allowOnlyNumbers(val).slice(0, 10);
-    setPhone(cleanDigits);
+    if (!sanitized) {
+      setPatientId('');
+      setPhone('');
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (!showSuggestions || filteredPatients.length === 0) return;
 
-    if (e.key === "ArrowDown") {
+    if (e.key === 'ArrowDown') {
       e.preventDefault();
       setActiveIndex((prev) => (prev < filteredPatients.length - 1 ? prev + 1 : 0));
-    } else if (e.key === "ArrowUp") {
+    } else if (e.key === 'ArrowUp') {
       e.preventDefault();
       setActiveIndex((prev) => (prev > 0 ? prev - 1 : filteredPatients.length - 1));
-    } else if (e.key === "Enter") {
+    } else if (e.key === 'Enter') {
       if (activeIndex >= 0 && activeIndex < filteredPatients.length) {
         e.preventDefault();
         selectPatient(filteredPatients[activeIndex]!);
       }
-    } else if (e.key === "Escape") {
+    } else if (e.key === 'Escape') {
       setShowSuggestions(false);
-      setActiveIndex(-1);
     }
   };
 
-  // Medicine select row states
-  const [selectedMedId, setSelectedMedId] = useState('');
+  // Medicine inputs state
+  const [selectedMedId, setSelectedMedId] = useState<string>('');
   const [price, setPrice] = useState<number>(0);
   const [qty, setQty] = useState<number | ''>('');
   const [lineTotal, setLineTotal] = useState<number>(0);
@@ -154,15 +122,6 @@ function PharmacyBilling() {
 
   // Right column financial inputs/calculations
   const [discountPercent, setDiscountPercent] = useState<number>(0);
-<<<<<<< HEAD
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [paymentMode, setPaymentMode] = useState("CASH");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [reference, setReference] = useState("");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [paidAmount, setPaidAmount] = useState<number | "">("");
-=======
->>>>>>> a821a0c (second update)
 
   // Update price and line total when medicine or quantity changes
   useEffect(() => {
@@ -204,13 +163,6 @@ function PharmacyBilling() {
   }, 0);
 
   const netValue = rawSubtotal - totalDiscount + gstValue;
-<<<<<<< HEAD
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const roundOff = Math.round(netValue) - netValue;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const billAmount = Math.round(netValue);
-=======
->>>>>>> a821a0c (second update)
 
   // Add Item to Bill
   const handleAddItem = () => {
@@ -274,17 +226,10 @@ function PharmacyBilling() {
 
   // Reset entire bill form
   const handleClearBill = () => {
-<<<<<<< HEAD
-    setPatientName("");
-    setPatientId("");
-    setPhone("");
-    setReferredDoctor("");
-=======
     setPatientName('');
+    setPatientId('');
     setPhone('');
-    setEmail('');
     setReferredDoctor('');
->>>>>>> a821a0c (second update)
     setBillingItems([]);
     setSelectedMedId('');
     setQty('');
@@ -304,8 +249,6 @@ function PharmacyBilling() {
 
     toast.success(`Invoice for ${patientName} generated successfully!`);
 
-<<<<<<< HEAD
-=======
     const user = useAuth.getState().user;
     if (user && user.role !== 'admin') {
       useAudit.getState().addLog({
@@ -316,7 +259,6 @@ function PharmacyBilling() {
       });
     }
 
->>>>>>> a821a0c (second update)
     // Trigger standard browser print
     setTimeout(() => {
       window.print();
@@ -329,40 +271,36 @@ function PharmacyBilling() {
       toast.error('No items in bill to hold.');
       return;
     }
-    toast.info('Bill placed on hold.');
+    toast.info('Current bill held.');
+    handleClearBill();
   };
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Print-only Hospital Header */}
-      <div className="hidden print:block text-center border-b-2 border-gray-800 pb-3 pt-2 mb-2">
-        <h1 className="text-2xl font-extrabold tracking-widest text-gray-900 uppercase">
-          SRI MANJUNATHA HOSPITAL
-        </h1>
-        <p className="text-sm text-gray-700 mt-0.5">
-          C.K.PURA, KELAGOTE, BESIDE SBI BANK, CHITRADURGA
-        </p>
-        <p className="text-sm text-gray-700">PH NO : (+91) 9108453470</p>
-      </div>
-
-      {/* Pharmacy Billing Main Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border pb-4 print:hidden">
+      {/* Top Header / Action Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
         <div>
-          <h1 className="font-display text-2xl font-bold text-foreground">Pharmacy Billing</h1>
+          <h1 className="font-display text-2xl font-bold tracking-tight text-foreground">
+            Pharmacy Billing
+          </h1>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Quick point-of-sale billing &amp; instant invoice generation
+          </p>
         </div>
 
-        {/* Date and Action Controls (Clear, Retrieve) */}
         <div className="flex flex-wrap items-center gap-3">
+          {/* Bill Date Input */}
           <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-muted-foreground">Bill Date *</span>
-            <div className="relative">
-              <Input
-                type="date"
-                value={billDate}
-                onChange={(e) => setBillDate(e.target.value)}
-                className="h-9 w-40 bg-background py-1 text-xs"
-              />
-            </div>
+            <Label htmlFor="billDate" className="text-xs font-semibold whitespace-nowrap">
+              Bill Date:
+            </Label>
+            <Input
+              id="billDate"
+              type="date"
+              value={billDate}
+              onChange={(e) => setBillDate(e.target.value)}
+              className="w-36 h-9 text-xs bg-background"
+            />
           </div>
 
           <Button
@@ -371,9 +309,8 @@ function PharmacyBilling() {
             onClick={handleClearBill}
             className="h-9 border-input text-foreground text-xs px-4"
           >
-            Clear Bill
+            Clear
           </Button>
-
           <Button
             type="button"
             variant="outline"
@@ -392,7 +329,6 @@ function PharmacyBilling() {
           {/* Patient Details Card */}
           <div className="surface-elevated p-5 rounded-2xl flex flex-col gap-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3.5">
-<<<<<<< HEAD
               <div className="md:col-span-1">
                 <Label htmlFor="patId" className="text-xs font-semibold">
                   Patient ID
@@ -407,11 +343,8 @@ function PharmacyBilling() {
               </div>
 
               <div className="md:col-span-2 relative" ref={suggestionsContainerRef}>
-=======
-              <div className="md:col-span-2">
->>>>>>> a821a0c (second update)
                 <Label htmlFor="patName" className="text-xs font-semibold">
-                  Patient Name *{" "}
+                  Patient Name *{' '}
                   <span className="text-xs text-muted-foreground">(Letters only)</span>
                 </Label>
                 <Input
@@ -448,8 +381,8 @@ function PharmacyBilling() {
                           onClick={() => selectPatient(p)}
                           className={`flex flex-col px-3 py-2 cursor-pointer transition-colors ${
                             isActive
-                              ? "bg-accent text-accent-foreground font-medium"
-                              : "text-foreground hover:bg-accent hover:text-accent-foreground"
+                              ? 'bg-accent text-accent-foreground font-medium'
+                              : 'text-foreground hover:bg-accent hover:text-accent-foreground'
                           }`}
                         >
                           <div className="flex justify-between items-center">

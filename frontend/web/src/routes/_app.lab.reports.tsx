@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
 import { PageHeader } from "@/components/common/PageHeader";
@@ -37,24 +36,11 @@ import { labOrders, patients, doctors } from "@/lib/mock/data";
 import { format } from "date-fns";
 import { StatusChip } from "@/components/common/StatusChip";
 import { toast } from "sonner";
-=======
-import { createFileRoute } from '@tanstack/react-router';
-import { useMemo } from 'react';
-import type { ColumnDef } from '@tanstack/react-table';
-import { PageHeader } from '@/components/common/PageHeader';
-import { DataTable } from '@/components/common/DataTable';
-import { Button } from '@/components/ui/button';
-import { Download, Printer } from 'lucide-react';
-import { labOrders, patients } from '@/lib/mock/data';
-import type { LabOrder } from '@/lib/types';
-import { format } from 'date-fns';
->>>>>>> a821a0c (second update)
 
 export const Route = createFileRoute('/_app/lab/reports')({
   component: LabReports,
 });
 
-<<<<<<< HEAD
 // ─── Filter Options ────────────────────────────────────────────────────────────
 const BRANCH_OPTIONS = ["Select Branch", "Koramangala", "Indiranagar", "Whitefield", "Jayanagar"];
 const TEST_FILTER_OPTIONS = [
@@ -139,49 +125,6 @@ const TEST_DATA: Record<
 };
 
 function getTestRows(testName: string) {
-=======
-function LabReports() {
-  const completed = labOrders.filter((l) => l.status === 'completed');
-  const columns = useMemo<ColumnDef<LabOrder>[]>(
-    () => [
-      {
-        header: 'Report',
-        accessorKey: 'id',
-        cell: ({ getValue }) => <code className="font-mono text-xs">{String(getValue())}</code>,
-      },
-      {
-        header: 'Patient',
-        accessorKey: 'patientId',
-        cell: ({ getValue }) => patients.find((p) => p.id === getValue())?.name,
-      },
-      {
-        header: 'Tests',
-        accessorKey: 'tests',
-        cell: ({ getValue }) => (getValue() as string[]).join(', '),
-      },
-      {
-        header: 'Date',
-        accessorKey: 'orderedOn',
-        cell: ({ getValue }) => format(new Date(String(getValue())), 'MMM d, yyyy'),
-      },
-      {
-        header: '',
-        id: 'a',
-        cell: () => (
-          <div className="flex gap-2">
-            <Button size="sm" variant="outline">
-              <Download className="mr-1 h-3.5 w-3.5" /> PDF
-            </Button>
-            <Button size="sm" variant="ghost">
-              <Printer className="h-3.5 w-3.5" />
-            </Button>
-          </div>
-        ),
-      },
-    ],
-    [],
-  );
->>>>>>> a821a0c (second update)
   return (
     TEST_DATA[testName] ?? [
       { parameter: testName, result: "Within normal limits", unit: "—", reference: "—" },

@@ -10,11 +10,7 @@ import {
   DialogTitle,
   DialogFooter,
   DialogDescription,
-<<<<<<< HEAD
-} from "@/components/ui/dialog";
-=======
 } from '@/components/ui/dialog';
->>>>>>> a821a0c (second update)
 import {
   Users,
   Stethoscope,
@@ -26,19 +22,11 @@ import {
   ArrowRight,
   X,
   ExternalLink,
-<<<<<<< HEAD
-} from "lucide-react";
-import { useCredentials } from "@/lib/store/credentials";
-import { useAuth } from "@/lib/store/auth";
-import type { Role } from "@/lib/types";
-import { cn } from "@/lib/utils";
-=======
 } from 'lucide-react';
 import { useCredentials } from '@/lib/store/credentials';
 import { useAuth } from '@/lib/store/auth';
 import type { Role } from '@/lib/types';
 import { cn } from '@/lib/utils';
->>>>>>> a821a0c (second update)
 
 const ALL_MONITOR_ROLES: {
   value: Role;
@@ -50,65 +38,6 @@ const ALL_MONITOR_ROLES: {
   stats: { label: string; value: string }[];
 }[] = [
   {
-<<<<<<< HEAD
-    value: "frontdesk",
-    label: "Front Desk",
-    icon: Users,
-    color: "from-blue-500 to-blue-700",
-    path: "/frontdesk",
-    description: "Patient registration, appointments & queue management",
-    stats: [
-      { label: "Today's check-ins", value: "47" },
-      { label: "Queue", value: "12" },
-    ],
-  },
-  {
-    value: "doctor",
-    label: "Doctor",
-    icon: Stethoscope,
-    color: "from-emerald-500 to-emerald-700",
-    path: "/doctor",
-    description: "Patient consultations, prescriptions & lab orders",
-    stats: [
-      { label: "In queue", value: "8" },
-      { label: "Completed", value: "23" },
-    ],
-  },
-  {
-    value: "nurse",
-    label: "Nurse",
-    icon: HeartPulse,
-    color: "from-pink-500 to-pink-700",
-    path: "/nurse",
-    description: "Vitals recording, patient observations & triage",
-    stats: [
-      { label: "Vitals recorded", value: "31" },
-      { label: "Pending", value: "5" },
-    ],
-  },
-  {
-    value: "pharmacy",
-    label: "Pharmacy",
-    icon: Pill,
-    color: "from-amber-500 to-amber-700",
-    path: "/pharmacy",
-    description: "Medicine dispensing, inventory & billing",
-    stats: [
-      { label: "Orders today", value: "64" },
-      { label: "Low stock", value: "3" },
-    ],
-  },
-  {
-    value: "lab",
-    label: "Laboratory",
-    icon: FlaskConical,
-    color: "from-violet-500 to-violet-700",
-    path: "/lab",
-    description: "Lab tests, reports upload & pending work",
-    stats: [
-      { label: "Pending tests", value: "14" },
-      { label: "Completed", value: "36" },
-=======
     value: 'frontdesk',
     label: 'Front Desk',
     icon: Users,
@@ -166,7 +95,6 @@ const ALL_MONITOR_ROLES: {
     stats: [
       { label: 'Pending tests', value: '14' },
       { label: 'Completed', value: '36' },
->>>>>>> a821a0c (second update)
     ],
   },
 ];
@@ -206,13 +134,8 @@ function MonitorModal({
           <DialogTitle className="flex items-center gap-2">
             <span
               className={cn(
-<<<<<<< HEAD
-                "grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br text-white",
-                role.color
-=======
                 'grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br text-white',
                 role.color,
->>>>>>> a821a0c (second update)
               )}
             >
               <Icon className="h-4 w-4" />
@@ -237,11 +160,7 @@ function MonitorModal({
           <p className="font-semibold">Admin Monitor Mode</p>
           <p className="mt-0.5 text-xs opacity-80">
             As <span className="font-semibold">{user?.name}</span> (Admin), you have read access to
-<<<<<<< HEAD
-            all dashboards. Click "Open Dashboard" to navigate and inspect the full {role.label}{" "}
-=======
             all dashboards. Click "Open Dashboard" to navigate and inspect the full {role.label}{' '}
->>>>>>> a821a0c (second update)
             view.
           </p>
         </div>
@@ -284,11 +203,7 @@ function MonitorDashboardsPage() {
         {ALL_MONITOR_ROLES.map((role) => {
           const Icon = role.icon;
           const staffCount = accounts.filter(
-<<<<<<< HEAD
-            (a) => a.role === role.value && a.status === "active"
-=======
             (a) => a.role === role.value && a.status === 'active',
->>>>>>> a821a0c (second update)
           ).length;
           return (
             <div
@@ -302,13 +217,8 @@ function MonitorDashboardsPage() {
                 <div className="flex items-center gap-3">
                   <span
                     className={cn(
-<<<<<<< HEAD
-                      "grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br text-white shadow-sm",
-                      role.color
-=======
                       'grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br text-white shadow-sm',
                       role.color,
->>>>>>> a821a0c (second update)
                     )}
                   >
                     <Icon className="h-5 w-5" />

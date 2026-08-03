@@ -1,10 +1,5 @@
-<<<<<<< HEAD
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-=======
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
->>>>>>> a821a0c (second update)
 import {
   Card,
   CardContent,
@@ -12,15 +7,9 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-<<<<<<< HEAD
-} from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-=======
 } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
->>>>>>> a821a0c (second update)
 
 const AppointmentCard = () => {
   return (
@@ -33,11 +22,7 @@ const AppointmentCard = () => {
         <CardContent className="flex flex-col gap-4">
           <div className="space-y-3">
             <Label className="text-muted-foreground">Available on March 18, 2026</Label>
-<<<<<<< HEAD
-            <ToggleGroup type={"single"} defaultValue={"9:00"} className="flex-wrap gap-2">
-=======
             <ToggleGroup type={'single'} defaultValue={'9:00'} className="flex-wrap gap-2">
->>>>>>> a821a0c (second update)
               <ToggleGroupItem value="9:00" className="cursor-pointer">
                 9:00 AM
               </ToggleGroupItem>

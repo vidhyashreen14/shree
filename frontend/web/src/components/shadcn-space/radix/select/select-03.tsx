@@ -1,25 +1,15 @@
 'use client';
 
-<<<<<<< HEAD
-import { useState, useId } from "react";
-import { CircleIcon } from "lucide-react";
-import { Label } from "@/components/ui/label";
-=======
 import { useState, useId } from 'react';
 import { CircleIcon } from 'lucide-react';
 import { Label } from '@/components/ui/label';
->>>>>>> a821a0c (second update)
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-<<<<<<< HEAD
-} from "@/components/ui/select";
-=======
 } from '@/components/ui/select';
->>>>>>> a821a0c (second update)
 
 const statuses = [
   {
@@ -51,14 +41,7 @@ const statuses = [
 
 const SelectStatusDemo = () => {
   const id = useId();
-<<<<<<< HEAD
-  const [value, setValue] = useState("In Progress");
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const selectedStatus = statuses.find((s) => s.value === value);
-=======
   const [value, setValue] = useState('In Progress');
->>>>>>> a821a0c (second update)
 
   return (
     <div className="w-full max-w-xs space-y-2">

@@ -1,10 +1,5 @@
-<<<<<<< HEAD
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/motion-radio-group";
-=======
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/motion-radio-group';
->>>>>>> a821a0c (second update)
 
 const RadioGroupAnimatedDemo = () => {
   return (

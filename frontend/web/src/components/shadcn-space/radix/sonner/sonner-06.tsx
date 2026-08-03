@@ -1,20 +1,3 @@
-<<<<<<< HEAD
-"use client";
-
-import { useState, useEffect } from "react";
-import { AnimatePresence, motion } from "motion/react";
-import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/spinner";
-import { Check, Wallet } from "lucide-react";
-import { cn } from "@/lib/utils";
-
-const TransactionToastContent = () => {
-  const [status, setStatus] = useState<"pending" | "success">("pending");
-
-  useEffect(() => {
-    const t = setTimeout(() => setStatus("success"), 2200);
-=======
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -30,7 +13,6 @@ const TransactionToastContent = () => {
 
   useEffect(() => {
     const t = setTimeout(() => setStatus('success'), 2200);
->>>>>>> a821a0c (second update)
     return () => clearTimeout(t);
   }, []);
 
@@ -64,24 +46,14 @@ const TransactionToastContent = () => {
           {/* Icon circle */}
           <div
             className={cn(
-<<<<<<< HEAD
-              "relative flex size-11 items-center justify-center rounded-full shadow-xs",
-              status === "pending" ? "bg-amber-300/20" : "bg-teal-400/20"
-=======
               'relative flex size-11 items-center justify-center rounded-full shadow-xs',
               status === 'pending' ? 'bg-amber-300/20' : 'bg-teal-400/20',
->>>>>>> a821a0c (second update)
             )}
           >
             <Wallet
               className={cn(
-<<<<<<< HEAD
-                "size-5 transition-colors duration-500",
-                status === "pending" ? "text-amber-400" : "text-teal-400"
-=======
                 'size-5 transition-colors duration-500',
                 status === 'pending' ? 'text-amber-400' : 'text-teal-400',
->>>>>>> a821a0c (second update)
               )}
             />
 

@@ -1,12 +1,6 @@
-<<<<<<< HEAD
-import { useId } from "react";
-
-import { Input } from "@/components/ui/input";
-=======
 import { useId } from 'react';
 
 import { Input } from '@/components/ui/input';
->>>>>>> a821a0c (second update)
 
 const InputErrorDemo = () => {
   const id = useId();

@@ -3,15 +3,9 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-<<<<<<< HEAD
-} from "@/components/ui/accordion";
-import { cn } from "@/lib/utils";
-import { FileText, Folder, LucideIcon, Settings, Users } from "lucide-react";
-=======
 } from '@/components/ui/accordion';
 import { cn } from '@/lib/utils';
 import { FileText, Folder, LucideIcon, Settings, Users } from 'lucide-react';
->>>>>>> a821a0c (second update)
 
 const data: {
   value: string;
@@ -43,33 +37,19 @@ const data: {
     bgColor: 'bg-orange-400/10',
   },
   {
-<<<<<<< HEAD
-    value: "settings",
-    title: "Settings",
-    subtitle: "Customize your experience",
-    content: "Adjust preferences, update account details, and configure application behavior.",
-=======
     value: 'settings',
     title: 'Settings',
     subtitle: 'Customize your experience',
     content: 'Adjust preferences, update account details, and configure application behavior.',
->>>>>>> a821a0c (second update)
     icon: Settings,
     textColor: 'text-teal-400',
     bgColor: 'bg-teal-400/10',
   },
   {
-<<<<<<< HEAD
-    value: "team",
-    title: "Team Members",
-    subtitle: "Manage users and roles",
-    content: "Invite new members, assign roles, and control access permissions for your team.",
-=======
     value: 'team',
     title: 'Team Members',
     subtitle: 'Manage users and roles',
     content: 'Invite new members, assign roles, and control access permissions for your team.',
->>>>>>> a821a0c (second update)
     icon: Users,
     textColor: 'text-red-500',
     bgColor: 'bg-red-500/10',

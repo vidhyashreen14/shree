@@ -1,22 +1,3 @@
-<<<<<<< HEAD
-import { createFileRoute } from "@tanstack/react-router";
-import { PageHeader } from "@/components/common/PageHeader";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
-import { toast } from "sonner";
-import {
-  allowOnlyHospitalNameChars,
-  allowOnlyNumbers,
-  allowOnlyAddressChars,
-} from "@/lib/validations";
-import { useState } from "react";
-import { useFeeSettings } from "@/lib/store/feeSettings";
-import { useHospitalSettings } from "@/lib/store/hospitalSettings";
-import { IndianRupee, Settings2, UploadCloud } from "lucide-react";
-=======
 import { createFileRoute } from '@tanstack/react-router';
 import { PageHeader } from '@/components/common/PageHeader';
 import { Button } from '@/components/ui/button';
@@ -39,7 +20,13 @@ import {
   planDurationDays,
   type SubscriptionPlan,
 } from '@/lib/store/subscriptions';
-import { cn } from '@/lib/utils';
+import {
+  cn,
+  sanitizePhone,
+  sanitizeGSTIN,
+  sanitizeAlphanumericId,
+  sanitizeOrgName,
+} from '@/lib/utils';
 import {
   IndianRupee,
   Settings2,
@@ -63,9 +50,6 @@ import {
   Mail,
   PhoneCall,
 } from 'lucide-react';
->>>>>>> a821a0c (second update)
-
-import { sanitizePhone, sanitizeGSTIN, sanitizeAlphanumericId, sanitizeOrgName } from '@/lib/utils';
 import {
   ResponsiveContainer,
   AreaChart,
@@ -413,70 +397,6 @@ function HospitalSettings() {
 
   return (
     <>
-<<<<<<< HEAD
-      <PageHeader
-        eyebrow="Configuration"
-        title="Hospital settings"
-        description="Branding, fee structure, operational policy, and notifications."
-      />
-
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        {/* Hospital Profile */}
-        <div className="surface-elevated p-6 lg:col-span-2">
-          <h3 className="font-display font-semibold">Hospital profile</h3>
-          <p className="text-xs text-muted-foreground">
-            Information shown on prescriptions and reports.
-          </p>
-          <form className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2" onSubmit={saveProfile}>
-            {/* Hospital Logo Section */}
-            <div className="sm:col-span-2 flex flex-col sm:flex-row items-center gap-6 pb-6 mb-2 border-b border-border">
-              <div className="relative flex h-24 w-24 shrink-0 items-center justify-center rounded-2xl border-2 border-dashed border-border bg-muted/20 overflow-hidden group hover:border-primary/50 transition-colors">
-                {logoUrl ? (
-                  <img
-                    src={logoUrl}
-                    alt="Hospital Logo"
-                    className="h-full w-full object-contain p-2"
-                  />
-                ) : (
-                  <div className="text-center p-3">
-                    <span className="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-primary mx-auto mb-1 text-lg">
-                      🏥
-                    </span>
-                    <span className="text-[10px] text-muted-foreground font-medium">
-                      Default Brand
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              <div className="flex-1 text-center sm:text-left space-y-2.5">
-                <div>
-                  <h4 className="text-sm font-semibold">Hospital Logo</h4>
-                  <p className="text-xs text-muted-foreground">
-                    This logo will appear on prescriptions, invoices, and the dashboard sidebar.
-                  </p>
-                </div>
-                <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
-                  <label className="cursor-pointer inline-flex items-center gap-1.5 h-9 rounded-lg bg-primary px-4 text-xs font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90">
-                    <UploadCloud className="h-3.5 w-3.5" />
-                    Upload Logo
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={handleLogoChange}
-                    />
-                  </label>
-                  {logoUrl && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      className="h-9 rounded-lg text-destructive hover:bg-destructive/10 hover:text-destructive"
-                      onClick={() => {
-                        setLogoUrl("");
-                        toast.success("Logo removed from preview");
-=======
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <PageHeader
           eyebrow="Configuration & Insights"
@@ -644,7 +564,6 @@ function HospitalSettings() {
                         border: '1px solid var(--color-border)',
                         borderRadius: 12,
                         fontSize: 12,
->>>>>>> a821a0c (second update)
                       }}
                     />
                     <Legend wrapperStyle={{ fontSize: 11 }} />
@@ -874,87 +793,6 @@ function HospitalSettings() {
                   )}
                 </div>
 
-<<<<<<< HEAD
-            <div className="sm:col-span-2">
-              <Label htmlFor="hosp-name">Hospital name</Label>
-              <Input
-                id="hosp-name"
-                value={name}
-                maxLength={150}
-                onChange={(e) => setName(allowOnlyHospitalNameChars(e.target.value))}
-                className="mt-1.5"
-              />
-            </div>
-            <div>
-              <Label htmlFor="hosp-phone">Phone</Label>
-              <Input
-                id="hosp-phone"
-                value={phone}
-                maxLength={10}
-                onChange={(e) => setPhone(allowOnlyNumbers(e.target.value))}
-                className="mt-1.5"
-              />
-            </div>
-            <div>
-              <Label htmlFor="hosp-email">Email</Label>
-              <Input
-                id="hosp-email"
-                value={email}
-                maxLength={100}
-                onChange={(e) => setEmail(e.target.value.replace(/\s/g, ""))}
-                className="mt-1.5"
-              />
-            </div>
-            <div className="sm:col-span-2">
-              <Label htmlFor="hosp-address">Address</Label>
-              <Textarea
-                id="hosp-address"
-                value={address}
-                maxLength={250}
-                onChange={(e) => setAddress(allowOnlyAddressChars(e.target.value))}
-                className="mt-1.5"
-              />
-            </div>
-            <div>
-              <Label htmlFor="hosp-gst">GST number</Label>
-              <Input
-                id="hosp-gst"
-                value={gstNumber}
-                onChange={(e) => setGstNumber(e.target.value)}
-                className="mt-1.5"
-              />
-            </div>
-            <div>
-              <Label htmlFor="hosp-license">License number</Label>
-              <Input
-                id="hosp-license"
-                value={licenseNumber}
-                onChange={(e) => setLicenseNumber(e.target.value)}
-                className="mt-1.5"
-              />
-            </div>
-            <div className="sm:col-span-2 mt-2 flex justify-end">
-              <Button type="submit">Save changes</Button>
-            </div>
-          </form>
-        </div>
-
-        {/* Operational Policy */}
-        <div className="surface-elevated p-6">
-          <h3 className="font-display font-semibold">Operational policy</h3>
-          <div className="mt-4 space-y-4">
-            {[
-              { label: "Allow walk-in patients", desc: "Patients without appointment" },
-              { label: "SMS appointment reminders", desc: "24h before consultation" },
-              { label: "Auto-assign tokens", desc: "On check-in" },
-              { label: "Two-factor for admins", desc: "TOTP via authenticator app", on: true },
-              { label: "Public doctor directory", desc: "Visible on hospital website" },
-            ].map((s, i) => (
-              <div key={s.label} className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="text-sm font-medium">{s.label}</p>
-                  <p className="text-xs text-muted-foreground">{s.desc}</p>
-=======
                 <div className="flex-1 text-center sm:text-left space-y-2.5">
                   <div>
                     <h4 className="text-sm font-semibold">Hospital Brand Logo</h4>
@@ -988,36 +826,9 @@ function HospitalSettings() {
                       </Button>
                     )}
                   </div>
->>>>>>> a821a0c (second update)
                 </div>
               </div>
 
-<<<<<<< HEAD
-        {/* Fee Configuration */}
-        <div className="surface-elevated p-6 lg:col-span-2">
-          <div className="flex items-center gap-2.5 mb-1">
-            <span className="grid h-8 w-8 place-items-center rounded-lg bg-primary/10">
-              <IndianRupee className="h-4 w-4 text-primary" />
-            </span>
-            <div>
-              <h3 className="font-display font-semibold">Fee configuration</h3>
-              <p className="text-xs text-muted-foreground">
-                These amounts are shown on the front desk payment screen for every patient visit.
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div>
-              <Label htmlFor="reg-fee">Registration fee (₹)</Label>
-              <p className="text-xs text-muted-foreground mb-1.5">
-                Charged once for new patients only
-              </p>
-              <div className="relative">
-                <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted-foreground text-sm">
-                  ₹
-                </span>
-=======
               <div className="sm:col-span-2">
                 <Label
                   htmlFor="hosp-name"
@@ -1025,7 +836,6 @@ function HospitalSettings() {
                 >
                   Hospital Name
                 </Label>
->>>>>>> a821a0c (second update)
                 <Input
                   id="hosp-name"
                   value={name}
@@ -1033,19 +843,6 @@ function HospitalSettings() {
                   className="mt-1.5 h-10 rounded-lg shadow-sm"
                 />
               </div>
-<<<<<<< HEAD
-            </div>
-
-            <div>
-              <Label htmlFor="cons-fee">Consultation fee (₹)</Label>
-              <p className="text-xs text-muted-foreground mb-1.5">
-                Charged per visit for all patients
-              </p>
-              <div className="relative">
-                <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted-foreground text-sm">
-                  ₹
-                </span>
-=======
               <div>
                 <Label
                   htmlFor="hosp-phone"
@@ -1053,7 +850,6 @@ function HospitalSettings() {
                 >
                   Contact Phone
                 </Label>
->>>>>>> a821a0c (second update)
                 <Input
                   id="hosp-phone"
                   type="tel"
@@ -1134,32 +930,6 @@ function HospitalSettings() {
           </div>
         </TabsContent>
 
-<<<<<<< HEAD
-            {/* Fee Preview */}
-            <div className="sm:col-span-2 rounded-xl border bg-muted/30 p-4">
-              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-3">
-                Preview — New Patient Receipt
-              </p>
-              <div className="space-y-1.5 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Registration fee</span>
-                  <span className="font-medium">₹{regFee || 0}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Consultation fee</span>
-                  <span className="font-medium">₹{consFee || 0}</span>
-                </div>
-                <div className="my-2 border-t border-dashed" />
-                <div className="flex justify-between font-bold">
-                  <span>Total (new patient)</span>
-                  <span className="text-primary">
-                    ₹{(Number(regFee) || 0) + (Number(consFee) || 0)}
-                  </span>
-                </div>
-                <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                  <span>Returning patient (consultation only)</span>
-                  <span>₹{Number(consFee) || 0}</span>
-=======
         {/* ── Operational Policy Tab ── */}
         <TabsContent value="policy" className="outline-none animate-in fade-in-50 duration-200">
           <div className="surface-elevated p-6 shadow-sm rounded-xl max-w-2xl mx-auto">
@@ -1200,7 +970,6 @@ function HospitalSettings() {
                     <p className="text-xs text-muted-foreground max-w-md">{s.desc}</p>
                   </div>
                   <Switch defaultChecked={s.on ?? i % 2 === 0} />
->>>>>>> a821a0c (second update)
                 </div>
               ))}
             </div>
@@ -1223,21 +992,6 @@ function HospitalSettings() {
               </div>
             </div>
 
-<<<<<<< HEAD
-            <div className="sm:col-span-2 flex justify-end gap-2">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setRegFee(String(registrationFee));
-                  setConsFee(String(consultationFee));
-                }}
-              >
-                Reset
-              </Button>
-              <Button onClick={saveFees} id="btn-save-fees">
-                <Settings2 className="mr-2 h-4 w-4" /> Save fee configuration
-              </Button>
-=======
             <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div>
                 <Label
@@ -1336,7 +1090,6 @@ function HospitalSettings() {
                   <Settings2 className="mr-2 h-4 w-4" /> Save fee configuration
                 </Button>
               </div>
->>>>>>> a821a0c (second update)
             </div>
           </div>
         </TabsContent>

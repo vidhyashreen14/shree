@@ -37,11 +37,6 @@ export const useTheme = create<ThemeState>()(
         set({ theme: t });
       },
     }),
-<<<<<<< HEAD
-    { name: "medicore-theme" }
-  )
-=======
     { name: 'medicore-theme' },
   ),
->>>>>>> a821a0c (second update)
 );

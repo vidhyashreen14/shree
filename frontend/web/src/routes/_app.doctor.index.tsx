@@ -1,16 +1,3 @@
-<<<<<<< HEAD
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { PageHeader } from "@/components/common/PageHeader";
-import { StatCard } from "@/components/common/StatCard";
-import { AppointmentStatusChip } from "@/components/common/AppointmentStatusChip";
-import { CalendarDays, Users, ClipboardCheck, FlaskConical, ArrowRight } from "lucide-react";
-import { appointments, doctors } from "@/lib/mock/data";
-import { useAuth } from "@/lib/store/auth";
-import { useNurseQueue } from "@/lib/store/nurseQueue";
-import { usePatients } from "@/lib/store/patients";
-import { useClinicalStore } from "@/lib/store/clinical";
-import { format, isToday } from "date-fns";
-=======
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { PageHeader } from '@/components/common/PageHeader';
 import { StatCard } from '@/components/common/StatCard';
@@ -23,13 +10,12 @@ import {
   ArrowRight,
   Printer,
 } from 'lucide-react';
-import { appointments, doctors } from '@/lib/mock/data';
+import { appointments } from '@/lib/mock/data';
 import { useAuth } from '@/lib/store/auth';
 import { useNurseQueue } from '@/lib/store/nurseQueue';
 import { usePatients } from '@/lib/store/patients';
 import { useClinicalStore } from '@/lib/store/clinical';
 import { format, isToday } from 'date-fns';
->>>>>>> a821a0c (second update)
 import {
   ResponsiveContainer,
   LineChart,
@@ -38,10 +24,6 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-<<<<<<< HEAD
-} from "recharts";
-import type { AppointmentStatus } from "@/lib/types";
-=======
 } from 'recharts';
 import type { AppointmentStatus } from '@/lib/types';
 import { useCurrentDoctorId } from '@/lib/store/doctors';
@@ -54,7 +36,6 @@ import {
 import { useStaffProfiles } from '@/lib/store/staffProfiles';
 import { useState } from 'react';
 import { toast } from 'sonner';
->>>>>>> a821a0c (second update)
 
 export const Route = createFileRoute('/_app/doctor/')({
   component: DoctorOverview,
@@ -73,13 +54,8 @@ function DoctorOverview() {
   const myAppts = appointments.filter((a) => a.doctorId === doctorId);
   const todayMock = myAppts.filter((a) => isToday(new Date(a.date)));
 
-<<<<<<< HEAD
-  // Load nurse queue entries for this doctor that are ready for consultation
-  const liveQueue = queue.filter((e) => e.doctorId === doctorId && e.vitalsStatus === "done");
-=======
   // Load nurse queue entries for this doctor (either vitals pending, in-progress, or done)
   const liveQueue = queue.filter((e) => e.doctorId === doctorId);
->>>>>>> a821a0c (second update)
 
   // Map live queue entries — embed patient info so rows are never silently dropped
   const liveRows = liveQueue.map((e) => ({
@@ -103,11 +79,6 @@ function DoctorOverview() {
     vitalsStatus: e.vitalsStatus,
   }));
 
-<<<<<<< HEAD
-  const combinedToday = [...todayMock, ...liveRows];
-  const myPatients = patients.filter(
-    (p) => p.assignedDoctorId === doctorId || liveQueue.some((e) => e.patientId === p.id)
-=======
   const combinedToday = [
     ...todayMock.map((r) => ({
       ...r,
@@ -124,7 +95,6 @@ function DoctorOverview() {
 
   const myPatients = patients.filter(
     (p) => p.assignedDoctorId === doctorId || liveQueue.some((e) => e.patientId === p.id),
->>>>>>> a821a0c (second update)
   );
   const myRx = prescriptions.filter((p) => p.doctorId === doctorId);
 
@@ -290,11 +260,7 @@ function DoctorOverview() {
                       )}
                     </div>
                     <p className="truncate text-xs text-muted-foreground">
-<<<<<<< HEAD
-                      {a.reason} · {format(new Date(a.date), "p")}
-=======
                       {displayReason} · {format(new Date(a.date), 'p')}
->>>>>>> a821a0c (second update)
                     </p>
                   </div>
                   <AppointmentStatusChip status={a.status} />
@@ -319,13 +285,8 @@ function DoctorOverview() {
                 <YAxis stroke="var(--color-muted-foreground)" fontSize={11} />
                 <Tooltip
                   contentStyle={{
-<<<<<<< HEAD
-                    background: "var(--color-popover)",
-                    border: "1px solid var(--color-border)",
-=======
                     background: 'var(--color-popover)',
                     border: '1px solid var(--color-border)',
->>>>>>> a821a0c (second update)
                     borderRadius: 12,
                     fontSize: 12,
                   }}

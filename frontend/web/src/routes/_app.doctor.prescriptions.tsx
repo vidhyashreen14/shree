@@ -4,26 +4,12 @@ import type { ColumnDef } from '@tanstack/react-table';
 import { PageHeader } from '@/components/common/PageHeader';
 import { DataTable } from '@/components/common/DataTable';
 import { Button } from '@/components/ui/button';
-import { doctors } from '@/lib/mock/data';
 import { usePatients } from '@/lib/store/patients';
 import { useClinicalStore } from '@/lib/store/clinical';
 import type { Prescription, Patient } from '@/lib/types';
 import { format } from 'date-fns';
 import { ClipboardPlus, Printer, Plus, Trash2 } from 'lucide-react';
 import {
-<<<<<<< HEAD
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-  SheetFooter,
-  SheetDescription,
-} from "@/components/ui/sheet";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-=======
   Dialog,
   DialogContent,
   DialogHeader,
@@ -35,22 +21,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
->>>>>>> a821a0c (second update)
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-<<<<<<< HEAD
-} from "@/components/ui/select";
-import { toast } from "sonner";
-import {
-  PrescriptionPrintModal,
-  doctorCredentials,
-  type PrescriptionPrintData,
-} from "./_app.doctor.patients.$id";
-=======
 } from '@/components/ui/select';
 import { toast } from 'sonner';
 import {
@@ -60,7 +36,6 @@ import {
 } from './_app.doctor.patients.$id';
 import { useAuth } from '@/lib/store/auth';
 import { useStaffProfiles } from '@/lib/store/staffProfiles';
->>>>>>> a821a0c (second update)
 
 import { useCurrentDoctorId } from '@/lib/store/doctors';
 import { sanitizeLettersOnly, sanitizePositiveInt, sanitizeAlphanumericId } from '@/lib/utils';
@@ -84,18 +59,6 @@ function DoctorRx() {
   ]);
   const [printData, setPrintData] = useState<PrescriptionPrintData | null>(null);
 
-<<<<<<< HEAD
-  const columns = useMemo<ColumnDef<Prescription>[]>(
-    () => [
-      {
-        header: "ID",
-        accessorKey: "id",
-        cell: ({ getValue }) => <code className="font-mono text-xs">{String(getValue())}</code>,
-      },
-      {
-        header: "Patient",
-        accessorKey: "patientId",
-=======
   const addPatient = usePatients((s) => s.addPatient);
   const [patientIdInput, setPatientIdInput] = useState('');
   const [patientNameInput, setPatientNameInput] = useState('');
@@ -213,33 +176,11 @@ function DoctorRx() {
       {
         header: 'Patient',
         accessorKey: 'patientId',
->>>>>>> a821a0c (second update)
         cell: ({ getValue }) => {
           const p = patients.find((x) => x.id === getValue());
           return <span className="font-medium">{p?.name}</span>;
         },
       },
-<<<<<<< HEAD
-      { header: "Diagnosis", accessorKey: "diagnosis" },
-      {
-        header: "Medicines",
-        accessorKey: "medicines",
-        cell: ({ getValue }) => (getValue() as Prescription["medicines"]).length,
-      },
-      {
-        header: "Date",
-        accessorKey: "date",
-        cell: ({ getValue }) => format(new Date(String(getValue())), "MMM d, yyyy"),
-      },
-      {
-        header: "",
-        id: "a",
-        cell: ({ row }) => {
-          const r = row.original;
-          const p = patients.find((x) => x.id === r.patientId);
-          const dr = doctors.find((d) => d.id === r.doctorId) || doctors[0]!;
-          const creds = doctorCredentials[dr.id] || { qualification: "MBBS, MD", kmc: "KMC-99999" };
-=======
       { header: 'Diagnosis', accessorKey: 'diagnosis' },
       {
         header: 'Medicines',
@@ -258,7 +199,6 @@ function DoctorRx() {
           const r = row.original;
           const p = patients.find((x) => x.id === r.patientId);
           const docDetails = getDoctorDetails(r.doctorId, user, staffProfiles);
->>>>>>> a821a0c (second update)
 
           return (
             <Button
@@ -266,35 +206,16 @@ function DoctorRx() {
               variant="ghost"
               onClick={() => {
                 if (!p) {
-<<<<<<< HEAD
-                  toast.error("Patient details not found");
-=======
                   toast.error('Patient details not found');
->>>>>>> a821a0c (second update)
                   return;
                 }
                 setPrintData({
                   rxNo: `RX-${r.id.slice(-6)}`,
-<<<<<<< HEAD
-                  date: format(new Date(r.date), "dd MMM yyyy, hh:mm a"),
-=======
                   date: format(new Date(r.date), 'dd MMM yyyy, hh:mm a'),
->>>>>>> a821a0c (second update)
                   patientName: p.name,
                   uhid: p.mrn,
                   age: p.age,
                   gender: p.gender,
-<<<<<<< HEAD
-                  doctorName: dr.name,
-                  specialization: dr.specialization,
-                  qualification: creds.qualification,
-                  kmcNo: creds.kmc,
-                  diagnosis: r.diagnosis,
-                  medicines: r.medicines,
-                  labTests: [],
-                  followUp: r.advice.includes("Follow up: ")
-                    ? r.advice.replace("Follow up: ", "").replace(".", "")
-=======
                   doctorName: docDetails.name,
                   specialization: docDetails.specialization,
                   qualification: docDetails.qualification,
@@ -304,7 +225,6 @@ function DoctorRx() {
                   labTests: [],
                   followUp: r.advice.includes('Follow up: ')
                     ? r.advice.replace('Follow up: ', '').replace('.', '')
->>>>>>> a821a0c (second update)
                     : undefined,
                   patientPhone: p.phone,
                   patientEmail: p.email,
@@ -317,11 +237,7 @@ function DoctorRx() {
         },
       },
     ],
-<<<<<<< HEAD
-    [patients]
-=======
-    [patients],
->>>>>>> a821a0c (second update)
+    [patients, user, staffProfiles],
   );
 
   return (
@@ -330,34 +246,6 @@ function DoctorRx() {
         title="Prescriptions"
         description="All prescriptions you've issued."
         actions={
-<<<<<<< HEAD
-          <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger asChild>
-              <Button>
-                <ClipboardPlus className="mr-2 h-4 w-4" /> New prescription
-              </Button>
-            </SheetTrigger>
-            <SheetContent className="w-full sm:max-w-xl">
-              <SheetHeader>
-                <SheetTitle>Create prescription</SheetTitle>
-                <SheetDescription>Issue a new prescription for a patient.</SheetDescription>
-              </SheetHeader>
-              <div className="space-y-4 px-4">
-                <div>
-                  <Label>Patient</Label>
-                  <Select>
-                    <SelectTrigger className="mt-1.5">
-                      <SelectValue placeholder="Select patient" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {patients.slice(0, 12).map((p) => (
-                        <SelectItem key={p.id} value={p.id}>
-                          {p.name} · {p.mrn}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-=======
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
               <Button>
@@ -419,7 +307,6 @@ function DoctorRx() {
                       </SelectContent>
                     </Select>
                   </div>
->>>>>>> a821a0c (second update)
                 </div>
 
                 <div>
@@ -439,9 +326,6 @@ function DoctorRx() {
                       size="sm"
                       variant="outline"
                       onClick={() =>
-<<<<<<< HEAD
-                        setMeds([...meds, { name: "", dose: "", frequency: "OD", duration: "" }])
-=======
                         setMeds([
                           ...meds,
                           {
@@ -452,7 +336,6 @@ function DoctorRx() {
                             notes: 'After food',
                           },
                         ])
->>>>>>> a821a0c (second update)
                       }
                     >
                       <Plus className="mr-1 h-3 w-3" /> Add
@@ -460,35 +343,6 @@ function DoctorRx() {
                   </div>
                   <div className="space-y-3">
                     {meds.map((m, i) => (
-<<<<<<< HEAD
-                      <div key={i} className="grid grid-cols-12 gap-2">
-                        <Input
-                          placeholder="Medicine"
-                          className="col-span-5"
-                          value={m.name}
-                          onChange={(e) =>
-                            setMeds(
-                              meds.map((x, j) => (j === i ? { ...x, name: e.target.value } : x))
-                            )
-                          }
-                        />
-                        <Input placeholder="Dose" className="col-span-2" />
-                        <Input
-                          placeholder="Freq"
-                          className="col-span-2"
-                          defaultValue={m.frequency}
-                        />
-                        <Input placeholder="Days" className="col-span-2" />
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          className="col-span-1"
-                          onClick={() => setMeds(meds.filter((_, j) => j !== i))}
-                        >
-                          <Trash2 className="h-4 w-4 text-destructive" />
-                        </Button>
-=======
                       <div
                         key={i}
                         className="space-y-2 p-3 border border-dashed rounded-lg relative bg-slate-50/50 dark:bg-slate-900/20"
@@ -580,7 +434,6 @@ function DoctorRx() {
                             </Select>
                           </div>
                         </div>
->>>>>>> a821a0c (second update)
                       </div>
                     ))}
                   </div>
@@ -595,23 +448,6 @@ function DoctorRx() {
                   />
                 </div>
               </div>
-<<<<<<< HEAD
-              <SheetFooter>
-                <Button variant="outline" onClick={() => setOpen(false)}>
-                  Cancel
-                </Button>
-                <Button
-                  onClick={() => {
-                    toast.success("Prescription issued");
-                    setOpen(false);
-                  }}
-                >
-                  Issue prescription
-                </Button>
-              </SheetFooter>
-            </SheetContent>
-          </Sheet>
-=======
               <DialogFooter className="mt-6 px-4">
                 <Button variant="outline" onClick={() => setOpen(false)}>
                   Cancel
@@ -620,7 +456,6 @@ function DoctorRx() {
               </DialogFooter>
             </DialogContent>
           </Dialog>
->>>>>>> a821a0c (second update)
         }
       />
       <DataTable columns={columns} data={myRx} searchPlaceholder="Search by diagnosis…" />

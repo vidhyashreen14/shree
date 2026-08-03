@@ -218,7 +218,7 @@
   background-clip: text;
   color: transparent;
 }
-<<<<<<< HEAD
+
 
 /* ─── Animated Hamburger Menu Button (Uiverse.io / ArturCodeCraft) ─────────
    Adapted to respect the app's CSS-variable theme (light + dark).          */
@@ -458,5 +458,4 @@
 .cir-tabs__t:focus-visible {
   box-shadow: 0 0 0 3px rgba(46, 125, 239, 0.32);
 }
-=======
->>>>>>> a821a0c (second update)
+

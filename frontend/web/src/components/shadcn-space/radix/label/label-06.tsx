@@ -1,13 +1,3 @@
-<<<<<<< HEAD
-"use client";
-
-import { useId, useState } from "react";
-import { UserRound } from "lucide-react";
-import { motion } from "motion/react";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
-=======
 'use client';
 
 import { useId, useState } from 'react';
@@ -16,16 +6,11 @@ import { motion } from 'motion/react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
->>>>>>> a821a0c (second update)
 
 const FloatingLabel = () => {
   const id = useId();
   const [focused, setFocused] = useState(false);
-<<<<<<< HEAD
-  const [value, setValue] = useState("");
-=======
   const [value, setValue] = useState('');
->>>>>>> a821a0c (second update)
   const isFloated = focused || value.length > 0;
 
   return (
@@ -50,13 +35,8 @@ const FloatingLabel = () => {
           <Label
             htmlFor={id}
             className={cn(
-<<<<<<< HEAD
-              "pointer-events-none absolute left-0 cursor-text transition-all duration-300 ease-in-out",
-              isFloated ? "top-0.5 text-xs text-primary" : "top-5 text-sm text-muted-foreground"
-=======
               'pointer-events-none absolute left-0 cursor-text transition-all duration-300 ease-in-out',
               isFloated ? 'top-0.5 text-xs text-primary' : 'top-5 text-sm text-muted-foreground',
->>>>>>> a821a0c (second update)
             )}
           >
             Full name

@@ -1,35 +1,23 @@
 import { cn } from '@/lib/utils';
+import type { ReactNode } from 'react';
 
 type Tone = 'success' | 'warning' | 'info' | 'danger' | 'neutral' | 'primary';
 
 const map: Record<Tone, string> = {
-<<<<<<< HEAD
-  success: "bg-success/10 text-success ring-1 ring-inset ring-success/20",
-  warning: "bg-warning/15 text-warning ring-1 ring-inset ring-warning/30",
-  info: "bg-info/10 text-info ring-1 ring-inset ring-info/20",
-  danger: "bg-destructive/10 text-destructive ring-1 ring-inset ring-destructive/20",
-  primary: "bg-primary/10 text-primary ring-1 ring-inset ring-primary/20",
-  neutral: "bg-muted text-muted-foreground ring-1 ring-inset ring-border",
-=======
   success: 'bg-success/10 text-success ring-1 ring-inset ring-success/20',
   warning: 'bg-warning/15 text-warning-foreground ring-1 ring-inset ring-warning/30',
   info: 'bg-info/10 text-info ring-1 ring-inset ring-info/20',
   danger: 'bg-destructive/10 text-destructive ring-1 ring-inset ring-destructive/20',
   primary: 'bg-primary/10 text-primary ring-1 ring-inset ring-primary/20',
   neutral: 'bg-muted text-muted-foreground ring-1 ring-inset ring-border',
->>>>>>> a821a0c (second update)
 };
 
 export function StatusChip({
   children,
-<<<<<<< HEAD
-  tone = "neutral",
-=======
   tone = 'neutral',
->>>>>>> a821a0c (second update)
   className,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
   tone?: Tone;
   className?: string;
 }) {
@@ -38,7 +26,7 @@ export function StatusChip({
       className={cn(
         'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold capitalize',
         map[tone],
-        className
+        className,
       )}
     >
       {children}

@@ -22,15 +22,9 @@ function Settings() {
           <div className="mt-4 grid grid-cols-3 gap-3">
             {(
               [
-<<<<<<< HEAD
-                { v: "light", label: "Light", icon: Sun },
-                { v: "dark", label: "Dark", icon: Moon },
-                { v: "light", label: "System", icon: Monitor },
-=======
                 { v: 'light', label: 'Light', icon: Sun },
                 { v: 'dark', label: 'Dark', icon: Moon },
                 { v: 'light', label: 'System', icon: Monitor },
->>>>>>> a821a0c (second update)
               ] as const
             ).map((opt) => {
               const Icon = opt.icon;
@@ -40,15 +34,10 @@ function Settings() {
                   key={opt.label}
                   onClick={() => set(opt.v)}
                   className={cn(
-<<<<<<< HEAD
-                    "flex flex-col items-start gap-2 rounded-xl border p-4 text-left transition-all",
-                    active ? "border-primary bg-primary/5" : "border-border hover:border-primary/50"
-=======
                     'flex flex-col items-start gap-2 rounded-xl border p-4 text-left transition-all',
                     active
                       ? 'border-primary bg-primary/5'
                       : 'border-border hover:border-primary/50',
->>>>>>> a821a0c (second update)
                   )}
                 >
                   <Icon className="h-5 w-5 text-primary" />

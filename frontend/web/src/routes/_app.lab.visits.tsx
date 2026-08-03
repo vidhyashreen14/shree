@@ -22,11 +22,10 @@ import {
     UserCheck,
     Layers,
     Hash,
-    Stethoscope,
     Filter,
     Eye,
-    XCircle,
     RotateCcw,
+    type LucideIcon,
 } from "lucide-react";
 import { toast } from "sonner";
 import type { VisitStatus, HomeVisit } from "@/lib/types";
@@ -46,7 +45,7 @@ export const Route = createFileRoute("/_app/lab/visits")({
 
 // ── Status badge helper ───────────────────────────────────────────────────────
 function StatusBadge({ status }: { status: VisitStatus }) {
-    const cfg: Record<string, { bg: string; dot: string; icon: any }> = {
+    const cfg: Record<string, { bg: string; dot: string; icon: LucideIcon }> = {
         Pending: { bg: "bg-amber-500/10 text-amber-600 ring-amber-500/20", dot: "bg-amber-500", icon: Clock },
         Collected: { bg: "bg-emerald-500/10 text-emerald-600 ring-emerald-500/20", dot: "bg-emerald-500", icon: CheckCircle2 },
         "In Progress": { bg: "bg-blue-500/10 text-blue-600 ring-blue-500/20", dot: "bg-blue-500", icon: Loader2 },
@@ -185,7 +184,7 @@ function AddVisitModal({
                                 <label className="text-xs font-semibold text-foreground mb-1 block">Gender</label>
                                 <select
                                     value={form.gender}
-                                    onChange={e => setForm(p => ({ ...p, gender: e.target.value as any }))}
+                                    onChange={e => setForm(p => ({ ...p, gender: e.target.value as HomeVisit['gender'] }))}
                                     className="w-full rounded-lg border border-input bg-background px-3 py-2 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-teal-500"
                                 >
                                     <option value="Male">Male</option>
@@ -456,6 +455,14 @@ function LabVisits() {
     const setFilter = (key: keyof typeof filters, value: string) =>
         setFilters(prev => ({ ...prev, [key]: value }));
 
+    const handleRefresh = useCallback((silent = false) => {
+        setIsRefreshing(true);
+        setTimeout(() => {
+            setIsRefreshing(false);
+            if (!silent) toast.success("Visit list refreshed");
+        }, 700);
+    }, []);
+
     // ── Auto Refresh ──
     useEffect(() => {
         if (refreshTimer.current) clearInterval(refreshTimer.current);
@@ -466,15 +473,7 @@ function LabVisits() {
             }, mins * 60 * 1000);
         }
         return () => { if (refreshTimer.current) clearInterval(refreshTimer.current); };
-    }, [autoRefreshMin]);
-
-    const handleRefresh = useCallback((silent = false) => {
-        setIsRefreshing(true);
-        setTimeout(() => {
-            setIsRefreshing(false);
-            if (!silent) toast.success("Visit list refreshed");
-        }, 700);
-    }, []);
+    }, [autoRefreshMin, handleRefresh]);
 
     // ── Apply Filters ──
     function handleSearch() {

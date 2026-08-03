@@ -1,18 +1,3 @@
-<<<<<<< HEAD
-"use client";
-
-import { useState } from "react";
-import { AtSign, BellIcon, Heart, MessageCircle, UserPlus } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { cn } from "@/lib/utils";
-
-type NotificationType = "like" | "follow" | "comment" | "mention";
-=======
 'use client';
 
 import { useState } from 'react';
@@ -26,26 +11,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
 
 type NotificationType = 'like' | 'follow' | 'comment' | 'mention';
->>>>>>> a821a0c (second update)
 
 const typeConfig: Record<NotificationType, { icon: React.ReactNode; color: string }> = {
   like: {
     icon: <Heart className="h-2.5 w-2.5" />,
-<<<<<<< HEAD
-    color: "bg-rose-500",
-  },
-  follow: {
-    icon: <UserPlus className="h-2.5 w-2.5" />,
-    color: "bg-blue-500",
-  },
-  comment: {
-    icon: <MessageCircle className="h-2.5 w-2.5" />,
-    color: "bg-green-500",
-  },
-  mention: {
-    icon: <AtSign className="h-2.5 w-2.5" />,
-    color: "bg-violet-500",
-=======
     color: 'bg-rose-500',
   },
   follow: {
@@ -59,7 +28,6 @@ const typeConfig: Record<NotificationType, { icon: React.ReactNode; color: strin
   mention: {
     icon: <AtSign className="h-2.5 w-2.5" />,
     color: 'bg-violet-500',
->>>>>>> a821a0c (second update)
   },
 };
 
@@ -133,15 +101,9 @@ const NotificationItem = ({ n }: { n: (typeof initialNotifications)[number] }) =
           {config.icon}
         </span>
       </div>
-<<<<<<< HEAD
-      <div className={cn("flex-1 min-w-0", n.preview && "max-w-56")}>
-        <p className="text-sm leading-snug">
-          <span className="font-medium">{n.name}</span>{" "}
-=======
       <div className={cn('flex-1 min-w-0', n.preview && 'max-w-56')}>
         <p className="text-sm leading-snug">
           <span className="font-medium">{n.name}</span>{' '}
->>>>>>> a821a0c (second update)
           <span className="text-muted-foreground">{n.action}</span>
         </p>
         {n.preview && <p className="text-xs text-muted-foreground mt-0.5 truncate">{n.preview}</p>}

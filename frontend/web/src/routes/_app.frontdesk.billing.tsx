@@ -1,40 +1,15 @@
-<<<<<<< HEAD
-import { createFileRoute } from "@tanstack/react-router";
-import { useState, useRef } from "react";
-import { PageHeader } from "@/components/common/PageHeader";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-
-=======
 import { createFileRoute } from '@tanstack/react-router';
 import { useState, useRef } from 'react';
 import { PageHeader } from '@/components/common/PageHeader';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
->>>>>>> a821a0c (second update)
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-<<<<<<< HEAD
-} from "@/components/ui/select";
-import { toast } from "sonner";
-import { cn } from "@/lib/utils";
-import { useBillingStore, type BillLineItem } from "@/lib/store/billing";
-import { usePatients } from "@/lib/store/patients";
-import { useNurseQueue } from "@/lib/store/nurseQueue";
-import { useHospitalSettings } from "@/lib/store/hospitalSettings";
-import { doctors } from "@/lib/mock/data";
-import {
-  Search,
-  Printer,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  Send,
-=======
 } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
@@ -47,7 +22,6 @@ import { useDoctors } from '@/lib/store/doctors';
 import {
   Search,
   Printer,
->>>>>>> a821a0c (second update)
   MessageSquare,
   Mail,
   Phone,
@@ -55,34 +29,17 @@ import {
   CheckSquare,
   Square,
   X,
-<<<<<<< HEAD
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  ChevronDown,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  ChevronUp,
-} from "lucide-react";
-import { format } from "date-fns";
-=======
 } from 'lucide-react';
 import { format } from 'date-fns';
->>>>>>> a821a0c (second update)
 
 export const Route = createFileRoute('/_app/frontdesk/billing')({
   head: () => ({
     meta: [
-<<<<<<< HEAD
-      { title: "Optional Billing · MediCore Front Desk" },
-      {
-        name: "description",
-        content:
-          "Create and print additional bills for laboratory, radiology, procedures and more.",
-=======
       { title: 'Optional Billing · MediCore Front Desk' },
       {
         name: 'description',
         content:
           'Create and print additional bills for laboratory, radiology, procedures and more.',
->>>>>>> a821a0c (second update)
       },
     ],
   }),
@@ -113,17 +70,10 @@ function PrintReceipt({ data, onClose }: { data: ReceiptData; onClose: () => voi
   const { logoUrl, name, phone, email, address } = useHospitalSettings();
 
   const handlePrint = () => {
-<<<<<<< HEAD
-    const content = printRef.current?.innerHTML ?? "";
-    const win = window.open("", "_blank");
-    if (!win) {
-      toast.error("Pop-up blocked. Allow pop-ups and try again.");
-=======
     const content = printRef.current?.innerHTML ?? '';
     const win = window.open('', '_blank');
     if (!win) {
       toast.error('Pop-up blocked. Allow pop-ups and try again.');
->>>>>>> a821a0c (second update)
       return;
     }
     win.document.write(`
@@ -178,13 +128,8 @@ function PrintReceipt({ data, onClose }: { data: ReceiptData; onClose: () => voi
   };
 
   const handleSMS = () => {
-<<<<<<< HEAD
-    toast.info("SMS gateway integration required for live SMS dispatch.", {
-      description: "In production, this connects to your SMS provider API.",
-=======
     toast.info('SMS gateway integration required for live SMS dispatch.', {
       description: 'In production, this connects to your SMS provider API.',
->>>>>>> a821a0c (second update)
     });
   };
 
@@ -235,17 +180,10 @@ function PrintReceipt({ data, onClose }: { data: ReceiptData; onClose: () => voi
             <div
               className="header"
               style={{
-<<<<<<< HEAD
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                borderBottom: "2px solid #0d9488",
-=======
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 borderBottom: '2px solid #0d9488',
->>>>>>> a821a0c (second update)
                 paddingBottom: 16,
                 marginBottom: 20,
               }}
@@ -254,11 +192,7 @@ function PrintReceipt({ data, onClose }: { data: ReceiptData; onClose: () => voi
                 <img
                   src={logoUrl}
                   alt="Logo"
-<<<<<<< HEAD
-                  style={{ maxHeight: 50, maxWidth: 150, marginBottom: 8, objectFit: "contain" }}
-=======
                   style={{ maxHeight: 50, maxWidth: 150, marginBottom: 8, objectFit: 'contain' }}
->>>>>>> a821a0c (second update)
                 />
               ) : (
                 <div
@@ -266,35 +200,22 @@ function PrintReceipt({ data, onClose }: { data: ReceiptData; onClose: () => voi
                   style={{
                     fontSize: 22,
                     fontWeight: 800,
-<<<<<<< HEAD
-                    color: "#0d9488",
-                    letterSpacing: "-0.5px",
-=======
                     color: '#0d9488',
                     letterSpacing: '-0.5px',
->>>>>>> a821a0c (second update)
                   }}
                 >
                   🏥 {name}
                 </div>
               )}
               {logoUrl && (
-<<<<<<< HEAD
-                <div style={{ fontSize: 14, fontWeight: 800, color: "#0d9488", marginTop: 2 }}>
-=======
                 <div style={{ fontSize: 14, fontWeight: 800, color: '#0d9488', marginTop: 2 }}>
->>>>>>> a821a0c (second update)
                   {name}
                 </div>
               )}
               <div className="subtitle">Multispecialty Hospital · Compassionate Care</div>
               <div
                 className="addr"
-<<<<<<< HEAD
-                style={{ textAlign: "center", fontSize: 11, color: "#555", marginTop: 6 }}
-=======
                 style={{ textAlign: 'center', fontSize: 11, color: '#555', marginTop: 6 }}
->>>>>>> a821a0c (second update)
               >
                 {address}
                 <br />
@@ -305,24 +226,14 @@ function PrintReceipt({ data, onClose }: { data: ReceiptData; onClose: () => voi
             {/* Bill type badge + number */}
             <div
               style={{
-<<<<<<< HEAD
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-=======
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
->>>>>>> a821a0c (second update)
                 marginBottom: 16,
               }}
             >
               <span className="badge">{data.billType}</span>
-<<<<<<< HEAD
-              <div style={{ textAlign: "right", fontSize: 12 }}>
-=======
               <div style={{ textAlign: 'right', fontSize: 12 }}>
->>>>>>> a821a0c (second update)
                 <div>
                   <strong>Bill No:</strong> {data.billNo}
                 </div>
@@ -346,11 +257,7 @@ function PrintReceipt({ data, onClose }: { data: ReceiptData; onClose: () => voi
                   <strong>Age / Gender:</strong> {data.age} / {data.gender}
                 </p>
               </div>
-<<<<<<< HEAD
-              <div className="meta-block" style={{ textAlign: "right" }}>
-=======
               <div className="meta-block" style={{ textAlign: 'right' }}>
->>>>>>> a821a0c (second update)
                 <p>
                   <strong>Assigned Consultant:</strong> {data.doctor}
                 </p>
@@ -389,13 +296,8 @@ function PrintReceipt({ data, onClose }: { data: ReceiptData; onClose: () => voi
             <div
               style={{
                 marginTop: 16,
-<<<<<<< HEAD
-                padding: "10px 0",
-                borderTop: "1px solid #e2e8f0",
-=======
                 padding: '10px 0',
                 borderTop: '1px solid #e2e8f0',
->>>>>>> a821a0c (second update)
                 fontSize: 12,
               }}
             >
@@ -433,13 +335,8 @@ function BillItemRow({
   return (
     <div
       className={cn(
-<<<<<<< HEAD
-        "flex items-center gap-3 rounded-lg border px-3 py-2.5 transition-all cursor-pointer",
-        selected ? "border-primary bg-primary/5" : "border-border hover:bg-accent/30"
-=======
         'flex items-center gap-3 rounded-lg border px-3 py-2.5 transition-all cursor-pointer',
         selected ? 'border-primary bg-primary/5' : 'border-border hover:bg-accent/30',
->>>>>>> a821a0c (second update)
       )}
       onClick={onToggle}
     >
@@ -463,13 +360,8 @@ function BillItemRow({
       )}
       <span
         className={cn(
-<<<<<<< HEAD
-          "text-sm font-semibold shrink-0",
-          selected ? "text-primary" : "text-muted-foreground"
-=======
           'text-sm font-semibold shrink-0',
           selected ? 'text-primary' : 'text-muted-foreground',
->>>>>>> a821a0c (second update)
         )}
       >
         ₹{(item.amount * (selected ? qty : 1)).toLocaleString()}
@@ -485,24 +377,6 @@ interface Selection {
 }
 
 function FrontDeskBilling() {
-<<<<<<< HEAD
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { categories, registrationFee, consultationFee } = useBillingStore();
-  const { searchPatients } = usePatients();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const queue = useNurseQueue((s) => s.queue);
-
-  const [patientSearch, setPatientSearch] = useState("");
-  const [selectedPatient, setSelectedPatient] = useState<
-    ReturnType<typeof searchPatients>[0] | null
-  >(null);
-  const [selectedDoctorId, setSelectedDoctorId] = useState("");
-  const [selectedCategoryId, setSelectedCategoryId] = useState("");
-  const [selections, setSelections] = useState<Selection>({});
-  const [paymentMethod, setPaymentMethod] = useState("Cash");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [expandedCats, setExpandedCats] = useState<Record<string, boolean>>({});
-=======
   // Subscribe to staff profiles store to trigger re-renders on real-time changes
   const doctors = useDoctors();
 
@@ -517,7 +391,6 @@ function FrontDeskBilling() {
   const [selectedCategoryId, setSelectedCategoryId] = useState('');
   const [selections, setSelections] = useState<Selection>({});
   const [paymentMethod, setPaymentMethod] = useState('Cash');
->>>>>>> a821a0c (second update)
   const [receipt, setReceipt] = useState<ReceiptData | null>(null);
 
   const searchResults = patientSearch.length >= 2 ? searchPatients(patientSearch) : [];
@@ -530,11 +403,7 @@ function FrontDeskBilling() {
 
   const total = selectedItems.reduce(
     (sum, item) => sum + item.amount * (selections[item.id]?.qty ?? 1),
-<<<<<<< HEAD
-    0
-=======
     0,
->>>>>>> a821a0c (second update)
   );
 
   const toggleItem = (itemId: string) => {
@@ -550,17 +419,6 @@ function FrontDeskBilling() {
 
   const handleGenerateBill = () => {
     if (!selectedPatient) {
-<<<<<<< HEAD
-      toast.error("Select a patient first");
-      return;
-    }
-    if (!selectedCategoryId) {
-      toast.error("Select a bill type");
-      return;
-    }
-    if (selectedItems.length === 0) {
-      toast.error("Select at least one item");
-=======
       toast.error('Select a patient first');
       return;
     }
@@ -570,7 +428,6 @@ function FrontDeskBilling() {
     }
     if (selectedItems.length === 0) {
       toast.error('Select at least one item');
->>>>>>> a821a0c (second update)
       return;
     }
 
@@ -622,11 +479,7 @@ function FrontDeskBilling() {
           data={receipt}
           onClose={() => {
             setReceipt(null);
-<<<<<<< HEAD
-            toast.success("Bill closed. Ready for next patient.");
-=======
             toast.success('Bill closed. Ready for next patient.');
->>>>>>> a821a0c (second update)
           }}
         />
       )}
@@ -641,17 +494,10 @@ function FrontDeskBilling() {
               <div className="flex items-center gap-3 rounded-xl border bg-primary/5 border-primary/30 p-3">
                 <span className="grid h-10 w-10 place-items-center rounded-full bg-primary text-primary-foreground text-sm font-bold">
                   {selectedPatient.name
-<<<<<<< HEAD
-                    .split(" ")
-                    .map((n) => n[0])
-                    .slice(0, 2)
-                    .join("")}
-=======
                     .split(' ')
                     .map((n) => n[0])
                     .slice(0, 2)
                     .join('')}
->>>>>>> a821a0c (second update)
                 </span>
                 <div className="flex-1 min-w-0">
                   <p className="font-semibold text-sm truncate">{selectedPatient.name}</p>
@@ -665,11 +511,7 @@ function FrontDeskBilling() {
                   className="h-8 w-8"
                   onClick={() => {
                     setSelectedPatient(null);
-<<<<<<< HEAD
-                    setPatientSearch("");
-=======
                     setPatientSearch('');
->>>>>>> a821a0c (second update)
                   }}
                 >
                   <X className="h-3.5 w-3.5" />
@@ -694,27 +536,16 @@ function FrontDeskBilling() {
                         type="button"
                         onClick={() => {
                           setSelectedPatient(p);
-<<<<<<< HEAD
-                          setPatientSearch("");
-=======
                           setPatientSearch('');
->>>>>>> a821a0c (second update)
                         }}
                         className="flex w-full items-center gap-3 px-3 py-2.5 hover:bg-accent/40 text-left text-sm"
                       >
                         <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary/10 text-xs font-bold text-primary">
                           {p.name
-<<<<<<< HEAD
-                            .split(" ")
-                            .map((n) => n[0])
-                            .slice(0, 2)
-                            .join("")}
-=======
                             .split(' ')
                             .map((n) => n[0])
                             .slice(0, 2)
                             .join('')}
->>>>>>> a821a0c (second update)
                         </span>
                         <div>
                           <p className="font-medium">{p.name}</p>
@@ -846,11 +677,7 @@ function FrontDeskBilling() {
                 {selectedItems.map((item) => (
                   <div key={item.id} className="flex justify-between text-sm">
                     <span className="text-muted-foreground">
-<<<<<<< HEAD
-                      {item.name}{" "}
-=======
                       {item.name}{' '}
->>>>>>> a821a0c (second update)
                       {(selections[item.id]?.qty ?? 1) > 1 && `× ${selections[item.id]?.qty}`}
                     </span>
                     <span className="font-medium">

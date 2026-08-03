@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { PageHeader } from "@/components/common/PageHeader";
@@ -19,164 +18,85 @@ import {
   Layers,
   Activity,
   Printer,
+  type LucideIcon,
 } from "lucide-react";
 import { toast } from "sonner";
 import { medicines } from "@/lib/mock/data";
-=======
-import { createFileRoute } from '@tanstack/react-router';
-import { PageHeader } from '@/components/common/PageHeader';
-import { StatCard } from '@/components/common/StatCard';
-import { Pill, TrendingUp, IndianRupee } from 'lucide-react';
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
->>>>>>> a821a0c (second update)
 
 export const Route = createFileRoute('/_app/pharmacy/reports')({
   component: PharmacyReports,
 });
 
-<<<<<<< HEAD
-// ==========================================
-// 1. Mock Data Generators & Helpers
-// ==========================================
+// ===================================
 
-interface SaleItem {
-  medicine: string;
-  qty: number;
-  price: number;
-  gstPercent: number;
-  costPrice: number;
-}
+const getMockSales = () => [
+  {
+    id: "INV-9022",
+    date: "2026-07-09",
+    patientName: "Aarav Sharma",
+    amount: 650,
+    tax: 78,
+    grandTotal: 728,
+    items: [
+      { medicine: "Paracetamol 650mg", qty: 20, price: 15, costPrice: 10, gstPercent: 12 },
+      { medicine: "Amoxicillin 500mg", qty: 10, price: 35, costPrice: 22, gstPercent: 12 },
+    ],
+  },
+  {
+    id: "INV-9018",
+    date: "2026-07-05",
+    patientName: "Saanvi Patel",
+    amount: 1100,
+    tax: 132,
+    grandTotal: 1232,
+    items: [
+      { medicine: "Atorvastatin 20mg", qty: 30, price: 25, costPrice: 16, gstPercent: 12 },
+      { medicine: "Metformin 500mg", qty: 20, price: 17.5, costPrice: 11, gstPercent: 12 },
+    ],
+  },
+  {
+    id: "INV-9012",
+    date: "2026-06-28",
+    patientName: "Vihaan Iyer",
+    amount: 720,
+    tax: 86.4,
+    grandTotal: 806.4,
+    items: [
+      { medicine: "Salbutamol Inhaler", qty: 2, price: 220, costPrice: 150, gstPercent: 12 },
+      { medicine: "Cetirizine 10mg", qty: 20, price: 14, costPrice: 8, gstPercent: 12 },
+    ],
+  },
+  {
+    id: "INV-9005",
+    date: "2026-06-18",
+    patientName: "Ananya Reddy",
+    amount: 1950,
+    tax: 234,
+    grandTotal: 2184,
+    items: [
+      { medicine: "Azithromycin 500mg", qty: 15, price: 70, costPrice: 45, gstPercent: 12 },
+      { medicine: "Amlodipine 5mg", qty: 30, price: 30, costPrice: 18, gstPercent: 12 },
+    ],
+  },
+];
 
-interface SaleInvoice {
-  id: string;
-  date: string;
-  patientName: string;
-  mrn: string;
-  items: SaleItem[];
-  amount: number; // subtotal
-  tax: number; // total GST
-  grandTotal: number;
-  status: "paid";
-}
-
-// Generate consistent mock sales over the last 60 days
-const getMockSales = (): SaleInvoice[] => {
-  const sales: SaleInvoice[] = [];
-  const medList = [
-    { name: "Amoxicillin 500mg", price: 15, gst: 12 },
-    { name: "Azithromycin 250mg", price: 28, gst: 12 },
-    { name: "Atorvastatin 20mg", price: 22, gst: 5 },
-    { name: "Aspirin 75mg", price: 6, gst: 5 },
-    { name: "Metformin 500mg", price: 10, gst: 5 },
-    { name: "Paracetamol 650mg", price: 5, gst: 12 },
-    { name: "Ibuprofen 400mg", price: 8, gst: 12 },
-    { name: "Cetirizine 10mg", price: 7, gst: 18 },
-    { name: "Omeprazole 20mg", price: 12, gst: 18 },
-    { name: "Amlodipine 5mg", price: 14, gst: 5 },
-  ];
-
-  const patientList = [
-    "Aarav Sharma",
-    "Saanvi Patel",
-    "Vihaan Iyer",
-    "Diya Kapoor",
-    "Arjun Mehta",
-    "Anaya Reddy",
-    "Reyansh Khanna",
-    "Ishaani Rao",
-    "Kabir Joshi",
-    "Aadhya Nair",
-  ];
-
-  const baseDate = new Date("2026-07-10");
-  for (let i = 1; i <= 45; i++) {
-    const transactionDate = new Date(baseDate);
-    transactionDate.setDate(baseDate.getDate() - (i % 60));
-    const dateStr = transactionDate.toISOString().split("T")[0];
-
-    const numItems = (i % 3) + 1;
-    const items: SaleItem[] = [];
-    let subtotal = 0;
-    let taxTotal = 0;
-
-    for (let j = 0; j < numItems; j++) {
-      const medIndex = (i + j) % medList.length;
-      const med = medList[medIndex]!;
-      const qty = ((i * 2 + j) % 4) + 1;
-      const itemPrice = med.price;
-      const lineCost = itemPrice * qty;
-      const lineTax = (lineCost * med.gst) / 100;
-
-      items.push({
-        medicine: med.name,
-        qty,
-        price: itemPrice,
-        gstPercent: med.gst,
-        costPrice: Number((itemPrice * 0.75).toFixed(2)),
-      });
-
-      subtotal += lineCost;
-      taxTotal += lineTax;
-    }
-
-    sales.push({
-      id: `INV-${9100 + i}`,
-      date: dateStr,
-      patientName: patientList[i % patientList.length]!,
-      mrn: `MRN-${10200 + i}`,
-      items,
-      amount: subtotal,
-      tax: Number(taxTotal.toFixed(2)),
-      grandTotal: Number((subtotal + taxTotal).toFixed(2)),
-      status: "paid",
-    });
-  }
-  return sales;
-};
-
-// Audit logs mock datasets
 const getMockDeletedOrders = () => [
   {
     date: "2026-07-08",
-    id: "PO-5012",
-    supplier: "MedPlus Distributors",
-    amount: 15400,
-    user: "Sister Joan",
-    reason: "Ordered wrong batch size",
-  },
-  {
-    date: "2026-07-02",
-    id: "PO-5008",
-    supplier: "Apollo Pharmacy",
-    amount: 8900,
-    user: "Rahul Verma",
-    reason: "Supplier out of stock",
+    id: "PO-8812",
+    supplier: "Cipla Med Corp",
+    amount: 14500,
+    user: "Priya Menon",
+    reason: "Duplicate order placed by error",
   },
   {
     date: "2026-06-25",
-    id: "PO-5004",
-    supplier: "Wellness Medical Suppliers",
-    amount: 24500,
-    user: "Sister Joan",
-    reason: "Duplicate purchase order",
+    id: "PO-8790",
+    supplier: "Sun Pharma Supplies",
+    amount: 28400,
+    user: "Mei Chen",
+    reason: "Supplier unable to fulfill batch expiry requirements",
   },
-  {
-    date: "2026-06-12",
-    id: "PO-5001",
-    supplier: "Global Health Distributors",
-    amount: 12000,
-    user: "Rahul Verma",
-    reason: "Items added directly to inventory instead",
-  },
-=======
-const reportData = [
-  { month: 'Jan', sales: 45000, scripts: 540 },
-  { month: 'Feb', sales: 52000, scripts: 610 },
-  { month: 'Mar', sales: 49000, scripts: 580 },
-  { month: 'Apr', sales: 63000, scripts: 710 },
-  { month: 'May', sales: 58000, scripts: 670 },
-  { month: 'Jun', sales: 71000, scripts: 820 },
->>>>>>> a821a0c (second update)
 ];
 
 const getMockModifiedInvoices = () => [
@@ -288,8 +208,7 @@ const getMockReturns = () => [
 interface SummaryStat {
   label: string;
   value: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  icon: any;
+  icon: LucideIcon;
   tone: "success" | "primary" | "warning" | "danger";
 }
 
@@ -318,8 +237,6 @@ const generateReportData = (
     case "sales-tax-report": {
       let totalTaxable = 0;
       let totalTax = 0;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      let totalGrand = 0;
 
       let rows = "";
       csv = "Invoice ID,Date,Patient,Taxable Amount,CGST,SGST,Total GST,Grand Total\n";
@@ -329,7 +246,6 @@ const generateReportData = (
         const sgst = sale.tax / 2;
         totalTaxable += sale.amount;
         totalTax += sale.tax;
-        totalGrand += sale.grandTotal;
 
         rows += `
           <tr class="hover:bg-muted/30 border-b border-border transition-colors">
@@ -1419,7 +1335,6 @@ function PharmacyReports() {
   };
 
   return (
-<<<<<<< HEAD
     <div className="flex flex-col gap-6">
       {/* Print-only Hospital Header */}
       <div className="hidden print:block text-center border-b-2 border-gray-800 pb-3 pt-2 mb-2">
@@ -1493,55 +1408,6 @@ function PharmacyReports() {
             </div>
           </div>
         ))}
-=======
-    <>
-      <PageHeader
-        title="Pharmacy Reports"
-        description="Analytics overview of sales performance, script counts, and inventory metrics."
-      />
-
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 mt-6">
-        <StatCard label="Monthly sales average" value="₹56,333" icon={IndianRupee} tone="success" />
-        <StatCard label="Average scripts filled" value="655" icon={Pill} tone="primary" />
-        <StatCard label="Year-over-year growth" value="+18.4%" icon={TrendingUp} tone="warning" />
-      </div>
-
-      <div className="surface-elevated p-5 mt-6">
-        <h3 className="font-display font-semibold">Sales Revenue & Scripts count (H1 2026)</h3>
-        <div className="mt-6 h-80">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={reportData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-              <XAxis
-                dataKey="month"
-                tickLine={false}
-                axisLine={false}
-                stroke="hsl(var(--muted-foreground))"
-                fontSize={11}
-              />
-              <YAxis
-                tickLine={false}
-                axisLine={false}
-                stroke="hsl(var(--muted-foreground))"
-                fontSize={11}
-              />
-              <Tooltip
-                contentStyle={{
-                  background: 'hsl(var(--popover))',
-                  border: '1px solid hsl(var(--border))',
-                  borderRadius: 12,
-                }}
-              />
-              <Bar
-                dataKey="sales"
-                fill="hsl(var(--primary))"
-                radius={[4, 4, 0, 0]}
-                maxBarSize={45}
-              />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
->>>>>>> a821a0c (second update)
       </div>
 
       {/* Date Range & Report Viewer Modal */}

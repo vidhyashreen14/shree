@@ -1,11 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { PageHeader } from '@/components/common/PageHeader';
 
-<<<<<<< HEAD
-export const Route = createFileRoute("/_app/doctor/patient-history")({
-=======
 export const Route = createFileRoute('/_app/doctor/patient-history')({
->>>>>>> a821a0c (second update)
   component: PatientHistory,
 });
 

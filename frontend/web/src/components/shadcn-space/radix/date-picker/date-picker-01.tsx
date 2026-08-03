@@ -5,28 +5,16 @@ import { format } from 'date-fns';
 import { CalendarIcon, Clock, ChevronDown, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-<<<<<<< HEAD
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-=======
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
->>>>>>> a821a0c (second update)
 
 const DateAndTimePickerDemo = () => {
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState<Date | undefined>(undefined);
-<<<<<<< HEAD
-  const [bookingStatus, setBookingStatus] = useState<"idle" | "loading" | "success">("idle");
-=======
   const [bookingStatus, setBookingStatus] = useState<'idle' | 'loading' | 'success'>('idle');
->>>>>>> a821a0c (second update)
 
   const handleBooking = () => {
     setBookingStatus('loading');
@@ -41,22 +29,13 @@ const DateAndTimePickerDemo = () => {
             Select Date
           </Label>
           <Popover open={open} onOpenChange={setOpen}>
-<<<<<<< HEAD
-            <PopoverTrigger asChild onPointerDown={() => setBookingStatus("idle")}>
-=======
             <PopoverTrigger asChild onPointerDown={() => setBookingStatus('idle')}>
->>>>>>> a821a0c (second update)
               <Button
                 variant="outline"
                 id="date"
                 className={cn(
-<<<<<<< HEAD
-                  "w-full justify-start text-left font-normal h-10 transition-all hover:bg-muted/50 cursor-pointer",
-                  !date && "text-muted-foreground"
-=======
                   'w-full justify-start text-left font-normal h-10 transition-all hover:bg-muted/50 cursor-pointer',
                   !date && 'text-muted-foreground',
->>>>>>> a821a0c (second update)
                 )}
               >
                 <CalendarIcon className="mr-2 h-4 w-4 opacity-70" />

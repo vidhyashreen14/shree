@@ -1,16 +1,8 @@
-<<<<<<< HEAD
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Outlet, Link, createRootRouteWithContext, useRouter } from "@tanstack/react-router";
-import { useEffect } from "react";
-import { Toaster } from "@/components/ui/sonner";
-import { useTheme } from "@/lib/store/theme";
-=======
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Outlet, Link, createRootRouteWithContext, useRouter } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import { Toaster } from '@/components/ui/sonner';
 import { useTheme } from '@/lib/store/theme';
->>>>>>> a821a0c (second update)
 
 function NotFoundComponent() {
   return (
@@ -75,12 +67,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-<<<<<<< HEAD
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const theme = useTheme((s: { theme: any }) => s.theme);
-=======
-  const theme = useTheme((s: { theme: unknown }) => s.theme);
->>>>>>> a821a0c (second update)
+  const theme = useTheme((s) => s.theme);
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
   }, [theme]);

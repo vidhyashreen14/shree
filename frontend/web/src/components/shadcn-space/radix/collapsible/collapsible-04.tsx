@@ -152,11 +152,7 @@ const UserProfileDemo = ({
                     href={profileHref}
                     className="group flex gap-1 items-center text-muted-foreground hover:text-primary text-xs font-medium transition-colors"
                   >
-<<<<<<< HEAD
-                    View full profile{" "}
-=======
                     View full profile{' '}
->>>>>>> a821a0c (second update)
                     <ArrowRight size={14} className="group-hover:translate-x-1 duration-300" />
                   </a>
                 </motion.div>

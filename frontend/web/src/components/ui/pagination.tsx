@@ -16,23 +16,13 @@ Pagination.displayName = 'Pagination';
 
 const PaginationContent = React.forwardRef<HTMLUListElement, React.ComponentProps<'ul'>>(
   ({ className, ...props }, ref) => (
-<<<<<<< HEAD
-    <ul ref={ref} className={cn("flex flex-row items-center gap-1", className)} {...props} />
-  )
-=======
     <ul ref={ref} className={cn('flex flex-row items-center gap-1', className)} {...props} />
   ),
->>>>>>> a821a0c (second update)
 );
 PaginationContent.displayName = 'PaginationContent';
 
-<<<<<<< HEAD
-const PaginationItem = React.forwardRef<HTMLLIElement, React.ComponentProps<"li">>(
-  ({ className, ...props }, ref) => <li ref={ref} className={cn("", className)} {...props} />
-=======
 const PaginationItem = React.forwardRef<HTMLLIElement, React.ComponentProps<'li'>>(
   ({ className, ...props }, ref) => <li ref={ref} className={cn('', className)} {...props} />,
->>>>>>> a821a0c (second update)
 );
 PaginationItem.displayName = 'PaginationItem';
 

@@ -14,13 +14,8 @@ const SwitchToggleThemeDemo = () => {
       <span
         id={`${id}-light`}
         className={cn(
-<<<<<<< HEAD
-          "cursor-pointer text-left text-sm font-medium",
-          isDark && "text-foreground/50"
-=======
           'cursor-pointer text-left text-sm font-medium',
           isDark && 'text-foreground/50',
->>>>>>> a821a0c (second update)
         )}
         aria-controls={id}
         onClick={() => setIsDark(false)}
@@ -39,13 +34,8 @@ const SwitchToggleThemeDemo = () => {
       <span
         id={`${id}-dark`}
         className={cn(
-<<<<<<< HEAD
-          "cursor-pointer text-right text-sm font-medium",
-          isDark || "text-foreground/50"
-=======
           'cursor-pointer text-right text-sm font-medium',
           isDark || 'text-foreground/50',
->>>>>>> a821a0c (second update)
         )}
         aria-controls={id}
         onClick={() => setIsDark(true)}

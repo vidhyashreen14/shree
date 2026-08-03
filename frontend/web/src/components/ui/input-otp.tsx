@@ -1,16 +1,8 @@
-<<<<<<< HEAD
-import * as React from "react";
-import { OTPInput, OTPInputContext } from "input-otp";
-import { Dot } from "lucide-react";
-
-import { cn } from "@/lib/utils";
-=======
 import * as React from 'react';
 import { OTPInput, OTPInputContext } from 'input-otp';
 import { Dot } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
->>>>>>> a821a0c (second update)
 
 const InputOTP = React.forwardRef<
   React.ElementRef<typeof OTPInput>,
@@ -26,25 +18,15 @@ const InputOTP = React.forwardRef<
     {...props}
   />
 ));
-<<<<<<< HEAD
-InputOTP.displayName = "InputOTP";
-=======
 InputOTP.displayName = 'InputOTP';
->>>>>>> a821a0c (second update)
 
 const InputOTPGroup = React.forwardRef<
   React.ElementRef<'div'>,
   React.ComponentPropsWithoutRef<'div'>
 >(({ className, ...props }, ref) => (
-<<<<<<< HEAD
-  <div ref={ref} className={cn("flex items-center", className)} {...props} />
-));
-InputOTPGroup.displayName = "InputOTPGroup";
-=======
   <div ref={ref} className={cn('flex items-center', className)} {...props} />
 ));
 InputOTPGroup.displayName = 'InputOTPGroup';
->>>>>>> a821a0c (second update)
 
 const InputOTPSlot = React.forwardRef<
   React.ElementRef<'div'>,
@@ -72,11 +54,7 @@ const InputOTPSlot = React.forwardRef<
     </div>
   );
 });
-<<<<<<< HEAD
-InputOTPSlot.displayName = "InputOTPSlot";
-=======
 InputOTPSlot.displayName = 'InputOTPSlot';
->>>>>>> a821a0c (second update)
 
 const InputOTPSeparator = React.forwardRef<
   React.ElementRef<'div'>,
@@ -86,10 +64,6 @@ const InputOTPSeparator = React.forwardRef<
     <Dot />
   </div>
 ));
-<<<<<<< HEAD
-InputOTPSeparator.displayName = "InputOTPSeparator";
-=======
 InputOTPSeparator.displayName = 'InputOTPSeparator';
->>>>>>> a821a0c (second update)
 
 export { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator };

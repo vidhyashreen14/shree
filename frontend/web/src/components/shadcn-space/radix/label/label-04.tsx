@@ -1,12 +1,6 @@
-<<<<<<< HEAD
-import { useId } from "react";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-=======
 import { useId } from 'react';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
->>>>>>> a821a0c (second update)
 
 const LabelWithTextarea = () => {
   const id = useId();

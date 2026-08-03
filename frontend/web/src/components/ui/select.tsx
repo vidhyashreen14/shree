@@ -1,16 +1,8 @@
-<<<<<<< HEAD
-import * as React from "react";
-import * as SelectPrimitive from "@radix-ui/react-select";
-import { Check, ChevronDown, ChevronUp } from "lucide-react";
-
-import { cn } from "@/lib/utils";
-=======
 import * as React from 'react';
 import * as SelectPrimitive from '@radix-ui/react-select';
 import { Check, ChevronDown, ChevronUp } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
->>>>>>> a821a0c (second update)
 
 const Select = SelectPrimitive.Root;
 
@@ -44,11 +36,7 @@ const SelectScrollUpButton = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.ScrollUpButton
     ref={ref}
-<<<<<<< HEAD
-    className={cn("flex cursor-default items-center justify-center py-1", className)}
-=======
     className={cn('flex cursor-default items-center justify-center py-1', className)}
->>>>>>> a821a0c (second update)
     {...props}
   >
     <ChevronUp className="h-4 w-4" />
@@ -62,11 +50,7 @@ const SelectScrollDownButton = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.ScrollDownButton
     ref={ref}
-<<<<<<< HEAD
-    className={cn("flex cursor-default items-center justify-center py-1", className)}
-=======
     className={cn('flex cursor-default items-center justify-center py-1', className)}
->>>>>>> a821a0c (second update)
     {...props}
   >
     <ChevronDown className="h-4 w-4" />

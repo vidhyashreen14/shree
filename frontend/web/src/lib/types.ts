@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-export type Role = "admin" | "doctor" | "frontdesk" | "nurse" | "pharmacy" | "lab";
-=======
 export type Role = 'admin' | 'doctor' | 'frontdesk' | 'nurse' | 'pharmacy' | 'lab' | 'superadmin';
->>>>>>> a821a0c (second update)
 
 export interface User {
   id: string;
@@ -49,13 +45,13 @@ export interface Patient {
 }
 
 export type AppointmentStatus =
-<<<<<<< HEAD
-  "scheduled" | "checked-in" | "in-consultation" | "completed" | "cancelled" | "no-show";
-export type AppointmentType = "consultation" | "follow-up" | "walk-in" | "tele";
-=======
-  'scheduled' | 'checked-in' | 'in-consultation' | 'completed' | 'cancelled' | 'no-show';
+  | 'scheduled'
+  | 'checked-in'
+  | 'in-consultation'
+  | 'completed'
+  | 'cancelled'
+  | 'no-show';
 export type AppointmentType = 'consultation' | 'follow-up' | 'walk-in' | 'tele';
->>>>>>> a821a0c (second update)
 
 export interface Appointment {
   id: string;
@@ -103,7 +99,7 @@ export interface Prescription {
   advice: string;
 }
 
-export type LabOrderStatus = "ordered" | "sample-collected" | "in-progress" | "completed";
+export type LabOrderStatus = 'ordered' | 'sample-collected' | 'in-progress' | 'completed';
 
 export interface LabOrder {
   id: string;
@@ -115,7 +111,7 @@ export interface LabOrder {
   reportUrl?: string;
 }
 
-export type VisitStatus = "Pending" | "Collected" | "In Progress" | "Cancelled" | "Completed";
+export type VisitStatus = 'Pending' | 'Collected' | 'In Progress' | 'Cancelled' | 'Completed';
 
 export interface HomeVisit {
   id: string;
@@ -123,7 +119,7 @@ export interface HomeVisit {
   patientName: string;
   mobile: string;
   age: number;
-  gender: "Male" | "Female" | "Other";
+  gender: 'Male' | 'Female' | 'Other';
   address: string;
   sbu: string;
   branch: string;

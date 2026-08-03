@@ -1,13 +1,3 @@
-<<<<<<< HEAD
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { PageHeader } from "@/components/common/PageHeader";
-import { StatCard } from "@/components/common/StatCard";
-import { HeartPulse, Hourglass, Users, ClipboardList, CheckCircle2, Clock } from "lucide-react";
-import { appointments, patients as mockPatients, doctors, vitals } from "@/lib/mock/data";
-import { useNurseQueue } from "@/lib/store/nurseQueue";
-import { isToday, format, formatDistanceToNow } from "date-fns";
-import { Button } from "@/components/ui/button";
-=======
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { PageHeader } from '@/components/common/PageHeader';
 import { StatCard } from '@/components/common/StatCard';
@@ -20,11 +10,10 @@ import {
   Clock,
   Printer,
 } from 'lucide-react';
-import { appointments, patients as mockPatients, doctors, vitals } from '@/lib/mock/data';
+import { appointments, patients as mockPatients, doctors } from '@/lib/mock/data';
 import { useNurseQueue } from '@/lib/store/nurseQueue';
 import { isToday, format, formatDistanceToNow } from 'date-fns';
 import { Button } from '@/components/ui/button';
->>>>>>> a821a0c (second update)
 import {
   Line,
   LineChart,
@@ -33,17 +22,12 @@ import {
   XAxis,
   YAxis,
   CartesianGrid,
-<<<<<<< HEAD
-} from "recharts";
-import { cn } from "@/lib/utils";
-=======
 } from 'recharts';
 import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useHospitalSettings } from '@/lib/store/hospitalSettings';
 import type { NurseQueueEntry, NurseVitals } from '@/lib/types';
->>>>>>> a821a0c (second update)
 
 export const Route = createFileRoute('/_app/nurse/')({
   head: () => ({
@@ -217,16 +201,9 @@ function NurseOverview() {
   const today = appointments.filter((a) => isToday(new Date(a.date)));
   const awaiting = today.filter((a) => a.status === 'scheduled' || a.status === 'checked-in');
 
-<<<<<<< HEAD
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { queue, markVitalsStatus } = useNurseQueue();
-  const pendingQueue = queue.filter((e) => e.vitalsStatus === "pending");
-  const inProgressQueue = queue.filter((e) => e.vitalsStatus === "in-progress");
-=======
   const { queue } = useNurseQueue();
   const pendingQueue = queue.filter((e) => e.vitalsStatus === 'pending');
   const inProgressQueue = queue.filter((e) => e.vitalsStatus === 'in-progress');
->>>>>>> a821a0c (second update)
   const freshQueue = [...inProgressQueue, ...pendingQueue]; // in-progress first
   const recordedQueue = queue.filter((e) => e.vitalsStatus === 'done');
 
@@ -253,7 +230,7 @@ function NurseOverview() {
           tone="warning"
         />
         <StatCard label="Today's patients" value={today.length} icon={Users} tone="primary" />
-        <StatCard label="Vitals recorded" value={vitals.length} icon={HeartPulse} tone="success" />
+        <StatCard label="Vitals recorded" value={recordedQueue.length} icon={HeartPulse} tone="success" />
         <StatCard label="Observation notes" value="14" icon={ClipboardList} tone="info" />
       </div>
 
@@ -308,13 +285,8 @@ function NurseOverview() {
                 />
                 <Tooltip
                   contentStyle={{
-<<<<<<< HEAD
-                    background: "hsl(var(--popover))",
-                    border: "1px solid hsl(var(--border))",
-=======
                     background: 'hsl(var(--popover))',
                     border: '1px solid hsl(var(--border))',
->>>>>>> a821a0c (second update)
                     borderRadius: 12,
                   }}
                 />
@@ -353,17 +325,10 @@ function NurseOverview() {
                 <div className="flex items-start gap-3">
                   <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary/10 text-xs font-bold text-primary">
                     {entry.patientName
-<<<<<<< HEAD
-                      .split(" ")
-                      .map((n) => n[0])
-                      .slice(0, 2)
-                      .join("")}
-=======
                       .split(' ')
                       .map((n) => n[0])
                       .slice(0, 2)
                       .join('')}
->>>>>>> a821a0c (second update)
                   </span>
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-semibold">{entry.patientName}</p>
@@ -378,15 +343,6 @@ function NurseOverview() {
                       {formatDistanceToNow(new Date(entry.arrivedAt), { addSuffix: true })}
                       <span
                         className={cn(
-<<<<<<< HEAD
-                          "ml-1 rounded-full px-1.5 py-0.5 font-semibold",
-                          entry.isNewPatient
-                            ? "bg-blue-500/10 text-blue-600"
-                            : "bg-muted text-muted-foreground"
-                        )}
-                      >
-                        {entry.isNewPatient ? "New" : "Return"}
-=======
                           'ml-1 rounded-full px-1.5 py-0.5 font-semibold',
                           entry.isNewPatient
                             ? 'bg-blue-500/10 text-blue-600'
@@ -394,7 +350,6 @@ function NurseOverview() {
                         )}
                       >
                         {entry.isNewPatient ? 'New' : 'Return'}
->>>>>>> a821a0c (second update)
                       </span>
                     </div>
                   </div>
@@ -439,42 +394,6 @@ function NurseOverview() {
         </div>
       </div>
 
-<<<<<<< HEAD
-      {/* Existing awaiting vitals panel */}
-      <div className="mt-4 surface-elevated p-5">
-        <div className="mb-3 flex items-center justify-between">
-          <h3 className="font-display font-semibold">Scheduled — Awaiting vitals</h3>
-          <Link to="/nurse/queue" className="text-xs font-semibold text-primary hover:underline">
-            View queue
-          </Link>
-        </div>
-        <div className="divide-y divide-border">
-          {awaiting.slice(0, 6).map((a) => {
-            const p = mockPatients.find((x) => x.id === a.patientId)!;
-            const d = doctors.find((x) => x.id === a.doctorId);
-            return (
-              <div key={a.id} className="flex items-center gap-3 py-3">
-                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary/10 text-xs font-bold text-primary">
-                  #{a.token}
-                </span>
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-semibold">{p.name}</p>
-                  <p className="truncate text-xs text-muted-foreground">
-                    {p.age}y · for {d?.name} · {format(new Date(a.date), "p")}
-                  </p>
-                </div>
-                <Link to="/nurse/vitals" search={{ patientId: p.id }}>
-                  <Button size="sm" variant="outline">
-                    Take
-                  </Button>
-                </Link>
-              </div>
-            );
-          })}
-          {awaiting.length === 0 && (
-            <p className="py-6 text-center text-xs text-muted-foreground">No one in queue.</p>
-          )}
-=======
       {/* Bottom Panels Grid */}
       <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Existing awaiting vitals panel */}
@@ -540,7 +459,6 @@ function NurseOverview() {
               </p>
             )}
           </div>
->>>>>>> a821a0c (second update)
         </div>
       </div>
     </>

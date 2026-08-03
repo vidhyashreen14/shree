@@ -1,39 +1,21 @@
-<<<<<<< HEAD
-import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
-import type { ColumnDef } from "@tanstack/react-table";
-import { PageHeader } from "@/components/common/PageHeader";
-import { DataTable } from "@/components/common/DataTable";
-import { StatusChip } from "@/components/common/StatusChip";
-=======
 import { createFileRoute } from '@tanstack/react-router';
 import { useMemo, useState } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
 import { PageHeader } from '@/components/common/PageHeader';
 import { DataTable } from '@/components/common/DataTable';
 import { StatusChip } from '@/components/common/StatusChip';
->>>>>>> a821a0c (second update)
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-<<<<<<< HEAD
-} from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { Filter, RotateCcw } from "lucide-react";
-import { useAudit } from "@/lib/store/audit";
-import type { AuditLog } from "@/lib/types";
-import { formatDistanceToNow, differenceInDays } from "date-fns";
-=======
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Filter, RotateCcw } from 'lucide-react';
 import { useAudit } from '@/lib/store/audit';
 import type { AuditLog } from '@/lib/types';
 import { formatDistanceToNow, differenceInDays } from 'date-fns';
->>>>>>> a821a0c (second update)
 
 export const Route = createFileRoute('/_app/admin/audit')({
   component: AdminAudit,
@@ -83,11 +65,7 @@ function AdminAudit() {
   }, [auditLogs, roleFilter, actionFilter, timeframeFilter]);
 
   const hasActiveFilters =
-<<<<<<< HEAD
-    roleFilter !== "all" || actionFilter !== "all" || timeframeFilter !== "all";
-=======
     roleFilter !== 'all' || actionFilter !== 'all' || timeframeFilter !== 'all';
->>>>>>> a821a0c (second update)
 
   const resetFilters = () => {
     setRoleFilter('all');
@@ -97,18 +75,6 @@ function AdminAudit() {
 
   const columns = useMemo<ColumnDef<AuditLog>[]>(
     () => [
-<<<<<<< HEAD
-      { header: "User", accessorKey: "user" },
-      {
-        header: "Role",
-        accessorKey: "role",
-        cell: ({ getValue }) => <StatusChip tone="primary">{String(getValue())}</StatusChip>,
-      },
-      { header: "Action", accessorKey: "action" },
-      {
-        header: "When",
-        accessorKey: "at",
-=======
       { header: 'User', accessorKey: 'user' },
       {
         header: 'Role',
@@ -119,16 +85,11 @@ function AdminAudit() {
       {
         header: 'When',
         accessorKey: 'at',
->>>>>>> a821a0c (second update)
         cell: ({ getValue }) =>
           formatDistanceToNow(new Date(String(getValue())), { addSuffix: true }),
       },
     ],
-<<<<<<< HEAD
-    []
-=======
     [],
->>>>>>> a821a0c (second update)
   );
 
   return (

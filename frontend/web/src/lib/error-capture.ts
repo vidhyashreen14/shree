@@ -5,17 +5,10 @@ function record(error: unknown) {
   lastCapturedError = { error, at: Date.now() };
 }
 
-<<<<<<< HEAD
-if (typeof globalThis.addEventListener === "function") {
-  globalThis.addEventListener("error", (event) => record((event as ErrorEvent).error ?? event));
-  globalThis.addEventListener("unhandledrejection", (event) =>
-    record((event as PromiseRejectionEvent).reason)
-=======
 if (typeof globalThis.addEventListener === 'function') {
   globalThis.addEventListener('error', (event) => record((event as ErrorEvent).error ?? event));
   globalThis.addEventListener('unhandledrejection', (event) =>
     record((event as PromiseRejectionEvent).reason),
->>>>>>> a821a0c (second update)
   );
 }
 

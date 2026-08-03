@@ -1,39 +1,22 @@
-<<<<<<< HEAD
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { PageHeader } from "@/components/common/PageHeader";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-=======
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { PageHeader } from '@/components/common/PageHeader';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
->>>>>>> a821a0c (second update)
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-<<<<<<< HEAD
-} from "@/components/ui/select";
-import { useNurseQueue } from "@/lib/store/nurseQueue";
-import { usePatients } from "@/lib/store/patients";
-import { useState, useEffect } from "react";
-import { HeartPulse, Activity, User, FileText, Scale } from "lucide-react";
-import { toast } from "sonner";
-import { cn } from "@/lib/utils";
-=======
 } from '@/components/ui/select';
 import { useNurseQueue } from '@/lib/store/nurseQueue';
 import { usePatients } from '@/lib/store/patients';
 import { useState, useEffect } from 'react';
 import { HeartPulse, Activity, User, FileText, Scale } from 'lucide-react';
 import {
+  cn,
   sanitizeLettersOnly,
   sanitizePositiveInt,
   sanitizeBP,
@@ -41,9 +24,7 @@ import {
   sanitizeAlphanumericId,
 } from '@/lib/utils';
 import { toast } from 'sonner';
-import { cn } from '@/lib/utils';
 import { doctors } from '@/lib/mock/data';
->>>>>>> a821a0c (second update)
 
 export const Route = createFileRoute('/_app/nurse/vitals')({
   validateSearch: (search: Record<string, unknown>): { queueId?: string; patientId?: string } => ({
@@ -54,18 +35,6 @@ export const Route = createFileRoute('/_app/nurse/vitals')({
 });
 
 const CHIEF_COMPLAINT_TEMPLATES = [
-<<<<<<< HEAD
-  "Fever",
-  "Headache",
-  "Knee Pain",
-  "Chest Pain",
-  "Abdominal Pain",
-  "Cough & Cold",
-  "Shortness of Breath",
-  "Dizziness",
-  "High BP Check",
-  "Regular Follow-up",
-=======
   'Fever',
   'Headache',
   'Knee Pain',
@@ -76,7 +45,6 @@ const CHIEF_COMPLAINT_TEMPLATES = [
   'Dizziness',
   'High BP Check',
   'Regular Follow-up',
->>>>>>> a821a0c (second update)
 ];
 
 function NurseVitals() {
@@ -87,19 +55,10 @@ function NurseVitals() {
 
   // Find selected patient / queue entry
   const initialQueueEntry = queue.find(
-<<<<<<< HEAD
-    (e) => e.id === queueId || (queryPatientId && e.patientId === queryPatientId)
-  );
-
-  const [selectedQueueId, setSelectedQueueId] = useState<string>(initialQueueEntry?.id || "none");
-  const [selectedPatientId, setSelectedPatientId] = useState<string>(
-    initialQueueEntry?.patientId || queryPatientId || "none"
-=======
     (e) => e.id === queueId || (queryPatientId && e.patientId === queryPatientId),
   );
   const initialPatient = patients.find(
     (p) => p.id === queryPatientId || (initialQueueEntry && p.id === initialQueueEntry.patientId),
->>>>>>> a821a0c (second update)
   );
 
   // Vitals form state
@@ -155,45 +114,22 @@ function NurseVitals() {
     }
   }
 
-<<<<<<< HEAD
-  // Handle setting active queue entry fields
-  const activeQueueEntry = queue.find((e) => e.id === selectedQueueId);
-  const activePatient = patients.find(
-    (p) => p.id === selectedPatientId || (activeQueueEntry && p.id === activeQueueEntry.patientId)
-  );
-
-  // Sync state if selected queue changes
-=======
   // Sync vitals fields when queue entry changes
->>>>>>> a821a0c (second update)
   useEffect(() => {
     if (initialQueueEntry && initialQueueEntry.vitalsStatus === 'pending') {
       markVitalsStatus(initialQueueEntry.id, 'in-progress');
     }
-<<<<<<< HEAD
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedQueueId]);
-=======
   }, [queueId, initialQueueEntry, markVitalsStatus]);
->>>>>>> a821a0c (second update)
 
   const handleTemplateClick = (template: string) => {
     setChiefComplaint((prev) => {
       const trimmed = prev.trim();
       if (!trimmed) return template;
       if (trimmed.toLowerCase().includes(template.toLowerCase())) {
-<<<<<<< HEAD
-        // Toggle off
-        return trimmed
-          .split(", ")
-          .filter((x) => x.toLowerCase() !== template.toLowerCase())
-          .join(", ");
-=======
         return trimmed
           .split(', ')
           .filter((x) => x.toLowerCase() !== template.toLowerCase())
           .join(', ');
->>>>>>> a821a0c (second update)
       }
       return `${trimmed}, ${template}`;
     });
@@ -278,55 +214,6 @@ function NurseVitals() {
               Patient Information
             </h3>
 
-<<<<<<< HEAD
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div>
-                <Label>Select From Reception Queue</Label>
-                <Select
-                  value={selectedQueueId}
-                  onValueChange={(v) => {
-                    setSelectedQueueId(v);
-                    if (v !== "none") {
-                      const entry = queue.find((e) => e.id === v);
-                      if (entry) setSelectedPatientId(entry.patientId);
-                    }
-                  }}
-                >
-                  <SelectTrigger className="mt-1.5">
-                    <SelectValue placeholder="Choose queued patient..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="none">-- Select from live queue --</SelectItem>
-                    {queue
-                      .filter((e) => e.vitalsStatus !== "done")
-                      .map((entry) => (
-                        <SelectItem key={entry.id} value={entry.id}>
-                          {entry.patientName} ({entry.uhid})
-                        </SelectItem>
-                      ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <Label>Or Select All Registered Patients</Label>
-                <Select
-                  value={selectedPatientId}
-                  onValueChange={(v) => {
-                    setSelectedPatientId(v);
-                    const matchedQueue = queue.find(
-                      (e) => e.patientId === v && e.vitalsStatus !== "done"
-                    );
-                    if (matchedQueue) {
-                      setSelectedQueueId(matchedQueue.id);
-                    } else {
-                      setSelectedQueueId("none");
-                    }
-                  }}
-                >
-                  <SelectTrigger className="mt-1.5">
-                    <SelectValue placeholder="Choose registered patient..." />
-=======
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <Label htmlFor="directPatientId">Patient ID (UHID) *</Label>
@@ -381,7 +268,6 @@ function NurseVitals() {
                 <Select value={directDoctorId} onValueChange={setDirectDoctorId}>
                   <SelectTrigger>
                     <SelectValue placeholder="Choose doctor..." />
->>>>>>> a821a0c (second update)
                   </SelectTrigger>
                   <SelectContent>
                     {doctors.map((doc) => (
@@ -393,44 +279,6 @@ function NurseVitals() {
                 </Select>
               </div>
             </div>
-<<<<<<< HEAD
-
-            {activePatient && (
-              <div className="rounded-xl border bg-muted/30 p-4 space-y-2">
-                <div className="flex flex-wrap justify-between items-center gap-2">
-                  <span className="font-semibold text-sm">{activePatient.name}</span>
-                  <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-primary/10 text-primary">
-                    {activePatient.mrn}
-                  </span>
-                </div>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs text-muted-foreground">
-                  <div>
-                    Age / Gender:{" "}
-                    <span className="font-semibold text-foreground">
-                      {activePatient.age}y / {activePatient.gender}
-                    </span>
-                  </div>
-                  <div>
-                    Blood Group:{" "}
-                    <span className="font-semibold text-foreground">
-                      {activePatient.bloodGroup || "O+"}
-                    </span>
-                  </div>
-                  {activeQueueEntry && (
-                    <>
-                      <div className="col-span-2">
-                        Assigned Doctor:{" "}
-                        <span className="font-semibold text-foreground">
-                          {activeQueueEntry.doctorName} ({activeQueueEntry.department})
-                        </span>
-                      </div>
-                    </>
-                  )}
-                </div>
-              </div>
-            )}
-=======
->>>>>>> a821a0c (second update)
           </div>
 
           {/* Vitals Form Fields */}
@@ -463,19 +311,11 @@ function NurseVitals() {
                 <Label>BMI (calculated)</Label>
                 <div
                   className={cn(
-<<<<<<< HEAD
-                    "mt-1.5 flex h-10 items-center justify-between rounded-md border px-3 text-sm font-semibold transition-all",
-                    bmiVal ? bmiColor : "bg-muted/40 border-input"
-                  )}
-                >
-                  <span>{bmiVal || "—"}</span>
-=======
                     'mt-1.5 flex h-10 items-center justify-between rounded-md border px-3 text-sm font-semibold transition-all',
                     bmiVal ? bmiColor : 'bg-muted/40 border-input',
                   )}
                 >
                   <span>{bmiVal || '—'}</span>
->>>>>>> a821a0c (second update)
                   {bmiCategory && (
                     <span className="text-xs uppercase tracking-wider font-bold">
                       {bmiCategory}
@@ -570,11 +410,7 @@ function NurseVitals() {
 
           {/* Submit buttons */}
           <div className="flex justify-end gap-3">
-<<<<<<< HEAD
-            <Button type="button" variant="outline" onClick={() => navigate({ to: "/nurse" })}>
-=======
             <Button type="button" variant="outline" onClick={() => navigate({ to: '/nurse' })}>
->>>>>>> a821a0c (second update)
               Cancel
             </Button>
             <Button
@@ -664,10 +500,7 @@ function VitalsInput({
   onChange,
   placeholder,
   required,
-<<<<<<< HEAD
-=======
   sanitize,
->>>>>>> a821a0c (second update)
 }: {
   label: string;
   value: string;

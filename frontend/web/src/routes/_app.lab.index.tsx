@@ -1,22 +1,18 @@
-<<<<<<< HEAD
-import { createFileRoute} from "@tanstack/react-router";
-import { useState} from "react";
-import { PageHeader } from "@/components/common/PageHeader";
-
-import { labOrders, patients } from "@/lib/mock/data";
+import { createFileRoute, Link } from '@tanstack/react-router';
+import { useState } from 'react';
+import { PageHeader } from '@/components/common/PageHeader';
+import { Button } from '@/components/ui/button';
+import { labOrders, patients } from '@/lib/mock/data';
 import {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   FilePlus2,
   FlaskConical,
   CheckCircle2,
   IndianRupee,
   TrendingDown,
   Wallet,
-  CalendarDays,
-  ChevronDown,
   TrendingUp,
   Minus,
-} from "lucide-react";
+} from 'lucide-react';
 import {
   Area,
   AreaChart,
@@ -26,26 +22,14 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-} from "recharts";
-import { StatusChip } from "@/components/common/StatusChip";
-import { format, subDays } from "date-fns";
-=======
-import { createFileRoute, Link } from '@tanstack/react-router';
-import { PageHeader } from '@/components/common/PageHeader';
-import { StatCard } from '@/components/common/StatCard';
-import { Button } from '@/components/ui/button';
-import { labOrders, patients } from '@/lib/mock/data';
-import { Beaker, FileCheck2, FilePlus2, FlaskConical, Hourglass } from 'lucide-react';
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+} from 'recharts';
 import { StatusChip } from '@/components/common/StatusChip';
-import { format } from 'date-fns';
->>>>>>> a821a0c (second update)
+import { format, subDays } from 'date-fns';
 
 export const Route = createFileRoute('/_app/lab/')({
   component: LabOverview,
 });
 
-<<<<<<< HEAD
 // ─── Static KPI constants (reflect real lab snapshot values) ─────────────────
 const KPI = {
   samplesRegistered: 312,
@@ -58,12 +42,8 @@ const KPI = {
   netAmount: 57220,
 };
 
-// ─── Filter dropdowns ─────────────────────────────────────────────────────────
-const SBU_OPTIONS = ["All SBU", "Diagnostics", "Pathology", "Radiology", "Microbiology"];
-const BRANCH_OPTIONS = ["All Branches", "Koramangala", "Indiranagar", "Whitefield", "Jayanagar"];
-
 // ─── Sample count trend data ──────────────────────────────────────────────────
-const dayLabels = Array.from({ length: 7 }, (_, i) => format(subDays(new Date(), 6 - i), "EEE d"));
+const dayLabels = Array.from({ length: 7 }, (_, i) => format(subDays(new Date(), 6 - i), 'EEE d'));
 const dayWiseSamples = [38, 52, 47, 63, 70, 55, 61];
 const DAY_AVG = Math.round(dayWiseSamples.reduce((a, b) => a + b, 0) / dayWiseSamples.length);
 const dayWiseData = dayLabels.map((label, i) => ({
@@ -73,32 +53,22 @@ const dayWiseData = dayLabels.map((label, i) => ({
 }));
 
 const weekWiseData = [
-  { label: "Wk 22", samples: 310, avg: 320 },
-  { label: "Wk 23", samples: 285, avg: 320 },
-  { label: "Wk 24", samples: 340, avg: 320 },
-  { label: "Wk 25", samples: 298, avg: 320 },
-  { label: "Wk 26", samples: 372, avg: 320 },
-  { label: "Wk 27", samples: 360, avg: 320 },
-=======
-const throughput = [
-  { day: 'Mon', samples: 38, reports: 31 },
-  { day: 'Tue', samples: 42, reports: 36 },
-  { day: 'Wed', samples: 55, reports: 49 },
-  { day: 'Thu', samples: 47, reports: 44 },
-  { day: 'Fri', samples: 61, reports: 52 },
-  { day: 'Sat', samples: 33, reports: 30 },
-  { day: 'Sun', samples: 22, reports: 19 },
->>>>>>> a821a0c (second update)
+  { label: 'Wk 22', samples: 310, avg: 320 },
+  { label: 'Wk 23', samples: 285, avg: 320 },
+  { label: 'Wk 24', samples: 340, avg: 320 },
+  { label: 'Wk 25', samples: 298, avg: 320 },
+  { label: 'Wk 26', samples: 372, avg: 320 },
+  { label: 'Wk 27', samples: 360, avg: 320 },
 ];
 
 const monthWiseData = [
-  { label: "Jan", samples: 1240, avg: 1400 },
-  { label: "Feb", samples: 1110, avg: 1400 },
-  { label: "Mar", samples: 1380, avg: 1400 },
-  { label: "Apr", samples: 1290, avg: 1400 },
-  { label: "May", samples: 1520, avg: 1400 },
-  { label: "Jun", samples: 1480, avg: 1400 },
-  { label: "Jul", samples: 1610, avg: 1400 },
+  { label: 'Jan', samples: 1240, avg: 1400 },
+  { label: 'Feb', samples: 1110, avg: 1400 },
+  { label: 'Mar', samples: 1380, avg: 1400 },
+  { label: 'Apr', samples: 1290, avg: 1400 },
+  { label: 'May', samples: 1520, avg: 1400 },
+  { label: 'Jun', samples: 1480, avg: 1400 },
+  { label: 'Jul', samples: 1610, avg: 1400 },
 ];
 
 // ─── Lab order status tones ────────────────────────────────────────────────────
@@ -109,112 +79,9 @@ const tone = {
   completed: 'success',
 } as const;
 
-<<<<<<< HEAD
 // ─── Helper: currency format ──────────────────────────────────────────────────
 function fmt(n: number) {
-  return n.toLocaleString("en-IN");
-}
-=======
-function LabOverview() {
-  const pending = labOrders.filter((l) => l.status !== 'completed');
-  const completed = labOrders.filter((l) => l.status === 'completed');
->>>>>>> a821a0c (second update)
-
-// ─── Top Filter Bar ───────────────────────────────────────────────────────────
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function TopFilters({
-  dateFrom,
-  setDateFrom,
-  dateTo,
-  setDateTo,
-  sbu,
-  setSbu,
-  branch,
-  setBranch,
-}: {
-  dateFrom: string;
-  setDateFrom: (v: string) => void;
-  dateTo: string;
-  setDateTo: (v: string) => void;
-  sbu: string;
-  setSbu: (v: string) => void;
-  branch: string;
-  setBranch: (v: string) => void;
-}) {
-  return (
-    <div className="mb-6 flex flex-wrap items-center gap-2">
-      {/* Date Range */}
-      <div className="flex items-center gap-1.5 rounded-lg border border-border bg-background px-3 py-2 shadow-sm">
-        <CalendarDays className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-        <input
-          type="date"
-          value={dateFrom}
-          onChange={(e) => setDateFrom(e.target.value)}
-          className="w-28 bg-transparent text-xs outline-none text-foreground"
-          aria-label="From date"
-          id="lab-filter-from"
-        />
-        <span className="text-muted-foreground text-xs">–</span>
-        <input
-          type="date"
-          value={dateTo}
-          onChange={(e) => setDateTo(e.target.value)}
-          className="w-28 bg-transparent text-xs outline-none text-foreground"
-          aria-label="To date"
-          id="lab-filter-to"
-        />
-      </div>
-
-      {/* SBU */}
-      <div className="relative flex items-center gap-1.5 rounded-lg border border-border bg-background px-3 py-2 shadow-sm">
-        <select
-          value={sbu}
-          onChange={(e) => setSbu(e.target.value)}
-          className="bg-transparent text-xs text-foreground outline-none cursor-pointer pr-5 appearance-none"
-          aria-label="SBU filter"
-          id="lab-filter-sbu"
-        >
-          {SBU_OPTIONS.map((s) => (
-            <option key={s} value={s}>
-              {s}
-            </option>
-          ))}
-        </select>
-        <ChevronDown className="pointer-events-none absolute right-2 h-3 w-3 text-muted-foreground" />
-      </div>
-
-      {/* Branch */}
-      <div className="relative flex items-center gap-1.5 rounded-lg border border-border bg-background px-3 py-2 shadow-sm">
-        <select
-          value={branch}
-          onChange={(e) => setBranch(e.target.value)}
-          className="bg-transparent text-xs text-foreground outline-none cursor-pointer pr-5 appearance-none"
-          aria-label="Branch filter"
-          id="lab-filter-branch"
-        >
-          {BRANCH_OPTIONS.map((b) => (
-            <option key={b} value={b}>
-              {b}
-            </option>
-          ))}
-        </select>
-        <ChevronDown className="pointer-events-none absolute right-2 h-3 w-3 text-muted-foreground" />
-      </div>
-
-      <button
-        onClick={() => {
-          setDateFrom("");
-          setDateTo("");
-          setSbu(SBU_OPTIONS[0]!);
-          setBranch(BRANCH_OPTIONS[0]!);
-        }}
-        className="rounded-lg border border-border bg-background px-3 py-2 text-xs text-muted-foreground shadow-sm hover:bg-muted transition-colors"
-        id="lab-filter-clear"
-      >
-        Clear
-      </button>
-    </div>
-  );
+  return n.toLocaleString('en-IN');
 }
 
 // ─── KPI Card ─────────────────────────────────────────────────────────────────
@@ -231,8 +98,8 @@ function KpiCard({
   value: string | number;
   sub?: React.ReactNode;
   icon: React.ElementType;
-  accent: string; // text colour class
-  iconBg: string; // icon container bg class
+  accent: string;
+  iconBg: string;
   valueSuffix?: string;
 }) {
   return (
@@ -260,9 +127,9 @@ function KpiCard({
 
 // ─── Sample Analytics Chart ────────────────────────────────────────────────────
 function SampleAnalytics() {
-  const [gran, setGran] = useState<"day" | "week" | "month">("week");
+  const [gran, setGran] = useState<'day' | 'week' | 'month'>('week');
 
-  const data = gran === "day" ? dayWiseData : gran === "week" ? weekWiseData : monthWiseData;
+  const data = gran === 'day' ? dayWiseData : gran === 'week' ? weekWiseData : monthWiseData;
 
   const peak = Math.max(...data.map((d) => d.samples));
   const avg = data[0]!.avg;
@@ -276,25 +143,25 @@ function SampleAnalytics() {
         <div>
           <h3 className="font-display font-semibold">Sample Count</h3>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Trend vs average baseline ·{" "}
-            {gran === "day" ? "Last 7 days" : gran === "week" ? "Last 6 weeks" : "Last 7 months"}
+            Trend vs average baseline ·{' '}
+            {gran === 'day' ? 'Last 7 days' : gran === 'week' ? 'Last 6 weeks' : 'Last 7 months'}
           </p>
         </div>
 
         {/* Granularity toggle */}
         <div className="flex gap-1 rounded-lg border border-border bg-muted/40 p-0.5">
-          {(["day", "week", "month"] as const).map((g) => (
+          {(['day', 'week', 'month'] as const).map((g) => (
             <button
               key={g}
               onClick={() => setGran(g)}
               className={`rounded-md px-3 py-1.5 text-xs font-semibold capitalize transition-all ${
                 gran === g
-                  ? "bg-primary text-primary-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? 'bg-primary text-primary-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
               }`}
               id={`btn-gran-${g}`}
             >
-              {g === "day" ? "Day" : g === "week" ? "Week" : "Month"}
+              {g === 'day' ? 'Day' : g === 'week' ? 'Week' : 'Month'}
             </button>
           ))}
         </div>
@@ -303,16 +170,16 @@ function SampleAnalytics() {
       {/* Mini stats */}
       <div className="mb-4 grid grid-cols-3 gap-2">
         {[
-          { label: "Peak", value: peak, icon: TrendingUp, color: "text-primary" },
-          { label: "Avg", value: avg, icon: Minus, color: "text-amber-600 dark:text-amber-400" },
+          { label: 'Peak', value: peak, icon: TrendingUp, color: 'text-primary' },
+          { label: 'Avg', value: avg, icon: Minus, color: 'text-amber-600 dark:text-amber-400' },
           {
-            label: "Latest vs prev",
-            value: `${delta >= 0 ? "+" : ""}${delta}`,
+            label: 'Latest vs prev',
+            value: `${delta >= 0 ? '+' : ''}${delta}`,
             icon: delta >= 0 ? TrendingUp : TrendingDown,
             color:
               delta >= 0
-                ? "text-emerald-600 dark:text-emerald-400"
-                : "text-rose-600 dark:text-rose-400",
+                ? 'text-emerald-600 dark:text-emerald-400'
+                : 'text-rose-600 dark:text-rose-400',
           },
         ].map(({ label, value, icon: I, color }) => (
           <div key={label} className="rounded-xl bg-muted/30 p-3">
@@ -351,14 +218,13 @@ function SampleAnalytics() {
             />
             <Tooltip
               contentStyle={{
-                background: "var(--color-popover)",
-                border: "1px solid var(--color-border)",
+                background: 'var(--color-popover)',
+                border: '1px solid var(--color-border)',
                 borderRadius: 10,
                 fontSize: 12,
               }}
-              formatter={(v: number, name: string) => [v, name === "samples" ? "Samples" : "Avg"]}
+              formatter={(v: number, name: string) => [v, name === 'samples' ? 'Samples' : 'Avg']}
             />
-            {/* Average baseline reference line */}
             <ReferenceLine
               y={avg}
               stroke="var(--color-warning)"
@@ -366,9 +232,9 @@ function SampleAnalytics() {
               strokeWidth={1.5}
               label={{
                 value: `Avg ${avg}`,
-                position: "insideTopRight",
+                position: 'insideTopRight',
                 fontSize: 10,
-                fill: "var(--color-warning)",
+                fill: 'var(--color-warning)',
               }}
             />
             <Area
@@ -377,7 +243,7 @@ function SampleAnalytics() {
               stroke="var(--color-primary)"
               strokeWidth={2.5}
               fill="url(#sampleGrad)"
-              dot={{ r: 3.5, fill: "var(--color-primary)", strokeWidth: 0 }}
+              dot={{ r: 3.5, fill: 'var(--color-primary)', strokeWidth: 0 }}
               activeDot={{ r: 5 }}
             />
           </AreaChart>
@@ -389,7 +255,7 @@ function SampleAnalytics() {
 
 // ─── Pending Pipeline ──────────────────────────────────────────────────────────
 function PendingPipeline() {
-  const pending = labOrders.filter((l) => l.status !== "completed");
+  const pending = labOrders.filter((l) => l.status !== 'completed');
   return (
     <div className="surface-elevated p-5 flex flex-col">
       <div className="mb-3 flex items-center justify-between">
@@ -399,6 +265,9 @@ function PendingPipeline() {
             {pending.length} orders awaiting completion
           </p>
         </div>
+        <Link to="/lab/pending" className="text-xs font-semibold text-primary hover:underline">
+          View all
+        </Link>
       </div>
       <div className="divide-y divide-border flex-1">
         {pending.slice(0, 6).map((l) => {
@@ -408,10 +277,10 @@ function PendingPipeline() {
               <div className="min-w-0">
                 <p className="truncate text-sm font-semibold">{p?.name}</p>
                 <p className="text-xs text-muted-foreground">
-                  {l.tests.join(", ")} · {format(new Date(l.orderedOn), "MMM d")}
+                  {l.tests.join(', ')} · {format(new Date(l.orderedOn), 'MMM d')}
                 </p>
               </div>
-              <StatusChip tone={tone[l.status]}>{l.status.replace(/-/g, " ")}</StatusChip>
+              <StatusChip tone={tone[l.status]}>{l.status.replace(/-/g, ' ')}</StatusChip>
             </div>
           );
         })}
@@ -429,12 +298,8 @@ function LabOverview() {
     <>
       <PageHeader
         eyebrow="Laboratory"
-<<<<<<< HEAD
         title="Investigations Control Room"
         description="Daily operational and financial snapshot across all branches."
-=======
-        title="Investigations control room"
-        description="Sample pipeline, turnaround time and report uploads."
         actions={
           <Link to="/lab/upload">
             <Button>
@@ -442,7 +307,6 @@ function LabOverview() {
             </Button>
           </Link>
         }
->>>>>>> a821a0c (second update)
       />
       {/* ── 6 KPI Cards ─────────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6">
@@ -469,7 +333,6 @@ function LabOverview() {
           }
         />
 
-<<<<<<< HEAD
         {/* 2. Tests in Progress */}
         <KpiCard
           label="Tests in Progress"
@@ -552,78 +415,6 @@ function LabOverview() {
 
         {/* Pending Pipeline */}
         <PendingPipeline />
-=======
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard label="Pending samples" value={pending.length} icon={Hourglass} tone="warning" />
-        <StatCard
-          label="In progress"
-          value={labOrders.filter((l) => l.status === 'in-progress').length}
-          icon={FlaskConical}
-          tone="info"
-        />
-        <StatCard label="Reports today" value={completed.length} icon={FileCheck2} tone="success" />
-        <StatCard label="Avg TAT" value="3.2h" icon={Beaker} tone="primary" />
-      </div>
-
-      <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <div className="surface-elevated p-5 lg:col-span-2">
-          <h3 className="font-display font-semibold">Sample throughput</h3>
-          <div className="mt-3 h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={throughput}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis
-                  dataKey="day"
-                  tickLine={false}
-                  axisLine={false}
-                  stroke="hsl(var(--muted-foreground))"
-                  fontSize={11}
-                />
-                <YAxis
-                  tickLine={false}
-                  axisLine={false}
-                  stroke="hsl(var(--muted-foreground))"
-                  fontSize={11}
-                />
-                <Tooltip
-                  contentStyle={{
-                    background: 'hsl(var(--popover))',
-                    border: '1px solid hsl(var(--border))',
-                    borderRadius: 12,
-                  }}
-                />
-                <Bar dataKey="samples" fill="hsl(var(--primary))" radius={[6, 6, 0, 0]} />
-                <Bar dataKey="reports" fill="hsl(var(--info))" radius={[6, 6, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        <div className="surface-elevated p-5">
-          <div className="mb-3 flex items-center justify-between">
-            <h3 className="font-display font-semibold">Pending pipeline</h3>
-            <Link to="/lab/pending" className="text-xs font-semibold text-primary hover:underline">
-              View all
-            </Link>
-          </div>
-          <div className="divide-y divide-border">
-            {pending.slice(0, 6).map((l) => {
-              const p = patients.find((x) => x.id === l.patientId);
-              return (
-                <div key={l.id} className="flex items-center justify-between gap-3 py-3">
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-semibold">{p?.name}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {l.tests.join(', ')} · {format(new Date(l.orderedOn), 'MMM d')}
-                    </p>
-                  </div>
-                  <StatusChip tone={tone[l.status]}>{l.status.replace('-', ' ')}</StatusChip>
-                </div>
-              );
-            })}
-          </div>
-        </div>
->>>>>>> a821a0c (second update)
       </div>
     </>
   );

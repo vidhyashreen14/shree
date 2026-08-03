@@ -13,13 +13,6 @@ export const Route = createFileRoute('/_app/admin/doctors')({
 });
 
 function AdminDoctors() {
-<<<<<<< HEAD
-  const columns = useMemo<ColumnDef<Doctor>[]>(
-    () => [
-      {
-        header: "Doctor",
-        accessorKey: "name",
-=======
   const doctors = useDoctors();
 
   const columns = useMemo<ColumnDef<Doctor>[]>(
@@ -27,7 +20,6 @@ function AdminDoctors() {
       {
         header: 'Doctor',
         accessorKey: 'name',
->>>>>>> a821a0c (second update)
         cell: ({ row }) => (
           <div>
             <p className="font-medium">{row.original.name}</p>
@@ -35,18 +27,6 @@ function AdminDoctors() {
           </div>
         ),
       },
-<<<<<<< HEAD
-      { header: "Department", accessorKey: "department" },
-      {
-        header: "Experience",
-        accessorKey: "experienceYears",
-        cell: ({ getValue }) => `${getValue()} yrs`,
-      },
-      { header: "Fee", accessorKey: "fee", cell: ({ getValue }) => `₹${getValue()}` },
-      {
-        header: "Rating",
-        accessorKey: "rating",
-=======
       { header: 'Department', accessorKey: 'department' },
       {
         header: 'Experience',
@@ -57,7 +37,6 @@ function AdminDoctors() {
       {
         header: 'Rating',
         accessorKey: 'rating',
->>>>>>> a821a0c (second update)
         cell: ({ getValue }) => (
           <span className="inline-flex items-center gap-1 text-sm font-semibold">
             <Star className="h-3.5 w-3.5 fill-warning text-warning" /> {String(getValue())}
@@ -65,13 +44,8 @@ function AdminDoctors() {
         ),
       },
       {
-<<<<<<< HEAD
-        header: "Availability",
-        accessorKey: "available",
-=======
         header: 'Availability',
         accessorKey: 'available',
->>>>>>> a821a0c (second update)
         cell: ({ getValue }) =>
           getValue() ? (
             <StatusChip tone="success">Available</StatusChip>
@@ -80,11 +54,7 @@ function AdminDoctors() {
           ),
       },
     ],
-<<<<<<< HEAD
-    []
-=======
     [],
->>>>>>> a821a0c (second update)
   );
 
   return (

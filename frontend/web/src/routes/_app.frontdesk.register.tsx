@@ -1,46 +1,24 @@
-<<<<<<< HEAD
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import React, { useState, useMemo, useRef } from "react";
-import {
-  allowOnlyAlphabetsAndSpaces,
-  allowOnlyNumbers,
-  allowOnlyAddressChars,
-} from "@/lib/validations";
-import { PageHeader } from "@/components/common/PageHeader";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { PatientNameInput, MobileInput, EmailInput } from "@/components/common/ValidatedInputs";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-=======
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import { PageHeader } from '@/components/common/PageHeader';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
->>>>>>> a821a0c (second update)
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-<<<<<<< HEAD
-} from "@/components/ui/select";
-import { toast } from "sonner";
-import { cn } from "@/lib/utils";
-import { usePatients } from "@/lib/store/patients";
-import { useBillingStore } from "@/lib/store/billing";
-import { useNurseQueue } from "@/lib/store/nurseQueue";
-import { useHospitalSettings } from "@/lib/store/hospitalSettings";
-import { doctors, departments } from "@/lib/mock/data";
-import type { Patient } from "@/lib/types";
-=======
 } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { cn } from '@/lib/utils';
+import {
+  cn,
+  sanitizeLettersOnly,
+  sanitizePhone,
+  sanitizeAlphanumericId,
+} from '@/lib/utils';
 import { usePatients } from '@/lib/store/patients';
 import { useBillingStore } from '@/lib/store/billing';
 import { useNurseQueue } from '@/lib/store/nurseQueue';
@@ -48,7 +26,6 @@ import { useHospitalSettings } from '@/lib/store/hospitalSettings';
 import { useStaffProfiles } from '@/lib/store/staffProfiles';
 import { doctors, departments } from '@/lib/mock/data';
 import type { Patient } from '@/lib/types';
->>>>>>> a821a0c (second update)
 import {
   Search,
   UserPlus,
@@ -68,14 +45,8 @@ import {
   Mail,
   Phone,
   X,
-<<<<<<< HEAD
-} from "lucide-react";
-import { format } from "date-fns";
-=======
 } from 'lucide-react';
-import { sanitizeLettersOnly, sanitizePhone, sanitizeAlphanumericId } from '@/lib/utils';
 import { format } from 'date-fns';
->>>>>>> a821a0c (second update)
 
 export const Route = createFileRoute('/_app/frontdesk/register')({
   head: () => ({
@@ -122,13 +93,8 @@ function StepIndicator({ current }: { current: number }) {
                 i < current
                   ? 'border-primary bg-primary text-primary-foreground'
                   : i === current
-<<<<<<< HEAD
-                    ? "border-primary bg-primary/10 text-primary shadow-md shadow-primary/20"
-                    : "border-border bg-background text-muted-foreground"
-=======
                     ? 'border-primary bg-primary/10 text-primary shadow-md shadow-primary/20'
                     : 'border-border bg-background text-muted-foreground',
->>>>>>> a821a0c (second update)
               )}
             >
               {i < current ? <CheckCircle2 className="h-4 w-4" /> : i + 1}
@@ -181,18 +147,6 @@ function StepLookup({
       <div className="mb-6 grid grid-cols-2 gap-3">
         {[
           {
-<<<<<<< HEAD
-            id: "new" as const,
-            label: "New Patient",
-            icon: UserPlus,
-            desc: "First time visit — needs registration",
-          },
-          {
-            id: "existing" as const,
-            label: "Existing Patient",
-            icon: UserCheck,
-            desc: "Has a UHID — search below",
-=======
             id: 'new' as const,
             label: 'New Patient',
             icon: UserPlus,
@@ -203,7 +157,6 @@ function StepLookup({
             label: 'Existing Patient',
             icon: UserCheck,
             desc: 'Has a UHID — search below',
->>>>>>> a821a0c (second update)
           },
         ].map(({ id, label, icon: Icon, desc }) => (
           <button
@@ -219,17 +172,10 @@ function StepLookup({
           >
             <span
               className={cn(
-<<<<<<< HEAD
-                "grid h-10 w-10 place-items-center rounded-xl",
-                mode === id
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted text-muted-foreground"
-=======
                 'grid h-10 w-10 place-items-center rounded-xl',
                 mode === id
                   ? 'bg-primary text-primary-foreground'
                   : 'bg-muted text-muted-foreground',
->>>>>>> a821a0c (second update)
               )}
             >
               <Icon className="h-5 w-5" />
@@ -279,17 +225,10 @@ function StepLookup({
                   >
                     <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-primary/10 text-sm font-bold text-primary">
                       {p.name
-<<<<<<< HEAD
-                        .split(" ")
-                        .map((n) => n[0])
-                        .slice(0, 2)
-                        .join("")}
-=======
                         .split(' ')
                         .map((n) => n[0])
                         .slice(0, 2)
                         .join('')}
->>>>>>> a821a0c (second update)
                     </span>
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-sm">{p.name}</p>
@@ -331,24 +270,6 @@ interface RegForm {
 }
 
 const emptyRegForm: RegForm = {
-<<<<<<< HEAD
-  name: "",
-  dob: "",
-  age: "",
-  gender: "Male",
-  mobile: "",
-  email: "",
-  address: "",
-  bloodGroup: "O+",
-  emergencyName: "",
-  emergencyPhone: "",
-  emergencyRelation: "Parent",
-  allergies: "",
-  diseases: "",
-  medications: "",
-  insuranceProvider: "",
-  policyNumber: "",
-=======
   name: '',
   dob: '',
   age: '',
@@ -365,7 +286,6 @@ const emptyRegForm: RegForm = {
   medications: '',
   insuranceProvider: '',
   policyNumber: '',
->>>>>>> a821a0c (second update)
 };
 
 function StepRegistration({
@@ -379,27 +299,14 @@ function StepRegistration({
   onNext: () => void;
   onBack: () => void;
 }) {
-  const [errors, setErrors] = React.useState<Record<string, boolean>>({});
-  const updateError = (k: string, hasError: boolean) =>
-    setErrors((prev) => ({ ...prev, [k]: hasError }));
-
   const update = (k: keyof RegForm, v: string) => setForm((f) => ({ ...f, [k]: v }));
   const valid =
     form.name.trim().length >= 2 &&
-<<<<<<< HEAD
-    form.mobile.trim().length === 10 &&
-    form.gender &&
-    form.address.trim().length >= 2 &&
-    form.emergencyName.trim().length >= 2 &&
-    form.emergencyPhone.trim().length === 10 &&
-    !Object.values(errors).some(Boolean);
-=======
     form.mobile.trim().length >= 7 &&
     form.gender &&
     form.address.trim().length >= 2 &&
     form.emergencyName.trim().length >= 2 &&
     form.emergencyPhone.trim().length >= 7;
->>>>>>> a821a0c (second update)
 
   return (
     <div className="mx-auto max-w-3xl space-y-6">
@@ -413,20 +320,11 @@ function StepRegistration({
         </h3>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field label="Full Name *" className="sm:col-span-2">
-<<<<<<< HEAD
-            <PatientNameInput
-              id="reg-name"
-              value={form.name}
-              onChange={(v) => update("name", v)}
-              onErrorChange={(err) => updateError("name", err)}
-              required
-=======
             <Input
               id="reg-name"
               value={form.name}
               onChange={(e) => update('name', sanitizeLettersOnly(e.target.value))}
               placeholder="e.g. Aarav Sharma"
->>>>>>> a821a0c (second update)
             />
           </Field>
           <Field label="Date of Birth">
@@ -434,12 +332,7 @@ function StepRegistration({
               id="reg-dob"
               type="date"
               value={form.dob}
-<<<<<<< HEAD
-              onChange={(e) => update("dob", e.target.value)}
-              max={new Date().toISOString().split("T")[0]}
-=======
               onChange={(e) => update('dob', e.target.value)}
->>>>>>> a821a0c (second update)
             />
           </Field>
           <Field label="Age">
@@ -447,33 +340,19 @@ function StepRegistration({
               id="reg-age"
               type="number"
               min={0}
-<<<<<<< HEAD
-              max={120}
-              value={form.age}
-              onChange={(e) => update("age", allowOnlyNumbers(e.target.value))}
-=======
               max={130}
               value={form.age}
               onChange={(e) => update('age', e.target.value)}
->>>>>>> a821a0c (second update)
               placeholder="Years"
             />
           </Field>
           <Field label="Gender *">
-<<<<<<< HEAD
-            <Select value={form.gender} onValueChange={(v) => update("gender", v)}>
-=======
             <Select value={form.gender} onValueChange={(v) => update('gender', v)}>
->>>>>>> a821a0c (second update)
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-<<<<<<< HEAD
-                {["Male", "Female", "Other"].map((g) => (
-=======
                 {['Male', 'Female', 'Other'].map((g) => (
->>>>>>> a821a0c (second update)
                   <SelectItem key={g} value={g}>
                     {g}
                   </SelectItem>
@@ -482,11 +361,7 @@ function StepRegistration({
             </Select>
           </Field>
           <Field label="Blood Group">
-<<<<<<< HEAD
-            <Select value={form.bloodGroup} onValueChange={(v) => update("bloodGroup", v)}>
-=======
             <Select value={form.bloodGroup} onValueChange={(v) => update('bloodGroup', v)}>
->>>>>>> a821a0c (second update)
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
@@ -500,22 +375,6 @@ function StepRegistration({
             </Select>
           </Field>
           <Field label="Mobile Number *">
-<<<<<<< HEAD
-            <MobileInput
-              id="reg-mobile"
-              value={form.mobile}
-              onChange={(v) => update("mobile", v)}
-              onErrorChange={(err) => updateError("mobile", err)}
-              required
-            />
-          </Field>
-          <Field label="Email (optional)">
-            <EmailInput
-              id="reg-email"
-              value={form.email}
-              onChange={(v) => update("email", v)}
-              onErrorChange={(err) => updateError("email", err)}
-=======
             <Input
               id="reg-mobile"
               type="tel"
@@ -532,18 +391,13 @@ function StepRegistration({
               value={form.email}
               onChange={(e) => update('email', e.target.value)}
               placeholder="patient@email.com"
->>>>>>> a821a0c (second update)
             />
           </Field>
           <Field label="Address *" className="sm:col-span-2">
             <Textarea
               id="reg-address"
               value={form.address}
-<<<<<<< HEAD
-              onChange={(e) => update("address", allowOnlyAddressChars(e.target.value))}
-=======
               onChange={(e) => update('address', e.target.value)}
->>>>>>> a821a0c (second update)
               rows={2}
               placeholder="Full address…"
             />
@@ -561,32 +415,14 @@ function StepRegistration({
         </h3>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field label="Contact Person Name *">
-<<<<<<< HEAD
-            <PatientNameInput
-              id="reg-emname"
-              value={form.emergencyName}
-              onChange={(v) => update("emergencyName", v)}
-              onErrorChange={(err) => updateError("emergencyName", err)}
-              required
-=======
             <Input
               id="reg-emname"
               value={form.emergencyName}
               onChange={(e) => update('emergencyName', sanitizeLettersOnly(e.target.value))}
->>>>>>> a821a0c (second update)
               placeholder="Guardian / Relative name"
             />
           </Field>
           <Field label="Phone Number *">
-<<<<<<< HEAD
-            <MobileInput
-              id="reg-emphone"
-              value={form.emergencyPhone}
-              onChange={(v) => update("emergencyPhone", v)}
-              onErrorChange={(err) => updateError("emergencyPhone", err)}
-              required
-              placeholder="+91 …"
-=======
             <Input
               id="reg-emphone"
               type="tel"
@@ -594,17 +430,12 @@ function StepRegistration({
               onChange={(e) => update('emergencyPhone', sanitizePhone(e.target.value))}
               placeholder="98765 43210"
               maxLength={15}
->>>>>>> a821a0c (second update)
             />
           </Field>
           <Field label="Relationship">
             <Select
               value={form.emergencyRelation}
-<<<<<<< HEAD
-              onValueChange={(v) => update("emergencyRelation", v)}
-=======
               onValueChange={(v) => update('emergencyRelation', v)}
->>>>>>> a821a0c (second update)
             >
               <SelectTrigger>
                 <SelectValue />
@@ -634,11 +465,7 @@ function StepRegistration({
             <Input
               id="reg-allergies"
               value={form.allergies}
-<<<<<<< HEAD
-              onChange={(e) => update("allergies", allowOnlyAlphabetsAndSpaces(e.target.value))}
-=======
               onChange={(e) => update('allergies', e.target.value)}
->>>>>>> a821a0c (second update)
               placeholder="e.g. Penicillin, Peanuts"
             />
           </Field>
@@ -646,11 +473,7 @@ function StepRegistration({
             <Input
               id="reg-diseases"
               value={form.diseases}
-<<<<<<< HEAD
-              onChange={(e) => update("diseases", allowOnlyAlphabetsAndSpaces(e.target.value))}
-=======
               onChange={(e) => update('diseases', e.target.value)}
->>>>>>> a821a0c (second update)
               placeholder="e.g. Diabetes, Hypertension"
             />
           </Field>
@@ -658,13 +481,7 @@ function StepRegistration({
             <Input
               id="reg-medications"
               value={form.medications}
-<<<<<<< HEAD
-              onChange={(e) =>
-                update("medications", e.target.value.replace(/[^a-zA-Z0-9\s.,-]/g, ""))
-              }
-=======
               onChange={(e) => update('medications', e.target.value)}
->>>>>>> a821a0c (second update)
               placeholder="e.g. Metformin 500mg, Amlodipine 5mg"
             />
           </Field>
@@ -690,11 +507,7 @@ function StepRegistration({
             <Input
               id="reg-ins-provider"
               value={form.insuranceProvider}
-<<<<<<< HEAD
-              onChange={(e) => update("insuranceProvider", e.target.value)}
-=======
               onChange={(e) => update('insuranceProvider', e.target.value)}
->>>>>>> a821a0c (second update)
               placeholder="e.g. Star Health, HDFC Ergo"
             />
           </Field>
@@ -702,11 +515,7 @@ function StepRegistration({
             <Input
               id="reg-ins-policy"
               value={form.policyNumber}
-<<<<<<< HEAD
-              onChange={(e) => update("policyNumber", e.target.value)}
-=======
               onChange={(e) => update('policyNumber', sanitizeAlphanumericId(e.target.value))}
->>>>>>> a821a0c (second update)
               placeholder="e.g. SH-100245"
             />
           </Field>
@@ -742,16 +551,10 @@ function StepDoctorSelection({
   selectedDoctorId: string;
   setSelectedDoctorId: (v: string) => void;
 }) {
-<<<<<<< HEAD
-  const deptDoctors = doctors.filter(
-    (d) =>
-      !selectedDeptId || d.department === departments.find((dep) => dep.id === selectedDeptId)?.name
-=======
   const deptDoctors = [...doctors].filter(
     (d) =>
       !selectedDeptId ||
       d.department === departments.find((dep) => dep.id === selectedDeptId)?.name,
->>>>>>> a821a0c (second update)
   );
 
   return (
@@ -769,11 +572,7 @@ function StepDoctorSelection({
               type="button"
               onClick={() => {
                 setSelectedDeptId(dept.id);
-<<<<<<< HEAD
-                setSelectedDoctorId("");
-=======
                 setSelectedDoctorId('');
->>>>>>> a821a0c (second update)
               }}
               className={cn(
                 'flex flex-col items-start gap-1 rounded-xl border-2 p-4 text-left transition-all',
@@ -818,15 +617,6 @@ function StepDoctorSelection({
               >
                 <span
                   className={cn(
-<<<<<<< HEAD
-                    "grid h-11 w-11 shrink-0 place-items-center rounded-full border-2 text-sm font-bold transition-all",
-                    selectedDoctorId === doc.id
-                      ? "border-primary bg-primary text-primary-foreground"
-                      : "border-border bg-muted text-muted-foreground"
-                  )}
-                >
-                  {doc.name.split(" ").slice(-1)[0]?.[0]}
-=======
                     'grid h-11 w-11 shrink-0 place-items-center rounded-full border-2 text-sm font-bold transition-all',
                     selectedDoctorId === doc.id
                       ? 'border-primary bg-primary text-primary-foreground'
@@ -834,7 +624,6 @@ function StepDoctorSelection({
                   )}
                 >
                   {doc.name.split(' ').slice(-1)[0]?.[0]}
->>>>>>> a821a0c (second update)
                 </span>
                 <div className="flex-1 min-w-0">
                   <p className="font-semibold text-sm">{doc.name}</p>
@@ -844,15 +633,6 @@ function StepDoctorSelection({
                   <p className="text-sm font-semibold text-primary">₹{doc.fee}</p>
                   <span
                     className={cn(
-<<<<<<< HEAD
-                      "text-[10px] font-semibold rounded-full px-2 py-0.5",
-                      doc.available
-                        ? "bg-emerald-500/10 text-emerald-600"
-                        : "bg-muted text-muted-foreground"
-                    )}
-                  >
-                    {doc.available ? "Available" : "Busy"}
-=======
                       'text-[10px] font-semibold rounded-full px-2 py-0.5',
                       doc.available
                         ? 'bg-emerald-500/10 text-emerald-600'
@@ -860,7 +640,6 @@ function StepDoctorSelection({
                     )}
                   >
                     {doc.available ? 'Available' : 'Busy'}
->>>>>>> a821a0c (second update)
                   </span>
                 </div>
               </button>
@@ -926,17 +705,6 @@ function ConsultationBillModal({
   onClose: () => void;
 }) {
   const printRef = useRef<HTMLDivElement>(null);
-<<<<<<< HEAD
-  const billDate = format(new Date(), "dd MMM yyyy, hh:mm a");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { logoUrl, name, phone, email, address } = useHospitalSettings();
-
-  const handlePrint = () => {
-    const content = printRef.current?.innerHTML ?? "";
-    const win = window.open("", "_blank");
-    if (!win) {
-      toast.error("Pop-up blocked. Allow pop-ups and try again.");
-=======
   const billDate = format(new Date(), 'dd MMM yyyy, hh:mm a');
   const { logoUrl, name, phone, address } = useHospitalSettings();
 
@@ -945,7 +713,6 @@ function ConsultationBillModal({
     const win = window.open('', '_blank');
     if (!win) {
       toast.error('Pop-up blocked. Allow pop-ups and try again.');
->>>>>>> a821a0c (second update)
       return;
     }
     win.document.write(`
@@ -996,13 +763,8 @@ function ConsultationBillModal({
   };
 
   const handleSMS = () => {
-<<<<<<< HEAD
-    toast.info("SMS gateway integration required.", {
-      description: "Connect your SMS provider API in production.",
-=======
     toast.info('SMS gateway integration required.', {
       description: 'Connect your SMS provider API in production.',
->>>>>>> a821a0c (second update)
     });
   };
 
@@ -1062,17 +824,10 @@ function ConsultationBillModal({
             <div
               className="header"
               style={{
-<<<<<<< HEAD
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                borderBottom: "2px solid #0d9488",
-=======
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 borderBottom: '2px solid #0d9488',
->>>>>>> a821a0c (second update)
                 paddingBottom: 16,
                 marginBottom: 20,
               }}
@@ -1081,60 +836,30 @@ function ConsultationBillModal({
                 <img
                   src={logoUrl}
                   alt="Logo"
-<<<<<<< HEAD
-                  style={{ maxHeight: 50, maxWidth: 150, marginBottom: 8, objectFit: "contain" }}
-                />
-              ) : (
-                <div className="logo" style={{ fontSize: 22, fontWeight: 800, color: "#0d9488" }}>
-=======
                   style={{ maxHeight: 50, maxWidth: 150, marginBottom: 8, objectFit: 'contain' }}
                 />
               ) : (
                 <div className="logo" style={{ fontSize: 22, fontWeight: 800, color: '#0d9488' }}>
->>>>>>> a821a0c (second update)
                   🏥 {name}
                 </div>
               )}
               {logoUrl && (
-<<<<<<< HEAD
-                <div style={{ fontSize: 14, fontWeight: 800, color: "#0d9488", marginTop: 2 }}>
-                  {name}
-                </div>
-              )}
-              <div className="subtitle" style={{ fontSize: 11, color: "#555", marginTop: 2 }}>
-=======
                 <div style={{ fontSize: 14, fontWeight: 800, color: '#0d9488', marginTop: 2 }}>
                   {name}
                 </div>
               )}
               <div className="subtitle" style={{ fontSize: 11, color: '#555', marginTop: 2 }}>
->>>>>>> a821a0c (second update)
                 Multispecialty Hospital · Compassionate Care
               </div>
               <div
                 className="addr"
-<<<<<<< HEAD
-                style={{ fontSize: 11, color: "#555", marginTop: 6, textAlign: "center" }}
-=======
                 style={{ fontSize: 11, color: '#555', marginTop: 6, textAlign: 'center' }}
->>>>>>> a821a0c (second update)
               >
                 {address} · 📞 {phone}
               </div>
             </div>
 
             {/* Bill meta */}
-<<<<<<< HEAD
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
-              <span
-                className="badge"
-                style={{
-                  display: "inline-block",
-                  background: "#f0fdfa",
-                  color: "#0d9488",
-                  borderRadius: 4,
-                  padding: "2px 8px",
-=======
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
               <span
                 className="badge"
@@ -1144,18 +869,13 @@ function ConsultationBillModal({
                   color: '#0d9488',
                   borderRadius: 4,
                   padding: '2px 8px',
->>>>>>> a821a0c (second update)
                   fontSize: 11,
                   fontWeight: 600,
                 }}
               >
                 Consultation Bill
               </span>
-<<<<<<< HEAD
-              <div style={{ textAlign: "right", fontSize: 12 }}>
-=======
               <div style={{ textAlign: 'right', fontSize: 12 }}>
->>>>>>> a821a0c (second update)
                 <div>
                   <strong>Bill No:</strong> {billNo}
                 </div>
@@ -1171,30 +891,17 @@ function ConsultationBillModal({
               style={{
                 fontSize: 11,
                 fontWeight: 700,
-<<<<<<< HEAD
-                textTransform: "uppercase",
-                letterSpacing: "0.5px",
-                color: "#0d9488",
-                borderBottom: "1px solid #e2e8f0",
-                paddingBottom: 4,
-                margin: "14px 0 8px",
-=======
                 textTransform: 'uppercase',
                 letterSpacing: '0.5px',
                 color: '#0d9488',
                 borderBottom: '1px solid #e2e8f0',
                 paddingBottom: 4,
                 margin: '14px 0 8px',
->>>>>>> a821a0c (second update)
               }}
             >
               Patient Details
             </div>
-<<<<<<< HEAD
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
-=======
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
->>>>>>> a821a0c (second update)
               <div>
                 <p style={{ fontSize: 12, marginBottom: 4 }}>
                   <strong>Patient Name:</strong> {patientName}
@@ -1206,11 +913,7 @@ function ConsultationBillModal({
                   <strong>Age / Gender:</strong> {patientAge}y / {patientGender}
                 </p>
               </div>
-<<<<<<< HEAD
-              <div style={{ textAlign: "right" }}>
-=======
               <div style={{ textAlign: 'right' }}>
->>>>>>> a821a0c (second update)
                 <p style={{ fontSize: 12, marginBottom: 4 }}>
                   <strong>Assigned Consultant:</strong> {doctorName}
                 </p>
@@ -1218,11 +921,7 @@ function ConsultationBillModal({
                   <strong>Department:</strong> {department}
                 </p>
                 <p style={{ fontSize: 12, marginBottom: 4 }}>
-<<<<<<< HEAD
-                  <strong>Type:</strong> {isNewPatient ? "New Patient" : "Returning Patient"}
-=======
                   <strong>Type:</strong> {isNewPatient ? 'New Patient' : 'Returning Patient'}
->>>>>>> a821a0c (second update)
                 </p>
               </div>
             </div>
@@ -1233,43 +932,21 @@ function ConsultationBillModal({
               style={{
                 fontSize: 11,
                 fontWeight: 700,
-<<<<<<< HEAD
-                textTransform: "uppercase",
-                letterSpacing: "0.5px",
-                color: "#0d9488",
-                borderBottom: "1px solid #e2e8f0",
-                paddingBottom: 4,
-                margin: "14px 0 8px",
-=======
                 textTransform: 'uppercase',
                 letterSpacing: '0.5px',
                 color: '#0d9488',
                 borderBottom: '1px solid #e2e8f0',
                 paddingBottom: 4,
                 margin: '14px 0 8px',
->>>>>>> a821a0c (second update)
               }}
             >
               Fee Details
             </div>
-<<<<<<< HEAD
-            <table style={{ width: "100%", borderCollapse: "collapse" }}>
-=======
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
->>>>>>> a821a0c (second update)
               <thead>
                 <tr>
                   <th
                     style={{
-<<<<<<< HEAD
-                      background: "#f0fdfa",
-                      color: "#0d9488",
-                      fontSize: 11,
-                      fontWeight: 700,
-                      textTransform: "uppercase",
-                      padding: "8px 10px",
-                      textAlign: "left",
-=======
                       background: '#f0fdfa',
                       color: '#0d9488',
                       fontSize: 11,
@@ -1277,22 +954,12 @@ function ConsultationBillModal({
                       textTransform: 'uppercase',
                       padding: '8px 10px',
                       textAlign: 'left',
->>>>>>> a821a0c (second update)
                     }}
                   >
                     #
                   </th>
                   <th
                     style={{
-<<<<<<< HEAD
-                      background: "#f0fdfa",
-                      color: "#0d9488",
-                      fontSize: 11,
-                      fontWeight: 700,
-                      textTransform: "uppercase",
-                      padding: "8px 10px",
-                      textAlign: "left",
-=======
                       background: '#f0fdfa',
                       color: '#0d9488',
                       fontSize: 11,
@@ -1300,22 +967,12 @@ function ConsultationBillModal({
                       textTransform: 'uppercase',
                       padding: '8px 10px',
                       textAlign: 'left',
->>>>>>> a821a0c (second update)
                     }}
                   >
                     Description
                   </th>
                   <th
                     style={{
-<<<<<<< HEAD
-                      background: "#f0fdfa",
-                      color: "#0d9488",
-                      fontSize: 11,
-                      fontWeight: 700,
-                      textTransform: "uppercase",
-                      padding: "8px 10px",
-                      textAlign: "right",
-=======
                       background: '#f0fdfa',
                       color: '#0d9488',
                       fontSize: 11,
@@ -1323,7 +980,6 @@ function ConsultationBillModal({
                       textTransform: 'uppercase',
                       padding: '8px 10px',
                       textAlign: 'right',
->>>>>>> a821a0c (second update)
                     }}
                   >
                     Amount (₹)
@@ -1335,13 +991,8 @@ function ConsultationBillModal({
                   <tr>
                     <td
                       style={{
-<<<<<<< HEAD
-                        padding: "7px 10px",
-                        borderBottom: "1px solid #f1f5f9",
-=======
                         padding: '7px 10px',
                         borderBottom: '1px solid #f1f5f9',
->>>>>>> a821a0c (second update)
                         fontSize: 12,
                       }}
                     >
@@ -1349,13 +1000,8 @@ function ConsultationBillModal({
                     </td>
                     <td
                       style={{
-<<<<<<< HEAD
-                        padding: "7px 10px",
-                        borderBottom: "1px solid #f1f5f9",
-=======
                         padding: '7px 10px',
                         borderBottom: '1px solid #f1f5f9',
->>>>>>> a821a0c (second update)
                         fontSize: 12,
                       }}
                     >
@@ -1363,17 +1009,10 @@ function ConsultationBillModal({
                     </td>
                     <td
                       style={{
-<<<<<<< HEAD
-                        padding: "7px 10px",
-                        borderBottom: "1px solid #f1f5f9",
-                        fontSize: 12,
-                        textAlign: "right",
-=======
                         padding: '7px 10px',
                         borderBottom: '1px solid #f1f5f9',
                         fontSize: 12,
                         textAlign: 'right',
->>>>>>> a821a0c (second update)
                       }}
                     >
                       ₹{registrationFee.toLocaleString()}
@@ -1382,36 +1021,21 @@ function ConsultationBillModal({
                 )}
                 <tr>
                   <td
-<<<<<<< HEAD
-                    style={{ padding: "7px 10px", borderBottom: "1px solid #f1f5f9", fontSize: 12 }}
-=======
                     style={{ padding: '7px 10px', borderBottom: '1px solid #f1f5f9', fontSize: 12 }}
->>>>>>> a821a0c (second update)
                   >
                     {isNewPatient ? 2 : 1}
                   </td>
                   <td
-<<<<<<< HEAD
-                    style={{ padding: "7px 10px", borderBottom: "1px solid #f1f5f9", fontSize: 12 }}
-=======
                     style={{ padding: '7px 10px', borderBottom: '1px solid #f1f5f9', fontSize: 12 }}
->>>>>>> a821a0c (second update)
                   >
                     Doctor Consultation Fee — {doctorName}
                   </td>
                   <td
                     style={{
-<<<<<<< HEAD
-                      padding: "7px 10px",
-                      borderBottom: "1px solid #f1f5f9",
-                      fontSize: 12,
-                      textAlign: "right",
-=======
                       padding: '7px 10px',
                       borderBottom: '1px solid #f1f5f9',
                       fontSize: 12,
                       textAlign: 'right',
->>>>>>> a821a0c (second update)
                     }}
                   >
                     ₹{consultationFee.toLocaleString()}
@@ -1423,13 +1047,8 @@ function ConsultationBillModal({
                     style={{
                       fontWeight: 800,
                       fontSize: 14,
-<<<<<<< HEAD
-                      borderTop: "2px solid #0d9488",
-                      padding: "10px 10px 7px",
-=======
                       borderTop: '2px solid #0d9488',
                       padding: '10px 10px 7px',
->>>>>>> a821a0c (second update)
                     }}
                   >
                     Total Paid
@@ -1438,15 +1057,9 @@ function ConsultationBillModal({
                     style={{
                       fontWeight: 800,
                       fontSize: 14,
-<<<<<<< HEAD
-                      borderTop: "2px solid #0d9488",
-                      padding: "10px 10px 7px",
-                      textAlign: "right",
-=======
                       borderTop: '2px solid #0d9488',
                       padding: '10px 10px 7px',
                       textAlign: 'right',
->>>>>>> a821a0c (second update)
                     }}
                   >
                     ₹{total.toLocaleString()}
@@ -1458,13 +1071,8 @@ function ConsultationBillModal({
             <div
               style={{
                 marginTop: 16,
-<<<<<<< HEAD
-                padding: "10px 0",
-                borderTop: "1px solid #e2e8f0",
-=======
                 padding: '10px 0',
                 borderTop: '1px solid #e2e8f0',
->>>>>>> a821a0c (second update)
                 fontSize: 12,
               }}
             >
@@ -1474,17 +1082,10 @@ function ConsultationBillModal({
             <div
               style={{
                 marginTop: 24,
-<<<<<<< HEAD
-                textAlign: "center",
-                fontSize: 11,
-                color: "#888",
-                borderTop: "1px dashed #ddd",
-=======
                 textAlign: 'center',
                 fontSize: 11,
                 color: '#888',
                 borderTop: '1px dashed #ddd',
->>>>>>> a821a0c (second update)
                 paddingTop: 12,
               }}
             >
@@ -1543,11 +1144,7 @@ function StepPayment({
 
   const handlePayment = async () => {
     if (!paymentMethod) {
-<<<<<<< HEAD
-      toast.error("Please select a payment method");
-=======
       toast.error('Please select a payment method');
->>>>>>> a821a0c (second update)
       return;
     }
     setProcessing(true);
@@ -1608,17 +1205,10 @@ function StepPayment({
         <div className="flex items-center gap-3">
           <span className="grid h-12 w-12 place-items-center rounded-full bg-primary/10 text-base font-bold text-primary">
             {patientName
-<<<<<<< HEAD
-              .split(" ")
-              .map((n) => n[0])
-              .slice(0, 2)
-              .join("")}
-=======
               .split(' ')
               .map((n) => n[0])
               .slice(0, 2)
               .join('')}
->>>>>>> a821a0c (second update)
           </span>
           <div>
             <p className="font-semibold">{patientName}</p>
@@ -1628,19 +1218,11 @@ function StepPayment({
           </div>
           <span
             className={cn(
-<<<<<<< HEAD
-              "ml-auto rounded-full px-2.5 py-1 text-xs font-semibold",
-              isNewPatient ? "bg-blue-500/10 text-blue-600" : "bg-emerald-500/10 text-emerald-600"
-            )}
-          >
-            {isNewPatient ? "New Patient" : "Returning Patient"}
-=======
               'ml-auto rounded-full px-2.5 py-1 text-xs font-semibold',
               isNewPatient ? 'bg-blue-500/10 text-blue-600' : 'bg-emerald-500/10 text-emerald-600',
             )}
           >
             {isNewPatient ? 'New Patient' : 'Returning Patient'}
->>>>>>> a821a0c (second update)
           </span>
         </div>
         {doctor && (
@@ -1663,11 +1245,7 @@ function StepPayment({
           {isNewPatient && (
             <div className="flex items-center justify-between rounded-lg bg-muted/40 px-4 py-2.5">
               <span className="text-sm text-muted-foreground">
-<<<<<<< HEAD
-                Hospital Registration Fee{" "}
-=======
                 Hospital Registration Fee{' '}
->>>>>>> a821a0c (second update)
                 <span className="text-[10px] ml-1 text-blue-500 font-semibold">(new patient)</span>
               </span>
               <span className="font-semibold">₹{registrationFee.toLocaleString()}</span>
@@ -1703,21 +1281,12 @@ function StepPayment({
             >
               <Icon
                 className={cn(
-<<<<<<< HEAD
-                  "h-5 w-5",
-                  paymentMethod === id ? "text-primary" : "text-muted-foreground"
-                )}
-              />
-              <span
-                className={cn("text-sm font-medium", paymentMethod === id ? "text-primary" : "")}
-=======
                   'h-5 w-5',
                   paymentMethod === id ? 'text-primary' : 'text-muted-foreground',
                 )}
               />
               <span
                 className={cn('text-sm font-medium', paymentMethod === id ? 'text-primary' : '')}
->>>>>>> a821a0c (second update)
               >
                 {label}
               </span>
@@ -1797,11 +1366,7 @@ function SuccessScreen({
       <div className="flex flex-col gap-3 sm:flex-row justify-center">
         <Button
           variant="outline"
-<<<<<<< HEAD
-          onClick={() => navigate({ to: "/frontdesk" })}
-=======
           onClick={() => navigate({ to: '/frontdesk' })}
->>>>>>> a821a0c (second update)
           id="btn-back-to-desk"
         >
           Back to Reception
@@ -1911,13 +1476,8 @@ function RegisterPatient() {
         phone: regForm.emergencyPhone.trim(),
         relation: regForm.emergencyRelation,
       },
-<<<<<<< HEAD
-      allergies: regForm.allergies ? regForm.allergies.split(",").map((a) => a.trim()) : [],
-      medications: regForm.medications ? regForm.medications.split(",").map((m) => m.trim()) : [],
-=======
       allergies: regForm.allergies ? regForm.allergies.split(',').map((a) => a.trim()) : [],
       medications: regForm.medications ? regForm.medications.split(',').map((m) => m.trim()) : [],
->>>>>>> a821a0c (second update)
       insurance: regForm.insuranceProvider.trim()
         ? { provider: regForm.insuranceProvider.trim(), policyNo: regForm.policyNumber.trim() }
         : undefined,

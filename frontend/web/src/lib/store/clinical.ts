@@ -19,11 +19,6 @@ export const useClinicalStore = create<ClinicalState>()(
       prescriptions: mockRx,
       labOrders: mockLabs,
 
-<<<<<<< HEAD
-      addPrescription: (rx) => set((s) => ({ prescriptions: [rx, ...s.prescriptions] })),
-
-      addLabOrder: (order) => set((s) => ({ labOrders: [order, ...s.labOrders] })),
-=======
       addPrescription: (rx) => {
         set((s) => ({ prescriptions: [rx, ...s.prescriptions] }));
         const user = useAuth.getState().user;
@@ -49,7 +44,6 @@ export const useClinicalStore = create<ClinicalState>()(
           });
         }
       },
->>>>>>> a821a0c (second update)
     }),
     {
       name: 'medicore-clinical-records',

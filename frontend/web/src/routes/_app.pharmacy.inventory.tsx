@@ -49,19 +49,11 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-<<<<<<< HEAD
-} from "@/components/ui/alert-dialog";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { medicines as seedMedicines } from "@/lib/mock/data";
-import type { Medicine } from "@/lib/types";
-=======
 } from '@/components/ui/alert-dialog';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { medicines as seedMedicines } from '@/lib/mock/data';
 import type { Medicine } from '@/lib/types';
->>>>>>> a821a0c (second update)
 import {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Plus,
@@ -86,16 +78,10 @@ import {
   SlidersHorizontal,
   RotateCcw,
   Gauge,
-<<<<<<< HEAD
   Factory,
-} from "lucide-react";
-import { format, formatDistanceToNow, differenceInDays } from "date-fns";
-import { toast } from "sonner";
-=======
 } from 'lucide-react';
 import { format, formatDistanceToNow, differenceInDays } from 'date-fns';
 import { toast } from 'sonner';
->>>>>>> a821a0c (second update)
 
 const stockFilters = ['all', 'ok', 'low', 'out', 'expired'] as const;
 const sortableIds = [
@@ -290,13 +276,8 @@ function PharmacyInventory() {
   );
 
   const effectiveMin = (m: Medicine): number => {
-<<<<<<< HEAD
-    if (thresholds.overrides[m.id] !== null) return thresholds.overrides[m.id]!;
-    if (thresholds.categories[m.category] !== null) return thresholds.categories[m.category]!;
-=======
     if (thresholds.overrides[m.id] != null) return thresholds.overrides[m.id]!;
     if (thresholds.categories[m.category] != null) return thresholds.categories[m.category]!;
->>>>>>> a821a0c (second update)
     return m.minStock;
   };
 
@@ -400,11 +381,7 @@ function PharmacyInventory() {
     toast.success(
       action === 'set'
         ? `Stock set to ${n} for ${editing.name}`
-<<<<<<< HEAD
-        : `${action === "add" ? "Added" : "Removed"} ${n} units · ${editing.name}`
-=======
         : `${action === 'add' ? 'Added' : 'Removed'} ${n} units · ${editing.name}`,
->>>>>>> a821a0c (second update)
     );
     setEditing(null);
     setQty('');
@@ -413,11 +390,7 @@ function PharmacyInventory() {
   const openThresholdDialog = (m: Medicine) => {
     const current = thresholds.overrides[m.id];
     setThresholdEditing(m);
-<<<<<<< HEAD
-    setThresholdInput(current !== null ? String(current) : "");
-=======
     setThresholdInput(current != null ? String(current) : '');
->>>>>>> a821a0c (second update)
   };
 
   const applyThresholdOverride = () => {
@@ -492,15 +465,9 @@ function PharmacyInventory() {
         cell: ({ row }) => {
           const s = row.original.stock;
           const min = effectiveMin(row.original);
-<<<<<<< HEAD
-          const tone = s === 0 ? "danger" : s <= min ? "warning" : "success";
-          const overridden = thresholds.overrides[row.original.id] !== null;
-          const catSet = thresholds.categories[row.original.category] !== null;
-=======
           const tone = s === 0 ? 'danger' : s <= min ? 'warning' : 'success';
           const overridden = thresholds.overrides[row.original.id] != null;
           const catSet = thresholds.categories[row.original.category] != null;
->>>>>>> a821a0c (second update)
           const source = overridden
             ? 'Per-medicine override'
             : catSet
@@ -538,11 +505,7 @@ function PharmacyInventory() {
           const days = differenceInDays(d, new Date());
           return (
             <span
-<<<<<<< HEAD
-              className={days < 0 ? "text-destructive" : days < 60 ? "text-warning-foreground" : ""}
-=======
               className={days < 0 ? 'text-destructive' : days < 60 ? 'text-warning-foreground' : ''}
->>>>>>> a821a0c (second update)
             >
               {format(d, 'MMM yyyy')}
             </span>
@@ -742,11 +705,7 @@ function PharmacyInventory() {
         m.pricePerUnit,
       ]
         .map(esc)
-<<<<<<< HEAD
-        .join(",")
-=======
         .join(','),
->>>>>>> a821a0c (second update)
     );
     const csv = [headers.join(','), ...rows].join('\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -765,11 +724,7 @@ function PharmacyInventory() {
 
   const historyEntries = historyFor ? history.filter((h) => h.medicineId === historyFor.id) : [];
 
-<<<<<<< HEAD
-  const hasActiveFilters = search.cat !== "all" || search.stock !== "all" || search.q !== "";
-=======
   const hasActiveFilters = search.cat !== 'all' || search.stock !== 'all' || search.q !== '';
->>>>>>> a821a0c (second update)
 
   return (
     <TooltipProvider delayDuration={150}>
@@ -804,21 +759,13 @@ function PharmacyInventory() {
               <div>
                 <p className="font-display text-sm font-semibold">Inventory needs attention</p>
                 <p className="text-xs text-muted-foreground">
-<<<<<<< HEAD
-                  {outOfStock.length} out of stock · {lowStock.length} low stock · {expired.length}{" "}
-=======
                   {outOfStock.length} out of stock · {lowStock.length} low stock · {expired.length}{' '}
->>>>>>> a821a0c (second update)
                   expired batch(es)
                 </p>
                 <div className="mt-2 flex flex-wrap gap-1.5">
                   {alerts.map((m) => {
                     const isExpired = new Date(m.expiry) < new Date();
-<<<<<<< HEAD
-                    const tone = m.stock === 0 || isExpired ? "danger" : ("warning" as const);
-=======
                     const tone = m.stock === 0 || isExpired ? 'danger' : ('warning' as const);
->>>>>>> a821a0c (second update)
                     const min = effectiveMin(m);
                     const overridden = thresholds.overrides[m.id] !== null;
                     const catSet = thresholds.categories[m.category] !== null;
@@ -852,15 +799,11 @@ function PharmacyInventory() {
                 </div>
               </div>
             </div>
-<<<<<<< HEAD
-            <Button size="sm" onClick={() => updateSearch({ stock: "low", page: 1 })}>
-=======
             <Button
               size="sm"
               variant="outline"
               onClick={() => updateSearch({ stock: 'low', page: 1 })}
             >
->>>>>>> a821a0c (second update)
               <PackageX className="mr-2 h-4 w-4" /> Review low stock
             </Button>
           </div>
@@ -1107,11 +1050,7 @@ function PharmacyInventory() {
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-3 py-2">
-<<<<<<< HEAD
-            <Label htmlFor="qty">{action === "set" ? "New stock level" : "Quantity"}</Label>
-=======
             <Label htmlFor="qty">{action === 'set' ? 'New stock level' : 'Quantity'}</Label>
->>>>>>> a821a0c (second update)
             <Input
               id="qty"
               type="number"
@@ -1280,11 +1219,7 @@ function PharmacyInventory() {
           <DialogHeader>
             <DialogTitle>Set low-stock threshold</DialogTitle>
             <DialogDescription>
-<<<<<<< HEAD
-              {thresholdEditing?.name} · current stock{" "}
-=======
               {thresholdEditing?.name} · current stock{' '}
->>>>>>> a821a0c (second update)
               <span className="font-semibold text-foreground">{thresholdEditing?.stock}</span>.
               Leave empty to fall back to the category or default minimum.
             </DialogDescription>
@@ -1299,11 +1234,7 @@ function PharmacyInventory() {
                   </span>
                 </div>
                 <div>
-<<<<<<< HEAD
-                  Default minimum:{" "}
-=======
                   Default minimum:{' '}
->>>>>>> a821a0c (second update)
                   <span className="font-medium text-foreground">{thresholdEditing.minStock}</span>
                 </div>
                 <div>
@@ -1483,11 +1414,7 @@ function ThresholdsDrawer({
               const overriddenInCat = catItems.filter(
                 (m) => thresholds.overrides[m.id] !== null
               ).length;
-<<<<<<< HEAD
-              const bulkVal = bulkValueInput[cat] ?? (value !== null ? String(value) : "");
-=======
               const bulkVal = bulkValueInput[cat] ?? (value != null ? String(value) : '');
->>>>>>> a821a0c (second update)
               const replace = !!bulkReplace[cat];
               return (
                 <div
@@ -1499,11 +1426,7 @@ function ThresholdsDrawer({
                       <p className="text-sm font-medium">{cat}</p>
                       <p className="text-[11px] text-muted-foreground">
                         {catItems.length} medicine(s) · {overriddenInCat} with override
-<<<<<<< HEAD
-                        {value === null && " · using per-item defaults"}
-=======
                         {value == null && ' · using per-item defaults'}
->>>>>>> a821a0c (second update)
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
@@ -1642,41 +1565,23 @@ function ThresholdsDrawer({
             <AlertDialogDescription>
               {bulkTarget && (
                 <>
-<<<<<<< HEAD
-                  This will set an override low-stock threshold of{" "}
-                  <span className="font-semibold text-foreground">{bulkTarget.value}</span> on{" "}
-=======
                   This will set an override low-stock threshold of{' '}
                   <span className="font-semibold text-foreground">{bulkTarget.value}</span> on{' '}
->>>>>>> a821a0c (second update)
                   <span className="font-semibold text-foreground">
                     {
                       items.filter((m) => {
                         if (m.category !== bulkTarget.category) return false;
-<<<<<<< HEAD
-                        if (!bulkTarget.replaceExisting && thresholds.overrides[m.id] !== null)
-=======
                         if (!bulkTarget.replaceExisting && thresholds.overrides[m.id] != null)
->>>>>>> a821a0c (second update)
                           return false;
                         return true;
                       }).length
                     }
-<<<<<<< HEAD
-                  </span>{" "}
-                  medicine(s) in{" "}
-                  <span className="font-semibold text-foreground">{bulkTarget.category}</span>.{" "}
-                  {bulkTarget.replaceExisting
-                    ? "Existing overrides will be replaced."
-                    : "Medicines that already have an override are skipped."}
-=======
                   </span>{' '}
                   medicine(s) in{' '}
                   <span className="font-semibold text-foreground">{bulkTarget.category}</span>.{' '}
                   {bulkTarget.replaceExisting
                     ? 'Existing overrides will be replaced.'
                     : 'Medicines that already have an override are skipped.'}
->>>>>>> a821a0c (second update)
                 </>
               )}
             </AlertDialogDescription>

@@ -197,13 +197,8 @@ export default function TabsScrollSwitchRadix() {
                           )}
                           <span
                             className={cn(
-<<<<<<< HEAD
-                              "font-medium",
-                              f.done ? "text-foreground" : "text-muted-foreground"
-=======
                               'font-medium',
                               f.done ? 'text-foreground' : 'text-muted-foreground',
->>>>>>> a821a0c (second update)
                             )}
                           >
                             {f.label}

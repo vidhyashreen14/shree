@@ -31,11 +31,6 @@ export const useNurseQueue = create<NurseQueueState>()(
       saveVitals: (id, vitals) => {
         set((s) => ({
           queue: s.queue.map((e) =>
-<<<<<<< HEAD
-            e.id === id ? { ...e, vitals, vitalsStatus: "done", consultStatus: "waiting" } : e
-          ),
-        })),
-=======
             e.id === id ? { ...e, vitals, vitalsStatus: 'done', consultStatus: 'waiting' } : e,
           ),
         }));
@@ -63,7 +58,6 @@ export const useNurseQueue = create<NurseQueueState>()(
           });
         }
       },
->>>>>>> a821a0c (second update)
 
       markConsultStatus: (id, status) =>
         set((s) => ({
@@ -72,11 +66,7 @@ export const useNurseQueue = create<NurseQueueState>()(
 
       removeFromQueue: (id) => set((s) => ({ queue: s.queue.filter((e) => e.id !== id) })),
 
-<<<<<<< HEAD
-      clearDone: () => set((s) => ({ queue: s.queue.filter((e) => e.vitalsStatus !== "done") })),
-=======
       clearDone: () => set((s) => ({ queue: s.queue.filter((e) => e.vitalsStatus !== 'done') })),
->>>>>>> a821a0c (second update)
     }),
     {
       name: 'medicore-nurse-queue',

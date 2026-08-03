@@ -1,23 +1,3 @@
-<<<<<<< HEAD
-import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
-
-import { StatusChip } from "@/components/common/StatusChip";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { usePatients } from "@/lib/store/patients";
-import { useNurseQueue } from "@/lib/store/nurseQueue";
-import { useClinicalStore } from "@/lib/store/clinical";
-import { useAuth } from "@/lib/store/auth";
-import { useHospitalSettings } from "@/lib/store/hospitalSettings";
-import { doctors, vitals, appointments } from "@/lib/mock/data";
-import { format } from "date-fns";
-import { useState, useRef, useEffect } from "react";
-import { cn } from "@/lib/utils";
-import { jsPDF } from "jspdf";
-=======
 import { createFileRoute, Link, notFound, useNavigate } from '@tanstack/react-router';
 import { StatusChip } from '@/components/common/StatusChip';
 import { Button } from '@/components/ui/button';
@@ -31,12 +11,11 @@ import { useAuth } from '@/lib/store/auth';
 import { useHospitalSettings } from '@/lib/store/hospitalSettings';
 import { useCurrentDoctorId } from '@/lib/store/doctors';
 import { useStaffProfiles, type StaffProfile } from '@/lib/store/staffProfiles';
-import { doctors, vitals, appointments } from '@/lib/mock/data';
+import { doctors, appointments, vitals } from '@/lib/mock/data';
 import { format } from 'date-fns';
 import { useState, useRef, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import { jsPDF } from 'jspdf';
->>>>>>> a821a0c (second update)
 import {
   ArrowLeft,
   Phone,
@@ -47,11 +26,6 @@ import {
   FlaskConical,
   ClipboardPlus,
   HeartPulse,
-<<<<<<< HEAD
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  FileText,
-=======
->>>>>>> a821a0c (second update)
   Activity,
   Calendar,
   Printer,
@@ -60,21 +34,11 @@ import {
   Trash2,
   X,
   CheckCircle2,
-<<<<<<< HEAD
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  Send,
-  MessageSquare,
-  Heart,
-} from "lucide-react";
-import { toast } from "sonner";
-import type { Prescription, LabOrder, NurseVitals } from "@/lib/types";
-=======
   MessageSquare,
   Heart,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import type { Prescription, LabOrder, NurseVitals, User } from '@/lib/types';
->>>>>>> a821a0c (second update)
 
 export const Route = createFileRoute('/_app/doctor/patients/$id')({
   loader: ({ params }): { patient: import('@/lib/types').Patient } => {
@@ -85,11 +49,7 @@ export const Route = createFileRoute('/_app/doctor/patients/$id')({
   component: PatientProfile,
   notFoundComponent: () => (
     <div className="p-10 text-center text-sm text-muted-foreground">
-<<<<<<< HEAD
-      Patient not found.{" "}
-=======
       Patient not found.{' '}
->>>>>>> a821a0c (second update)
       <Link to="/doctor/patients" className="text-primary underline">
         Back to list
       </Link>
@@ -195,17 +155,10 @@ export function PrescriptionPrintModal({
   const { logoUrl, name, phone, email, address } = useHospitalSettings();
 
   const handlePrint = () => {
-<<<<<<< HEAD
-    const content = printRef.current?.innerHTML ?? "";
-    const win = window.open("", "_blank");
-    if (!win) {
-      toast.error("Pop-up blocked. Please allow pop-ups and try again.");
-=======
     const content = printRef.current?.innerHTML ?? '';
     const win = window.open('', '_blank');
     if (!win) {
       toast.error('Pop-up blocked. Please allow pop-ups and try again.');
->>>>>>> a821a0c (second update)
       return;
     }
     win.document.write(`
@@ -256,11 +209,7 @@ export function PrescriptionPrintModal({
     doc.setTextColor(13, 148, 136); // #0d9488
     doc.text(name, 20, 20);
 
-<<<<<<< HEAD
-    doc.setFont("helvetica", "normal");
-=======
     doc.setFont('helvetica', 'normal');
->>>>>>> a821a0c (second update)
     doc.setFontSize(9);
     doc.setTextColor(100, 116, 139);
     doc.text(address, 20, 26);
@@ -270,16 +219,6 @@ export function PrescriptionPrintModal({
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(13);
     doc.setTextColor(17, 24, 39);
-<<<<<<< HEAD
-    doc.text(data.doctorName, 190, 20, { align: "right" });
-
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(9);
-    doc.setTextColor(71, 85, 105);
-    doc.text(data.specialization, 190, 26, { align: "right" });
-    doc.text(data.qualification, 190, 31, { align: "right" });
-    doc.text(`KMC No: ${data.kmcNo}`, 190, 36, { align: "right" });
-=======
     doc.text(data.doctorName, 190, 20, { align: 'right' });
 
     doc.setFont('helvetica', 'normal');
@@ -288,7 +227,6 @@ export function PrescriptionPrintModal({
     doc.text(data.specialization, 190, 26, { align: 'right' });
     doc.text(data.qualification, 190, 31, { align: 'right' });
     doc.text(`KMC No: ${data.kmcNo}`, 190, 36, { align: 'right' });
->>>>>>> a821a0c (second update)
 
     // Divider
     doc.setDrawColor(13, 148, 136);
@@ -300,15 +238,9 @@ export function PrescriptionPrintModal({
     doc.rect(20, 48, 170, 26, 'F');
     doc.setDrawColor(226, 232, 240);
     doc.setLineWidth(0.5);
-<<<<<<< HEAD
-    doc.rect(20, 48, 170, 26, "S");
-
-    doc.setFont("helvetica", "bold");
-=======
     doc.rect(20, 48, 170, 26, 'S');
 
     doc.setFont('helvetica', 'bold');
->>>>>>> a821a0c (second update)
     doc.setFontSize(9);
     doc.setTextColor(17, 24, 39);
     doc.text(`Patient: ${data.patientName}`, 25, 54);
@@ -324,16 +256,6 @@ export function PrescriptionPrintModal({
       doc.setFillColor(240, 253, 250);
       doc.rect(20, 78, 170, 14, 'F');
       doc.setDrawColor(204, 251, 241);
-<<<<<<< HEAD
-      doc.rect(20, 78, 170, 14, "S");
-
-      doc.setFont("helvetica", "bold");
-      doc.setTextColor(13, 148, 136);
-      doc.setFontSize(8);
-      doc.text("TRIAGE VITALS", 25, 83);
-
-      doc.setFont("helvetica", "normal");
-=======
       doc.rect(20, 78, 170, 14, 'S');
 
       doc.setFont('helvetica', 'bold');
@@ -342,7 +264,6 @@ export function PrescriptionPrintModal({
       doc.text('TRIAGE VITALS', 25, 83);
 
       doc.setFont('helvetica', 'normal');
->>>>>>> a821a0c (second update)
       doc.setTextColor(15, 118, 110);
       doc.setFontSize(9);
       const vitalsText = `BP: ${data.vitals.bp}   Pulse: ${data.vitals.pulse} bpm   Temp: ${data.vitals.tempF}°F   Weight: ${data.vitals.weight} kg   SpO2: ${data.vitals.spo2}%`;
@@ -363,11 +284,7 @@ export function PrescriptionPrintModal({
       currentY += 8;
     }
 
-<<<<<<< HEAD
-    doc.setFont("helvetica", "bold");
-=======
     doc.setFont('helvetica', 'bold');
->>>>>>> a821a0c (second update)
     doc.setTextColor(17, 24, 39);
     doc.text('Diagnosis:', 20, currentY);
     doc.setFont('helvetica', 'normal');
@@ -385,17 +302,10 @@ export function PrescriptionPrintModal({
     // Medicines list
     doc.setFontSize(9);
     doc.setTextColor(13, 148, 136);
-<<<<<<< HEAD
-    doc.text("Medicine Name", 20, currentY);
-    doc.text("Dose", 100, currentY);
-    doc.text("Frequency", 130, currentY);
-    doc.text("Duration", 160, currentY);
-=======
     doc.text('Medicine Name', 20, currentY);
     doc.text('Dose', 100, currentY);
     doc.text('Frequency', 130, currentY);
     doc.text('Duration', 160, currentY);
->>>>>>> a821a0c (second update)
 
     doc.setDrawColor(226, 232, 240);
     doc.setLineWidth(1);
@@ -441,25 +351,15 @@ export function PrescriptionPrintModal({
       doc.setFillColor(255, 251, 235);
       doc.rect(20, currentY, 170, 10, 'F');
       doc.setDrawColor(254, 243, 199);
-<<<<<<< HEAD
-      doc.rect(20, currentY, 170, 10, "S");
-
-      doc.setFont("helvetica", "bold");
-=======
       doc.rect(20, currentY, 170, 10, 'S');
 
       doc.setFont('helvetica', 'bold');
->>>>>>> a821a0c (second update)
       doc.setTextColor(180, 83, 9);
       doc.setFontSize(9);
       doc.text(
         `📅 Follow-up: Please consult again on or before ${data.followUp}`,
         25,
-<<<<<<< HEAD
-        currentY + 6.5
-=======
         currentY + 6.5,
->>>>>>> a821a0c (second update)
       );
     }
 
@@ -471,17 +371,10 @@ export function PrescriptionPrintModal({
     doc.setFontSize(8.5);
     doc.setTextColor(17, 24, 39);
     doc.text(data.doctorName, 140, currentY + 4.5);
-<<<<<<< HEAD
-    doc.setFont("helvetica", "normal");
-    doc.text("Authorized Signatory", 140, currentY + 8.5);
-
-    return doc.output("blob");
-=======
     doc.setFont('helvetica', 'normal');
     doc.text('Authorized Signatory', 140, currentY + 8.5);
 
     return doc.output('blob');
->>>>>>> a821a0c (second update)
   };
 
   const handleSharePDF = async (method: 'whatsapp' | 'email' | 'sms' | 'generic') => {
@@ -511,50 +404,25 @@ export function PrescriptionPrintModal({
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
 
-<<<<<<< HEAD
-      if (method === "whatsapp") {
-        const phoneNum = data.patientPhone.replace(/\D/g, "");
-        const medsText = data.medicines
-          .map((m, i) => `${i + 1}. ${m.name} (${m.dose}) - ${m.frequency} for ${m.duration}`)
-          .join("\n");
-=======
       if (method === 'whatsapp') {
         const phoneNum = data.patientPhone.replace(/\D/g, '');
         const medsText = data.medicines
           .map((m, i) => `${i + 1}. ${m.name} (${m.dose}) - ${m.frequency} for ${m.duration}`)
           .join('\n');
->>>>>>> a821a0c (second update)
         const msg = encodeURIComponent(
           `*${name} — Rx Prescription*\n\nDoctor: ${data.doctorName}\nPatient: ${data.patientName} (${data.uhid})\nDiagnosis: ${data.diagnosis}\n\n*Medicines Prescribed:*\n${medsText}\n\n${data.followUp ? `*Follow-up Date:* ${data.followUp}\n` : ''}\nThank you for choosing ${name}! (Prescription PDF downloaded to your device)`,
         );
-<<<<<<< HEAD
-        window.open(`https://wa.me/${phoneNum}?text=${msg}`, "_blank");
-        toast.success("Prescription PDF Downloaded! WhatsApp chat opened to send notification.", {
-          duration: 6000,
-        });
-      } else if (method === "email") {
-=======
         window.open(`https://wa.me/${phoneNum}?text=${msg}`, '_blank');
         toast.success('Prescription PDF Downloaded! WhatsApp chat opened to send notification.', {
           duration: 6000,
         });
       } else if (method === 'email') {
->>>>>>> a821a0c (second update)
         const subject = encodeURIComponent(`Prescription PDF — ${data.rxNo} — ${data.patientName}`);
         const body = encodeURIComponent(
           `Dear ${data.patientName},\n\nYour prescription PDF has been downloaded to your device. Please find it attached.\n\nDoctor: ${data.doctorName} (${data.specialization})\nDate: ${data.date}\nDiagnosis: ${data.diagnosis}\n\n${name}`,
         );
         window.location.href = `mailto:${data.patientEmail}?subject=${subject}&body=${body}`;
         toast.success(
-<<<<<<< HEAD
-          "Prescription PDF Downloaded! Email client opened. Please attach the downloaded PDF file.",
-          { duration: 6000 }
-        );
-      } else if (method === "sms") {
-        toast.info(
-          "Prescription PDF Downloaded! Please send/attach it to the patient via SMS gateway.",
-          { duration: 5000 }
-=======
           'Prescription PDF Downloaded! Email client opened. Please attach the downloaded PDF file.',
           { duration: 6000 },
         );
@@ -562,7 +430,6 @@ export function PrescriptionPrintModal({
         toast.info(
           'Prescription PDF Downloaded! Please send/attach it to the patient via SMS gateway.',
           { duration: 5000 },
->>>>>>> a821a0c (second update)
         );
       }
     } catch (err) {
@@ -625,73 +492,42 @@ export function PrescriptionPrintModal({
             <div
               className="header"
               style={{
-<<<<<<< HEAD
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                borderBottom: "2px solid #0d9488",
-=======
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 borderBottom: '2px solid #0d9488',
->>>>>>> a821a0c (second update)
                 paddingBottom: 12,
                 marginBottom: 16,
               }}
             >
               <div
                 className="hospital-info"
-<<<<<<< HEAD
-                style={{ display: "flex", gap: 12, alignItems: "center" }}
-=======
                 style={{ display: 'flex', gap: 12, alignItems: 'center' }}
->>>>>>> a821a0c (second update)
               >
                 {logoUrl ? (
                   <img
                     src={logoUrl}
                     alt="Logo"
-<<<<<<< HEAD
-                    style={{ maxHeight: 50, maxWidth: 80, objectFit: "contain" }}
-=======
                     style={{ maxHeight: 50, maxWidth: 80, objectFit: 'contain' }}
->>>>>>> a821a0c (second update)
                   />
                 ) : (
                   <span style={{ fontSize: 28 }}>🏥</span>
                 )}
                 <div>
-<<<<<<< HEAD
-                  <h2 style={{ fontSize: 20, fontWeight: 800, color: "#0d9488", marginBottom: 2 }}>
-                    {name}
-                  </h2>
-                  <p style={{ fontSize: 11, color: "#555" }}>{address}</p>
-                  <p style={{ fontSize: 11, color: "#555" }}>
-=======
                   <h2 style={{ fontSize: 20, fontWeight: 800, color: '#0d9488', marginBottom: 2 }}>
                     {name}
                   </h2>
                   <p style={{ fontSize: 11, color: '#555' }}>{address}</p>
                   <p style={{ fontSize: 11, color: '#555' }}>
->>>>>>> a821a0c (second update)
                     Phone: {phone} · {email}
                   </p>
                 </div>
               </div>
-<<<<<<< HEAD
-              <div className="doctor-info" style={{ textAlign: "right" }}>
-                <h3 style={{ fontSize: 15, fontWeight: 700, color: "#111" }}>{data.doctorName}</h3>
-                <p style={{ fontSize: 11, color: "#555" }}>{data.specialization}</p>
-                <p style={{ fontSize: 11, color: "#555" }}>{data.qualification}</p>
-                <p style={{ fontSize: 11, color: "#555" }}>
-=======
               <div className="doctor-info" style={{ textAlign: 'right' }}>
                 <h3 style={{ fontSize: 15, fontWeight: 700, color: '#111' }}>{data.doctorName}</h3>
                 <p style={{ fontSize: 11, color: '#555' }}>{data.specialization}</p>
                 <p style={{ fontSize: 11, color: '#555' }}>{data.qualification}</p>
                 <p style={{ fontSize: 11, color: '#555' }}>
->>>>>>> a821a0c (second update)
                   <strong>KMC No:</strong> {data.kmcNo}
                 </p>
               </div>
@@ -701,13 +537,8 @@ export function PrescriptionPrintModal({
             <div
               className="patient-bar"
               style={{
-<<<<<<< HEAD
-                background: "#f8fafc",
-                border: "1px solid #e2e8f0",
-=======
                 background: '#f8fafc',
                 border: '1px solid #e2e8f0',
->>>>>>> a821a0c (second update)
                 borderRadius: 8,
                 padding: 12,
                 marginBottom: 16,
@@ -716,11 +547,7 @@ export function PrescriptionPrintModal({
             >
               <div
                 className="patient-grid"
-<<<<<<< HEAD
-                style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10 }}
-=======
                 style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}
->>>>>>> a821a0c (second update)
               >
                 <div>
                   <strong>Patient Name:</strong> {data.patientName}
@@ -742,15 +569,6 @@ export function PrescriptionPrintModal({
               <div
                 className="vitals-bar"
                 style={{
-<<<<<<< HEAD
-                  display: "flex",
-                  gap: 16,
-                  flexWrap: "wrap",
-                  background: "#f0fdfa",
-                  border: "1px solid #ccfbf1",
-                  borderRadius: 6,
-                  padding: "8px 12px",
-=======
                   display: 'flex',
                   gap: 16,
                   flexWrap: 'wrap',
@@ -758,7 +576,6 @@ export function PrescriptionPrintModal({
                   border: '1px solid #ccfbf1',
                   borderRadius: 6,
                   padding: '8px 12px',
->>>>>>> a821a0c (second update)
                   marginBottom: 16,
                   fontSize: 11,
                 }}
@@ -789,35 +606,21 @@ export function PrescriptionPrintModal({
             {/* Chief Complaint */}
             {data.vitals?.chiefComplaint && (
               <div style={{ marginBottom: 12, fontSize: 12 }}>
-<<<<<<< HEAD
-                <strong>Chief Complaint:</strong>{" "}
-                <span style={{ fontStyle: "italic" }}>"{data.vitals.chiefComplaint}"</span>
-=======
                 <strong>Chief Complaint:</strong>{' '}
                 <span style={{ fontStyle: 'italic' }}>"{data.vitals.chiefComplaint}"</span>
->>>>>>> a821a0c (second update)
               </div>
             )}
 
             {/* Diagnosis */}
             <div style={{ marginBottom: 16, fontSize: 12 }}>
-<<<<<<< HEAD
-              <strong>Diagnosis:</strong>{" "}
-              <span style={{ textDecoration: "underline", fontWeight: 600 }}>{data.diagnosis}</span>
-=======
               <strong>Diagnosis:</strong>{' '}
               <span style={{ textDecoration: 'underline', fontWeight: 600 }}>{data.diagnosis}</span>
->>>>>>> a821a0c (second update)
             </div>
 
             {/* Rx Symbol */}
             <div
               className="rx-symbol"
-<<<<<<< HEAD
-              style={{ fontSize: 24, fontWeight: 700, color: "#0d9488", margin: "12px 0 6px" }}
-=======
               style={{ fontSize: 24, fontWeight: 700, color: '#0d9488', margin: '12px 0 6px' }}
->>>>>>> a821a0c (second update)
             >
               Rₓ
             </div>
@@ -828,15 +631,6 @@ export function PrescriptionPrintModal({
                 <tr>
                   <th
                     style={{
-<<<<<<< HEAD
-                      borderBottom: "2px solid #e2e8f0",
-                      color: "#0d9488",
-                      fontSize: 11,
-                      fontWeight: 700,
-                      textTransform: "uppercase",
-                      padding: "8px 6px",
-                      textAlign: "left",
-=======
                       borderBottom: '2px solid #e2e8f0',
                       color: '#0d9488',
                       fontSize: 11,
@@ -844,22 +638,12 @@ export function PrescriptionPrintModal({
                       textTransform: 'uppercase',
                       padding: '8px 6px',
                       textAlign: 'left',
->>>>>>> a821a0c (second update)
                     }}
                   >
                     Medicine Name
                   </th>
                   <th
                     style={{
-<<<<<<< HEAD
-                      borderBottom: "2px solid #e2e8f0",
-                      color: "#0d9488",
-                      fontSize: 11,
-                      fontWeight: 700,
-                      textTransform: "uppercase",
-                      padding: "8px 6px",
-                      textAlign: "left",
-=======
                       borderBottom: '2px solid #e2e8f0',
                       color: '#0d9488',
                       fontSize: 11,
@@ -867,22 +651,12 @@ export function PrescriptionPrintModal({
                       textTransform: 'uppercase',
                       padding: '8px 6px',
                       textAlign: 'left',
->>>>>>> a821a0c (second update)
                     }}
                   >
                     Dose
                   </th>
                   <th
                     style={{
-<<<<<<< HEAD
-                      borderBottom: "2px solid #e2e8f0",
-                      color: "#0d9488",
-                      fontSize: 11,
-                      fontWeight: 700,
-                      textTransform: "uppercase",
-                      padding: "8px 6px",
-                      textAlign: "left",
-=======
                       borderBottom: '2px solid #e2e8f0',
                       color: '#0d9488',
                       fontSize: 11,
@@ -890,22 +664,12 @@ export function PrescriptionPrintModal({
                       textTransform: 'uppercase',
                       padding: '8px 6px',
                       textAlign: 'left',
->>>>>>> a821a0c (second update)
                     }}
                   >
                     Frequency
                   </th>
                   <th
                     style={{
-<<<<<<< HEAD
-                      borderBottom: "2px solid #e2e8f0",
-                      color: "#0d9488",
-                      fontSize: 11,
-                      fontWeight: 700,
-                      textTransform: "uppercase",
-                      padding: "8px 6px",
-                      textAlign: "left",
-=======
                       borderBottom: '2px solid #e2e8f0',
                       color: '#0d9488',
                       fontSize: 11,
@@ -913,7 +677,6 @@ export function PrescriptionPrintModal({
                       textTransform: 'uppercase',
                       padding: '8px 6px',
                       textAlign: 'left',
->>>>>>> a821a0c (second update)
                     }}
                   >
                     Duration
@@ -925,37 +688,23 @@ export function PrescriptionPrintModal({
                   <tr key={index}>
                     <td
                       style={{
-<<<<<<< HEAD
-                        padding: "8px 6px",
-                        borderBottom: "1px solid #f1f5f9",
-=======
                         padding: '8px 6px',
                         borderBottom: '1px solid #f1f5f9',
->>>>>>> a821a0c (second update)
                         fontSize: 12,
                         fontWeight: 600,
                       }}
                     >
                       {med.name}
                       {med.notes && (
-<<<<<<< HEAD
-                        <div style={{ fontSize: 10, color: "#666", fontWeight: "normal" }}>
-=======
                         <div style={{ fontSize: 10, color: '#666', fontWeight: 'normal' }}>
->>>>>>> a821a0c (second update)
                           {med.notes}
                         </div>
                       )}
                     </td>
                     <td
                       style={{
-<<<<<<< HEAD
-                        padding: "8px 6px",
-                        borderBottom: "1px solid #f1f5f9",
-=======
                         padding: '8px 6px',
                         borderBottom: '1px solid #f1f5f9',
->>>>>>> a821a0c (second update)
                         fontSize: 12,
                       }}
                     >
@@ -963,13 +712,8 @@ export function PrescriptionPrintModal({
                     </td>
                     <td
                       style={{
-<<<<<<< HEAD
-                        padding: "8px 6px",
-                        borderBottom: "1px solid #f1f5f9",
-=======
                         padding: '8px 6px',
                         borderBottom: '1px solid #f1f5f9',
->>>>>>> a821a0c (second update)
                         fontSize: 12,
                       }}
                     >
@@ -977,13 +721,8 @@ export function PrescriptionPrintModal({
                     </td>
                     <td
                       style={{
-<<<<<<< HEAD
-                        padding: "8px 6px",
-                        borderBottom: "1px solid #f1f5f9",
-=======
                         padding: '8px 6px',
                         borderBottom: '1px solid #f1f5f9',
->>>>>>> a821a0c (second update)
                         fontSize: 12,
                       }}
                     >
@@ -1011,24 +750,15 @@ export function PrescriptionPrintModal({
               <div
                 className="follow-up-bar"
                 style={{
-<<<<<<< HEAD
-                  background: "#fffbeb",
-                  border: "1px solid #fef3c7",
-=======
                   background: '#fffbeb',
                   border: '1px solid #fef3c7',
->>>>>>> a821a0c (second update)
                   borderRadius: 6,
                   padding: 10,
                   marginTop: 16,
                   fontSize: 12,
                 }}
               >
-<<<<<<< HEAD
-                📅 <strong>Follow-up Consultation:</strong> Please return for a review on or before{" "}
-=======
                 📅 <strong>Follow-up Consultation:</strong> Please return for a review on or before{' '}
->>>>>>> a821a0c (second update)
                 <strong>{data.followUp}</strong>.
               </div>
             )}
@@ -1038,38 +768,21 @@ export function PrescriptionPrintModal({
               className="footer"
               style={{
                 marginTop: 48,
-<<<<<<< HEAD
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "flex-end",
-                borderTop: "1px dashed #e2e8f0",
-                paddingTop: 16,
-                fontSize: 11,
-                color: "#666",
-=======
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'flex-end',
                 paddingTop: 16,
                 fontSize: 11,
                 color: '#666',
->>>>>>> a821a0c (second update)
               }}
             >
               <div>
                 <em>Please keep this prescription safe for future reference.</em>
               </div>
-<<<<<<< HEAD
-              <div className="signature" style={{ textAlign: "right" }}>
-                <div
-                  className="sig-line"
-                  style={{ width: 150, borderBottom: "1px solid #94a3b8", marginBottom: 4 }}
-=======
               <div className="signature" style={{ textAlign: 'right' }}>
                 <div
                   className="sig-line"
                   style={{ width: 150, borderBottom: '1px solid #94a3b8', marginBottom: 4 }}
->>>>>>> a821a0c (second update)
                 ></div>
                 <strong>{data.doctorName}</strong>
                 <div>Authorized Signatory</div>
@@ -1111,17 +824,10 @@ function PatientProfile() {
   const [printData, setPrintData] = useState<PrescriptionPrintData | null>(null);
 
   // Diagnosis, Prescription and Labs forms
-<<<<<<< HEAD
-  const [diagnosis, setDiagnosis] = useState("");
-  const [medsList, setMedsList] = useState<
-    { name: string; dose: string; frequency: string; duration: string; notes: string }[]
-  >([{ name: "", dose: "1 tab", frequency: "1-0-1", duration: "5 days", notes: "After food" }]);
-=======
   const [diagnosis, setDiagnosis] = useState('');
   const [medsList, setMedsList] = useState<
     { name: string; dose: string; frequency: string; duration: string; notes: string }[]
   >([{ name: '', dose: '1 tab', frequency: '1-0-1', duration: '5 days', notes: 'After food' }]);
->>>>>>> a821a0c (second update)
   const [selectedLabs, setSelectedLabs] = useState<string[]>([]);
   const [followUpDate, setFollowUpDate] = useState('');
 
@@ -1129,21 +835,11 @@ function PatientProfile() {
   const myLabs = labOrders.filter((l) => l.patientId === patient.id);
 
   // Extract vitals list dynamically (mock + live)
-<<<<<<< HEAD
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [myVitals, setMyVitals] = useState<any[]>([]);
-
-  useEffect(() => {
-    // Combine static mock vitals with live queue entries vitals
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const mockV = vitals.filter((v: any) => v.patientId === patient.id);
-=======
   const myVitals = useMemo(() => {
     // Combine static mock vitals with live queue entries vitals
     const mockV = vitals.filter(
       (v: unknown) => (v as { patientId: string }).patientId === patient.id,
     );
->>>>>>> a821a0c (second update)
     const liveV = queue
       .filter((e) => e.patientId === patient.id && e.vitalsStatus === 'done' && e.vitals)
       .map((e) => ({
@@ -1160,35 +856,17 @@ function PatientProfile() {
         bloodSugar: Number(e.vitals!.sugar) || 100,
         notes: `Chief Complaint: ${e.vitals!.chiefComplaint}`,
       }));
-<<<<<<< HEAD
-
-    setMyVitals([...liveV, ...mockV]);
-  }, [queue, patient.id]);
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const myAppts = appointments.filter((a: any) => a.patientId === patient.id);
-
-  const credentials = doctorCredentials[doctorId] ?? {
-    qualification: "MBBS, MD",
-    kmc: "KMC-99999",
-  };
-=======
     return [...liveV, ...mockV];
   }, [queue, patient.id]);
 
   const myAppts = appointments.filter(
     (a: unknown) => (a as { patientId: string }).patientId === patient.id,
   );
->>>>>>> a821a0c (second update)
 
   const handleAddMedRow = () => {
     setMedsList((prev) => [
       ...prev,
-<<<<<<< HEAD
-      { name: "", dose: "1 tab", frequency: "1-0-1", duration: "5 days", notes: "After food" },
-=======
       { name: '', dose: '1 tab', frequency: '1-0-1', duration: '5 days', notes: 'After food' },
->>>>>>> a821a0c (second update)
     ]);
   };
 
@@ -1356,15 +1034,9 @@ function PatientProfile() {
                   SpO₂: <span className="font-bold">{activeConsult.vitals.spo2}%</span>
                 </div>
                 <div>
-<<<<<<< HEAD
-                  BMI:{" "}
-                  <span className="font-bold">
-                    {activeConsult.vitals.bmi} ({activeConsult.vitals.weight}kg /{" "}
-=======
                   BMI:{' '}
                   <span className="font-bold">
                     {activeConsult.vitals.bmi} ({activeConsult.vitals.weight}kg /{' '}
->>>>>>> a821a0c (second update)
                     {activeConsult.vitals.height}cm)
                   </span>
                 </div>
@@ -1472,15 +1144,6 @@ function PatientProfile() {
                 <Label className="font-semibold text-sm">Recommended Labs / Radiology</Label>
                 <div className="mt-1.5 grid grid-cols-2 gap-2 rounded-lg border p-3 bg-muted/10">
                   {[
-<<<<<<< HEAD
-                    "CBC Test",
-                    "Urine Profile",
-                    "Thyroid TSH",
-                    "Lipid Panel",
-                    "Chest X-Ray",
-                    "Ultrasound USG",
-                    "ECG Monitor",
-=======
                     'CBC Test',
                     'Urine Profile',
                     'Thyroid TSH',
@@ -1488,7 +1151,6 @@ function PatientProfile() {
                     'Chest X-Ray',
                     'Ultrasound USG',
                     'ECG Monitor',
->>>>>>> a821a0c (second update)
                   ].map((test) => {
                     const isChecked = selectedLabs.includes(test);
                     return (
@@ -1552,17 +1214,10 @@ function PatientProfile() {
           <div className="flex min-w-0 items-center gap-4">
             <span className="grid h-16 w-16 shrink-0 place-items-center rounded-2xl bg-primary text-2xl font-bold text-primary-foreground">
               {patient.name
-<<<<<<< HEAD
-                .split(" ")
-                .map((n: string) => n[0])
-                .slice(0, 2)
-                .join("")}
-=======
                 .split(' ')
                 .map((n: string) => n[0])
                 .slice(0, 2)
                 .join('')}
->>>>>>> a821a0c (second update)
             </span>
             <div className="min-w-0">
               <p className="text-xs font-semibold uppercase tracking-widest text-primary">
@@ -1664,17 +1319,10 @@ function PatientProfile() {
             <div className="mt-3 flex items-center gap-3">
               <span className="grid h-10 w-10 place-items-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
                 {doctors[0]?.name
-<<<<<<< HEAD
-                  .split(" ")
-                  .map((n) => n[0])
-                  .slice(0, 2)
-                  .join("")}
-=======
                   .split(' ')
                   .map((n) => n[0])
                   .slice(0, 2)
                   .join('')}
->>>>>>> a821a0c (second update)
               </span>
               <div>
                 <p className="text-sm font-semibold">{doctors[0]?.name}</p>
@@ -1683,11 +1331,7 @@ function PatientProfile() {
             </div>
             <h3 className="mt-5 font-display font-semibold">Registered</h3>
             <p className="mt-1 text-sm text-muted-foreground">
-<<<<<<< HEAD
-              {format(new Date(patient.registeredOn), "MMM d, yyyy")}
-=======
               {format(new Date(patient.registeredOn), 'MMM d, yyyy')}
->>>>>>> a821a0c (second update)
             </p>
           </div>
         </TabsContent>
@@ -1696,22 +1340,6 @@ function PatientProfile() {
           <div className="surface-elevated p-5">
             <h3 className="font-display font-semibold">Visit timeline</h3>
             <ol className="relative mt-6 border-l-2 border-border pl-6">
-<<<<<<< HEAD
-              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-              {myAppts.slice(0, 8).map((a: any) => (
-                <li key={a.id} className="mb-6 last:mb-0">
-                  <span className="absolute -left-[7px] mt-1.5 h-3 w-3 rounded-full bg-primary ring-4 ring-background" />
-                  <div className="flex flex-wrap items-center gap-2">
-                    <p className="text-sm font-semibold">{a.reason}</p>
-                    <StatusChip tone="primary">{a.type}</StatusChip>
-                  </div>
-                  <p className="mt-0.5 text-xs text-muted-foreground">
-                    <Calendar className="mr-1 inline h-3 w-3" />
-                    {format(new Date(a.date), "MMM d, yyyy · p")}
-                  </p>
-                </li>
-              ))}
-=======
               {myAppts.slice(0, 8).map((a: unknown) => {
                 const appt = a as {
                   id: string;
@@ -1734,7 +1362,6 @@ function PatientProfile() {
                   </li>
                 );
               })}
->>>>>>> a821a0c (second update)
             </ol>
           </div>
         </TabsContent>
@@ -1754,30 +1381,18 @@ function PatientProfile() {
                         {r.diagnosis}
                       </p>
                       <p className="text-xs text-muted-foreground">
-<<<<<<< HEAD
-                        {format(new Date(r.date), "dd MMM yyyy, hh:mm a")} · {r.id}
-=======
                         {format(new Date(r.date), 'dd MMM yyyy, hh:mm a')} · {r.id}
->>>>>>> a821a0c (second update)
                       </p>
                     </div>
                     <Button
                       size="sm"
                       variant="outline"
                       onClick={() => {
-<<<<<<< HEAD
-                        const dr = doctors.find((d) => d.id === r.doctorId) || doctors[0];
-                        const creds = doctorCredentials[dr!.id] || {
-                          qualification: "MBBS, MD",
-                          kmc: "KMC-99999",
-                        };
-=======
                         const docDetails = getDoctorDetails(
                           r.doctorId,
                           user,
                           useStaffProfiles.getState().profiles,
                         );
->>>>>>> a821a0c (second update)
                         setPrintData({
                           rxNo: `RX-${r.id.slice(-6)}`,
                           date: format(new Date(r.date), 'dd MMM yyyy, hh:mm a'),
@@ -1792,13 +1407,8 @@ function PatientProfile() {
                           diagnosis: r.diagnosis,
                           medicines: r.medicines,
                           labTests: [],
-<<<<<<< HEAD
-                          followUp: r.advice.includes("Follow up: ")
-                            ? r.advice.replace("Follow up: ", "").replace(".", "")
-=======
                           followUp: r.advice.includes('Follow up: ')
                             ? r.advice.replace('Follow up: ', '').replace('.', '')
->>>>>>> a821a0c (second update)
                             : undefined,
                           patientPhone: patient.phone,
                           patientEmail: patient.email,
@@ -1858,11 +1468,7 @@ function PatientProfile() {
             {myVitals.map((v) => (
               <div key={v.id} className="surface-elevated p-5">
                 <p className="text-xs text-muted-foreground">
-<<<<<<< HEAD
-                  {format(new Date(v.recordedAt), "dd MMM yyyy, hh:mm a")}
-=======
                   {format(new Date(v.recordedAt), 'dd MMM yyyy, hh:mm a')}
->>>>>>> a821a0c (second update)
                 </p>
                 <div className="mt-3 grid grid-cols-2 gap-3 text-sm">
                   <Vital label="BP" value={v.bp} />
@@ -1895,18 +1501,6 @@ function PatientProfile() {
                   className="surface-elevated flex flex-wrap items-center justify-between gap-3 p-4"
                 >
                   <div>
-<<<<<<< HEAD
-                    <p className="font-semibold">{l.tests.join(", ")}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {l.id} · {format(new Date(l.orderedOn), "dd MMM yyyy, hh:mm a")}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <StatusChip tone={l.status === "completed" ? "success" : "warning"}>
-                      {l.status}
-                    </StatusChip>
-                    {l.status === "completed" && (
-=======
                     <p className="font-semibold">{l.tests.join(', ')}</p>
                     <p className="text-xs text-muted-foreground">
                       {l.id} · {format(new Date(l.orderedOn), 'dd MMM yyyy, hh:mm a')}
@@ -1917,7 +1511,6 @@ function PatientProfile() {
                       {l.status}
                     </StatusChip>
                     {l.status === 'completed' && (
->>>>>>> a821a0c (second update)
                       <Button size="sm" variant="outline">
                         <Download className="mr-1 h-4 w-4" /> Download
                       </Button>

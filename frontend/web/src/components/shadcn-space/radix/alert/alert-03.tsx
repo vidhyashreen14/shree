@@ -14,11 +14,7 @@ export default function AlertSocialComponent() {
           <Check className="text-teal-400" />
           <span>Accept</span>
         </ConfettiButton>
-<<<<<<< HEAD
-        <Button variant={"destructive"} className="cursor-pointer">
-=======
         <Button variant={'destructive'} className="cursor-pointer">
->>>>>>> a821a0c (second update)
           <X />
         </Button>
       </div>

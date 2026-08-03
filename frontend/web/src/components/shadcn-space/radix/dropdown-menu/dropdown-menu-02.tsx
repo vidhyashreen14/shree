@@ -8,19 +8,11 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuTrigger,
-<<<<<<< HEAD
-} from "@/components/ui/dropdown-menu";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { BellRing, Headset, LucideIcon, Salad, ScanText, Star, Video } from "lucide-react";
-=======
 } from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { BellRing, Headset, LucideIcon, Salad, ScanText, Star, Video } from 'lucide-react';
->>>>>>> a821a0c (second update)
 
 type Props = {
   trigger: ReactElement;
@@ -100,19 +92,11 @@ const Dropdown = ({ trigger, defaultOpen, align = 'end' }: Props) => {
             {PROFILE_ITEMS.map(({ bgColor, iconColor, icon: Icon, title, desc, time }) => (
               <DropdownMenuItem
                 key={title}
-<<<<<<< HEAD
-                className={"mx-1.5 my-1 p-2 flex items-center justify-between cursor-pointer"}
-              >
-                <div className="flex items-center gap-3">
-                  <div className={cn("p-2.5 rounded-xl", bgColor)}>
-                    <Icon size={20} className={cn("size-5", iconColor)} />
-=======
                 className={'mx-1.5 my-1 p-2 flex items-center justify-between cursor-pointer'}
               >
                 <div className="flex items-center gap-3">
                   <div className={cn('p-2.5 rounded-xl', bgColor)}>
                     <Icon size={20} className={cn('size-5', iconColor)} />
->>>>>>> a821a0c (second update)
                   </div>
                   <div>
                     <p className="text-sm font-medium text-popover-foreground">{title}</p>

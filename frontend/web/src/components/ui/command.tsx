@@ -1,14 +1,3 @@
-<<<<<<< HEAD
-"use client";
-
-import * as React from "react";
-import { type DialogProps } from "@radix-ui/react-dialog";
-import { Command as CommandPrimitive } from "cmdk";
-import { Search } from "lucide-react";
-
-import { cn } from "@/lib/utils";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-=======
 'use client';
 
 import * as React from 'react';
@@ -18,7 +7,6 @@ import { Search } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
->>>>>>> a821a0c (second update)
 
 const Command = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive>,
@@ -135,20 +123,12 @@ CommandItem.displayName = CommandPrimitive.Item.displayName;
 const CommandShortcut = ({ className, ...props }: React.HTMLAttributes<HTMLSpanElement>) => {
   return (
     <span
-<<<<<<< HEAD
-      className={cn("ml-auto text-xs tracking-widest text-muted-foreground", className)}
-=======
       className={cn('ml-auto text-xs tracking-widest text-muted-foreground', className)}
->>>>>>> a821a0c (second update)
       {...props}
     />
   );
 };
-<<<<<<< HEAD
-CommandShortcut.displayName = "CommandShortcut";
-=======
 CommandShortcut.displayName = 'CommandShortcut';
->>>>>>> a821a0c (second update)
 
 export {
   Command,

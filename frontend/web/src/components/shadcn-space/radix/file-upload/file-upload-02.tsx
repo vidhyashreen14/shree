@@ -1,15 +1,5 @@
 'use client';
 
-<<<<<<< HEAD
-import { useState, useCallback } from "react";
-import { useDropzone } from "react-dropzone";
-import { CloudUpload, FileIcon, X, CheckCircle2, Trash2, FileImage, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Progress } from "@/components/ui/progress";
-import { cn } from "@/lib/utils";
-=======
 import { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { CloudUpload, FileIcon, X, CheckCircle2, Trash2, FileImage, Loader2 } from 'lucide-react';
@@ -18,7 +8,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
->>>>>>> a821a0c (second update)
 
 interface FileWithProgress {
   id: string;
@@ -84,21 +73,12 @@ const FileUpload = () => {
           clearInterval(interval);
           setFiles((prev) =>
             prev.map((f) =>
-<<<<<<< HEAD
-              f.id === fileObj.id ? { ...f, progress: 100, status: "completed" as const } : f
-            )
-          );
-        } else {
-          setFiles((prev) =>
-            prev.map((f) => (f.id === fileObj.id ? { ...f, progress: currentProgress } : f))
-=======
               f.id === fileObj.id ? { ...f, progress: 100, status: 'completed' as const } : f,
             ),
           );
         } else {
           setFiles((prev) =>
             prev.map((f) => (f.id === fileObj.id ? { ...f, progress: currentProgress } : f)),
->>>>>>> a821a0c (second update)
           );
         }
       }, 400);
@@ -129,11 +109,7 @@ const FileUpload = () => {
           </span>
         </div>
       );
-<<<<<<< HEAD
-    if (type.includes("image")) return <FileImage size={24} className="text-blue-500" />;
-=======
     if (type.includes('image')) return <FileImage size={24} className="text-blue-500" />;
->>>>>>> a821a0c (second update)
     return <FileIcon size={24} className="text-muted-foreground" />;
   };
 
@@ -146,15 +122,9 @@ const FileUpload = () => {
             <div
               {...getRootProps()}
               className={cn(
-<<<<<<< HEAD
-                "relative group cursor-pointer overflow-hidden rounded-xl border-2 border-dashed transition-all duration-200",
-                "flex flex-col items-center justify-center p-8 gap-4 text-center",
-                isDragActive && "border-primary bg-primary/5 shadow-inner"
-=======
                 'relative group cursor-pointer overflow-hidden rounded-xl border-2 border-dashed transition-all duration-200',
                 'flex flex-col items-center justify-center p-8 gap-4 text-center',
                 isDragActive && 'border-primary bg-primary/5 shadow-inner',
->>>>>>> a821a0c (second update)
               )}
             >
               <Input {...getInputProps()} />
@@ -164,11 +134,7 @@ const FileUpload = () => {
 
               <div className="space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">
-<<<<<<< HEAD
-                  {isDragActive ? "Drop files here" : "Choose a file or drag & drop it here"}
-=======
                   {isDragActive ? 'Drop files here' : 'Choose a file or drag & drop it here'}
->>>>>>> a821a0c (second update)
                 </p>
                 <p className="text-xs text-muted-foreground">
                   JPEG, PNG, PDF, and MP4 formats, up to 50 MB.
@@ -195,13 +161,8 @@ const FileUpload = () => {
 
                     <div
                       className={cn(
-<<<<<<< HEAD
-                        "flex-1 min-w-0",
-                        fileObj.status === "uploading" && "space-y-1"
-=======
                         'flex-1 min-w-0',
                         fileObj.status === 'uploading' && 'space-y-1',
->>>>>>> a821a0c (second update)
                       )}
                     >
                       <div className="flex flex-col gap-1">
@@ -219,17 +180,10 @@ const FileUpload = () => {
                           <span className="text-muted-foreground">·</span>
                           <span
                             className={cn(
-<<<<<<< HEAD
-                              "flex items-center gap-1.5 font-medium leading-normal",
-                              fileObj.status === "completed"
-                                ? "text-teal-400"
-                                : "text-muted-foreground"
-=======
                               'flex items-center gap-1.5 font-medium leading-normal',
                               fileObj.status === 'completed'
                                 ? 'text-teal-400'
                                 : 'text-muted-foreground',
->>>>>>> a821a0c (second update)
                             )}
                           >
                             {fileObj.status === 'uploading' && (
@@ -238,11 +192,7 @@ const FileUpload = () => {
                             {fileObj.status === 'completed' && (
                               <CheckCircle2 className="size-3.5 fill-teal-400/20 text-teal-400" />
                             )}
-<<<<<<< HEAD
-                            {fileObj.status === "uploading" ? "Uploading..." : "Completed"}
-=======
                             {fileObj.status === 'uploading' ? 'Uploading...' : 'Completed'}
->>>>>>> a821a0c (second update)
                           </span>
                         </div>
                       </div>
@@ -262,11 +212,7 @@ const FileUpload = () => {
                       onClick={() => removeFile(fileObj.id)}
                       className="absolute right-3.5 top-4 p-1.5 rounded-full dark:hover:bg-muted cursor-pointer"
                     >
-<<<<<<< HEAD
-                      {fileObj.status === "completed" ? <Trash2 size={16} /> : <X size={16} />}
-=======
                       {fileObj.status === 'completed' ? <Trash2 size={16} /> : <X size={16} />}
->>>>>>> a821a0c (second update)
                     </Button>
                   </div>
                 ))}

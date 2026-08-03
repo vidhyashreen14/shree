@@ -6,11 +6,7 @@ import './styles.css';
 
 const router = getRouter();
 
-<<<<<<< HEAD
-declare module "@tanstack/react-router" {
-=======
 declare module '@tanstack/react-router' {
->>>>>>> a821a0c (second update)
   interface Register {
     router: ReturnType<typeof getRouter>;
   }
@@ -22,10 +18,6 @@ if (rootElement && !rootElement.innerHTML) {
   root.render(
     <React.StrictMode>
       <RouterProvider router={router} />
-<<<<<<< HEAD
-    </React.StrictMode>
-=======
     </React.StrictMode>,
->>>>>>> a821a0c (second update)
   );
 }

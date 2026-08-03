@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { Input, InputProps } from "@/components/ui/input";
 import {
   allowOnlyAlphabetsAndSpaces,
@@ -32,28 +32,17 @@ export function PatientNameInput({
   placeholder = "Patient Name",
   ...props
 }: ValidatedInputProps) {
-  const [error, setError] = useState<string>();
-
-  useEffect(() => {
+  const error = useMemo(() => {
     if (!value) {
-      if (required) {
-        setError("Patient name is required.");
-        onErrorChange?.(true);
-      } else {
-        setError(undefined);
-        onErrorChange?.(false);
-      }
-      return;
+      return required ? "Patient name is required." : undefined;
     }
     const res = patientNameSchema.safeParse(value);
-    if (!res.success) {
-      setError("Patient name should contain only alphabets.");
-      onErrorChange?.(true);
-    } else {
-      setError(undefined);
-      onErrorChange?.(false);
-    }
-  }, [value, required, onErrorChange]);
+    return res.success ? undefined : "Patient name should contain only alphabets.";
+  }, [value, required]);
+
+  useEffect(() => {
+    onErrorChange?.(Boolean(error));
+  }, [error, onErrorChange]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange(allowOnlyAlphabetsAndSpaces(e.target.value).slice(0, 50));
@@ -89,28 +78,17 @@ export function FirstNameInput({
   placeholder = "First Name",
   ...props
 }: ValidatedInputProps) {
-  const [error, setError] = useState<string>();
-
-  useEffect(() => {
+  const error = useMemo(() => {
     if (!value) {
-      if (required) {
-        setError("First name should contain only alphabets.");
-        onErrorChange?.(true);
-      } else {
-        setError(undefined);
-        onErrorChange?.(false);
-      }
-      return;
+      return required ? "First name should contain only alphabets." : undefined;
     }
     const res = firstNameSchema.safeParse(value);
-    if (!res.success) {
-      setError("First name should contain only alphabets.");
-      onErrorChange?.(true);
-    } else {
-      setError(undefined);
-      onErrorChange?.(false);
-    }
-  }, [value, required, onErrorChange]);
+    return res.success ? undefined : "First name should contain only alphabets.";
+  }, [value, required]);
+
+  useEffect(() => {
+    onErrorChange?.(Boolean(error));
+  }, [error, onErrorChange]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange(allowOnlyAlphabetsAndSpaces(e.target.value).slice(0, 50));
@@ -142,27 +120,19 @@ export function MiddleNameInput({
   value,
   onChange,
   onErrorChange,
-  required,
+  required: _required,
   placeholder = "Middle Name",
   ...props
 }: ValidatedInputProps) {
-  const [error, setError] = useState<string>();
+  const error = useMemo(() => {
+    if (!value) return undefined;
+    const res = middleNameSchema.safeParse(value);
+    return res.success ? undefined : "Middle name should contain only alphabets.";
+  }, [value]);
 
   useEffect(() => {
-    if (!value) {
-      setError(undefined);
-      onErrorChange?.(false);
-      return;
-    }
-    const res = middleNameSchema.safeParse(value);
-    if (!res.success) {
-      setError("Middle name should contain only alphabets.");
-      onErrorChange?.(true);
-    } else {
-      setError(undefined);
-      onErrorChange?.(false);
-    }
-  }, [value, required, onErrorChange]);
+    onErrorChange?.(Boolean(error));
+  }, [error, onErrorChange]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange(allowOnlyAlphabetsAndSpaces(e.target.value).slice(0, 50));
@@ -198,28 +168,17 @@ export function LastNameInput({
   placeholder = "Last Name",
   ...props
 }: ValidatedInputProps) {
-  const [error, setError] = useState<string>();
-
-  useEffect(() => {
+  const error = useMemo(() => {
     if (!value) {
-      if (required) {
-        setError("Last name should contain only alphabets.");
-        onErrorChange?.(true);
-      } else {
-        setError(undefined);
-        onErrorChange?.(false);
-      }
-      return;
+      return required ? "Last name should contain only alphabets." : undefined;
     }
     const res = lastNameSchema.safeParse(value);
-    if (!res.success) {
-      setError("Last name should contain only alphabets.");
-      onErrorChange?.(true);
-    } else {
-      setError(undefined);
-      onErrorChange?.(false);
-    }
-  }, [value, required, onErrorChange]);
+    return res.success ? undefined : "Last name should contain only alphabets.";
+  }, [value, required]);
+
+  useEffect(() => {
+    onErrorChange?.(Boolean(error));
+  }, [error, onErrorChange]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange(allowOnlyAlphabetsAndSpaces(e.target.value).slice(0, 50));
@@ -255,33 +214,20 @@ export function MobileInput({
   placeholder = "(+91) Mobile Number",
   ...props
 }: ValidatedInputProps) {
-  const [error, setError] = useState<string>();
-
-  useEffect(() => {
+  const error = useMemo(() => {
     if (!value) {
-      if (required) {
-        setError("Enter a valid 10-digit mobile number.");
-        onErrorChange?.(true);
-      } else {
-        setError(undefined);
-        onErrorChange?.(false);
-      }
-      return;
+      return required ? "Enter a valid 10-digit mobile number." : undefined;
     }
     if (value.length !== 10) {
-      setError("Enter a valid 10-digit mobile number.");
-      onErrorChange?.(true);
-    } else {
-      const res = mobileSchema.safeParse(value);
-      if (!res.success) {
-        setError("Enter a valid 10-digit mobile number.");
-        onErrorChange?.(true);
-      } else {
-        setError(undefined);
-        onErrorChange?.(false);
-      }
+      return "Enter a valid 10-digit mobile number.";
     }
-  }, [value, required, onErrorChange]);
+    const res = mobileSchema.safeParse(value);
+    return res.success ? undefined : "Enter a valid 10-digit mobile number.";
+  }, [value, required]);
+
+  useEffect(() => {
+    onErrorChange?.(Boolean(error));
+  }, [error, onErrorChange]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let val = e.target.value;
@@ -316,28 +262,17 @@ export function EmailInput({
   placeholder = "Email Address",
   ...props
 }: ValidatedInputProps) {
-  const [error, setError] = useState<string>();
-
-  useEffect(() => {
+  const error = useMemo(() => {
     if (!value) {
-      if (required) {
-        setError("Enter a valid email address.");
-        onErrorChange?.(true);
-      } else {
-        setError(undefined);
-        onErrorChange?.(false);
-      }
-      return;
+      return required ? "Enter a valid email address." : undefined;
     }
     const res = emailSchema.safeParse(value);
-    if (!res.success) {
-      setError("Enter a valid email address.");
-      onErrorChange?.(true);
-    } else {
-      setError(undefined);
-      onErrorChange?.(false);
-    }
-  }, [value, required, onErrorChange]);
+    return res.success ? undefined : "Enter a valid email address.";
+  }, [value, required]);
+
+  useEffect(() => {
+    onErrorChange?.(Boolean(error));
+  }, [error, onErrorChange]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // Only allow letters, numbers, @, dot, underscore, hyphen.
@@ -377,28 +312,17 @@ export function PasswordInput({
   placeholder = "Password",
   ...props
 }: ValidatedInputProps) {
-  const [error, setError] = useState<string>();
-
-  useEffect(() => {
+  const error = useMemo(() => {
     if (!value) {
-      if (required) {
-        setError("Password should contain only alphabets.");
-        onErrorChange?.(true);
-      } else {
-        setError(undefined);
-        onErrorChange?.(false);
-      }
-      return;
+      return required ? "Password should contain only alphabets." : undefined;
     }
     const res = passwordSchema.safeParse(value);
-    if (!res.success) {
-      setError("Password should contain only alphabets.");
-      onErrorChange?.(true);
-    } else {
-      setError(undefined);
-      onErrorChange?.(false);
-    }
-  }, [value, required, onErrorChange]);
+    return res.success ? undefined : "Password should contain only alphabets.";
+  }, [value, required]);
+
+  useEffect(() => {
+    onErrorChange?.(Boolean(error));
+  }, [error, onErrorChange]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // Allow only alphabetic characters (A-Z, a-z). Block numbers (0-9) and special characters.
@@ -428,28 +352,17 @@ export function LabIdInput({
   placeholder = "Lab / Specimen ID",
   ...props
 }: ValidatedInputProps) {
-  const [error, setError] = useState<string>();
-
-  useEffect(() => {
+  const error = useMemo(() => {
     if (!value) {
-      if (required) {
-        setError("Lab ID / Specimen ID can only contain alphanumeric characters and hyphens.");
-        onErrorChange?.(true);
-      } else {
-        setError(undefined);
-        onErrorChange?.(false);
-      }
-      return;
+      return required ? "Lab ID / Specimen ID can only contain alphanumeric characters and hyphens." : undefined;
     }
     const res = labIdSchema.safeParse(value);
-    if (!res.success) {
-      setError("Lab ID / Specimen ID can only contain alphanumeric characters and hyphens.");
-      onErrorChange?.(true);
-    } else {
-      setError(undefined);
-      onErrorChange?.(false);
-    }
-  }, [value, required, onErrorChange]);
+    return res.success ? undefined : "Lab ID / Specimen ID can only contain alphanumeric characters and hyphens.";
+  }, [value, required]);
+
+  useEffect(() => {
+    onErrorChange?.(Boolean(error));
+  }, [error, onErrorChange]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const cleaned = allowOnlyAlphanumericAndHyphen(e.target.value).slice(0, 20);
@@ -477,29 +390,20 @@ export function SearchMobileInput({
   placeholder = "(+91) Search mobile...",
   ...props
 }: Omit<ValidatedInputProps, "required">) {
-  const [error, setError] = useState<string>();
   const inputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    if (!value) {
-      setError(undefined);
-      onErrorChange?.(false);
-      return;
-    }
+  const error = useMemo(() => {
+    if (!value) return undefined;
     if (value.length < 10) {
-      setError("Enter a valid 10-digit mobile number.");
-      onErrorChange?.(true);
-    } else {
-      const res = mobileSchema.safeParse(value);
-      if (!res.success) {
-        setError("Enter a valid 10-digit mobile number.");
-        onErrorChange?.(true);
-      } else {
-        setError(undefined);
-        onErrorChange?.(false);
-      }
+      return "Enter a valid 10-digit mobile number.";
     }
-  }, [value, onErrorChange]);
+    const res = mobileSchema.safeParse(value);
+    return res.success ? undefined : "Enter a valid 10-digit mobile number.";
+  }, [value]);
+
+  useEffect(() => {
+    onErrorChange?.(Boolean(error));
+  }, [error, onErrorChange]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     const allowed = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab", "Home", "End"];
@@ -563,22 +467,17 @@ export function SearchPatientNameInput({
   placeholder = "Search patient name...",
   ...props
 }: Omit<ValidatedInputProps, "required">) {
-  const [error, setError] = useState<string>();
+  const error = useMemo(() => {
+    if (!value) return undefined;
+    if (!/^[a-zA-Z]+(\s[a-zA-Z]+)*$/.test(value)) {
+      return "Patient name should contain only alphabets.";
+    }
+    return undefined;
+  }, [value]);
 
   useEffect(() => {
-    if (!value) {
-      setError(undefined);
-      onErrorChange?.(false);
-      return;
-    }
-    if (!/^[a-zA-Z]+(\s[a-zA-Z]+)*$/.test(value)) {
-      setError("Patient name should contain only alphabets.");
-      onErrorChange?.(true);
-    } else {
-      setError(undefined);
-      onErrorChange?.(false);
-    }
-  }, [value, onErrorChange]);
+    onErrorChange?.(Boolean(error));
+  }, [error, onErrorChange]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     const allowed = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab", "Home", "End"];

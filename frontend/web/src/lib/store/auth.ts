@@ -1,52 +1,3 @@
-<<<<<<< HEAD
-import { create } from "zustand";
-import type { Role, User } from "../types";
-
-import { useCredentials } from "./credentials";
-
-const DEMO_USERS: Record<Role, User> = {
-  admin: {
-    id: "u-admin",
-    name: "Dr. Anika Rao",
-    email: "admin@medicore.io",
-    role: "admin",
-    department: "Administration",
-  },
-  doctor: {
-    id: "u-doc-1",
-    name: "Dr. Vikram Shah",
-    email: "doctor@medicore.io",
-    role: "doctor",
-    department: "Cardiology",
-  },
-  frontdesk: {
-    id: "u-fd",
-    name: "Priya Menon",
-    email: "frontdesk@medicore.io",
-    role: "frontdesk",
-    department: "Reception",
-  },
-  nurse: {
-    id: "u-rn",
-    name: "Sister Joan Lewis",
-    email: "nurse@medicore.io",
-    role: "nurse",
-    department: "OPD",
-  },
-  pharmacy: {
-    id: "u-rx",
-    name: "Rahul Verma",
-    email: "pharmacy@medicore.io",
-    role: "pharmacy",
-    department: "Pharmacy",
-  },
-  lab: {
-    id: "u-lab",
-    name: "Mei Chen",
-    email: "lab@medicore.io",
-    role: "lab",
-    department: "Pathology",
-=======
 import { create } from 'zustand';
 import type { Role, User } from '../types';
 import { useCredentials } from './credentials';
@@ -101,7 +52,6 @@ const DEMO_USERS: Record<Role, User> = {
     email: 'lab@medicore.io',
     role: 'lab',
     department: 'Pathology',
->>>>>>> a821a0c (second update)
   },
 };
 
@@ -177,10 +127,6 @@ export const useAuth = create<AuthState>()((set, get) => ({
 
     return user;
   },
-<<<<<<< HEAD
-  signOut: () => set({ user: null, isAuthenticated: false }),
-  logout: () => set({ user: null, isAuthenticated: false }),
-=======
   signOut: () => {
     const user = get().user;
     if (user && user.role !== 'admin') {
@@ -205,7 +151,6 @@ export const useAuth = create<AuthState>()((set, get) => ({
     }
     set({ user: null, isAuthenticated: false });
   },
->>>>>>> a821a0c (second update)
   updateProfile: (patch) => set((s) => (s.user ? { user: { ...s.user, ...patch } } : s)),
 }));
 

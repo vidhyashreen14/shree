@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-import { cn } from "@/lib/utils";
-=======
 import { cn } from '@/lib/utils';
->>>>>>> a821a0c (second update)
 
 function Kbd({ className, ...props }: React.ComponentProps<'kbd'>) {
   return (

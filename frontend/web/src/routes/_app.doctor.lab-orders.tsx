@@ -30,32 +30,6 @@ function DoctorLabs() {
   const columns = useMemo<ColumnDef<LabOrder>[]>(
     () => [
       {
-<<<<<<< HEAD
-        header: "Order",
-        accessorKey: "id",
-        cell: ({ getValue }) => <code className="font-mono text-xs">{String(getValue())}</code>,
-      },
-      {
-        header: "Patient",
-        accessorKey: "patientId",
-        cell: ({ getValue }) => patients.find((p) => p.id === getValue())?.name,
-      },
-      {
-        header: "Tests",
-        accessorKey: "tests",
-        cell: ({ getValue }) => (getValue() as string[]).join(", "),
-      },
-      {
-        header: "Ordered",
-        accessorKey: "orderedOn",
-        cell: ({ getValue }) => format(new Date(String(getValue())), "MMM d, yyyy"),
-      },
-      {
-        header: "Status",
-        accessorKey: "status",
-        cell: ({ getValue }) => (
-          <StatusChip tone={toneFor[getValue() as LabOrder["status"]]}>
-=======
         header: 'Order',
         accessorKey: 'id',
         cell: ({ getValue }) => <code className="font-mono text-xs">{String(getValue())}</code>,
@@ -80,34 +54,22 @@ function DoctorLabs() {
         accessorKey: 'status',
         cell: ({ getValue }) => (
           <StatusChip tone={toneFor[getValue() as LabOrder['status']]}>
->>>>>>> a821a0c (second update)
             {String(getValue())}
           </StatusChip>
         ),
       },
       {
-<<<<<<< HEAD
-        header: "",
-        id: "a",
-        cell: ({ row }) =>
-          row.original.status === "completed" ? (
-=======
         header: '',
         id: 'a',
         cell: ({ row }) =>
           row.original.status === 'completed' ? (
->>>>>>> a821a0c (second update)
             <Button size="sm" variant="outline">
               <Download className="mr-1 h-3.5 w-3.5" /> Report
             </Button>
           ) : null,
       },
     ],
-<<<<<<< HEAD
-    []
-=======
     [],
->>>>>>> a821a0c (second update)
   );
 
   return (

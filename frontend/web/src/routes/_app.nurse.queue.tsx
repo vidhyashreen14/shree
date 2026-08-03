@@ -25,11 +25,7 @@ function NurseQueue() {
               <div className="min-w-0 flex-1">
                 <p className="font-semibold">{p.name}</p>
                 <p className="text-xs text-muted-foreground">
-<<<<<<< HEAD
-                  {p.age}y · {d?.name} · {format(new Date(a.date), "p")}
-=======
                   {p.age}y · {d?.name} · {format(new Date(a.date), 'p')}
->>>>>>> a821a0c (second update)
                 </p>
               </div>
               <AppointmentStatusChip status={a.status} />

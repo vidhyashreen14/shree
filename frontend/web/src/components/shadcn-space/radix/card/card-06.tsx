@@ -5,38 +5,6 @@ import { Badge } from "@/components/ui/badge";
 const StatisticsCard = () => {
   const EcommerceActions = [
     {
-<<<<<<< HEAD
-      title: "Orders",
-      subtitle: "5868",
-      cardIcon: "solar:bag-4-line-duotone",
-      badgeColor: "bg-teal-400/10",
-      statusValue: "+18%",
-      statusIcon: "solar:course-up-line-duotone",
-    },
-    {
-      title: "Sales",
-      subtitle: "$96,850",
-      cardIcon: "solar:box-line-duotone",
-      badgeColor: "bg-orange-400/10",
-      statusValue: "-5%",
-      statusIcon: "solar:course-down-line-duotone",
-    },
-    {
-      title: "Profit",
-      subtitle: "$82,906",
-      cardIcon: "solar:chart-square-line-duotone",
-      badgeColor: "bg-teal-400/10",
-      statusValue: "+18%",
-      statusIcon: "solar:course-up-line-duotone",
-    },
-    {
-      title: "Expense",
-      subtitle: "$14,653",
-      cardIcon: "solar:star-line-duotone",
-      badgeColor: "bg-teal-400/10",
-      statusValue: "+18%",
-      statusIcon: "solar:course-up-line-duotone",
-=======
       title: 'Orders',
       subtitle: '5868',
       cardIcon: 'solar:bag-4-line-duotone',
@@ -67,7 +35,6 @@ const StatisticsCard = () => {
       badgeColor: 'bg-teal-400/10',
       statusValue: '+18%',
       statusIcon: 'solar:course-up-line-duotone',
->>>>>>> a821a0c (second update)
     },
   ];
 

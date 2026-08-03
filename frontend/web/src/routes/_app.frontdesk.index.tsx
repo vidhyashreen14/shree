@@ -82,15 +82,9 @@ function FrontDeskOverview() {
                     #{a.token}
                   </span>
                   <div className="min-w-0 flex-1">
-<<<<<<< HEAD
-                    <p className="truncate text-sm font-semibold">{p?.name ?? "—"}</p>
-                    <p className="truncate text-xs text-muted-foreground">
-                      {d?.name} · {format(new Date(a.date), "p")}
-=======
                     <p className="truncate text-sm font-semibold">{p?.name ?? '—'}</p>
                     <p className="truncate text-xs text-muted-foreground">
                       {d?.name} · {format(new Date(a.date), 'p')}
->>>>>>> a821a0c (second update)
                     </p>
                   </div>
                   <AppointmentStatusChip status={a.status} />
@@ -123,38 +117,22 @@ function FrontDeskOverview() {
                 <div key={entry.id} className="flex items-center gap-3 py-3">
                   <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary/10 text-xs font-bold text-primary">
                     {entry.patientName
-<<<<<<< HEAD
-                      .split(" ")
-                      .map((n) => n[0])
-                      .slice(0, 2)
-                      .join("")}
-=======
                       .split(' ')
                       .map((n) => n[0])
                       .slice(0, 2)
                       .join('')}
->>>>>>> a821a0c (second update)
                   </span>
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-semibold">{entry.patientName}</p>
                     <p className="truncate text-xs text-muted-foreground">
-<<<<<<< HEAD
-                      {entry.uhid} · {entry.doctorName} ·{" "}
-=======
                       {entry.uhid} · {entry.doctorName} ·{' '}
->>>>>>> a821a0c (second update)
                       {formatDistanceToNow(new Date(entry.arrivedAt), { addSuffix: true })}
                     </p>
                   </div>
                   <span
                     className={cn(
-<<<<<<< HEAD
-                      "rounded-full px-2 py-0.5 text-[10px] font-semibold",
-                      vStatus.color
-=======
                       'rounded-full px-2 py-0.5 text-[10px] font-semibold',
                       vStatus.color,
->>>>>>> a821a0c (second update)
                     )}
                   >
                     {vStatus.label}
@@ -174,11 +152,7 @@ function FrontDeskOverview() {
         <div className="surface-elevated p-5 lg:col-span-2">
           <h3 className="font-display font-semibold">Doctor availability</h3>
           <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
-<<<<<<< HEAD
-            {doctors.map((d) => (
-=======
             {[...doctors].map((d) => (
->>>>>>> a821a0c (second update)
               <div
                 key={d.id}
                 className="flex items-center gap-3 rounded-xl border bg-background/60 px-3 py-2.5"
@@ -192,15 +166,6 @@ function FrontDeskOverview() {
                 </div>
                 <span
                   className={cn(
-<<<<<<< HEAD
-                    "rounded-full px-2 py-0.5 text-xs font-semibold",
-                    d.available
-                      ? "bg-emerald-500/10 text-emerald-600"
-                      : "bg-muted text-muted-foreground"
-                  )}
-                >
-                  {d.available ? "Available" : "Off"}
-=======
                     'rounded-full px-2 py-0.5 text-xs font-semibold',
                     d.available
                       ? 'bg-emerald-500/10 text-emerald-600'
@@ -208,7 +173,6 @@ function FrontDeskOverview() {
                   )}
                 >
                   {d.available ? 'Available' : 'Off'}
->>>>>>> a821a0c (second update)
                 </span>
               </div>
             ))}

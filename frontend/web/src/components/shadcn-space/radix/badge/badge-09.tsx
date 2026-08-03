@@ -25,19 +25,11 @@ const FailedBadgeDemo = () => {
     <MotionBadge
       variant="outline"
       className={cn(
-<<<<<<< HEAD
-        "relative h-auto cursor-default overflow-visible rounded-full",
-        "gap-2 px-3 py-2",
-        "bg-background backdrop-blur-md",
-        "text-foreground text-sm font-medium leading-none",
-        "border-red-500/25"
-=======
         'relative h-auto cursor-default overflow-visible rounded-full',
         'gap-2 px-3 py-2',
         'bg-background backdrop-blur-md',
         'text-foreground text-sm font-medium leading-none',
         'border-red-500/25',
->>>>>>> a821a0c (second update)
       )}
     >
       {/* Top glow */}

@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-=======
-import type { ReactNode } from 'react';
->>>>>>> a821a0c (second update)
 import React, {
   createContext,
   forwardRef,
@@ -10,37 +6,21 @@ import React, {
   useImperativeHandle,
   useMemo,
   useRef,
-<<<<<<< HEAD
   type ReactNode,
-} from "react";
+} from 'react';
 import confetti, {
   type GlobalOptions as ConfettiGlobalOptions,
   type CreateTypes as ConfettiInstance,
   type Options as ConfettiOptions,
-} from "canvas-confetti";
-
-import { Button } from "@/components/ui/button";
-=======
-} from 'react';
-import type {
-  GlobalOptions as ConfettiGlobalOptions,
-  CreateTypes as ConfettiInstance,
-  Options as ConfettiOptions,
 } from 'canvas-confetti';
-import confetti from 'canvas-confetti';
 
 import { Button } from '@/components/ui/button';
->>>>>>> a821a0c (second update)
 
 type Api = {
   fire: (options?: ConfettiOptions) => void;
 };
 
-<<<<<<< HEAD
-type Props = React.ComponentPropsWithRef<"canvas"> & {
-=======
 type Props = React.ComponentPropsWithRef<'canvas'> & {
->>>>>>> a821a0c (second update)
   options?: ConfettiOptions;
   globalOptions?: ConfettiGlobalOptions;
   manualstart?: boolean;
@@ -77,11 +57,7 @@ const ConfettiComponent = forwardRef<ConfettiRef, Props>((props, ref) => {
         }
       }
     },
-<<<<<<< HEAD
-    [globalOptions]
-=======
     [globalOptions],
->>>>>>> a821a0c (second update)
   );
 
   const fire = useCallback(
@@ -89,28 +65,17 @@ const ConfettiComponent = forwardRef<ConfettiRef, Props>((props, ref) => {
       try {
         await instanceRef.current?.({ ...options, ...opts });
       } catch (error) {
-<<<<<<< HEAD
-        console.error("Confetti error:", error);
-      }
-    },
-    [options]
-=======
         console.error('Confetti error:', error);
       }
     },
     [options],
->>>>>>> a821a0c (second update)
   );
 
   const api = useMemo(
     () => ({
       fire,
     }),
-<<<<<<< HEAD
-    [fire]
-=======
     [fire],
->>>>>>> a821a0c (second update)
   );
 
   useImperativeHandle(ref, () => api, [api]);
@@ -121,11 +86,7 @@ const ConfettiComponent = forwardRef<ConfettiRef, Props>((props, ref) => {
         try {
           await fire();
         } catch (error) {
-<<<<<<< HEAD
-          console.error("Confetti effect error:", error);
-=======
           console.error('Confetti effect error:', error);
->>>>>>> a821a0c (second update)
         }
       })();
     }
@@ -140,20 +101,12 @@ const ConfettiComponent = forwardRef<ConfettiRef, Props>((props, ref) => {
 });
 
 // Set display name immediately
-<<<<<<< HEAD
-ConfettiComponent.displayName = "Confetti";
-=======
 ConfettiComponent.displayName = 'Confetti';
->>>>>>> a821a0c (second update)
 
 // Export as Confetti
 export const Confetti = ConfettiComponent;
 
-<<<<<<< HEAD
-interface ConfettiButtonProps extends React.ComponentProps<"button"> {
-=======
 interface ConfettiButtonProps extends React.ComponentProps<'button'> {
->>>>>>> a821a0c (second update)
   options?: ConfettiOptions & ConfettiGlobalOptions & { canvas?: HTMLCanvasElement };
 }
 
@@ -171,11 +124,7 @@ const ConfettiButtonComponent = ({ options, children, ...props }: ConfettiButton
         },
       });
     } catch (error) {
-<<<<<<< HEAD
-      console.error("Confetti button error:", error);
-=======
       console.error('Confetti button error:', error);
->>>>>>> a821a0c (second update)
     }
   };
 
@@ -186,10 +135,6 @@ const ConfettiButtonComponent = ({ options, children, ...props }: ConfettiButton
   );
 };
 
-<<<<<<< HEAD
-ConfettiButtonComponent.displayName = "ConfettiButton";
-=======
 ConfettiButtonComponent.displayName = 'ConfettiButton';
->>>>>>> a821a0c (second update)
 
 export const ConfettiButton = ConfettiButtonComponent;

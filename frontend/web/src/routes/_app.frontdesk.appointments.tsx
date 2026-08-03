@@ -18,44 +18,13 @@ function FdAppts() {
   const columns = useMemo<ColumnDef<Appointment>[]>(
     () => [
       {
-<<<<<<< HEAD
-        header: "Token",
-        accessorKey: "token",
-=======
         header: 'Token',
         accessorKey: 'token',
->>>>>>> a821a0c (second update)
         cell: ({ getValue }) => (
           <span className="font-mono font-semibold">#{String(getValue())}</span>
         ),
       },
       {
-<<<<<<< HEAD
-        header: "Patient",
-        accessorKey: "patientId",
-        cell: ({ getValue }) => patients.find((p) => p.id === getValue())?.name,
-      },
-      {
-        header: "Doctor",
-        accessorKey: "doctorId",
-        cell: ({ getValue }) => doctors.find((d) => d.id === getValue())?.name,
-      },
-      { header: "Reason", accessorKey: "reason" },
-      {
-        header: "When",
-        accessorKey: "date",
-        cell: ({ getValue }) => format(new Date(String(getValue())), "MMM d, p"),
-      },
-      {
-        header: "Status",
-        accessorKey: "status",
-        cell: ({ getValue }) => (
-          <AppointmentStatusChip status={getValue() as Appointment["status"]} />
-        ),
-      },
-    ],
-    []
-=======
         header: 'Patient',
         accessorKey: 'patientId',
         cell: ({ getValue }) => patients.find((p) => p.id === getValue())?.name,
@@ -80,7 +49,6 @@ function FdAppts() {
       },
     ],
     [],
->>>>>>> a821a0c (second update)
   );
 
   return (

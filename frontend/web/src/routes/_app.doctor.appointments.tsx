@@ -22,15 +22,6 @@ function DoctorAppts() {
 
   const [now] = useState(() => Date.now());
   const data = useMemo(() => {
-<<<<<<< HEAD
-    if (tab === "completed") return all.filter((a) => a.status === "completed");
-    if (tab === "cancelled") return all.filter((a) => a.status === "cancelled");
-    return all.filter(
-      (a) =>
-        new Date(a.date).getTime() >= now - 1000 * 60 * 60 * 24 &&
-        a.status !== "completed" &&
-        a.status !== "cancelled"
-=======
     if (tab === 'completed') return all.filter((a) => a.status === 'completed');
     if (tab === 'cancelled') return all.filter((a) => a.status === 'cancelled');
     return all.filter(
@@ -38,32 +29,21 @@ function DoctorAppts() {
         new Date(a.date).getTime() >= now - 1000 * 60 * 60 * 24 &&
         a.status !== 'completed' &&
         a.status !== 'cancelled',
->>>>>>> a821a0c (second update)
     );
   }, [tab, all, now]);
 
   const columns = useMemo<ColumnDef<Appointment>[]>(
     () => [
       {
-<<<<<<< HEAD
-        header: "Token",
-        accessorKey: "token",
-=======
         header: 'Token',
         accessorKey: 'token',
->>>>>>> a821a0c (second update)
         cell: ({ getValue }) => (
           <span className="font-mono font-semibold">#{String(getValue())}</span>
         ),
       },
       {
-<<<<<<< HEAD
-        header: "Patient",
-        accessorKey: "patientId",
-=======
         header: 'Patient',
         accessorKey: 'patientId',
->>>>>>> a821a0c (second update)
         cell: ({ getValue }) => {
           const p = patients.find((x) => x.id === getValue());
           return (
@@ -74,28 +54,6 @@ function DoctorAppts() {
           );
         },
       },
-<<<<<<< HEAD
-      { header: "Reason", accessorKey: "reason" },
-      {
-        header: "Type",
-        accessorKey: "type",
-        cell: ({ getValue }) => <span className="capitalize">{String(getValue())}</span>,
-      },
-      {
-        header: "When",
-        accessorKey: "date",
-        cell: ({ getValue }) => format(new Date(String(getValue())), "MMM d, p"),
-      },
-      {
-        header: "Status",
-        accessorKey: "status",
-        cell: ({ getValue }) => (
-          <AppointmentStatusChip status={getValue() as Appointment["status"]} />
-        ),
-      },
-    ],
-    []
-=======
       { header: 'Reason', accessorKey: 'reason' },
       {
         header: 'Type',
@@ -116,7 +74,6 @@ function DoctorAppts() {
       },
     ],
     [],
->>>>>>> a821a0c (second update)
   );
 
   return (
@@ -128,11 +85,7 @@ function DoctorAppts() {
 
       <Tabs
         value={tab}
-<<<<<<< HEAD
-        onValueChange={(v) => setTab(v as "upcoming" | "completed" | "cancelled")}
-=======
         onValueChange={(v) => setTab(v as 'upcoming' | 'completed' | 'cancelled')}
->>>>>>> a821a0c (second update)
         className="mb-4"
       >
         <TabsList>

@@ -33,13 +33,8 @@ function OtpPage() {
           Verify your identity
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-<<<<<<< HEAD
-          Enter the 6-digit code sent to{" "}
-          <span className="font-semibold text-foreground">{email || "your email"}</span>.
-=======
           Enter the 6-digit code sent to{' '}
           <span className="font-semibold text-foreground">{email || 'your email'}</span>.
->>>>>>> a821a0c (second update)
         </p>
 
         <form
@@ -69,19 +64,11 @@ function OtpPage() {
             Verify code
           </Button>
           <p className="text-center text-xs text-muted-foreground">
-<<<<<<< HEAD
-            Didn't receive it?{" "}
-            <button
-              type="button"
-              className="font-semibold text-primary hover:underline"
-              onClick={() => toast("Code resent")}
-=======
             Didn't receive it?{' '}
             <button
               type="button"
               className="font-semibold text-primary hover:underline"
               onClick={() => toast('Code resent')}
->>>>>>> a821a0c (second update)
             >
               Resend
             </button>

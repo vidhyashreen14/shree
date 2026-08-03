@@ -12,19 +12,11 @@ export const Route = createFileRoute('/_app/notifications')({
   component: Notifications,
 });
 
-<<<<<<< HEAD
-const tone: Record<Notification["kind"], Parameters<typeof StatusChip>[0]["tone"]> = {
-  info: "info",
-  success: "success",
-  warning: "warning",
-  error: "danger",
-=======
 const tone: Record<Notification['kind'], Parameters<typeof StatusChip>[0]['tone']> = {
   info: 'info',
   success: 'success',
   warning: 'warning',
   error: 'danger',
->>>>>>> a821a0c (second update)
 };
 
 function Notifications() {
@@ -51,17 +43,10 @@ function Notifications() {
           </div>
         )}
         {items.map((n) => (
-<<<<<<< HEAD
-          <div key={n.id} className={cn("flex items-start gap-3 p-4", !n.read && "bg-primary/4")}>
-            <span
-              className={cn(
-                "mt-1 grid h-9 w-9 shrink-0 place-items-center rounded-full bg-muted text-muted-foreground"
-=======
           <div key={n.id} className={cn('flex items-start gap-3 p-4', !n.read && 'bg-primary/4')}>
             <span
               className={cn(
                 'mt-1 grid h-9 w-9 shrink-0 place-items-center rounded-full bg-muted text-muted-foreground',
->>>>>>> a821a0c (second update)
               )}
             >
               <Bell className="h-4 w-4" />

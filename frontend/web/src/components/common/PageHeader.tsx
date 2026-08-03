@@ -13,13 +13,8 @@ export function PageHeader({ title, description, actions, className, eyebrow }: 
   return (
     <div
       className={cn(
-<<<<<<< HEAD
-        "grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4 pb-6 sm:flex sm:flex-wrap sm:items-end sm:justify-between",
-        className
-=======
         'grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4 pb-6 sm:flex sm:flex-wrap sm:items-end sm:justify-between',
         className,
->>>>>>> a821a0c (second update)
       )}
     >
       <div className="min-w-0">

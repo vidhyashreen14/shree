@@ -1,12 +1,6 @@
-<<<<<<< HEAD
-"use client";
-
-import * as React from "react";
-=======
 'use client';
 
 import * as React from 'react';
->>>>>>> a821a0c (second update)
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -18,19 +12,11 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-<<<<<<< HEAD
-} from "@tanstack/react-table";
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-=======
 } from '@tanstack/react-table';
 import { ArrowUpDown, ChevronDown, MoreHorizontal } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
->>>>>>> a821a0c (second update)
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -39,13 +25,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-<<<<<<< HEAD
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-=======
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
->>>>>>> a821a0c (second update)
 import {
   Table,
   TableBody,
@@ -53,55 +34,17 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-<<<<<<< HEAD
-} from "@/components/ui/table";
-=======
 } from '@/components/ui/table';
->>>>>>> a821a0c (second update)
 
 export type Transaction = {
   id: string;
   amount: number;
-<<<<<<< HEAD
-  status: "Success" | "Processing" | "Failed";
-=======
   status: 'Success' | 'Processing' | 'Failed';
->>>>>>> a821a0c (second update)
   email: string;
 };
 
 const data: Transaction[] = [
   {
-<<<<<<< HEAD
-    id: "m5gr84i9",
-    amount: 316.0,
-    status: "Success",
-    email: "ken99@example.com",
-  },
-  {
-    id: "3u1reuv4",
-    amount: 242.0,
-    status: "Success",
-    email: "abe45@example.com",
-  },
-  {
-    id: "derv1ws0",
-    amount: 837.0,
-    status: "Processing",
-    email: "monserrat44@example.com",
-  },
-  {
-    id: "5kma53ae",
-    amount: 874.0,
-    status: "Success",
-    email: "silas22@example.com",
-  },
-  {
-    id: "bhqecj4p",
-    amount: 721.0,
-    status: "Failed",
-    email: "carmella@example.com",
-=======
     id: 'm5gr84i9',
     amount: 316.0,
     status: 'Success',
@@ -130,7 +73,6 @@ const data: Transaction[] = [
     amount: 721.0,
     status: 'Failed',
     email: 'carmella@example.com',
->>>>>>> a821a0c (second update)
   },
 ];
 
@@ -140,11 +82,7 @@ export const columns: ColumnDef<Transaction>[] = [
     header: ({ table }) => (
       <Checkbox
         checked={
-<<<<<<< HEAD
-          table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")
-=======
           table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')
->>>>>>> a821a0c (second update)
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
@@ -164,19 +102,6 @@ export const columns: ColumnDef<Transaction>[] = [
     accessorKey: 'status',
     header: 'Status',
     cell: ({ row }) => {
-<<<<<<< HEAD
-      const status = row.getValue("status") as string;
-      let statusStyles = "";
-      if (status === "Success") {
-        statusStyles =
-          "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400 border border-emerald-200/50 dark:border-emerald-800/30";
-      } else if (status === "Processing") {
-        statusStyles =
-          "bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400 border border-amber-200/50 dark:border-amber-800/30";
-      } else {
-        statusStyles =
-          "bg-rose-50 text-rose-700 dark:bg-rose-950/30 dark:text-rose-400 border border-rose-200/50 dark:border-rose-800/30";
-=======
       const status = row.getValue('status') as string;
       let statusStyles: string;
       if (status === 'Success') {
@@ -188,7 +113,6 @@ export const columns: ColumnDef<Transaction>[] = [
       } else {
         statusStyles =
           'bg-rose-50 text-rose-700 dark:bg-rose-950/30 dark:text-rose-400 border border-rose-200/50 dark:border-rose-800/30';
->>>>>>> a821a0c (second update)
       }
 
       return (
@@ -220,21 +144,12 @@ export const columns: ColumnDef<Transaction>[] = [
     accessorKey: 'amount',
     header: () => <div className="font-semibold text-foreground text-sm">Amount</div>,
     cell: ({ row }) => {
-<<<<<<< HEAD
-      const amount = parseFloat(row.getValue("amount"));
-
-      // Format the amount as a dollar amount
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-=======
       const amount = parseFloat(row.getValue('amount'));
 
       // Format the amount as a dollar amount
       const formatted = new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD',
->>>>>>> a821a0c (second update)
       }).format(amount);
 
       return <div className="font-medium">{formatted}</div>;
@@ -304,13 +219,8 @@ export default function Table05Demo() {
       <div className="flex items-center justify-between pb-4 gap-4">
         <Input
           placeholder="Filter emails..."
-<<<<<<< HEAD
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
-          onChange={(event) => table.getColumn("email")?.setFilterValue(event.target.value)}
-=======
           value={(table.getColumn('email')?.getFilterValue() as string) ?? ''}
           onChange={(event) => table.getColumn('email')?.setFilterValue(event.target.value)}
->>>>>>> a821a0c (second update)
           className="max-w-sm"
         />
         <DropdownMenu>
@@ -358,11 +268,7 @@ export default function Table05Demo() {
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-<<<<<<< HEAD
-                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
-=======
                 <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
->>>>>>> a821a0c (second update)
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}

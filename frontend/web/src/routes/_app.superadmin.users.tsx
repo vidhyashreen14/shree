@@ -31,8 +31,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { cn } from '@/lib/utils';
-import { sanitizeLettersOnly } from '@/lib/utils';
+import { cn, sanitizeLettersOnly } from '@/lib/utils';
 import { toast } from 'sonner';
 import { useState, useEffect } from 'react';
 

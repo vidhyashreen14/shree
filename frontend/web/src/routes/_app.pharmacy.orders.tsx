@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useRef } from "react";
 import { PageHeader } from "@/components/common/PageHeader";
@@ -7,16 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { medicines } from "@/lib/mock/data";
-=======
-import { createFileRoute } from '@tanstack/react-router';
-import { useState } from 'react';
-import { PageHeader } from '@/components/common/PageHeader';
-import { StatusChip } from '@/components/common/StatusChip';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { medicines } from '@/lib/mock/data';
->>>>>>> a821a0c (second update)
 import {
   Truck,
   Plus,
@@ -25,11 +14,8 @@ import {
   Printer,
   Download,
   Trash2,
-<<<<<<< HEAD
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Calendar,
-=======
->>>>>>> a821a0c (second update)
   History,
   ShoppingCart,
   Pill,
@@ -66,11 +52,7 @@ interface PurchaseOrderHistory {
 
 const initialOrders: PurchaseOrderHistory[] = Array.from({ length: 8 }).map((_, i) => ({
   id: `PO-${5000 + i}`,
-<<<<<<< HEAD
   supplier: ["MedPlus Distributors", "Apollo Wholesale", "PharmEasy Bulk", "Wellness Stockists"][
-=======
-  supplier: ['MedPlus Distributors', 'Apollo Wholesale', 'PharmEasy Bulk', 'Wellness Stockists'][
->>>>>>> a821a0c (second update)
     i % 4
   ]!,
   items: 8 + (i % 14),
@@ -88,23 +70,11 @@ function PharmacyOrders() {
   const printContentRef = useRef<HTMLDivElement>(null);
 
   // Form states
-<<<<<<< HEAD
   const [stockist, setStockist] = useState("");
   const [orderDate, setOrderDate] = useState("");
   const [selectedMed, setSelectedMed] = useState("");
   const [unitsPerStrip, setUnitsPerStrip] = useState<number | "">("");
   const [noOfStrips, setNoOfStrips] = useState<number | "">("");
-=======
-  const [stockist, setStockist] = useState('');
-  const [orderDate, setOrderDate] = useState('');
-
-  // Current item row states
-  const [selectedMed, setSelectedMed] = useState('');
-  const [unitsPerStrip, setUnitsPerStrip] = useState<number | ''>('');
-  const [noOfStrips, setNoOfStrips] = useState<number | ''>('');
-
-  // Added items table state
->>>>>>> a821a0c (second update)
   const [addedItems, setAddedItems] = useState<AddedItem[]>([]);
 
   const handleAddItem = () => {
@@ -152,18 +122,10 @@ function PharmacyOrders() {
       ]);
     }
 
-<<<<<<< HEAD
     setSelectedMed("");
     setUnitsPerStrip("");
     setNoOfStrips("");
     toast.success("Medicine added to order.");
-=======
-    // Reset item inputs
-    setSelectedMed('');
-    setUnitsPerStrip('');
-    setNoOfStrips('');
-    toast.success('Medicine added to order.');
->>>>>>> a821a0c (second update)
   };
 
   const handleRemoveItem = (id: string) => {
@@ -206,14 +168,8 @@ function PharmacyOrders() {
     setOrderHistory([newOrder, ...orderHistory]);
     toast.success(`Purchase Order ${newOrder.id} saved successfully!`);
 
-<<<<<<< HEAD
     setStockist("");
     setOrderDate("");
-=======
-    // Reset full form
-    setStockist('');
-    setOrderDate('');
->>>>>>> a821a0c (second update)
     setAddedItems([]);
     setIsCreating(false);
   };
@@ -223,7 +179,6 @@ function PharmacyOrders() {
       toast.error('No items in order to print.');
       return;
     }
-<<<<<<< HEAD
 
     // Generate the print content
     const printWindow = window.open("", "_blank", "width=1200,height=800");
@@ -518,10 +473,6 @@ function PharmacyOrders() {
     printWindow.document.close();
 
     toast.success("Purchase Order sent to printer.");
-=======
-    toast.success('Sending Purchase Order to printer...');
-    window.print();
->>>>>>> a821a0c (second update)
   };
 
   const handleDownload = () => {
@@ -572,12 +523,8 @@ function PharmacyOrders() {
               </h2>
             </div>
 
-<<<<<<< HEAD
             {/* All fields in one grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-=======
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
->>>>>>> a821a0c (second update)
               <div>
                 <Label htmlFor="stockist" className="flex items-center gap-1">
                   Stockist Name <span className="text-destructive">*</span>
@@ -610,25 +557,6 @@ function PharmacyOrders() {
                 </div>
               </div>
 
-<<<<<<< HEAD
-=======
-            <div className="flex justify-start">
-              <Button
-                type="button"
-                onClick={() =>
-                  toast.success('Feature to register custom stockist medicine is coming soon')
-                }
-                className="bg-success text-success-foreground hover:bg-success/90 rounded-full px-5"
-              >
-                <Plus className="mr-1.5 h-4 w-4" /> Add New Medicine
-              </Button>
-            </div>
-          </div>
-
-          {/* Mockup Card 2: Medicine selection row */}
-          <div className="surface-elevated p-6 rounded-2xl flex flex-col gap-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
->>>>>>> a821a0c (second update)
               <div>
                 <Label htmlFor="medicine" className="flex items-center gap-1">
                   Medicine <span className="text-destructive">*</span>
@@ -711,11 +639,7 @@ function PharmacyOrders() {
                       Total Units
                     </th>
                     <th className="px-4 py-3.5 text-center font-semibold uppercase text-xs w-28">
-<<<<<<< HEAD
                       Action
-=======
-                      Edit/Delete
->>>>>>> a821a0c (second update)
                     </th>
                   </tr>
                 </thead>
@@ -780,11 +704,7 @@ function PharmacyOrders() {
             <table className="min-w-full divide-y divide-border text-sm">
               <thead className="bg-muted/40">
                 <tr>
-<<<<<<< HEAD
                   {["Order ID", "Supplier", "Items Count", "Total Value", "Status", "Date"].map(
-=======
-                  {['Order ID', 'Supplier', 'Items Count', 'Total Value', 'Status', 'Date'].map(
->>>>>>> a821a0c (second update)
                     (h) => (
                       <th
                         key={h}
@@ -792,11 +712,7 @@ function PharmacyOrders() {
                       >
                         {h}
                       </th>
-<<<<<<< HEAD
                     )
-=======
-                    ),
->>>>>>> a821a0c (second update)
                   )}
                 </tr>
               </thead>

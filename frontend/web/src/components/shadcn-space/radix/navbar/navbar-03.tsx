@@ -20,12 +20,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 interface ServiceItem {
-<<<<<<< HEAD
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  icon: any;
-=======
   icon: React.ComponentType<{ className?: string }>;
->>>>>>> a821a0c (second update)
   title: string;
   description: string;
   href: string;
