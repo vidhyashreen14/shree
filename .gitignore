@@ -128,3 +128,4 @@ desktop.ini
 dist/
 .tanstack/
 routeTree.gen.ts
+.vscode/
