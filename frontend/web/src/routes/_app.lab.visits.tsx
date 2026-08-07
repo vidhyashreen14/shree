@@ -696,13 +696,13 @@ function LabVisits() {
             <div className="flex items-center gap-2">
               <button
                 onClick={handleClear}
-                className="flex items-center gap-1.5 rounded-lg bg-orange-500 px-4 py-2 text-sm font-bold text-white hover:bg-orange-600 transition-colors shadow-sm"
+                className="flex items-center gap-1.5 rounded-lg bg-teal-600 px-4 py-2 text-sm font-bold text-white hover:bg-teal-700 transition-colors shadow-sm"
               >
                 <RotateCcw className="h-3.5 w-3.5" /> Clear
               </button>
               <button
                 onClick={handleSearch}
-                className="flex items-center gap-1.5 rounded-lg bg-teal-600 px-5 py-2 text-sm font-bold text-white hover:bg-teal-700 transition-colors shadow-sm"
+                className="flex items-center gap-1.5 rounded-lg bg-muted text-foreground border border-border px-5 py-2 text-sm font-bold hover:bg-accent hover:text-accent-foreground transition-colors shadow-sm"
               >
                 <Search className="h-3.5 w-3.5" /> Search
               </button>

@@ -44,10 +44,18 @@ export function Sidebar({ open, onClose, desktopOpen = true, onToggleDesktop }: 
   const isActive = (to: string) => {
     const href = decodeURIComponent(location.href);
     const target = decodeURIComponent(to);
-    if (target.includes('?')) {
-      return href === target || href.startsWith(target + '&');
-    }
-    return location.pathname === target || (target !== '/' && location.pathname.startsWith(target + '/'));
+    
+    // Exact match (also handles query params perfectly)
+    if (href === target || href.startsWith(target + '&')) return true;
+    if (location.pathname === target) return true;
+
+    // Prevent double highlighting of role dashboards. 
+    // e.g. target "/lab" shouldn't stay active when we are on "/lab/visits"
+    const isRoleRoot = target.split('/').length === 2 && target !== '/';
+    if (target === '/' || isRoleRoot) return false;
+
+    // For other nested routes (e.g. /lab/reports matching /lab/reports/123)
+    return location.pathname.startsWith(target + '/');
   };
 
   return (

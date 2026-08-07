@@ -77,9 +77,17 @@ export function SuperAdminAppShell({ children }: Props) {
 
   const groups = Array.from(new Set(tabs.map((t) => t.group)));
 
-  const isActive = (to: string) =>
-    pathname === to || (to !== '/' && pathname.startsWith(to + '/'));
+  const isActive = (to: string) => {
+    const href = decodeURIComponent(location.href);
+    const target = decodeURIComponent(to);
+    if (href === target || href.startsWith(target + '&')) return true;
+    if (pathname === target) return true;
 
+    const isRoleRoot = target.split('/').length === 2 && target !== '/';
+    if (target === '/' || isRoleRoot) return false;
+
+    return pathname.startsWith(target + '/');
+  };
   return (
     <div className="min-h-screen w-full bg-background text-foreground flex flex-col">
       {/* Backdrop overlay for drawer */}
