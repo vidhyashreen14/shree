@@ -55,7 +55,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { medicines as seedMedicines } from '@/lib/mock/data';
 import type { Medicine } from '@/lib/types';
 import {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Plus,
   AlertTriangle,
   PackageX,
@@ -381,7 +380,7 @@ function PharmacyInventory() {
     toast.success(
       action === 'set'
         ? `Stock set to ${n} for ${editing.name}`
-        : `${action === 'add' ? 'Added' : 'Removed'} ${n} units · ${editing.name}`,
+        : `${action === 'add' ? 'Added' : 'Removed'} ${n} units · ${editing.name}`
     );
     setEditing(null);
     setQty('');
@@ -705,7 +704,7 @@ function PharmacyInventory() {
         m.pricePerUnit,
       ]
         .map(esc)
-        .join(','),
+        .join(',')
     );
     const csv = [headers.join(','), ...rows].join('\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -739,12 +738,6 @@ function PharmacyInventory() {
             <Button variant="default" onClick={exportCsv}>
               <Download className="mr-2 h-4 w-4" /> Export CSV
             </Button>
-            <Button
-              variant="default"
-              onClick={() => navigate({ to: "/pharmacy/manufacturemaster" })}
-            >
-              <Factory className="mr-2 h-4 w-4" /> Manufacture Master
-            </Button>
           </>
         }
       />
@@ -767,8 +760,8 @@ function PharmacyInventory() {
                     const isExpired = new Date(m.expiry) < new Date();
                     const tone = m.stock === 0 || isExpired ? 'danger' : ('warning' as const);
                     const min = effectiveMin(m);
-                    const overridden = thresholds.overrides[m.id] !== null;
-                    const catSet = thresholds.categories[m.category] !== null;
+                    const overridden = thresholds.overrides[m.id] != null;
+                    const catSet = thresholds.categories[m.category] != null;
                     const source = overridden
                       ? 'Per-medicine override'
                       : catSet
@@ -799,13 +792,6 @@ function PharmacyInventory() {
                 </div>
               </div>
             </div>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => updateSearch({ stock: 'low', page: 1 })}
-            >
-              <PackageX className="mr-2 h-4 w-4" /> Review low stock
-            </Button>
           </div>
         </div>
       )}
@@ -862,7 +848,7 @@ function PharmacyInventory() {
         </Select>
         {hasActiveFilters && (
           <Button
-            variant="ghost"
+            variant="outline"
             size="sm"
             onClick={() => {
               setSearchInput('');
@@ -1327,7 +1313,7 @@ function ThresholdsDrawer({
     setThresholds((prev) => {
       const next = { ...prev.overrides };
       for (const m of catItems) {
-        if (!replaceExisting && next[m.id] !== null) continue;
+        if (!replaceExisting && next[m.id] != null) continue;
         next[m.id] = value;
         touched++;
       }
@@ -1412,7 +1398,7 @@ function ThresholdsDrawer({
               const value = thresholds.categories[cat];
               const catItems = items.filter((m) => m.category === cat);
               const overriddenInCat = catItems.filter(
-                (m) => thresholds.overrides[m.id] !== null
+                (m) => thresholds.overrides[m.id] != null
               ).length;
               const bulkVal = bulkValueInput[cat] ?? (value != null ? String(value) : '');
               const replace = !!bulkReplace[cat];
@@ -1438,7 +1424,7 @@ function ThresholdsDrawer({
                         placeholder="—"
                         className="h-8 w-24 text-sm"
                       />
-                      {value !== null && (
+                      {value != null && (
                         <Button
                           size="icon"
                           variant="ghost"
@@ -1519,7 +1505,7 @@ function ThresholdsDrawer({
                         placeholder="—"
                         className="h-8 w-24 text-sm"
                       />
-                      {override !== null && (
+                      {override != null && (
                         <Button
                           size="icon"
                           variant="ghost"

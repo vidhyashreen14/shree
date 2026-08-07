@@ -1,11 +1,13 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
-import { PageHeader } from "@/components/common/PageHeader";
-import { EmptyState } from "@/components/common/EmptyState";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { medicines as seedMedicines } from "@/lib/mock/data";
+import { createFileRoute } from '@tanstack/react-router';
+import { useState, useEffect } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
+import { PageHeader } from '@/components/common/PageHeader';
+import { EmptyState } from '@/components/common/EmptyState';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { medicines as seedMedicines } from '@/lib/mock/data';
+import type { Medicine } from '@/lib/types';
 import {
   Plus,
   Pencil,
@@ -20,8 +22,9 @@ import {
   ChevronsRight,
   Building2,
   Package,
-} from "lucide-react";
-import { toast } from "sonner";
+} from 'lucide-react';
+import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
 import {
   Dialog,
   DialogContent,
@@ -29,11 +32,20 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 
-export const Route = createFileRoute("/_app/pharmacy/manufacturemaster")({
+export const Route = createFileRoute('/_app/pharmacy/manufacturemaster')({
   component: ManufactureMaster,
 });
+
+const DEFAULT_CATEGORIES = [
+  'Antibiotics',
+  'Cardiac',
+  'Diabetes',
+  'Analgesic',
+  'Respiratory',
+  'Dermatology',
+];
 
 interface Manufacturer {
   name: string;
@@ -46,57 +58,110 @@ function ManufactureMaster() {
   const [manufacturers, setManufacturers] = useState<Manufacturer[]>(() => {
     const unique = Array.from(new Set(seedMedicines.map((m) => m.manufacturer)));
     const mocks: Record<string, { phone: string; address: string; email: string }> = {
-      Cipla: {
-        phone: "+91 98765 43210",
-        address: "Mumbai, Maharashtra",
-        email: "contact@cipla.com",
-      },
+      Cipla: { phone: '9876543210', address: 'Mumbai, Maharashtra', email: 'contact@cipla.com' },
       "Dr. Reddy's": {
-        phone: "+91 87654 32109",
-        address: "Hyderabad, Telangana",
-        email: "info@drreddys.com",
+        phone: '8765432109',
+        address: 'Hyderabad, Telangana',
+        email: 'info@drreddys.com',
       },
-      GSK: {
-        phone: "+44 20 8990 9000",
-        address: "London, United Kingdom",
-        email: "gsk.support@gsk.com",
-      },
+      GSK: { phone: '8990990000', address: 'London, United Kingdom', email: 'gsk.support@gsk.com' },
       Pfizer: {
-        phone: "+1 212-733-2323",
-        address: "New York, USA",
-        email: "corporate.affairs@pfizer.com",
+        phone: '2127332323',
+        address: 'New York, USA',
+        email: 'corporate.affairs@pfizer.com',
       },
     };
     return unique
       .map((name) => ({
         name,
-        phone: mocks[name]?.phone ?? "+91 99999 88888",
-        address: mocks[name]?.address ?? "Industrial Area, Phase 1",
-        email: mocks[name]?.email ?? `contact@${name.toLowerCase().replace(/[^a-z0-9]/g, "")}.com`,
+        phone: mocks[name]?.phone ?? '9999988888',
+        address: mocks[name]?.address ?? 'Industrial Area, Phase 1',
+        email: mocks[name]?.email ?? `contact@${name.toLowerCase().replace(/[^a-z0-9]/g, '')}.com`,
       }))
       .sort((a, b) => a.name.localeCompare(b.name));
   });
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingMfg, setEditingMfg] = useState<Manufacturer | null>(null);
-  const [mfgName, setMfgName] = useState("");
-  const [mfgPhone, setMfgPhone] = useState("");
-  const [mfgEmail, setMfgEmail] = useState("");
-  const [mfgAddress, setMfgAddress] = useState("");
+  const [mfgName, setMfgName] = useState('');
+  const [mfgPhone, setMfgPhone] = useState('');
+  const [mfgEmail, setMfgEmail] = useState('');
+  const [mfgAddress, setMfgAddress] = useState('');
 
-  const [searchQuery, setSearchQuery] = useState("");
+  // Form fields for associated medicine
+  const [addMedicine, setAddMedicine] = useState(false);
+  const [medName, setMedName] = useState('');
+  const [medCategory, setMedCategory] = useState('Analgesic');
+  const [medIngredients, setMedIngredients] = useState('');
+  const [medPrice, setMedPrice] = useState('10');
+  const [medGst, setMedGst] = useState('12');
+  const [medMinStock, setMedMinStock] = useState('20');
+  const [medStock, setMedStock] = useState('100');
+  const [medBatch, setMedBatch] = useState('');
+  const [medExpiry, setMedExpiry] = useState('');
+
+  const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [viewingMfgMedicines, setViewingMfgMedicines] = useState<string | null>(null);
+  const [isPopupLoading, setIsPopupLoading] = useState(false);
+
+  useEffect(() => {
+    if (viewingMfgMedicines) {
+      setIsPopupLoading(true);
+      const timer = setTimeout(() => {
+        setIsPopupLoading(false);
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [viewingMfgMedicines]);
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
+  // Phone number validation function
+  const validatePhoneNumber = (phone: string): boolean => {
+    // Remove any non-digit characters
+    const digitsOnly = phone.replace(/\D/g, '');
+    // Check if it's exactly 10 digits
+    return digitsOnly.length === 10;
+  };
+
+  // Format phone number to only digits
+  const formatPhoneNumber = (phone: string): string => {
+    return phone.replace(/\D/g, '');
+  };
+
+  // Handle phone input change
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Only allow digits
+    const digitsOnly = value.replace(/\D/g, '');
+    // Limit to 10 digits
+    const limited = digitsOnly.slice(0, 10);
+    setMfgPhone(limited);
+  };
+
   const handleOpenAdd = () => {
     setEditingMfg(null);
-    setMfgName("");
-    setMfgPhone("");
-    setMfgEmail("");
-    setMfgAddress("");
+    setMfgName('');
+    setMfgPhone('');
+    setMfgEmail('');
+    setMfgAddress('');
+
+    setAddMedicine(false);
+    setMedName('');
+    setMedCategory('Analgesic');
+    setMedIngredients('');
+    setMedPrice('10');
+    setMedGst('12');
+    setMedMinStock('20');
+    setMedStock('100');
+    setMedBatch(`B${2400 + seedMedicines.length}`);
+    const nextYear = new Date();
+    nextYear.setFullYear(nextYear.getFullYear() + 1);
+    setMedExpiry(nextYear.toISOString().split('T')[0] || '');
+
     setIsDialogOpen(true);
   };
 
@@ -116,19 +181,51 @@ function ManufactureMaster() {
     const address = mfgAddress.trim();
 
     if (!name) {
-      toast.error("Please enter a manufacturer name");
+      toast.error('Please enter a manufacturer name');
       return;
+    }
+
+    // Validate phone number if provided
+    if (phone && !validatePhoneNumber(phone)) {
+      toast.error('Phone number must be exactly 10 digits');
+      return;
+    }
+
+    if (!editingMfg && addMedicine) {
+      if (!medName.trim()) {
+        toast.error('Please enter a medicine name');
+        return;
+      }
+      if (isNaN(parseFloat(medPrice)) || parseFloat(medPrice) < 0) {
+        toast.error('Please enter a valid price');
+        return;
+      }
+      if (isNaN(parseInt(medMinStock)) || parseInt(medMinStock) < 0) {
+        toast.error('Please enter a valid low-stock threshold');
+        return;
+      }
+      if (isNaN(parseInt(medStock)) || parseInt(medStock) < 0) {
+        toast.error('Please enter a valid stock count');
+        return;
+      }
+      if (!medBatch.trim()) {
+        toast.error('Please enter a batch code');
+        return;
+      }
+      if (!medExpiry.trim()) {
+        toast.error('Please select an expiry date');
+        return;
+      }
     }
 
     setIsLoading(true);
     setTimeout(() => {
       if (editingMfg) {
-        // Editing existing
         if (
           name.toLowerCase() !== editingMfg.name.toLowerCase() &&
           manufacturers.some((m) => m.name.toLowerCase() === name.toLowerCase())
         ) {
-          toast.error("Manufacturer name already exists");
+          toast.error('Manufacturer name already exists');
           setIsLoading(false);
           return;
         }
@@ -139,14 +236,31 @@ function ManufactureMaster() {
         );
         toast.success(`Updated manufacturer "${name}"`);
       } else {
-        // Adding new
         if (manufacturers.some((m) => m.name.toLowerCase() === name.toLowerCase())) {
-          toast.error("Manufacturer name already exists");
+          toast.error('Manufacturer name already exists');
           setIsLoading(false);
           return;
         }
         const newMfg: Manufacturer = { name, phone, email, address };
         setManufacturers((prev) => [...prev, newMfg].sort((a, b) => a.name.localeCompare(b.name)));
+
+        if (addMedicine) {
+          const newMed: Medicine = {
+            id: `m-${5000 + seedMedicines.length + (Date.now() % 1000)}`,
+            name: medName.trim(),
+            category: medCategory,
+            manufacturer: name,
+            pricePerUnit: parseFloat(medPrice),
+            gst: parseInt(medGst),
+            minStock: parseInt(medMinStock),
+            stock: parseInt(medStock),
+            batch: medBatch.trim(),
+            expiry: medExpiry,
+            ingredients: medIngredients.trim() || 'Active Pharmaceutical Ingredient, Excipients',
+          };
+          seedMedicines.push(newMed);
+          toast.success(`Added medicine "${medName.trim()}" under "${name}"`);
+        }
         toast.success(`Added "${name}" to manufacturers`);
       }
       setIsDialogOpen(false);
@@ -156,16 +270,31 @@ function ManufactureMaster() {
 
   const handleDeleteManufacturer = (name: string) => {
     const medCount = seedMedicines.filter((m) => m.manufacturer === name).length;
+
+    let confirmMsg = `Are you sure you want to delete manufacturer "${name}"?`;
     if (medCount > 0) {
-      toast.warning(`Cannot delete "${name}" - ${medCount} medicine(s) use this manufacturer`);
-      return;
+      confirmMsg = `Warning: This manufacturer has ${medCount} medicine(s) associated with them. Deleting "${name}" will also delete all of their medicines from the catalog. Proceed?`;
     }
-    if (window.confirm(`Delete manufacturer "${name}"?`)) {
+
+    if (window.confirm(confirmMsg)) {
       setIsLoading(true);
       setTimeout(() => {
         setManufacturers((prev) => prev.filter((m) => m.name !== name));
+
+        if (medCount > 0) {
+          const initialLength = seedMedicines.length;
+          for (let i = seedMedicines.length - 1; i >= 0; i--) {
+            if (seedMedicines[i]!.manufacturer === name) {
+              seedMedicines.splice(i, 1);
+            }
+          }
+          toast.success(
+            `Removed "${name}" and cascade deleted ${initialLength - seedMedicines.length} medicine(s)`
+          );
+        } else {
+          toast.success(`Removed "${name}" from manufacturers`);
+        }
         setIsLoading(false);
-        toast.success(`Removed "${name}" from manufacturers`);
       }, 500);
     }
   };
@@ -174,7 +303,7 @@ function ManufactureMaster() {
     ? manufacturers.filter(
         (m) =>
           m.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          m.phone.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          m.phone.includes(searchQuery) ||
           m.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
           m.address.toLowerCase().includes(searchQuery.toLowerCase())
       )
@@ -201,24 +330,24 @@ function ManufactureMaster() {
 
   const exportToCSV = () => {
     if (manufacturers.length === 0) {
-      toast.info("No manufacturers to export");
+      toast.info('No manufacturers to export');
       return;
     }
     const csv =
-      "Manufacturer Name,Phone No,Email,Address,Medicine Count\n" +
+      'Manufacturer Name,Phone No,Email,Address,Medicine Count\n' +
       manufacturers
         .map(
           (m) => `"${m.name}","${m.phone}","${m.email}","${m.address}",${getMedicineCount(m.name)}`
         )
-        .join("\n");
-    const blob = new Blob([csv], { type: "text/csv" });
+        .join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
+    const a = document.createElement('a');
     a.href = url;
-    a.download = `manufacturers_${new Date().toISOString().split("T")[0]}.csv`;
+    a.download = `manufacturers_${new Date().toISOString().split('T')[0]}.csv`;
     a.click();
     URL.revokeObjectURL(url);
-    toast.success("Exported manufacturers list");
+    toast.success('Exported manufacturers list');
   };
 
   return (
@@ -226,16 +355,6 @@ function ManufactureMaster() {
       <PageHeader
         title="Manufacture Master"
         description="Manage all medicine manufacturers in the system."
-        actions={
-          <div className="flex items-center gap-2">
-            <Button variant="default" onClick={exportToCSV} className="text-white">
-              <Download className="mr-2 h-4 w-4" /> Export CSV
-            </Button>
-            <span className="text-sm bg-primary text-primary-foreground px-3 py-1 rounded-full font-semibold">
-              {manufacturers.length} Total
-            </span>
-          </div>
-        }
       />
 
       <div className="surface-elevated rounded-2xl overflow-hidden border border-border">
@@ -253,55 +372,64 @@ function ManufactureMaster() {
                 />
               </div>
             </div>
-            <Button
-              onClick={handleOpenAdd}
-              disabled={isLoading}
-              variant="default"
-              className="text-white w-full sm:w-auto"
-            >
-              <Plus className="mr-2 h-4 w-4" /> Add Manufacturer
-            </Button>
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <Button
+                variant="default"
+                onClick={exportToCSV}
+                disabled={isLoading}
+                className="text-white w-full sm:w-auto"
+              >
+                <Download className="mr-2 h-4 w-4" /> Export CSV
+              </Button>
+              <Button
+                onClick={handleOpenAdd}
+                disabled={isLoading}
+                variant="default"
+                className="text-white w-full sm:w-auto"
+              >
+                <Plus className="mr-2 h-4 w-4" /> Add Manufacturer
+              </Button>
+            </div>
           </div>
         </div>
 
         <div className="p-6">
-          {/* Stats Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-            <div className="bg-gradient-to-br from-emerald-50 to-emerald-100/50 rounded-xl p-4 border border-emerald-200">
+            <div className="bg-primary/5 rounded-xl p-4 border border-primary/20">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-emerald-600/10 rounded-lg">
-                  <Building2 className="h-5 w-5 text-emerald-600" />
+                <div className="p-2.5 bg-primary/10 rounded-lg">
+                  <Building2 className="h-5 w-5 text-primary" />
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground font-medium">Total Manufacturers</p>
-                  <p className="text-2xl font-bold text-emerald-700">{manufacturers.length}</p>
+                  <p className="text-2xl font-bold text-primary">{manufacturers.length}</p>
                 </div>
               </div>
             </div>
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-xl p-4 border border-blue-200">
+            <div className="bg-primary/5 rounded-xl p-4 border border-primary/20">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-blue-600/10 rounded-lg">
-                  <Package className="h-5 w-5 text-blue-600" />
+                <div className="p-2.5 bg-primary/10 rounded-lg">
+                  <Package className="h-5 w-5 text-primary" />
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground font-medium">Total Medicines</p>
-                  <p className="text-2xl font-bold text-blue-700">{seedMedicines.length}</p>
+                  <p className="text-2xl font-bold text-primary">{seedMedicines.length}</p>
                 </div>
               </div>
             </div>
-            <div className="bg-gradient-to-br from-purple-50 to-purple-100/50 rounded-xl p-4 border border-purple-200">
+            <div className="bg-primary/5 rounded-xl p-4 border border-primary/20">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-purple-600/10 rounded-lg">
-                  <Factory className="h-5 w-5 text-purple-600" />
+                <div className="p-2.5 bg-primary/10 rounded-lg">
+                  <Factory className="h-5 w-5 text-primary" />
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground font-medium">
                     Avg Medicines/Manufacturer
                   </p>
-                  <p className="text-2xl font-bold text-purple-700">
+                  <p className="text-2xl font-bold text-primary">
                     {manufacturers.length > 0
                       ? (seedMedicines.length / manufacturers.length).toFixed(1)
-                      : "0"}
+                      : '0'}
                   </p>
                 </div>
               </div>
@@ -319,11 +447,11 @@ function ManufactureMaster() {
             {currentItems.length === 0 ? (
               <EmptyState
                 icon={Factory}
-                title={searchQuery ? "No manufacturers match" : "No manufacturers"}
+                title={searchQuery ? 'No manufacturers match' : 'No manufacturers'}
                 description={
                   searchQuery
                     ? `No manufacturers found matching "${searchQuery}"`
-                    : "Add your first manufacturer above."
+                    : 'Add your first manufacturer above.'
                 }
               />
             ) : (
@@ -349,18 +477,25 @@ function ManufactureMaster() {
                             <span>{mfg.name}</span>
                           </div>
                         </td>
-                        <td className="px-6 py-4 text-foreground/80">{mfg.phone || "—"}</td>
-                        <td className="px-6 py-4 text-foreground/80">{mfg.email || "—"}</td>
+                        <td className="px-6 py-4 text-foreground/80 font-mono">
+                          {mfg.phone || '—'}
+                        </td>
+                        <td className="px-6 py-4 text-foreground/80">{mfg.email || '—'}</td>
                         <td
                           className="px-6 py-4 text-foreground/80 max-w-[200px] truncate"
                           title={mfg.address}
                         >
-                          {mfg.address || "—"}
+                          {mfg.address || '—'}
                         </td>
                         <td className="px-6 py-4 text-center">
-                          <span className="inline-block bg-primary/10 text-primary px-2.5 py-0.5 rounded text-xs font-semibold">
+                          <button
+                            type="button"
+                            onClick={() => setViewingMfgMedicines(mfg.name)}
+                            className="inline-flex items-center justify-center bg-primary hover:bg-primary/90 text-primary-foreground transition-colors min-w-[28px] h-7 px-2 rounded-full text-xs font-bold mx-auto shadow-sm"
+                            title={`Click to view ${medCount} medicine(s)`}
+                          >
                             {medCount}
-                          </span>
+                          </button>
                         </td>
                         <td className="px-6 py-4 text-right">
                           <div className="flex items-center justify-end gap-1">
@@ -380,7 +515,7 @@ function ManufactureMaster() {
                               className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
                               onClick={() => handleDeleteManufacturer(mfg.name)}
                               title="Delete manufacturer"
-                              disabled={medCount > 0 || isLoading}
+                              disabled={isLoading}
                             >
                               <PackageMinus className="h-3.5 w-3.5" />
                             </Button>
@@ -394,7 +529,6 @@ function ManufactureMaster() {
             )}
           </div>
 
-          {/* Pagination */}
           {totalItems > 0 && (
             <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
               <div className="flex items-center gap-3 text-xs text-muted-foreground">
@@ -472,7 +606,7 @@ function ManufactureMaster() {
                 variant="outline"
                 size="sm"
                 onClick={() => {
-                  setSearchQuery("");
+                  setSearchQuery('');
                   setCurrentPage(1);
                 }}
                 className="border-primary text-primary hover:bg-primary/10 hover:text-primary"
@@ -481,15 +615,15 @@ function ManufactureMaster() {
               </Button>
             )}
             <Button
-              variant="outline"
+              variant="default"
               size="sm"
               onClick={() => {
                 setCurrentPage(1);
                 setItemsPerPage(10);
-                setSearchQuery("");
-                toast.info("Reset to default view");
+                setSearchQuery('');
+                toast.info('Reset to default view');
               }}
-              className="border-primary text-primary hover:bg-primary/10 hover:text-primary"
+              className="text-white"
             >
               Reset View
             </Button>
@@ -499,69 +633,243 @@ function ManufactureMaster() {
 
       {/* Dialog modal for Add/Edit */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[480px]">
+        <DialogContent
+          className={cn(
+            'sm:max-w-[480px] transition-all duration-300',
+            !editingMfg && addMedicine && 'sm:max-w-[800px]'
+          )}
+        >
           <DialogHeader>
-            <DialogTitle>{editingMfg ? "Edit Manufacturer" : "Add New Manufacturer"}</DialogTitle>
+            <DialogTitle>{editingMfg ? 'Edit Manufacturer' : 'Add New Manufacturer'}</DialogTitle>
             <DialogDescription>
               {editingMfg
                 ? "Update the manufacturer's details below."
-                : "Fill in the details to register a new medicine manufacturer."}
+                : 'Fill in the details to register a new medicine manufacturer.'}
             </DialogDescription>
           </DialogHeader>
 
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="mfg-name" className="text-sm font-semibold">
-                Manufacturer Name <span className="text-destructive">*</span>
-              </Label>
-              <Input
-                id="mfg-name"
-                value={mfgName}
-                onChange={(e) => setMfgName(e.target.value)}
-                placeholder="e.g. Cipla, Pfizer"
-                disabled={isLoading}
-              />
+          <div className={cn('grid gap-4 py-4', !editingMfg && addMedicine && 'grid-cols-2')}>
+            <div className="space-y-4">
+              <h4 className="text-xs font-bold uppercase tracking-widest text-emerald-600">
+                Manufacturer Details
+              </h4>
+
+              <div className="grid gap-2">
+                <Label htmlFor="mfg-name" className="text-sm font-semibold">
+                  Manufacturer Name <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  id="mfg-name"
+                  value={mfgName}
+                  onChange={(e) => setMfgName(e.target.value)}
+                  placeholder="e.g. Cipla, Pfizer"
+                  disabled={isLoading}
+                />
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="mfg-phone" className="text-sm font-semibold">
+                  Phone Number{' '}
+                  <span className="text-muted-foreground text-xs">(10 digits only)</span>
+                </Label>
+                <Input
+                  id="mfg-phone"
+                  value={mfgPhone}
+                  onChange={handlePhoneChange}
+                  placeholder="e.g. 9876543210"
+                  disabled={isLoading}
+                  maxLength={10}
+                  className="font-mono"
+                />
+                {mfgPhone && mfgPhone.length < 10 && (
+                  <p className="text-xs text-destructive">Phone number must be exactly 10 digits</p>
+                )}
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="mfg-email" className="text-sm font-semibold">
+                  Email Address
+                </Label>
+                <Input
+                  id="mfg-email"
+                  type="email"
+                  value={mfgEmail}
+                  onChange={(e) => setMfgEmail(e.target.value)}
+                  placeholder="e.g. contact@cipla.com"
+                  disabled={isLoading}
+                />
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="mfg-address" className="text-sm font-semibold">
+                  Address
+                </Label>
+                <Input
+                  id="mfg-address"
+                  value={mfgAddress}
+                  onChange={(e) => setMfgAddress(e.target.value)}
+                  placeholder="e.g. Mumbai, Maharashtra"
+                  disabled={isLoading}
+                />
+              </div>
+
+              {!editingMfg && (
+                <div className="flex items-center gap-2 pt-2 border-t border-border">
+                  <input
+                    id="add-medicine-checkbox"
+                    type="checkbox"
+                    checked={addMedicine}
+                    onChange={(e) => setAddMedicine(e.target.checked)}
+                    className="h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500 accent-emerald-600"
+                    disabled={isLoading}
+                  />
+                  <Label
+                    htmlFor="add-medicine-checkbox"
+                    className="text-sm font-semibold select-none cursor-pointer"
+                  >
+                    Add a medicine for this manufacturer
+                  </Label>
+                </div>
+              )}
             </div>
 
-            <div className="grid gap-2">
-              <Label htmlFor="mfg-phone" className="text-sm font-semibold">
-                Phone Number
-              </Label>
-              <Input
-                id="mfg-phone"
-                value={mfgPhone}
-                onChange={(e) => setMfgPhone(e.target.value)}
-                placeholder="e.g. +91 98765 43210"
-                disabled={isLoading}
-              />
-            </div>
+            {!editingMfg && addMedicine && (
+              <div className="space-y-4 border-l border-border pl-6">
+                <h4 className="text-xs font-bold uppercase tracking-widest text-emerald-600">
+                  Associated Medicine Details
+                </h4>
 
-            <div className="grid gap-2">
-              <Label htmlFor="mfg-email" className="text-sm font-semibold">
-                Email Address
-              </Label>
-              <Input
-                id="mfg-email"
-                type="email"
-                value={mfgEmail}
-                onChange={(e) => setMfgEmail(e.target.value)}
-                placeholder="e.g. contact@cipla.com"
-                disabled={isLoading}
-              />
-            </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="med-name" className="text-sm font-semibold">
+                    Medicine Name <span className="text-destructive">*</span>
+                  </Label>
+                  <Input
+                    id="med-name"
+                    value={medName}
+                    onChange={(e) => setMedName(e.target.value)}
+                    placeholder="e.g. Paracetamol 650mg"
+                    disabled={isLoading}
+                  />
+                </div>
 
-            <div className="grid gap-2">
-              <Label htmlFor="mfg-address" className="text-sm font-semibold">
-                Address
-              </Label>
-              <Input
-                id="mfg-address"
-                value={mfgAddress}
-                onChange={(e) => setMfgAddress(e.target.value)}
-                placeholder="e.g. Mumbai, Maharashtra"
-                disabled={isLoading}
-              />
-            </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="grid gap-2">
+                    <Label htmlFor="med-category" className="text-sm font-semibold">
+                      Category <span className="text-destructive">*</span>
+                    </Label>
+                    <select
+                      id="med-category"
+                      value={medCategory}
+                      onChange={(e) => setMedCategory(e.target.value)}
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      disabled={isLoading}
+                    >
+                      {DEFAULT_CATEGORIES.map((cat) => (
+                        <option key={cat} value={cat}>
+                          {cat}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="grid gap-2">
+                    <Label htmlFor="med-ingredients" className="text-sm font-semibold">
+                      Ingredients
+                    </Label>
+                    <Input
+                      id="med-ingredients"
+                      value={medIngredients}
+                      onChange={(e) => setMedIngredients(e.target.value)}
+                      placeholder="e.g. Active Ingredient"
+                      disabled={isLoading}
+                    />
+                  </div>
+
+                  <div className="grid gap-2">
+                    <Label htmlFor="med-price" className="text-sm font-semibold">
+                      Price (INR) <span className="text-destructive">*</span>
+                    </Label>
+                    <Input
+                      id="med-price"
+                      type="number"
+                      step="0.01"
+                      value={medPrice}
+                      onChange={(e) => setMedPrice(e.target.value)}
+                      placeholder="e.g. 15.50"
+                      disabled={isLoading}
+                    />
+                  </div>
+
+                  <div className="grid gap-2">
+                    <Label htmlFor="med-gst" className="text-sm font-semibold">
+                      GST Rate % <span className="text-destructive">*</span>
+                    </Label>
+                    <select
+                      id="med-gst"
+                      value={medGst}
+                      onChange={(e) => setMedGst(e.target.value)}
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      disabled={isLoading}
+                    >
+                      <option value="5">5%</option>
+                      <option value="12">12%</option>
+                      <option value="18">18%</option>
+                    </select>
+                  </div>
+
+                  <div className="grid gap-2">
+                    <Label htmlFor="med-minstock" className="text-sm font-semibold">
+                      Min Stock <span className="text-destructive">*</span>
+                    </Label>
+                    <Input
+                      id="med-minstock"
+                      type="number"
+                      value={medMinStock}
+                      onChange={(e) => setMedMinStock(e.target.value)}
+                      disabled={isLoading}
+                    />
+                  </div>
+
+                  <div className="grid gap-2">
+                    <Label htmlFor="med-stock" className="text-sm font-semibold">
+                      Initial Stock <span className="text-destructive">*</span>
+                    </Label>
+                    <Input
+                      id="med-stock"
+                      type="number"
+                      value={medStock}
+                      onChange={(e) => setMedStock(e.target.value)}
+                      disabled={isLoading}
+                    />
+                  </div>
+
+                  <div className="grid gap-2">
+                    <Label htmlFor="med-batch" className="text-sm font-semibold">
+                      Batch Code <span className="text-destructive">*</span>
+                    </Label>
+                    <Input
+                      id="med-batch"
+                      value={medBatch}
+                      onChange={(e) => setMedBatch(e.target.value)}
+                      disabled={isLoading}
+                    />
+                  </div>
+
+                  <div className="grid gap-2">
+                    <Label htmlFor="med-expiry" className="text-sm font-semibold">
+                      Expiry Date <span className="text-destructive">*</span>
+                    </Label>
+                    <Input
+                      id="med-expiry"
+                      type="date"
+                      value={medExpiry}
+                      onChange={(e) => setMedExpiry(e.target.value)}
+                      disabled={isLoading}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           <DialogFooter>
@@ -570,15 +878,87 @@ function ManufactureMaster() {
             </Button>
             <Button
               onClick={handleSaveManufacturer}
-              disabled={isLoading || !mfgName.trim()}
+              disabled={
+                isLoading || !mfgName.trim() || (mfgPhone.length > 0 && mfgPhone.length !== 10)
+              }
               variant="default"
               className="text-white"
             >
-              {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Save Changes"}
+              {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Save Changes'}
             </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog modal for viewing medicines list */}
+      <Dialog
+        open={viewingMfgMedicines !== null}
+        onOpenChange={(open) => !open && setViewingMfgMedicines(null)}
+      >
+        <DialogContent className="sm:max-w-[640px]">
+          <DialogHeader>
+            <DialogTitle>Medicines by {viewingMfgMedicines}</DialogTitle>
+            <DialogDescription>
+              All medicines in inventory registered under this manufacturer.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="py-4">
+            {viewingMfgMedicines && (
+              <div className="overflow-x-auto rounded-lg border border-border max-h-[45vh] overflow-y-auto">
+                {seedMedicines.filter((m) => m.manufacturer === viewingMfgMedicines).length ===
+                0 ? (
+                  <div className="px-4 py-8 text-center text-sm text-muted-foreground">
+                    No medicines found for this manufacturer.
+                  </div>
+                ) : (
+                  <table className="w-full border-collapse text-left text-sm text-muted-foreground">
+                    <thead className="bg-muted/40 text-xs font-semibold uppercase tracking-wider text-muted-foreground border-b border-border">
+                      <tr>
+                        <th className="px-4 py-2.5 w-1/2">Medicine Name</th>
+                        <th className="px-4 py-2.5 w-1/2">Category</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border">
+                      {isPopupLoading
+                        ? Array.from({ length: 7 }).map((_, rowIndex) => (
+                            <tr key={rowIndex} className="animate-pulse">
+                              <td className="px-4 py-3.5">
+                                <Skeleton className="h-5 w-48 bg-muted-foreground/15 rounded-md" />
+                              </td>
+                              <td className="px-4 py-3.5">
+                                <Skeleton className="h-5 w-28 bg-muted-foreground/15 rounded-md" />
+                              </td>
+                            </tr>
+                          ))
+                        : seedMedicines
+                            .filter((m) => m.manufacturer === viewingMfgMedicines)
+                            .map((med) => (
+                              <tr key={med.id} className="hover:bg-muted/10 transition-colors">
+                                <td className="px-4 py-3 font-semibold text-foreground">
+                                  {med.name}
+                                </td>
+                                <td className="px-4 py-3">
+                                  <span className="inline-block bg-muted px-2 py-0.5 rounded text-xs font-medium border border-border">
+                                    {med.category}
+                                  </span>
+                                </td>
+                              </tr>
+                            ))}
+                    </tbody>
+                  </table>
+                )}
+              </div>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button onClick={() => setViewingMfgMedicines(null)}>Close</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
   );
 }
+
+export default ManufactureMaster;
