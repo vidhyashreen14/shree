@@ -1,6 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { PageHeader } from "@/components/common/PageHeader";
+import { Button } from "@/components/ui/button";
 import {
   labOrders,
   patients,
@@ -12,7 +13,6 @@ import {
   labWeekWiseData,
   labMonthWiseData,
 } from "@/lib/mock/data";
-import { Link } from "lucide-react";
 import {
   FilePlus2,
   FlaskConical,

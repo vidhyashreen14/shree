@@ -111,7 +111,7 @@ export interface LabOrder {
   reportUrl?: string;
 }
 
-export type VisitStatus = 'Pending' | 'Collected' | 'In Progress' | 'Cancelled' | 'Completed';
+export type VisitStatus = 'Pending' | 'Collected' | 'In Progress' | 'Received' | 'Cancelled' | 'Completed';
 
 export interface HomeVisit {
   id: string;

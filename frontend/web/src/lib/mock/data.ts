@@ -11,6 +11,7 @@ import type {
   VisitStatus,
   Vitals,
 } from '../types';
+export type { HomeVisit, VisitStatus } from '../types';
 import { useStaffProfiles, DEMO_STAFF, type StaffProfile } from '../store/staffProfiles';
 import { useDepartments } from '../store/departments';
 
@@ -326,3 +327,254 @@ export const dailyVisits = Array.from({ length: 14 }).map((_, i) => ({
 }));
 
 export const departmentLoad = departments.map((d) => ({ name: d.name, patients: d.patientsToday }));
+
+// Lab Visits Mock Data & Constants
+export const VISIT_SBU_OPTIONS = ['Diagnostics', 'Pathology', 'Radiology', 'Wellness'];
+export const VISIT_BRANCH_OPTIONS = ['Main Branch', 'North Wing', 'East Center', 'South Clinic'];
+export const VISIT_PHLEBO_OPTIONS = ['Ramesh Kumar', 'Suresh Sharma', 'Anita Roy', 'Vikram Singh'];
+export const VISIT_STATUS_OPTIONS: VisitStatus[] = [
+  'Pending',
+  'Collected',
+  'In Progress',
+  'Received',
+  'Completed',
+  'Cancelled',
+];
+export const LAB_TEST_POOL = [
+  'Complete Blood Count (CBC)',
+  'Lipid Profile',
+  'Thyroid Profile (T3, T4, TSH)',
+  'HbA1c',
+  'Liver Function Test (LFT)',
+  'Kidney Function Test (KFT)',
+  'Urine Routine',
+  'Vitamin D3',
+  'Vitamin B12',
+];
+
+export const SBU_OPTIONS = VISIT_SBU_OPTIONS;
+export const BRANCH_OPTIONS = VISIT_BRANCH_OPTIONS;
+export const PHLEBO_OPTIONS = VISIT_PHLEBO_OPTIONS;
+export const STATUS_OPTIONS = VISIT_STATUS_OPTIONS;
+export const TEST_POOL = LAB_TEST_POOL;
+
+export const allLabVisits: HomeVisit[] = [
+  {
+    id: 'hv-1',
+    visitId: 'HV-10021',
+    patientName: 'Aarav Sharma',
+    mobile: '+91 9010000000',
+    age: 34,
+    gender: 'Male',
+    address: '12 Maple Ave, Mumbai',
+    sbu: 'Diagnostics',
+    branch: 'Main Branch',
+    phlebo: 'Ramesh Kumar',
+    tests: ['Complete Blood Count (CBC)', 'Lipid Profile'],
+    regDate: '2026-08-07',
+    regTime: '08:30',
+    collDate: '2026-08-07',
+    collTimeFrom: '07:00',
+    collTimeTo: '09:00',
+    status: 'Pending',
+    remarks: 'Fasting sample required.',
+  },
+  {
+    id: 'hv-2',
+    visitId: 'HV-10022',
+    patientName: 'Saanvi Patel',
+    mobile: '+91 9010000013',
+    age: 28,
+    gender: 'Female',
+    address: '5 Lotus Rd, Bengaluru',
+    sbu: 'Pathology',
+    branch: 'North Wing',
+    phlebo: 'Anita Roy',
+    tests: ['Thyroid Profile (T3, T4, TSH)', 'HbA1c'],
+    regDate: '2026-08-06',
+    regTime: '09:15',
+    collDate: '2026-08-07',
+    collTimeFrom: '09:00',
+    collTimeTo: '11:00',
+    status: 'Collected',
+  },
+];
+export const ALL_VISITS = allLabVisits;
+export function padTwo(n: number) {
+  return String(n).padStart(2, '0');
+}
+
+// Report Configuration Mock Data & Types
+export interface ReportConfig {
+  hospitalName: string;
+  address: string;
+  phone: string;
+  email: string;
+  website: string;
+  accreditation: string;
+  reportHeader: string;
+  reportFooter: string;
+  authorizedSignatory: string;
+}
+
+export const SUPER_ADMIN_CONFIG: ReportConfig = {
+  hospitalName: 'Love DOC Super Specialty Hospital & Research Center',
+  address: '123 Medical Enclave, Health City, MH 400001',
+  phone: '+91 22 5555 0100',
+  email: 'info@lovedochospital.com',
+  website: 'www.lovedochospital.com',
+  accreditation: 'NABL Accredited & NABH Certified Laboratory',
+  reportHeader: 'CONFIDENTIAL LABORATORY INVESTIGATION REPORT',
+  reportFooter: 'This report is electronically generated and validated by Pathologist.',
+  authorizedSignatory: 'Dr. Ananya Sharma (MD, Pathology) - Chief Pathologist',
+};
+
+export const STANDALONE_LAB_CONFIG: ReportConfig = {
+  hospitalName: 'Love DOC Diagnostic & Clinical Laboratory',
+  address: '45 Diagnostics Plaza, Central Avenue, KA 560001',
+  phone: '+91 80 4444 0200',
+  email: 'lab@lovedocdiagnostics.com',
+  website: 'www.lovedocdiagnostics.com',
+  accreditation: 'NABL Accredited Laboratory (ISO 15189)',
+  reportHeader: 'DIAGNOSTIC TEST REPORT',
+  reportFooter: 'End of Report. Please correlate with clinical findings.',
+  authorizedSignatory: 'Dr. Rajesh Verma (MD, Biochemistry) - Lab Director',
+};
+
+// Lab KPI & Chart Mock Data
+export const labKPI = {
+  samplesRegistered: 142,
+  b2c: 98,
+  b2b: 44,
+  testsInProgress: 24,
+  reportsApproved: 118,
+  grossAmount: 320000,
+  discountAmount: 36000,
+  netAmount: 284000,
+  tatBreaches: 3,
+  totalRevenue: 284000,
+  outstandingDue: 35000,
+};
+
+export const LAB_SBU_OPTIONS = ['Diagnostics', 'Pathology', 'Radiology', 'Wellness'];
+export const LAB_BRANCH_OPTIONS = ['Main Branch', 'North Wing', 'East Center', 'South Clinic'];
+
+export const labDayWiseSamples = [120, 135, 150, 142, 160, 110, 80];
+export const LAB_DAY_AVG = 128;
+
+export const labWeekWiseData = [
+  { label: 'W1', samples: 850, avg: 880 },
+  { label: 'W2', samples: 920, avg: 880 },
+  { label: 'W3', samples: 880, avg: 880 },
+  { label: 'W4', samples: 950, avg: 880 },
+  { label: 'W5', samples: 910, avg: 880 },
+  { label: 'W6', samples: 940, avg: 880 },
+];
+
+export const labMonthWiseData = [
+  { label: 'Jan', samples: 3400, avg: 3700 },
+  { label: 'Feb', samples: 3600, avg: 3700 },
+  { label: 'Mar', samples: 3800, avg: 3700 },
+  { label: 'Apr', samples: 3900, avg: 3700 },
+  { label: 'May', samples: 3750, avg: 3700 },
+  { label: 'Jun', samples: 3850, avg: 3700 },
+  { label: 'Jul', samples: 4000, avg: 3700 },
+];
+
+// Lab Quotations Mock Data & Types
+export type QuotationType = 'Walk-in / Patient' | 'B2B Client' | 'Home Visit' | 'B2B';
+export type QuotationStatus = 'Draft' | 'Sent' | 'Approved' | 'Rejected';
+
+export interface QuotationServiceRow {
+  id: string;
+  service: string;
+  price: number;
+  discount: number;
+  net: number;
+  code?: string;
+  name?: string;
+  category?: string;
+}
+
+export interface Quotation {
+  id: string;
+  refNo: string;
+  patientOrOrg: string;
+  phone: string;
+  branch: string;
+  type: QuotationType;
+  tests: string[];
+  total: number;
+  netAmount: number;
+  status: QuotationStatus;
+  date: string;
+  validUntil?: string;
+  services?: QuotationServiceRow[];
+  totalAmount?: number;
+  discountAmount?: number;
+  notes?: string;
+}
+
+export const QUOTATION_BRANCHES = ['Main Branch', 'North Wing', 'East Center', 'South Clinic'];
+export const QUOTATION_B2B_OPTIONS = ['Apex Healthcare', 'City Life Clinic', 'Green Cross Diagnostics', 'Care First Hospital'];
+export const QUOTATION_SERVICE_OPTIONS = [
+  'Select test / package...',
+  'Complete Blood Count (CBC)',
+  'Lipid Profile',
+  'Liver Function Test (LFT)',
+  'Kidney Function Test (KFT)',
+  'Thyroid Profile (T3, T4, TSH)',
+  'HbA1c',
+  'Urine Routine & Microscopy',
+  'Vitamin D3 Total',
+  'Vitamin B12',
+];
+
+export const QUOTATION_SERVICE_PRICES: Record<string, number> = {
+  'Complete Blood Count (CBC)': 350,
+  'Lipid Profile': 800,
+  'Liver Function Test (LFT)': 950,
+  'Kidney Function Test (KFT)': 750,
+  'Thyroid Profile (T3, T4, TSH)': 600,
+  'HbA1c': 450,
+  'Urine Routine & Microscopy': 200,
+  'Vitamin D3 Total': 1200,
+  'Vitamin B12': 900,
+};
+
+export const MOCK_QUOTATIONS: Quotation[] = [
+  {
+    id: 'q-1',
+    refNo: 'QT-2026-001',
+    type: 'Walk-in / Patient',
+    patientOrOrg: 'Rahul Sharma',
+    phone: '+91 98765 43210',
+    branch: 'Main Branch',
+    tests: ['Complete Blood Count (CBC)', 'Lipid Profile'],
+    total: 1100,
+    netAmount: 1100,
+    status: 'Sent',
+    date: '2026-08-05',
+  },
+  {
+    id: 'q-2',
+    refNo: 'QT-2026-002',
+    type: 'B2B',
+    patientOrOrg: 'Apex Healthcare',
+    phone: '+91 91234 56789',
+    branch: 'North Wing',
+    tests: ['Thyroid Profile (T3, T4, TSH)', 'HbA1c'],
+    total: 900,
+    netAmount: 900,
+    status: 'Approved',
+    date: '2026-08-06',
+  },
+];
+
+export const MOCK_VISIT_DETAILS: Record<string, { patientName: string; mobile: string; email: string }> = {
+  'q-1': { patientName: 'Rahul Sharma', mobile: '9876543210', email: 'rahul.s@example.com' },
+  'q-2': { patientName: 'Apex Healthcare', mobile: '9123456789', email: 'contact@apexhealth.com' },
+};
+
+
+
