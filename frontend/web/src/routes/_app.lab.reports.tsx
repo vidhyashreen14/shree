@@ -2,8 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Button } from "@/components/ui/button";
-
-
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { GenerateReportModal } from "@/components/lab/GenerateReportModal";
+import { jsPDF } from "jspdf";
 import {
   LabIdInput,
   SearchMobileInput,
@@ -32,7 +33,9 @@ import {
   UserCheck,
   RotateCcw,
 } from "lucide-react";
-import { labOrders, patients, doctors } from "@/lib/mock/data";
+import { labOrders, patients, doctors, SUPER_ADMIN_CONFIG } from "@/lib/mock/data";
+import { getSuperAdminReportConfig } from "@/lib/services/superAdmin";
+import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { StatusChip } from "@/components/common/StatusChip";
 import { toast } from "sonner";
@@ -140,6 +143,16 @@ const toneFor: Record<string, "info" | "primary" | "warning" | "success" | "dang
 };
 
 function LabReports() {
+  const { data: fetchedConfig } = useQuery({
+    queryKey: ["reportConfig"],
+    queryFn: () => getSuperAdminReportConfig(false),
+  });
+  const config = fetchedConfig || SUPER_ADMIN_CONFIG;
+
+  const [activeTab, setActiveTab] = useState("action-needed");
+  const [reportOrderId, setReportOrderId] = useState<string | null>(null);
+  const [generated, setGenerated] = useState<Set<string>>(new Set());
+
   // Layout toggles
   const [layoutMode, setLayoutMode] = useState<"grid" | "list">("list");
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -152,7 +165,6 @@ function LabReports() {
   const [mobile, setMobile] = useState("");
   const [patientName, setPatientName] = useState("");
   const [consultingDoctor, setConsultingDoctor] = useState("Select Consulting Doctor");
-  const [testFilter, setTestFilter] = useState("Select Service");
 
   const [hasSearched, setHasSearched] = useState(false);
 
@@ -164,7 +176,6 @@ function LabReports() {
     setMobile("");
     setPatientName("");
     setConsultingDoctor("Select Consulting Doctor");
-    setTestFilter("Select Service");
     setHasSearched(false);
     toast.success("Filters cleared");
   };
@@ -177,7 +188,13 @@ function LabReports() {
 
   // Filtered reports logic
   const filteredReports = useMemo(() => {
-    return labOrders.filter((order) => {
+    let list = labOrders;
+    
+    if (activeTab === "action-needed") {
+      list = list.filter((order) => order.status === "sample-collected" && !generated.has(order.id));
+    }
+
+    return list.filter((order) => {
       // Branch filter
       if (branch !== "Select Branch") {
         const p = patients.find((pat) => pat.id === order.patientId);
@@ -210,17 +227,9 @@ function LabReports() {
           return false;
         }
       }
-      // Test filter
-      if (testFilter !== "Select Service") {
-        const testName = testFilter.replace(" (Complete Blood Count)", "");
-        const match = order.tests.some((t: string) =>
-          t.toLowerCase().includes(testName.toLowerCase())
-        );
-        if (!match) return false;
-      }
       return true;
     });
-  }, [branch, labId, mobile, patientName, consultingDoctor, testFilter]);
+  }, [branch, labId, mobile, patientName, consultingDoctor]);
 
    
   // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
@@ -231,22 +240,57 @@ function LabReports() {
       return;
     }
 
-    const formattedDate = format(new Date(report.orderedOn), "dd-MMM-yyyy, p");
+
+    const formattedDate = format(new Date(report.orderedOn), "dd-MMM-yyyy");
+    const formattedTime = format(new Date(report.orderedOn), "h:mm a");
+
+    const PDF_REMARKS: Record<string, string> = {
+      "HbA1c": "A person's blood glucose levels normally move up and down depending on meals, Exercise, sickness, and stress.",
+      "Lipid Panel": "Monitor treatment of gout,chemotherapeutic treatment of neoplasms to avoid renal urate deposition.\nFoods high in purines that can contribute to gout include caffeine-containing beverages, legumes, mushrooms, organ meats, spinach, gravies, and bakers and brewers yeast.",
+      "Thyroid Profile": "Age specific reference intervals for Free T4 from TIETZ Textbook of CLINICAL CHEMISTRY & MOLECULAR DIAGNOSTICS- 5th Edition. Pregnancy Reference Ranges : First Trimester : 0.81 - 1.90, Second & third Trimester :: 1.00 - 2.60",
+    };
 
     const testRowsHtml = report.tests
       .map((t: string) => {
         const rows = getTestRows(t);
-        return rows
-          .map(
-            (row) => `
-        <tr>
-          <td><span class="fw-600">${row.parameter}</span></td>
-          <td style="${row.flag ? "color: #dc2626; font-weight: 700;" : ""}">${row.result} ${row.unit}</td>
-          <td>${row.reference}</td>
-        </tr>
-      `
-          )
-          .join("");
+        const remark = PDF_REMARKS[t];
+        
+        let sectionHtml = `
+          <tr>
+            <td colspan="4" class="section-header">${t.toUpperCase()}</td>
+          </tr>
+        `;
+        
+        rows.forEach((row) => {
+           const methodTxt = "Method : Automated cell counter"; // Mock method to match PDF
+           sectionHtml += `
+             <tr class="test-row">
+               <td class="col-test">
+                 <div class="test-name">${row.parameter}</div>
+                 <div class="test-method">${methodTxt}</div>
+               </td>
+               <td class="col-result">
+                 ${row.result} ${row.flag ? '<span class="abnormal">*</span>' : ''}
+               </td>
+               <td class="col-unit">${row.unit !== "—" ? row.unit : ""}</td>
+               <td class="col-ref">${row.reference !== "—" ? row.reference : ""}</td>
+             </tr>
+           `;
+        });
+        
+        if (remark) {
+          sectionHtml += `
+            <tr>
+              <td colspan="4">
+                <div class="interpretation-box">
+                  ${remark.replace(/\n/g, '<br/>')}
+                </div>
+              </td>
+            </tr>
+          `;
+        }
+        
+        return sectionHtml;
       })
       .join("");
 
@@ -256,85 +300,200 @@ function LabReports() {
         <head>
           <title>Lab Report - ${report.id}</title>
           <style>
-            body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #1e293b; line-height: 1.5; margin: 0; padding: 40px; background: #fff; }
-            .invoice-wrapper { max-width: 800px; margin: 0 auto; }
-            .hospital-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px; border-bottom: 2px solid #000; padding-bottom: 20px; }
-            .logo-area { display: flex; align-items: center; gap: 12px; }
-            .logo-placeholder { background: transparent; color: inherit; font-size: 2rem; width: auto; height: auto; }
-            .hospital-name { font-size: 1.7rem; color: #002b49; font-weight: 800; letter-spacing: -0.5px; }
-            .hospital-detail { text-align: right; color: #334155; line-height: 1.6; font-size: 0.9rem; }
-            .invoice-meta { display: flex; flex-wrap: wrap; justify-content: space-between; background: #f8fafc; padding: 16px 18px; border-radius: 14px; margin-bottom: 28px; }
-            .meta-block { display: flex; flex-direction: column; }
-            .meta-block .label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.3px; color: #4b5563; }
-            .meta-block .value { font-weight: 600; font-size: 1rem; color: #0b1e2e; }
-            .info-grid { display: flex; flex-wrap: wrap; gap: 24px 40px; margin-bottom: 30px; padding: 6px 0 12px; border-bottom: 1px solid #e2e8f0; }
-            .info-item { flex: 1 0 180px; }
-            .info-item .label { font-size: 0.7rem; text-transform: uppercase; color: #4b5563; letter-spacing: 0.2px; }
-            .info-item .value { font-weight: 500; font-size: 1rem; margin-top: 3px; }
-            .items-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin: 14px 0 20px; }
-            .items-table th { text-align: left; background: #f1f5f9; padding: 10px 8px; font-weight: 600; color: #1e293b; border-bottom: 2px solid #cbd5e1; }
-            .items-table td { padding: 10px 8px; border-bottom: 1px solid #e9edf2; vertical-align: middle; }
-            .fw-600 { font-weight: 600; }
+            @page { size: A4; margin: 15mm; }
+            body { 
+              font-family: Arial, sans-serif; 
+              color: #000; 
+              line-height: 1.4; 
+              margin: 0; 
+              padding: 0; 
+              background: #fff; 
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+            .invoice-wrapper { max-width: 210mm; margin: 0 auto; position: relative; min-height: 250mm; }
+            
+            /* HEADER */
+            .hospital-header { 
+              text-align: center; 
+              margin-bottom: 10px; 
+            }
+            .hospital-name { 
+              font-size: 24px; 
+              font-weight: bold; 
+              text-transform: uppercase;
+              letter-spacing: 1px;
+            }
+            .hospital-detail { 
+              font-size: 13px; 
+              margin-top: 5px;
+              font-weight: bold;
+            }
+            .hospital-phone {
+              font-size: 13px;
+              font-weight: bold;
+              margin-top: 2px;
+            }
+
+            /* META GRID */
+            .meta-section {
+              border-top: 1px solid #000;
+              border-bottom: 2px solid #000;
+              padding: 10px 0;
+              display: flex;
+              justify-content: space-between;
+              font-size: 12px;
+              margin-bottom: 10px;
+            }
+            .meta-col { display: flex; flex-direction: column; gap: 8px; }
+            .meta-row { display: flex; }
+            .meta-label { width: 90px; }
+            .meta-value { font-weight: bold; }
+            
+            /* BARCODE */
+            .barcode {
+              font-family: 'Courier New', monospace;
+              font-size: 32px;
+              font-weight: bold;
+              letter-spacing: -2px;
+              line-height: 1;
+              align-self: flex-start;
+              margin-top: 2px;
+            }
+
+            /* TITLE */
+            .report-title {
+              text-align: center;
+              font-size: 18px;
+              font-weight: bold;
+              margin: 15px 0;
+            }
+
+            /* TABLE */
+            .items-table { 
+              width: 100%; 
+              border-collapse: collapse; 
+              font-size: 13px; 
+            }
+            .items-table th { 
+              text-align: left; 
+              background-color: #d1d5db !important;
+              padding: 6px 4px; 
+              font-weight: bold; 
+            }
+            .items-table td { 
+              padding: 6px 4px; 
+              vertical-align: top;
+            }
+            .section-header {
+              font-weight: bold;
+              font-size: 15px;
+              padding-top: 15px !important;
+              padding-bottom: 5px !important;
+              text-transform: uppercase;
+            }
+            .test-row {
+              page-break-inside: avoid;
+            }
+            
+            /* COLUMNS */
+            .col-test { width: 45%; }
+            .col-result { width: 20%; font-weight: bold; text-align: center;}
+            .col-unit { width: 15%; text-align: center;}
+            .col-ref { width: 20%; text-align: center;}
+
+            .test-name { font-size: 14px; }
+            .test-method { font-size: 10px; font-style: italic; margin-top: 2px; }
+            .abnormal { font-size: 16px; margin-left: 2px; }
+
+            /* INTERPRETATION BOX */
+            .interpretation-box {
+              border: 1px solid #000;
+              padding: 4px 6px;
+              font-size: 11px;
+              margin-top: 4px;
+              margin-bottom: 10px;
+              page-break-inside: avoid;
+            }
+
+            /* FOOTER */
+            .footer {
+              width: 100%;
+              display: flex;
+              justify-content: space-between;
+              align-items: flex-end;
+              font-size: 14px;
+              font-weight: bold;
+              margin-top: 30px;
+            }
+            .end-of-report {
+              text-align: center;
+              width: 100%;
+              font-size: 13px;
+              font-weight: bold;
+              margin-top: 50px;
+              margin-bottom: 20px;
+            }
+            .signature {
+              text-align: left;
+            }
           </style>
         </head>
         <body>
           <div class="invoice-wrapper">
             <!-- HEADER -->
             <div class="hospital-header">
-              <div class="logo-area">
-                <div class="logo-placeholder">🏥</div>
-                <div>
-                  <div class="hospital-name">Palm Health</div>
-                  <div style="font-size: 0.9rem; color: #475569;">Multispecialty Hospital</div>
+              <div class="hospital-name">${config.hospitalName}</div>
+              <div class="hospital-detail">${config.address}</div>
+              <div class="hospital-phone">PH NO : ${config.phone}</div>
+            </div>
+
+            <!-- META SECTION -->
+            <div class="meta-section">
+              <div class="meta-col">
+                <div class="meta-row">
+                  <span class="meta-label">Report No</span>
+                  <span class="meta-value">: ${report.id.toUpperCase()}</span>
+                </div>
+                <div class="meta-row">
+                  <span class="meta-label">Name</span>
+                  <span class="meta-value">: ${p?.name || "Unknown"}</span>
+                </div>
+                <div class="meta-row">
+                  <span class="meta-label">Refered By</span>
+                  <span class="meta-value">: ${doc?.name || "Self"}</span>
                 </div>
               </div>
-              <div class="hospital-detail">
-                <p>📍 12, Health Avenue, Metro City - 560001</p>
-                <p>📞 +91 80 4123 4567 &nbsp;•&nbsp; ✉️ billing@palmhealth.in</p>
-                <p style="font-weight: 700; color: #000; margin-top: 4px; font-size: 0.95rem;">GST: 22AABCP1234D1Z5</p>
+
+              <div class="barcode">|||||||||||||||||||||</div>
+
+              <div class="meta-col">
+                <div class="meta-row">
+                  <span class="meta-label" style="width:70px;">Bill Date</span>
+                  <span class="meta-value">: ${formattedDate} &nbsp;&nbsp;&nbsp; ${formattedTime}</span>
+                </div>
+                <div class="meta-row">
+                  <span class="meta-label" style="width:70px;">Age / Sex</span>
+                  <span class="meta-value">: ${p?.age || "N/A"}Years / ${p?.gender || "Unknown"}</span>
+                </div>
+                <div class="meta-row">
+                  <span class="meta-label" style="width:70px;">Rep Date</span>
+                  <span class="meta-value">: ${formattedDate} &nbsp;&nbsp;&nbsp; ${formattedTime}</span>
+                </div>
               </div>
             </div>
 
-            <!-- INVOICE META -->
-            <div class="invoice-meta">
-              <div class="meta-block">
-                <span class="label">Lab ID</span>
-                <span class="value">${report.id}</span>
-              </div>
-              <div class="meta-block">
-                <span class="label">Report Date</span>
-                <span class="value">${formattedDate}</span>
-              </div>
-              <div class="meta-block">
-                <span class="label">Status</span>
-                <span class="value" style="text-transform: capitalize;">${report.status.replace("-", " ")}</span>
-              </div>
-            </div>
-
-            <!-- PATIENT INFO -->
-            <div class="info-grid">
-              <div class="info-item">
-                <div class="label">Patient Name</div>
-                <div class="value">${p?.name || "Unknown Patient"}</div>
-              </div>
-              <div class="info-item">
-                <div class="label">Phone Number</div>
-                <div class="value">${p?.phone || "N/A"}</div>
-              </div>
-              <div class="info-item">
-                <div class="label">Consulting Doctor</div>
-                <div class="value">${doc?.name || "Self Referral"}</div>
-              </div>
-            </div>
+            <!-- TITLE -->
+            <div class="report-title">${config.reportHeader}</div>
 
             <!-- ITEMS TABLE -->
-            <h3 style="margin-top: 10px; margin-bottom: 15px; color: #0b1e2e;">Tests Conducted</h3>
             <table class="items-table">
               <thead>
                 <tr>
-                  <th style="width:50%;">Test Name</th>
-                  <th style="width:25%;">Result</th>
-                  <th style="width:25%;">Reference Range</th>
+                  <th class="col-test" style="text-align: left;">Test Name</th>
+                  <th class="col-result" style="text-align: center;">Result</th>
+                  <th class="col-unit" style="text-align: center;">Unit</th>
+                  <th class="col-ref" style="text-align: center;">Reference Range</th>
                 </tr>
               </thead>
               <tbody>
@@ -342,8 +501,14 @@ function LabReports() {
               </tbody>
             </table>
             
-            <div style="margin-top: 40px; font-size: 0.85rem; color: #64748b; text-align: center;">
-              This is a computer-generated report and does not require a physical signature.
+            <div class="end-of-report">
+              ---------------------- ${config.reportFooter} ----------------------
+            </div>
+
+            <div class="footer">
+              <div class="signature">
+                ${config.authorizedSignatory}
+              </div>
             </div>
           </div>
           <script>
@@ -366,30 +531,71 @@ function LabReports() {
 
    
   // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
-  const handleDownloadReport = (report: any, p: any, doc: any) => {
-    let csv = "Lab Report Details\n";
-    csv += `Lab ID,${report.id}\n`;
-    csv += `Patient Name,${p?.name || "Unknown Patient"}\n`;
-    csv += `Phone,${p?.phone || "N/A"}\n`;
-    csv += `Consulting Doctor,${doc?.name || "Self Referral"}\n`;
-    csv += `Ordered On,${format(new Date(report.orderedOn), "dd-MMM-yyyy p")}\n`;
-    csv += `Status,${report.status.replace("-", " ")}\n\n`;
-    csv += "Parameter,Result,Unit,Reference Range\n";
+  const handleDownloadReport = (report: any, p: any, docInfo: any) => {
+    const doc = new jsPDF();
+    let y = 20;
+    doc.setFontSize(18);
+    doc.text(config.reportHeader, 105, y, { align: "center" });
+    y += 10;
+    
+    doc.setFontSize(14);
+    doc.text(config.hospitalName, 105, y, { align: "center" });
+    y += 6;
+    doc.setFontSize(10);
+    doc.text(`${config.address} | ${config.phone} | ${config.email}`, 105, y, { align: "center" });
+    y += 15;
+    
+    doc.setFontSize(12);
+    doc.text(`Lab ID: ${report.id}`, 14, y);
+    doc.text(`Patient: ${p?.name || "Unknown Patient"}`, 105, y);
+    y += 8;
+    
+    doc.text(`Phone: ${p?.phone || "N/A"}`, 14, y);
+    doc.text(`Consulting Doctor: ${docInfo?.name || "Self Referral"}`, 105, y);
+    y += 8;
+    
+    doc.text(`Ordered On: ${format(new Date(report.orderedOn), "dd-MMM-yyyy p")}`, 14, y);
+    doc.text(`Status: ${report.status.replace("-", " ").toUpperCase()}`, 105, y);
+    y += 15;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "bold");
+    doc.text("Parameter", 14, y);
+    doc.text("Result", 80, y);
+    doc.text("Unit", 130, y);
+    doc.text("Reference Range", 160, y);
+    doc.setFont("helvetica", "normal");
+    y += 8;
+    
     report.tests.forEach((t: string) => {
+      doc.setFont("helvetica", "bold");
+      doc.text(t, 14, y);
+      doc.setFont("helvetica", "normal");
+      y += 8;
+      
       const rows = getTestRows(t);
       rows.forEach((row) => {
-        csv += `"${row.parameter}","${row.result}","${row.unit}","${row.reference}"\n`;
+        if (y > 280) {
+          doc.addPage();
+          y = 20;
+        }
+        doc.text(row.parameter, 14, y);
+        doc.text(row.result, 80, y);
+        doc.text(row.unit, 130, y);
+        doc.text(row.reference, 160, y);
+        y += 6;
       });
+      y += 4;
     });
 
-    const blob = new Blob([csv], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `Lab_Report_${report.id}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
-    toast.success(`Lab Report ${report.id} downloaded!`);
+    y += 15;
+    doc.setFontSize(10);
+    doc.text(`---------------------- ${config.reportFooter} ----------------------`, 105, y, { align: "center" });
+    y += 15;
+    doc.text(config.authorizedSignatory, 180, y, { align: "right" });
+
+    doc.save(`Lab_Report_${report.id}.pdf`);
+    toast.success(`Lab Report ${report.id} downloaded as PDF!`);
   };
 
   return (
@@ -402,15 +608,15 @@ function LabReports() {
               <div className="text-4xl">🏥</div>
               <div>
                 <div className="text-2xl font-extrabold text-[#002b49] tracking-tight">
-                  Palm Health
+                  {config.hospitalName}
                 </div>
-                <div className="text-sm text-slate-600">Multispecialty Hospital</div>
+                <div className="text-sm text-slate-600">{config.accreditation}</div>
               </div>
             </div>
             <div className="text-right text-sm text-slate-700 leading-relaxed">
-              <p>📍 12, Health Avenue, Metro City - 560001</p>
-              <p>📞 +91 80 4123 4567 &nbsp;•&nbsp; ✉️ billing@palmhealth.in</p>
-              <p className="font-bold text-black mt-1">GST: 22AABCP1234D1Z5</p>
+              <p>📍 {config.address}</p>
+              <p>📞 {config.phone} &nbsp;•&nbsp; ✉️ {config.email}</p>
+              <p className="font-bold text-black mt-1">Website: {config.website}</p>
             </div>
           </div>
           <h2 className="text-center text-xl font-bold mt-6 text-[#002b49]">
@@ -456,6 +662,12 @@ function LabReports() {
             }
           />
         </div>
+          
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-6">
+          <TabsList className="mb-4">
+              <TabsTrigger value="action-needed">Action Needed</TabsTrigger>
+              <TabsTrigger value="all-reports">All Reports</TabsTrigger>
+            </TabsList>
 
         {/* ─── Advanced Search Filter Grid ──────────────────────────────────── */}
         {showFilterPanel && (
@@ -554,26 +766,6 @@ function LabReports() {
                 </div>
               </div>
 
-              {/* Add Test */}
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                  Add Test
-                </label>
-                <div className="relative">
-                  <select
-                    value={testFilter}
-                    onChange={(e) => setTestFilter(e.target.value)}
-                    className="w-full appearance-none rounded-lg border border-border bg-background px-3 py-2 text-xs text-foreground outline-none pr-8 h-9"
-                  >
-                    {TEST_FILTER_OPTIONS.map((o) => (
-                      <option key={o} value={o}>
-                        {o}
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-                </div>
-              </div>
             </div>
 
             {/* Panel Actions */}
@@ -596,8 +788,9 @@ function LabReports() {
         )}
 
         {/* ─── Main Results Display ────────────────────────────────────────── */}
-        {hasSearched &&
-          (filteredReports.length === 0 ? (
+        {hasSearched && (
+          <div className="mt-4">
+          {filteredReports.length === 0 ? (
             <div className="surface-elevated p-16 text-center text-muted-foreground text-sm flex flex-col items-center gap-3">
               <FileCheck2 className="h-10 w-10 opacity-30" />
               <p className="font-medium">No reports match your current filter query</p>
@@ -626,11 +819,18 @@ function LabReports() {
                     <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground">
                       Status
                     </th>
+                    <th className="px-4 py-3 text-center text-xs font-semibold text-muted-foreground">
+                      Action
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
                   {filteredReports.map((report) => {
                     const p = patients.find((pat) => pat.id === report.patientId);
+                    const doc = doctors.find((d) => d.id === report.doctorId);
+                    const isDone = generated.has(report.id) || report.status === "completed";
+                    const isCollected = report.status === "sample-collected" && !isDone;
+
                     return (
                       <tr key={report.id} className="hover:bg-muted/20 transition-colors">
                         <td className="px-4 py-3 font-mono text-xs font-semibold text-primary">
@@ -644,9 +844,57 @@ function LabReports() {
                           {format(new Date(report.orderedOn), "dd-MMM-yyyy, p")}
                         </td>
                         <td className="px-4 py-3">
-                          <StatusChip tone={toneFor[report.status] || "neutral"}>
-                            {report.status.replace("-", " ")}
+                          <StatusChip tone={isDone ? "success" : toneFor[report.status] || "neutral"}>
+                            {isDone ? "Completed" : report.status.replace("-", " ")}
                           </StatusChip>
+                        </td>
+                        <td className="px-4 py-3 text-center">
+                          {isCollected ? (
+                            <div className="flex items-center justify-center gap-2">
+                              <Button size="sm" onClick={() => setReportOrderId(report.id)}>
+                                Generate
+                              </Button>
+                              <Button
+                                size="icon"
+                                variant="outline"
+                                className="h-8 w-8 text-blue-600 hover:text-blue-700 opacity-60"
+                                onClick={() => handleDownloadReport(report, p, doc)}
+                                title="Download PDF"
+                              >
+                                <Download className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                size="icon"
+                                variant="outline"
+                                className="h-8 w-8 text-teal-600 hover:text-teal-700 opacity-60"
+                                onClick={() => handlePrintReport(report, p, doc)}
+                                title="Print"
+                              >
+                                <Printer className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          ) : isDone ? (
+                            <div className="flex items-center justify-center gap-2">
+                              <Button
+                                size="icon"
+                                variant="outline"
+                                className="h-8 w-8 text-blue-600 hover:text-blue-700"
+                                onClick={() => handleDownloadReport(report, p, doc)}
+                                title="Download PDF"
+                              >
+                                <Download className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                size="icon"
+                                variant="outline"
+                                className="h-8 w-8 text-teal-600 hover:text-teal-700"
+                                onClick={() => handlePrintReport(report, p, doc)}
+                                title="Print"
+                              >
+                                <Printer className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          ) : null}
                         </td>
                       </tr>
                     );
@@ -660,6 +908,8 @@ function LabReports() {
               {filteredReports.map((report) => {
                 const p = patients.find((pat) => pat.id === report.patientId);
                 const doc = doctors.find((d) => d.id === report.doctorId);
+                const isDone = generated.has(report.id) || report.status === "completed";
+                const isCollected = report.status === "sample-collected" && !isDone;
                 return (
                   <div
                     key={report.id}
@@ -670,8 +920,8 @@ function LabReports() {
                         <code className="font-mono text-xs font-bold text-primary">
                           {report.id}
                         </code>
-                        <StatusChip tone={toneFor[report.status] || "neutral"}>
-                          {report.status.replace("-", " ")}
+                        <StatusChip tone={isDone ? "success" : toneFor[report.status] || "neutral"}>
+                          {isDone ? "Completed" : report.status.replace("-", " ")}
                         </StatusChip>
                       </div>
                       <div className="space-y-1.5">
@@ -699,18 +949,81 @@ function LabReports() {
                       <span className="text-[10px] text-muted-foreground">
                         {format(new Date(report.orderedOn), "dd-MMM-yyyy")}
                       </span>
+                      <div className="flex gap-2">
+                        {isCollected ? (
+                          <>
+                            <Button size="sm" onClick={() => setReportOrderId(report.id)}>
+                              Generate
+                            </Button>
+                            <Button
+                              size="icon"
+                              variant="outline"
+                              className="h-8 w-8 text-blue-600 hover:text-blue-700 opacity-60"
+                              onClick={() => handleDownloadReport(report, p, doc)}
+                              title="Download PDF"
+                            >
+                              <Download className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              size="icon"
+                              variant="outline"
+                              className="h-8 w-8 text-teal-600 hover:text-teal-700 opacity-60"
+                              onClick={() => handlePrintReport(report, p, doc)}
+                              title="Print"
+                            >
+                              <Printer className="h-4 w-4" />
+                            </Button>
+                          </>
+                        ) : isDone ? (
+                          <>
+                            <Button
+                              size="icon"
+                              variant="outline"
+                              className="h-8 w-8 text-blue-600 hover:text-blue-700"
+                              onClick={() => handleDownloadReport(report, p, doc)}
+                              title="Download PDF"
+                            >
+                              <Download className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              size="icon"
+                              variant="outline"
+                              className="h-8 w-8 text-teal-600 hover:text-teal-700"
+                              onClick={() => handlePrintReport(report, p, doc)}
+                              title="Print"
+                            >
+                              <Printer className="h-4 w-4" />
+                            </Button>
+                          </>
+                        ) : null}
+                      </div>
                     </div>
                   </div>
                 );
               })}
             </div>
-          ))}
+          )}
+          </div>
+        )}
+        </Tabs>
       </div>
 
       {/* ─── Footer Attribution ───────────────────────────────────────────── */}
       <footer className="mt-8 border-t border-border pt-4 text-center text-xs text-muted-foreground">
         <p>Copyright &copy; 2026 Sufalam, All rights reserved.</p>
       </footer>
+
+      <GenerateReportModal 
+        orderId={reportOrderId} 
+        open={!!reportOrderId} 
+        onOpenChange={(o) => { if (!o) setReportOrderId(null); }} 
+        onGenerated={() => {
+          if (reportOrderId) {
+            setGenerated((prev) => new Set(prev).add(reportOrderId));
+            setReportOrderId(null);
+          }
+        }} 
+      />
     </div>
   );
 }

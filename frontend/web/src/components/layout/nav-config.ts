@@ -91,9 +91,7 @@ export const NAV: Record<Role, NavItem[]> = {
   lab: [
     { to: '/lab', label: 'Overview', icon: LayoutDashboard, group: 'Main' },
     { to: '/lab/visits', label: 'Visit List', icon: ClipboardList, group: 'Main' },
-    { to: '/lab/pending', label: 'Pending tests', icon: Beaker, group: 'Main' },
     { to: '/lab/reports', label: 'Reports', icon: FileCheck2, group: 'Main' },
-    { to: '/lab/upload', label: 'Generate report', icon: FilePlus2, group: 'Main' },
     { to: '/lab/quotations', label: 'Quotations', icon: ClipboardPen, group: 'Transaction' },
     {
       to: '/lab/analytics?tab=sales',

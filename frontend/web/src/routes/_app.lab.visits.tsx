@@ -28,6 +28,7 @@ import {
     type LucideIcon,
 } from "lucide-react";
 import { toast } from "sonner";
+<<<<<<< Updated upstream
 import type { VisitStatus, HomeVisit } from "@/lib/types";
 import {
     SBU_OPTIONS,
@@ -38,11 +39,40 @@ import {
     ALL_VISITS,
     padTwo,
 } from "@/lib/mock/data";
+=======
+import {
+  allLabVisits,
+  LAB_TEST_POOL,
+  VISIT_SBU_OPTIONS,
+  VISIT_BRANCH_OPTIONS,
+  VISIT_PHLEBO_OPTIONS,
+  VISIT_STATUS_OPTIONS,
+} from "@/lib/mock/data";
+import type { HomeVisit, VisitStatus } from "@/lib/mock/data";
+>>>>>>> Stashed changes
 
 export const Route = createFileRoute("/_app/lab/visits")({
     component: LabVisits,
 });
 
+<<<<<<< Updated upstream
+=======
+// Aliases — all data now comes from @/lib/mock/data
+const SBU_OPTIONS = VISIT_SBU_OPTIONS;
+const BRANCH_OPTIONS = VISIT_BRANCH_OPTIONS;
+const PHLEBO_OPTIONS = VISIT_PHLEBO_OPTIONS;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const STATUS_OPTIONS: VisitStatus[] = [...VISIT_STATUS_OPTIONS];
+const TEST_POOL = LAB_TEST_POOL;
+
+const ALL_VISITS = allLabVisits;
+
+// Local helper used in form submission
+function padTwo(n: number) {
+  return String(n).padStart(2, "0");
+}
+
+>>>>>>> Stashed changes
 // ── Status badge helper ───────────────────────────────────────────────────────
 function StatusBadge({ status }: { status: VisitStatus }) {
     const cfg: Record<string, { bg: string; dot: string; icon: LucideIcon }> = {

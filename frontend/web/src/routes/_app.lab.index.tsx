@@ -1,8 +1,18 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
-import { useState } from 'react';
-import { PageHeader } from '@/components/common/PageHeader';
-import { Button } from '@/components/ui/button';
-import { labOrders, patients } from '@/lib/mock/data';
+import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
+import { PageHeader } from "@/components/common/PageHeader";
+import {
+  labOrders,
+  patients,
+  labKPI,
+  LAB_SBU_OPTIONS,
+  LAB_BRANCH_OPTIONS,
+  labDayWiseSamples,
+  LAB_DAY_AVG,
+  labWeekWiseData,
+  labMonthWiseData,
+} from "@/lib/mock/data";
+import { Link } from "lucide-react";
 import {
   FilePlus2,
   FlaskConical,
@@ -30,46 +40,21 @@ export const Route = createFileRoute('/_app/lab/')({
   component: LabOverview,
 });
 
-// ─── Static KPI constants (reflect real lab snapshot values) ─────────────────
-const KPI = {
-  samplesRegistered: 312,
-  b2c: 45,
-  b2b: 267,
-  testsInProgress: 128,
-  reportsApproved: 174,
-  grossAmount: 58420,
-  discountAmount: 1200,
-  netAmount: 57220,
-};
+// ─── Aliases from centralised mock data ──────────────────────────────────────
+const KPI = labKPI;
+const SBU_OPTIONS = LAB_SBU_OPTIONS;
+const BRANCH_OPTIONS = LAB_BRANCH_OPTIONS;
 
-// ─── Sample count trend data ──────────────────────────────────────────────────
-const dayLabels = Array.from({ length: 7 }, (_, i) => format(subDays(new Date(), 6 - i), 'EEE d'));
-const dayWiseSamples = [38, 52, 47, 63, 70, 55, 61];
-const DAY_AVG = Math.round(dayWiseSamples.reduce((a, b) => a + b, 0) / dayWiseSamples.length);
+// ─── Sample count trend data (day labels computed here, data from mock) ───────
+const dayLabels = Array.from({ length: 7 }, (_, i) => format(subDays(new Date(), 6 - i), "EEE d"));
 const dayWiseData = dayLabels.map((label, i) => ({
   label,
-  samples: dayWiseSamples[i]!,
-  avg: DAY_AVG,
+  samples: labDayWiseSamples[i]!,
+  avg: LAB_DAY_AVG,
 }));
 
-const weekWiseData = [
-  { label: 'Wk 22', samples: 310, avg: 320 },
-  { label: 'Wk 23', samples: 285, avg: 320 },
-  { label: 'Wk 24', samples: 340, avg: 320 },
-  { label: 'Wk 25', samples: 298, avg: 320 },
-  { label: 'Wk 26', samples: 372, avg: 320 },
-  { label: 'Wk 27', samples: 360, avg: 320 },
-];
-
-const monthWiseData = [
-  { label: 'Jan', samples: 1240, avg: 1400 },
-  { label: 'Feb', samples: 1110, avg: 1400 },
-  { label: 'Mar', samples: 1380, avg: 1400 },
-  { label: 'Apr', samples: 1290, avg: 1400 },
-  { label: 'May', samples: 1520, avg: 1400 },
-  { label: 'Jun', samples: 1480, avg: 1400 },
-  { label: 'Jul', samples: 1610, avg: 1400 },
-];
+const weekWiseData = labWeekWiseData;
+const monthWiseData = labMonthWiseData;
 
 // ─── Lab order status tones ────────────────────────────────────────────────────
 const tone = {
@@ -154,11 +139,10 @@ function SampleAnalytics() {
             <button
               key={g}
               onClick={() => setGran(g)}
-              className={`rounded-md px-3 py-1.5 text-xs font-semibold capitalize transition-all ${
-                gran === g
+              className={`rounded-md px-3 py-1.5 text-xs font-semibold capitalize transition-all ${gran === g
                   ? 'bg-primary text-primary-foreground shadow-sm'
                   : 'text-muted-foreground hover:text-foreground'
-              }`}
+                }`}
               id={`btn-gran-${g}`}
             >
               {g === 'day' ? 'Day' : g === 'week' ? 'Week' : 'Month'}

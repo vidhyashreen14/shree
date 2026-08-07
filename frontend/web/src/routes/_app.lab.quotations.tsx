@@ -43,155 +43,32 @@ import {
 } from "lucide-react";
 
 import { toast } from "sonner";
+import {
+  QUOTATION_BRANCHES,
+  QUOTATION_B2B_OPTIONS,
+  QUOTATION_SERVICE_OPTIONS,
+  QUOTATION_SERVICE_PRICES,
+  MOCK_QUOTATIONS,
+  MOCK_VISIT_DETAILS,
+} from "@/lib/mock/data";
+import type {
+  QuotationType,
+  QuotationStatus,
+  Quotation,
+  QuotationServiceRow,
+} from "@/lib/mock/data";
 
 export const Route = createFileRoute("/_app/lab/quotations")({
   component: LabQuotations,
 });
 
-// ─── Mock Data ─────────────────────────────────────────────────────────────────
-const BRANCHES = ["Select Branch", "Koramangala", "Indiranagar", "Whitefield", "Jayanagar"];
-
-type QuotationType = "B2C" | "B2B";
-type QuotationStatus = "Draft" | "Sent" | "Approved" | "Rejected";
-
-interface Quotation {
-  id: string;
-  refNo: string;
-  branch: string;
-  type: QuotationType;
-  patientOrOrg: string;
-  phone: string;
-  tests: string[];
-  grossAmount: number;
-  discount: number;
-  netAmount: number;
-  date: string;
-  status: QuotationStatus;
-}
-
-const today = new Date();
-const d = (n: number) => {
-  const dt = new Date(today);
-  dt.setDate(dt.getDate() - n);
-  return dt.toISOString();
-};
-
-const MOCK_QUOTATIONS: Quotation[] = [
-  {
-    id: "q-1",
-    refNo: "QT-2026-001",
-    branch: "Koramangala",
-    type: "B2C",
-    patientOrOrg: "Aarav Sharma",
-    phone: "+91 90100 01234",
-    tests: ["CBC", "Lipid Panel"],
-    grossAmount: 1800,
-    discount: 100,
-    netAmount: 1700,
-    date: d(0),
-    status: "Draft",
-  },
-  {
-    id: "q-2",
-    refNo: "QT-2026-002",
-    branch: "Indiranagar",
-    type: "B2B",
-    patientOrOrg: "Apollo Hospitals",
-    phone: "+91 80200 56789",
-    tests: ["HbA1c", "TSH", "Urine R/M"],
-    grossAmount: 4200,
-    discount: 420,
-    netAmount: 3780,
-    date: d(0),
-    status: "Sent",
-  },
-  {
-    id: "q-3",
-    refNo: "QT-2026-003",
-    branch: "Whitefield",
-    type: "B2C",
-    patientOrOrg: "Diya Kapoor",
-    phone: "+91 97300 11111",
-    tests: ["Urinalysis"],
-    grossAmount: 600,
-    discount: 0,
-    netAmount: 600,
-    date: d(1),
-    status: "Approved",
-  },
-  {
-    id: "q-4",
-    refNo: "QT-2026-004",
-    branch: "Koramangala",
-    type: "B2B",
-    patientOrOrg: "Fortis Healthcare",
-    phone: "+91 98400 22222",
-    tests: ["CBC", "LFT", "KFT"],
-    grossAmount: 6800,
-    discount: 680,
-    netAmount: 6120,
-    date: d(1),
-    status: "Approved",
-  },
-  {
-    id: "q-5",
-    refNo: "QT-2026-005",
-    branch: "Jayanagar",
-    type: "B2C",
-    patientOrOrg: "Arjun Mehta",
-    phone: "+91 99500 33333",
-    tests: ["Thyroid Profile"],
-    grossAmount: 1200,
-    discount: 50,
-    netAmount: 1150,
-    date: d(2),
-    status: "Rejected",
-  },
-  {
-    id: "q-6",
-    refNo: "QT-2026-006",
-    branch: "Indiranagar",
-    type: "B2C",
-    patientOrOrg: "Saanvi Patel",
-    phone: "+91 91600 44444",
-    tests: ["HbA1c"],
-    grossAmount: 800,
-    discount: 0,
-    netAmount: 800,
-    date: d(2),
-    status: "Sent",
-  },
-  {
-    id: "q-7",
-    refNo: "QT-2026-007",
-    branch: "Whitefield",
-    type: "B2B",
-    patientOrOrg: "Manipal Group",
-    phone: "+91 92700 55555",
-    tests: ["Lipid Panel", "CBC"],
-    grossAmount: 3600,
-    discount: 360,
-    netAmount: 3240,
-    date: d(3),
-    status: "Draft",
-  },
-  {
-    id: "q-8",
-    refNo: "QT-2026-008",
-    branch: "Koramangala",
-    type: "B2C",
-    patientOrOrg: "Liam Carter",
-    phone: "+91 93800 66666",
-    tests: ["Vitamin D", "B12"],
-    grossAmount: 2400,
-    discount: 200,
-    netAmount: 2200,
-    date: d(4),
-    status: "Approved",
-  },
-];
-
-// ─── Status config ─────────────────────────────────────────────────────────────
+// ── Local aliases — component code unchanged ──────────────────────────────────
+const BRANCHES = QUOTATION_BRANCHES;
+const B2B_OPTIONS = QUOTATION_B2B_OPTIONS;
+const SERVICE_OPTIONS = QUOTATION_SERVICE_OPTIONS;
+const MOCK_PRICES = QUOTATION_SERVICE_PRICES;
+// ServiceRow type alias
+type ServiceRow = QuotationServiceRow;
 const statusConfig: Record<
   QuotationStatus,
   { label: string; icon: React.ElementType; bg: string; text: string; dot: string }
@@ -260,64 +137,10 @@ function handleBranchDetails() {
   toast.info("Branch details panel coming soon");
 }
 
-// ─── Add Quotation Modal ───────────────────────────────────────────────────────
-const B2B_OPTIONS = [
-  "Select B2B",
-  "Apollo Hospitals",
-  "Fortis Healthcare",
-  "Manipal Group",
-  "Narayana Health",
-];
-const SERVICE_OPTIONS = [
-  "Select Service",
-  "CBC (Complete Blood Count)",
-  "Lipid Panel",
-  "HbA1c",
-  "TSH",
-  "Urinalysis",
-  "Thyroid Profile",
-  "Vitamin D",
-  "Vitamin B12",
-  "LFT",
-  "KFT",
-  "Urine R/M",
-];
 
-const MOCK_PRICES: Record<string, number> = {
-  "CBC (Complete Blood Count)": 400,
-  "Lipid Panel": 800,
-  HbA1c: 500,
-  TSH: 450,
-  Urinalysis: 200,
-  "Thyroid Profile": 1200,
-  "Vitamin D": 1500,
-  "Vitamin B12": 1100,
-  LFT: 750,
-  KFT: 850,
-  "Urine R/M": 250,
-};
-
-interface ServiceRow {
-  id: string;
-  service: string;
-  price: number;
-  discount: number;
-  net: number;
-}
-
-// ─── Mock visit detail lookup (per quotation) ─────────────────────────────────
-const MOCK_VISIT_DETAILS: Record<string, { patientName: string; mobile: string; email: string }> = {
-  "q-1": { patientName: "Aarav Sharma", mobile: "9010001234", email: "aarav.sharma@email.com" },
-  "q-2": { patientName: "Apollo Hospitals", mobile: "8020056789", email: "billing@apollo.com" },
-  "q-3": { patientName: "Diya Kapoor", mobile: "9730011111", email: "diya.kapoor@email.com" },
-  "q-4": { patientName: "Fortis Healthcare", mobile: "9840022222", email: "billing@fortis.com" },
-  "q-5": { patientName: "Arjun Mehta", mobile: "9950033333", email: "arjun.mehta@email.com" },
-  "q-6": { patientName: "Saanvi Patel", mobile: "9160044444", email: "saanvi.patel@email.com" },
-  "q-7": { patientName: "Manipal Group", mobile: "9270055555", email: "billing@manipal.com" },
-  "q-8": { patientName: "Liam Carter", mobile: "9380066666", email: "liam.carter@email.com" },
-};
 
 function LabQuotations() {
+  const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false);
   const [infoOpen, setInfoOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [infoService, setInfoService] = useState("");
@@ -382,6 +205,7 @@ function LabQuotations() {
   const [emailOn, setEmailOn] = useState(false);
 
   const resetForm = () => {
+    setHasAttemptedSubmit(false);
     setModalBranch(BRANCHES[0]!);
     setB2b(B2B_OPTIONS[0]!);
     setSampleCollectedNow(true);
@@ -431,38 +255,50 @@ function LabQuotations() {
   };
 
   const handleSave = () => {
+    setHasAttemptedSubmit(true);
+    let isValid = true;
+
     if (!patientName.trim()) {
-      toast.error("Patient name is required");
-      return;
+      toast.error("Patient name is required.");
+      isValid = false;
+    } else {
+      const nameRes = patientNameSchema.safeParse(patientName);
+      if (!nameRes.success) {
+        toast.error("Patient name should contain only alphabets.");
+        isValid = false;
+      }
     }
-    const nameRes = patientNameSchema.safeParse(patientName);
-    if (!nameRes.success) {
-      toast.error("Patient name should contain only alphabets.");
-      return;
-    }
+
     if (!mobile.trim()) {
-      toast.error("Enter a valid 10-digit mobile number.");
-      return;
+      toast.error("Mobile Number is required.");
+      isValid = false;
+    } else {
+      const mobileRes = mobileSchema.safeParse(mobile);
+      if (!mobileRes.success) {
+        toast.error("Enter a valid 10-digit mobile number.");
+        isValid = false;
+      }
     }
-    const mobileRes = mobileSchema.safeParse(mobile);
-    if (!mobileRes.success) {
-      toast.error("Enter a valid 10-digit mobile number.");
-      return;
-    }
+
     if (!email.trim()) {
-      toast.error("Enter a valid email address.");
-      return;
+      toast.error("Email is required.");
+      isValid = false;
+    } else {
+      const emailRes = emailSchema.safeParse(email);
+      if (!emailRes.success) {
+        toast.error("Enter a valid email address.");
+        isValid = false;
+      }
     }
-    const emailRes = emailSchema.safeParse(email);
-    if (!emailRes.success) {
-      toast.error("Enter a valid email address.");
-      return;
-    }
+
     if (serviceRows.length === 0) {
-      toast.error("Add at least one service");
-      return;
+      toast.error("Add at least one service.");
+      isValid = false;
     }
-    toast.success(`Quotation saved for ${patientName}`);
+
+    if (!isValid) return;
+
+    // Validation success - clear form without success toast
     resetForm();
   };
 
@@ -502,6 +338,116 @@ function LabQuotations() {
       />
 
       <div className="max-w-5xl space-y-5 mt-4">
+        <div className="rounded-xl border border-border bg-muted/20 p-4 space-y-3">
+          <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+            Patient Profile
+          </p>
+          <div className="grid grid-cols-1 gap-x-5 gap-y-4 sm:grid-cols-2">
+            {/* Row 1: Patient Name & Print */}
+            <div className="flex flex-col gap-1">
+              <label
+                className="text-xs font-semibold text-foreground h-4 flex items-center"
+                htmlFor="modal-patient-name"
+              >
+                Patient Name
+              </label>
+              <PatientNameInput
+                id="modal-patient-name"
+                value={patientName}
+                onChange={setPatientName}
+                required
+                showValidation={hasAttemptedSubmit}
+                placeholder="Enter patient name"
+                className="h-9 text-xs"
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground h-4 flex items-center">
+                Communication
+              </p>
+              <div className="flex h-9 items-center justify-between rounded-lg border border-border bg-background px-3">
+                <div className="flex items-center gap-2">
+                  <Printer className="h-3.5 w-3.5 text-muted-foreground" />
+                  <span className="text-sm font-medium">Print</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`text-xs font-semibold ${printOn ? "text-primary" : "text-muted-foreground"}`}
+                  >
+                    {printOn ? "ON" : "OFF"}
+                  </span>
+                  <Switch id="modal-toggle-print" checked={printOn} onCheckedChange={setPrintOn} />
+                </div>
+              </div>
+            </div>
+
+            {/* Row 2: Mobile & SMS */}
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-semibold text-foreground h-4 flex items-center" htmlFor="modal-mobile">
+                Mobile
+              </label>
+              <MobileInput
+                id="modal-mobile"
+                value={mobile}
+                onChange={setMobile}
+                required
+                showValidation={hasAttemptedSubmit}
+                placeholder="(+91) Mobile Number"
+                className="h-9 text-xs"
+              />
+            </div>
+            <div className="flex flex-col gap-1 sm:pt-5">
+              <div className="flex h-9 items-center justify-between rounded-lg border border-border bg-background px-3">
+                <div className="flex items-center gap-2">
+                  <MessageSquare className="h-3.5 w-3.5 text-muted-foreground" />
+                  <span className="text-sm font-medium">SMS</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`text-xs font-semibold ${smsOn ? "text-primary" : "text-muted-foreground"}`}
+                  >
+                    {smsOn ? "ON" : "OFF"}
+                  </span>
+                  <Switch id="modal-toggle-sms" checked={smsOn} onCheckedChange={setSmsOn} />
+                </div>
+              </div>
+            </div>
+
+            {/* Row 3: Email & Email toggle */}
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-semibold text-foreground h-4 flex items-center" htmlFor="modal-email">
+                Email
+              </label>
+              <EmailInput
+                id="modal-email"
+                value={email}
+                onChange={setEmail}
+                required
+                showValidation={hasAttemptedSubmit}
+                placeholder="example@domain.com"
+                className="h-9 text-xs"
+              />
+            </div>
+            <div className="flex flex-col gap-1 sm:pt-5">
+              <div className="flex h-9 items-center justify-between rounded-lg border border-border bg-background px-3">
+                <div className="flex items-center gap-2">
+                  <Mail className="h-3.5 w-3.5 text-muted-foreground" />
+                  <span className="text-sm font-medium">Email</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`text-xs font-semibold ${emailOn ? "text-primary" : "text-muted-foreground"}`}
+                  >
+                    {emailOn ? "ON" : "OFF"}
+                  </span>
+                  <Switch id="modal-toggle-email" checked={emailOn} onCheckedChange={setEmailOn} />
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
         {/* Section 2: Branch & Client */}
         <div className="rounded-xl border border-border bg-muted/20 p-4 space-y-3">
           <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
@@ -687,107 +633,6 @@ function LabQuotations() {
           />
         </div>
 
-        {/* Section 5: Patient Profile + Communication Prefs */}
-        <div className="rounded-xl border border-border bg-muted/20 p-4 space-y-3">
-          <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
-            Patient Profile
-          </p>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            {/* Left: fields */}
-            <div className="space-y-3">
-              <div className="flex flex-col gap-1">
-                <label
-                  className="text-xs font-semibold text-foreground"
-                  htmlFor="modal-patient-name"
-                >
-                  Patient Name <span className="text-destructive">*</span>
-                </label>
-                <PatientNameInput
-                  id="modal-patient-name"
-                  value={patientName}
-                  onChange={setPatientName}
-                  required
-                  placeholder="Enter patient name"
-                  className="h-9 text-xs"
-                />
-              </div>
-              <div className="flex flex-col gap-1">
-                <label className="text-xs font-semibold text-foreground" htmlFor="modal-mobile">
-                  Mobile <span className="text-destructive">*</span>
-                </label>
-                <MobileInput
-                  id="modal-mobile"
-                  value={mobile}
-                  onChange={setMobile}
-                  required
-                  placeholder="(+91) Mobile Number"
-                  className="h-9 text-xs"
-                />
-              </div>
-              <div className="flex flex-col gap-1">
-                <label className="text-xs font-semibold text-foreground" htmlFor="modal-email">
-                  Email <span className="text-destructive">*</span>
-                </label>
-                <EmailInput
-                  id="modal-email"
-                  value={email}
-                  onChange={setEmail}
-                  required
-                  placeholder="example@domain.com"
-                  className="h-9 text-xs"
-                />
-              </div>
-            </div>
-
-            {/* Right: communication toggles */}
-            <div className="flex flex-col justify-center gap-3">
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-                Communication
-              </p>
-              {[
-                {
-                  label: "Print",
-                  icon: Printer,
-                  val: printOn,
-                  set: setPrintOn,
-                  id: "modal-toggle-print",
-                },
-                {
-                  label: "SMS",
-                  icon: MessageSquare,
-                  val: smsOn,
-                  set: setSmsOn,
-                  id: "modal-toggle-sms",
-                },
-                {
-                  label: "Email",
-                  icon: Mail,
-                  val: emailOn,
-                  set: setEmailOn,
-                  id: "modal-toggle-email",
-                },
-              ].map(({ label, icon: Icon, val, set, id }) => (
-                <div
-                  key={label}
-                  className="flex items-center justify-between rounded-lg border border-border bg-background px-4 py-2.5"
-                >
-                  <div className="flex items-center gap-2">
-                    <Icon className="h-3.5 w-3.5 text-muted-foreground" />
-                    <span className="text-sm font-medium">{label}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span
-                      className={`text-xs font-semibold ${val ? "text-primary" : "text-muted-foreground"}`}
-                    >
-                      {val ? "ON" : "OFF"}
-                    </span>
-                    <Switch id={id} checked={val} onCheckedChange={set} />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
 
         <div className="flex justify-end pt-4 border-t border-border mt-4">
           <Button size="default" onClick={handleSave} id="btn-save-quotation">

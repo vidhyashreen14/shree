@@ -21,6 +21,7 @@ type ValidatedInputProps = Omit<InputProps, "value" | "onChange"> & {
   onChange: (val: string) => void;
   onErrorChange?: (hasError: boolean) => void;
   required?: boolean;
+  showValidation?: boolean;
 };
 
 // ─── Patient Name Input ───────────────────────────────────────────────────────
@@ -61,7 +62,7 @@ export function PatientNameInput({
       value={value}
       onChange={handleChange}
       onBlur={handleBlur}
-      error={error}
+      error={props.showValidation !== false ? error : undefined}
       maxLength={50}
       placeholder={placeholder}
       {...props}
@@ -107,7 +108,7 @@ export function FirstNameInput({
       value={value}
       onChange={handleChange}
       onBlur={handleBlur}
-      error={error}
+      error={props.showValidation !== false ? error : undefined}
       maxLength={50}
       placeholder={placeholder}
       {...props}
@@ -151,7 +152,7 @@ export function MiddleNameInput({
       value={value}
       onChange={handleChange}
       onBlur={handleBlur}
-      error={error}
+      error={props.showValidation !== false ? error : undefined}
       maxLength={50}
       placeholder={placeholder}
       {...props}
@@ -197,7 +198,7 @@ export function LastNameInput({
       value={value}
       onChange={handleChange}
       onBlur={handleBlur}
-      error={error}
+      error={props.showValidation !== false ? error : undefined}
       maxLength={50}
       placeholder={placeholder}
       {...props}
@@ -245,7 +246,7 @@ export function MobileInput({
     <Input
       value={displayValue}
       onChange={handleChange}
-      error={error}
+      error={props.showValidation !== false ? error : undefined}
       maxLength={16}
       placeholder={placeholder}
       {...props}
@@ -295,7 +296,7 @@ export function EmailInput({
       value={value}
       onChange={handleChange}
       onBlur={handleBlur}
-      error={error}
+      error={props.showValidation !== false ? error : undefined}
       maxLength={100}
       placeholder={placeholder}
       {...props}
@@ -335,7 +336,7 @@ export function PasswordInput({
       type="password"
       value={value}
       onChange={handleChange}
-      error={error}
+      error={props.showValidation !== false ? error : undefined}
       maxLength={50}
       placeholder={placeholder}
       {...props}
@@ -373,7 +374,7 @@ export function LabIdInput({
     <Input
       value={value}
       onChange={handleChange}
-      error={error}
+      error={props.showValidation !== false ? error : undefined}
       maxLength={20}
       placeholder={placeholder}
       {...props}
