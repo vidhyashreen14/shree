@@ -576,5 +576,185 @@ export const MOCK_VISIT_DETAILS: Record<string, { patientName: string; mobile: s
   'q-2': { patientName: 'Apex Healthcare', mobile: '9123456789', email: 'contact@apexhealth.com' },
 };
 
+// ── Lab Report Mock Test Data & Helpers ─────────────────────────────────────
+export interface LabTestParameter {
+  parameter: string;
+  result: string;
+  unit: string;
+  reference: string;
+  flag?: 'H' | 'L';
+}
+
+export const LAB_TEST_DATA: Record<string, LabTestParameter[]> = {
+  'CBC (Complete Blood Count)': [
+    { parameter: 'Haemoglobin', result: '11.8', unit: 'g/dL', reference: '12.0 – 17.5', flag: 'L' },
+    { parameter: 'WBC', result: '7200', unit: 'cells/µL', reference: '4000 – 11000' },
+    { parameter: 'Platelets', result: '210000', unit: 'cells/µL', reference: '150000 – 400000' },
+    { parameter: 'RBC', result: '4.6', unit: 'million/µL', reference: '4.5 – 5.9' },
+    { parameter: 'MCV', result: '82', unit: 'fL', reference: '80 – 100' },
+    { parameter: 'MCH', result: '28', unit: 'pg', reference: '27 – 33' },
+    { parameter: 'Neutrophils', result: '65', unit: '%', reference: '40 – 70' },
+    { parameter: 'Lymphocytes', result: '28', unit: '%', reference: '20 – 40' },
+    { parameter: 'ESR', result: '22', unit: 'mm/hr', reference: '< 20', flag: 'H' },
+  ],
+  CBC: [
+    { parameter: 'Haemoglobin', result: '11.8', unit: 'g/dL', reference: '12.0 – 17.5', flag: 'L' },
+    { parameter: 'WBC', result: '7200', unit: 'cells/µL', reference: '4000 – 11000' },
+    { parameter: 'Platelets', result: '210000', unit: 'cells/µL', reference: '150000 – 400000' },
+    { parameter: 'RBC', result: '4.6', unit: 'million/µL', reference: '4.5 – 5.9' },
+    { parameter: 'MCV', result: '82', unit: 'fL', reference: '80 – 100' },
+    { parameter: 'MCH', result: '28', unit: 'pg', reference: '27 – 33' },
+    { parameter: 'Neutrophils', result: '65', unit: '%', reference: '40 – 70' },
+    { parameter: 'Lymphocytes', result: '28', unit: '%', reference: '20 – 40' },
+    { parameter: 'ESR', result: '22', unit: 'mm/hr', reference: '< 20', flag: 'H' },
+  ],
+  'Lipid Panel': [
+    { parameter: 'Total Cholesterol', result: '214', unit: 'mg/dL', reference: '< 200', flag: 'H' },
+    { parameter: 'LDL Cholesterol', result: '138', unit: 'mg/dL', reference: '< 100', flag: 'H' },
+    { parameter: 'HDL Cholesterol', result: '42', unit: 'mg/dL', reference: '> 40' },
+    { parameter: 'Triglycerides', result: '168', unit: 'mg/dL', reference: '< 150', flag: 'H' },
+    { parameter: 'VLDL', result: '33', unit: 'mg/dL', reference: '< 30', flag: 'H' },
+    { parameter: 'Non-HDL', result: '172', unit: 'mg/dL', reference: '< 130', flag: 'H' },
+  ],
+  'Lipid panel': [
+    { parameter: 'Total Cholesterol', result: '214', unit: 'mg/dL', reference: '< 200', flag: 'H' },
+    { parameter: 'LDL Cholesterol', result: '138', unit: 'mg/dL', reference: '< 100', flag: 'H' },
+    { parameter: 'HDL Cholesterol', result: '42', unit: 'mg/dL', reference: '> 40' },
+    { parameter: 'Triglycerides', result: '168', unit: 'mg/dL', reference: '< 150', flag: 'H' },
+    { parameter: 'VLDL', result: '33', unit: 'mg/dL', reference: '< 30', flag: 'H' },
+    { parameter: 'Non-HDL', result: '172', unit: 'mg/dL', reference: '< 130', flag: 'H' },
+  ],
+  HbA1c: [
+    { parameter: 'HbA1c', result: '7.4', unit: '%', reference: '4.0 – 5.6', flag: 'H' },
+    {
+      parameter: 'Mean Blood Glucose',
+      result: '166',
+      unit: 'mg/dL',
+      reference: '70 – 100',
+      flag: 'H',
+    },
+  ],
+  TSH: [
+    { parameter: 'TSH', result: '4.8', unit: 'mIU/L', reference: '0.4 – 4.0', flag: 'H' },
+    { parameter: 'T3 (Total)', result: '1.1', unit: 'nmol/L', reference: '0.9 – 2.5' },
+    { parameter: 'T4 (Total)', result: '88', unit: 'nmol/L', reference: '70 – 150' },
+  ],
+  Urinalysis: [
+    { parameter: 'Colour', result: 'Yellow', unit: '—', reference: 'Yellow' },
+    { parameter: 'Clarity', result: 'Clear', unit: '—', reference: 'Clear' },
+    { parameter: 'pH', result: '6.2', unit: '—', reference: '4.5 – 8.5' },
+    { parameter: 'Protein', result: 'Trace', unit: '—', reference: 'Negative', flag: 'H' },
+    { parameter: 'Glucose', result: 'Nil', unit: '—', reference: 'Negative' },
+    { parameter: 'Ketones', result: 'Nil', unit: '—', reference: 'Negative' },
+    { parameter: 'RBCs', result: '2-4', unit: '/HPF', reference: '0 – 2', flag: 'H' },
+  ],
+  'Blood Sugar': [
+    {
+      parameter: 'Fasting Blood Sugar',
+      result: '128',
+      unit: 'mg/dL',
+      reference: '70 – 100',
+      flag: 'H',
+    },
+    { parameter: 'Post-Prandial', result: '196', unit: 'mg/dL', reference: '< 140', flag: 'H' },
+    {
+      parameter: 'Random Blood Sugar',
+      result: '154',
+      unit: 'mg/dL',
+      reference: '70 – 140',
+      flag: 'H',
+    },
+  ],
+  'Thyroid Profile': [],
+  'Vitamin D': [],
+  'Vitamin B12': [],
+  LFT: [],
+  KFT: [],
+  'Urine R/M': [],
+};
+
+export const TEST_DATA = LAB_TEST_DATA;
+
+export function getTestRows(testName: string): LabTestParameter[] {
+  return (
+    LAB_TEST_DATA[testName] ?? [
+      { parameter: testName, result: 'Within normal limits', unit: '—', reference: '—' },
+    ]
+  );
+}
+
+export const LAB_INTERPRETATIONS: Record<string, string> = {
+  CBC: 'Mild anaemia noted (Hb 11.8 g/dL). Elevated ESR suggests ongoing low-grade inflammation. All other parameters within acceptable range.',
+  'CBC (Complete Blood Count)':
+    'Mild anaemia noted (Hb 11.8 g/dL). Elevated ESR suggests ongoing low-grade inflammation. All other parameters within acceptable range.',
+  'Lipid panel':
+    'Dyslipidaemia detected. Total cholesterol and LDL are above optimal levels. Lifestyle modification (diet, exercise) and statin therapy review recommended.',
+  'Lipid Panel':
+    'Dyslipidaemia detected. Total cholesterol and LDL are above optimal levels. Lifestyle modification (diet, exercise) and statin therapy review recommended.',
+  HbA1c:
+    'Poor glycaemic control over the past 2–3 months (HbA1c 7.4%). Mean blood glucose significantly elevated. Intensification of diabetes management advised.',
+  TSH: 'Subclinical hypothyroidism suspected (TSH 4.8). Free thyroid indices normal. Clinical correlation and repeat testing in 6 weeks recommended.',
+  Urinalysis:
+    'Trace proteinuria and mild haematuria present. Repeat urinalysis and renal function tests advised to rule out early nephropathy.',
+  'Blood Sugar':
+    'Significantly elevated fasting and post-prandial blood glucose levels indicate poorly controlled diabetes. Medication review and dietary counselling recommended.',
+};
+
+export function getInterpretation(tests: string[]): string {
+  return (
+    tests
+      .map((t) => LAB_INTERPRETATIONS[t])
+      .filter(Boolean)
+      .join(' ') || 'Results reviewed. No critical values detected. Please correlate clinically.'
+  );
+}
+
+export const allOrders: LabOrder[] = [
+  ...labOrders,
+  {
+    id: 'lo-9001',
+    patientId: patients[0]?.id ?? '',
+    doctorId: 'u-doc-1',
+    tests: ['CBC (Complete Blood Count)', 'Lipid Panel'],
+    status: 'sample-collected',
+    orderedOn: new Date().toISOString(),
+  },
+  {
+    id: 'lo-9002',
+    patientId: patients[2]?.id ?? '',
+    doctorId: 'u-doc-4',
+    tests: ['HbA1c', 'Urinalysis'],
+    status: 'sample-collected',
+    orderedOn: new Date().toISOString(),
+  },
+  {
+    id: 'lo-9003',
+    patientId: patients[4]?.id ?? '',
+    doctorId: 'u-doc-2',
+    tests: ['TSH', 'CBC (Complete Blood Count)'],
+    status: 'sample-collected',
+    orderedOn: new Date().toISOString(),
+  },
+  {
+    id: 'lo-9004',
+    patientId: patients[6]?.id ?? '',
+    doctorId: 'u-doc-5',
+    tests: ['Lipid Panel'],
+    status: 'ordered',
+    orderedOn: new Date().toISOString(),
+  },
+  {
+    id: 'lo-9005',
+    patientId: patients[8]?.id ?? '',
+    doctorId: 'u-doc-3',
+    tests: ['HbA1c'],
+    status: 'in-progress',
+    orderedOn: new Date().toISOString(),
+  },
+];
+
+export const allLabReportOrders = allOrders;
+
+
 
 

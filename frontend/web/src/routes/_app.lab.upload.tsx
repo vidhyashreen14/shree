@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Button } from "@/components/ui/button";
-import { labOrders, patients, doctors } from "@/lib/mock/data";
+import { labOrders, patients, doctors, TEST_DATA, getTestRows, getInterpretation } from "@/lib/mock/data";
 import {
   FileText,
   FlaskConical,
@@ -42,104 +42,6 @@ export const Route = createFileRoute('/_app/lab/upload')({
   component: LabUpload,
 });
 
-// ── Deterministic test results per test name ──────────────────────────────────
-const TEST_DATA: Record<
-  string,
-  { parameter: string; result: string; unit: string; reference: string; flag?: "H" | "L" }[]
-> = {
-  CBC: [
-    { parameter: "Haemoglobin", result: "11.8", unit: "g/dL", reference: "12.0 – 17.5", flag: "L" },
-    { parameter: "WBC", result: "7200", unit: "cells/µL", reference: "4000 – 11000" },
-    { parameter: "Platelets", result: "210000", unit: "cells/µL", reference: "150000 – 400000" },
-    { parameter: "RBC", result: "4.6", unit: "million/µL", reference: "4.5 – 5.9" },
-    { parameter: "MCV", result: "82", unit: "fL", reference: "80 – 100" },
-    { parameter: "MCH", result: "28", unit: "pg", reference: "27 – 33" },
-    { parameter: "Neutrophils", result: "65", unit: "%", reference: "40 – 70" },
-    { parameter: "Lymphocytes", result: "28", unit: "%", reference: "20 – 40" },
-    { parameter: "ESR", result: "22", unit: "mm/hr", reference: "< 20", flag: "H" },
-  ],
-  "Lipid panel": [
-    { parameter: "Total Cholesterol", result: "214", unit: "mg/dL", reference: "< 200", flag: "H" },
-    { parameter: "LDL Cholesterol", result: "138", unit: "mg/dL", reference: "< 100", flag: "H" },
-    { parameter: "HDL Cholesterol", result: "42", unit: "mg/dL", reference: "> 40" },
-    { parameter: "Triglycerides", result: "168", unit: "mg/dL", reference: "< 150", flag: "H" },
-    { parameter: "VLDL", result: "33", unit: "mg/dL", reference: "< 30", flag: "H" },
-    { parameter: "Non-HDL", result: "172", unit: "mg/dL", reference: "< 130", flag: "H" },
-  ],
-  HbA1c: [
-    { parameter: "HbA1c", result: "7.4", unit: "%", reference: "4.0 – 5.6", flag: "H" },
-    {
-      parameter: "Mean Blood Glucose",
-      result: "166",
-      unit: "mg/dL",
-      reference: "70 – 100",
-      flag: "H",
-    },
-  ],
-  TSH: [
-    { parameter: "TSH", result: "4.8", unit: "mIU/L", reference: "0.4 – 4.0", flag: "H" },
-    { parameter: "T3 (Total)", result: "1.1", unit: "nmol/L", reference: "0.9 – 2.5" },
-    { parameter: "T4 (Total)", result: "88", unit: "nmol/L", reference: "70 – 150" },
-  ],
-  Urinalysis: [
-    { parameter: "Colour", result: "Yellow", unit: "—", reference: "Yellow" },
-    { parameter: "Clarity", result: "Clear", unit: "—", reference: "Clear" },
-    { parameter: "pH", result: "6.2", unit: "—", reference: "4.5 – 8.5" },
-    { parameter: "Protein", result: "Trace", unit: "—", reference: "Negative", flag: "H" },
-    { parameter: "Glucose", result: "Nil", unit: "—", reference: "Negative" },
-    { parameter: "Ketones", result: "Nil", unit: "—", reference: "Negative" },
-    { parameter: "RBCs", result: "2-4", unit: "/HPF", reference: "0 – 2", flag: "H" },
-  ],
-  "Blood Sugar": [
-    {
-      parameter: "Fasting Blood Sugar",
-      result: "128",
-      unit: "mg/dL",
-      reference: "70 – 100",
-      flag: "H",
-    },
-    { parameter: "Post-Prandial", result: "196", unit: "mg/dL", reference: "< 140", flag: "H" },
-    {
-      parameter: "Random Blood Sugar",
-      result: "154",
-      unit: "mg/dL",
-      reference: "70 – 140",
-      flag: "H",
-    },
-  ],
-};
-
-// Fallback for tests not in the dict above
-function getTestRows(testName: string) {
-  return (
-    TEST_DATA[testName] ?? [
-      { parameter: testName, result: "Within normal limits", unit: "—", reference: "—" },
-    ]
-  );
-}
-
-// Deterministic interpretation sentences per test
-const INTERPRETATION: Record<string, string> = {
-  CBC: "Mild anaemia noted (Hb 11.8 g/dL). Elevated ESR suggests ongoing low-grade inflammation. All other parameters within acceptable range.",
-  "Lipid panel":
-    "Dyslipidaemia detected. Total cholesterol and LDL are above optimal levels. Lifestyle modification (diet, exercise) and statin therapy review recommended.",
-  HbA1c:
-    "Poor glycaemic control over the past 2–3 months (HbA1c 7.4%). Mean blood glucose significantly elevated. Intensification of diabetes management advised.",
-  TSH: "Subclinical hypothyroidism suspected (TSH 4.8). Free thyroid indices normal. Clinical correlation and repeat testing in 6 weeks recommended.",
-  Urinalysis:
-    "Trace proteinuria and mild haematuria present. Repeat urinalysis and renal function tests advised to rule out early nephropathy.",
-  "Blood Sugar":
-    "Significantly elevated fasting and post-prandial blood glucose levels indicate poorly controlled diabetes. Medication review and dietary counselling recommended.",
-};
-
-function getInterpretation(tests: string[]) {
-  return (
-    tests
-      .map((t) => INTERPRETATION[t])
-      .filter(Boolean)
-      .join(" ") || "Results reviewed. No critical values detected. Please correlate clinically."
-  );
-}
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function getDynamicInterpretation(
