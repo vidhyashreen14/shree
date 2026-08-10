@@ -37,6 +37,7 @@ function PharmacyBilling() {
 
   const [patientName, setPatientName] = useState('');
   const [patientId, setPatientId] = useState('');
+  const [countryCode, setCountryCode] = useState('+91');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [referredDoctor, setReferredDoctor] = useState('');
@@ -44,6 +45,30 @@ function PharmacyBilling() {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
   const suggestionsContainerRef = useRef<HTMLDivElement>(null);
+
+  // Country codes list
+  const countryCodes = [
+    { code: '+1', country: 'USA/Canada' },
+    { code: '+44', country: 'UK' },
+    { code: '+91', country: 'India' },
+    { code: '+61', country: 'Australia' },
+    { code: '+81', country: 'Japan' },
+    { code: '+86', country: 'China' },
+    { code: '+49', country: 'Germany' },
+    { code: '+33', country: 'France' },
+    { code: '+39', country: 'Italy' },
+    { code: '+55', country: 'Brazil' },
+    { code: '+7', country: 'Russia' },
+    { code: '+82', country: 'South Korea' },
+    { code: '+31', country: 'Netherlands' },
+    { code: '+46', country: 'Sweden' },
+    { code: '+41', country: 'Switzerland' },
+    { code: '+34', country: 'Spain' },
+    { code: '+52', country: 'Mexico' },
+    { code: '+65', country: 'Singapore' },
+    { code: '+971', country: 'UAE' },
+    { code: '+966', country: 'Saudi Arabia' },
+  ];
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -73,7 +98,15 @@ function PharmacyBilling() {
   const selectPatient = (p: (typeof patients)[0]) => {
     setPatientName(p.name);
     setPatientId(p.id);
-    setPhone(p.phone);
+    // Extract country code and phone number if available
+    const phoneMatch = p.phone.match(/^(\+\d+)(\d+)$/);
+    if (phoneMatch) {
+      setCountryCode(phoneMatch[1] || '+91');
+      setPhone(phoneMatch[2] || '');
+    } else {
+      setCountryCode('+91');
+      setPhone(p.phone);
+    }
     setEmail(p.email || '');
     const doc = doctors.find((d) => d.id === p.assignedDoctorId);
     setReferredDoctor(doc ? doc.name : 'Not Assigned');
@@ -88,8 +121,8 @@ function PharmacyBilling() {
   };
 
   const validatePhone = (value: string) => {
-    // Allow only digits and max 10 digits
-    const phoneRegex = /^\d{0,10}$/;
+    // Allow only digits and max 15 digits (international)
+    const phoneRegex = /^\d{0,15}$/;
     return phoneRegex.test(value);
   };
 
@@ -115,7 +148,7 @@ function PharmacyBilling() {
     if (validatePhone(val) || val === '') {
       setPhone(val);
     } else {
-      toast.error('Phone number must be exactly 10 digits.');
+      toast.error('Phone number can only contain digits.');
     }
   };
 
@@ -234,22 +267,27 @@ function PharmacyBilling() {
   const handleUpdateItemQty = (index: number, newQty: number) => {
     if (newQty <= 0) return;
     const updated = [...billingItems];
-    const item = updated[index]!;
-    item.qty = newQty;
-    setBillingItems(updated);
+    const item = updated[index];
+    if (item) {
+      item.qty = newQty;
+      setBillingItems(updated);
+    }
   };
 
   const handleUpdateItemDiscount = (index: number, newDisc: number) => {
     if (newDisc < 0 || newDisc > 100) return;
     const updated = [...billingItems];
-    const item = updated[index]!;
-    item.discountPercent = newDisc;
-    setBillingItems(updated);
+    const item = updated[index];
+    if (item) {
+      item.discountPercent = newDisc;
+      setBillingItems(updated);
+    }
   };
 
   const handleClearBill = () => {
     setPatientName('');
     setPatientId('');
+    setCountryCode('+91');
     setPhone('');
     setEmail('');
     setReferredDoctor('');
@@ -271,8 +309,11 @@ function PharmacyBilling() {
       toast.error('Please enter patient phone number.');
       return;
     }
-    if (phone.length !== 10) {
-      toast.error('Phone number must be exactly 10 digits.');
+    // Check phone number length based on country code
+    const minLength = countryCode === '+91' ? 10 : 7;
+    const maxLength = countryCode === '+91' ? 10 : 15;
+    if (phone.length < minLength || phone.length > maxLength) {
+      toast.error(`Phone number must be between ${minLength} and ${maxLength} digits.`);
       return;
     }
     if (email && !validateEmail(email)) {
@@ -296,6 +337,7 @@ function PharmacyBilling() {
       month: 'long',
       year: 'numeric',
     });
+    const fullPhoneNumber = `${countryCode}${phone}`;
 
     const printHTML = `
       <!DOCTYPE html>
@@ -484,7 +526,7 @@ function PharmacyBilling() {
               </div>
               <div class="info-item">
                 <div class="label">Patient Phone No</div>
-                <div class="value">${phone || '—'}</div>
+                <div class="value">${fullPhoneNumber || '—'}</div>
               </div>
               <div class="info-item">
                 <div class="label">Patient Email</div>
@@ -614,8 +656,9 @@ function PharmacyBilling() {
         <div className="flex flex-col gap-6">
           {/* Patient Details Card */}
           <div className="surface-elevated p-5 rounded-2xl flex flex-col gap-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5">
-              <div className="relative" ref={suggestionsContainerRef}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+              {/* Patient Name - takes less space */}
+              <div className="relative sm:col-span-2 lg:col-span-1">
                 <Label htmlFor="patName" className="text-xs font-semibold">
                   Patient Name *
                 </Label>
@@ -674,36 +717,48 @@ function PharmacyBilling() {
                 )}
               </div>
 
-              <div>
+              {/* Phone Number - Split into two fields */}
+              <div className="sm:col-span-2 lg:col-span-1">
                 <Label htmlFor="patPhone" className="text-xs font-semibold">
                   Mobile *
                 </Label>
-                <div className="relative mt-1">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground font-medium">
-                    (+91)
-                  </span>
+                <div className="flex mt-1 gap-1.5">
+                  <Select value={countryCode} onValueChange={setCountryCode}>
+                    <SelectTrigger className="w-[100px] h-10 bg-background text-sm flex-shrink-0">
+                      <SelectValue placeholder="Code" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {countryCodes.map((country) => (
+                        <SelectItem key={country.code} value={country.code}>
+                          {country.code} ({country.country})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <Input
                     id="patPhone"
-                    placeholder="Enter 10-digit mobile number"
+                    placeholder="Phone number"
                     value={phone}
                     onChange={(e) => handlePhoneChange(e.target.value)}
                     onBlur={() => {
-                      if (phone && phone.length !== 20) {
-                        toast.error('Phone number must be exactly 10 digits.');
+                      const minLength = countryCode === '+91' ? 10 : 7;
+                      const maxLength = countryCode === '+91' ? 10 : 15;
+                      if (phone && (phone.length < minLength || phone.length > maxLength)) {
+                        toast.error(`Phone number must be between ${minLength} and ${maxLength} digits.`);
                       }
                     }}
-                    maxLength={15}
-                    className="bg-background h-10 text-sm pl-14"
-                    pattern="\d{10}"
-                    title="Please enter exactly 10 digits"
+                    className="bg-background h-10 text-sm flex-1"
+                    pattern="\d+"
+                    title="Please enter valid digits"
                   />
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Enter a valid 10-digit mobile number.
+                  Enter valid phone number with country code
                 </p>
               </div>
 
-              <div>
+              {/* Email */}
+              <div className="sm:col-span-2 lg:col-span-1">
                 <Label htmlFor="patEmail" className="text-xs font-semibold">
                   Email *
                 </Label>
@@ -719,7 +774,8 @@ function PharmacyBilling() {
                 <p className="text-xs text-muted-foreground mt-1">Enter a valid email address.</p>
               </div>
 
-              <div className="sm:col-span-2 md:col-span-3">
+              {/* Referred Doctor - Full width */}
+              <div className="sm:col-span-2 lg:col-span-3">
                 <Label htmlFor="refDoctor" className="text-xs font-semibold">
                   Referred Doctor
                 </Label>

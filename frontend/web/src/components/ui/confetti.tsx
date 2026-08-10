@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import React, {
   createContext,
   forwardRef,
@@ -6,13 +7,13 @@ import React, {
   useImperativeHandle,
   useMemo,
   useRef,
-  type ReactNode,
 } from 'react';
-import confetti, {
-  type GlobalOptions as ConfettiGlobalOptions,
-  type CreateTypes as ConfettiInstance,
-  type Options as ConfettiOptions,
+import type {
+  GlobalOptions as ConfettiGlobalOptions,
+  CreateTypes as ConfettiInstance,
+  Options as ConfettiOptions,
 } from 'canvas-confetti';
+import confetti from 'canvas-confetti';
 
 import { Button } from '@/components/ui/button';
 
@@ -57,7 +58,7 @@ const ConfettiComponent = forwardRef<ConfettiRef, Props>((props, ref) => {
         }
       }
     },
-    [globalOptions],
+    [globalOptions]
   );
 
   const fire = useCallback(
@@ -68,14 +69,14 @@ const ConfettiComponent = forwardRef<ConfettiRef, Props>((props, ref) => {
         console.error('Confetti error:', error);
       }
     },
-    [options],
+    [options]
   );
 
   const api = useMemo(
     () => ({
       fire,
     }),
-    [fire],
+    [fire]
   );
 
   useImperativeHandle(ref, () => api, [api]);

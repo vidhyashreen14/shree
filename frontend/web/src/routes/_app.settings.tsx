@@ -35,9 +35,7 @@ function Settings() {
                   onClick={() => set(opt.v)}
                   className={cn(
                     'flex flex-col items-start gap-2 rounded-xl border p-4 text-left transition-all',
-                    active
-                      ? 'border-primary bg-primary/5'
-                      : 'border-border hover:border-primary/50',
+                    active ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
                   )}
                 >
                   <Icon className="h-5 w-5 text-primary" />

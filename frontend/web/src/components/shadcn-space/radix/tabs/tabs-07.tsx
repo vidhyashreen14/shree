@@ -116,7 +116,7 @@ export default function TabsScrollSwitchRadix() {
                     isActive ? 'border-none' : 'border border-border/50',
                     'data-[state=active]:bg-transparent data-[state=active]:text-foreground',
                     'shadow-none data-[state=active]:shadow-none ring-0 data-[state=active]:ring-0 after:hidden',
-                    isActive ? 'text-foreground' : 'text-muted-foreground',
+                    isActive ? 'text-foreground' : 'text-muted-foreground'
                   )}
                 >
                   <Icon className="w-4 h-4 z-10 shrink-0" />
@@ -198,7 +198,7 @@ export default function TabsScrollSwitchRadix() {
                           <span
                             className={cn(
                               'font-medium',
-                              f.done ? 'text-foreground' : 'text-muted-foreground',
+                              f.done ? 'text-foreground' : 'text-muted-foreground'
                             )}
                           >
                             {f.label}

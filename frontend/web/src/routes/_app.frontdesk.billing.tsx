@@ -4,6 +4,7 @@ import { PageHeader } from '@/components/common/PageHeader';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
   SelectContent,
@@ -14,14 +15,14 @@ import {
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { useBillingStore, type BillLineItem } from '@/lib/store/billing';
-import { useAuth } from '@/lib/store/auth';
-import { useAudit } from '@/lib/store/audit';
 import { usePatients } from '@/lib/store/patients';
+import { useNurseQueue } from '@/lib/store/nurseQueue';
 import { useHospitalSettings } from '@/lib/store/hospitalSettings';
-import { useDoctors } from '@/lib/store/doctors';
+import { doctors } from '@/lib/mock/data';
 import {
   Search,
   Printer,
+  Send,
   MessageSquare,
   Mail,
   Phone,
@@ -29,6 +30,8 @@ import {
   CheckSquare,
   Square,
   X,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -114,7 +117,7 @@ function PrintReceipt({ data, onClose }: { data: ReceiptData; onClose: () => voi
   const handleWhatsApp = () => {
     const phoneNum = data.patientPhone.replace(/\D/g, '');
     const msg = encodeURIComponent(
-      `*${name} — ${data.billType}*\nBill No: ${data.billNo}\nPatient: ${data.patientName} (${data.uhid})\nDate: ${data.date}\nTotal Paid: ₹${data.total}\nPayment: ${data.paymentMethod}\n\nThank you for choosing ${name}!`,
+      `*${name} — ${data.billType}*\nBill No: ${data.billNo}\nPatient: ${data.patientName} (${data.uhid})\nDate: ${data.date}\nTotal Paid: ₹${data.total}\nPayment: ${data.paymentMethod}\n\nThank you for choosing ${name}!`
     );
     window.open(`https://wa.me/${phoneNum}?text=${msg}`, '_blank');
   };
@@ -122,7 +125,7 @@ function PrintReceipt({ data, onClose }: { data: ReceiptData; onClose: () => voi
   const handleEmail = () => {
     const subject = encodeURIComponent(`${name} Bill — ${data.billNo} — ${data.patientName}`);
     const body = encodeURIComponent(
-      `Dear ${data.patientName},\n\nYour ${data.billType} bill (No: ${data.billNo}) dated ${data.date} is ₹${data.total} (paid via ${data.paymentMethod}).\n\nFor queries, contact us at ${phone}.\n\n${name}`,
+      `Dear ${data.patientName},\n\nYour ${data.billType} bill (No: ${data.billNo}) dated ${data.date} is ₹${data.total} (paid via ${data.paymentMethod}).\n\nFor queries, contact us at ${phone}.\n\n${name}`
     );
     window.location.href = `mailto:${data.patientEmail}?subject=${subject}&body=${body}`;
   };
@@ -336,7 +339,7 @@ function BillItemRow({
     <div
       className={cn(
         'flex items-center gap-3 rounded-lg border px-3 py-2.5 transition-all cursor-pointer',
-        selected ? 'border-primary bg-primary/5' : 'border-border hover:bg-accent/30',
+        selected ? 'border-primary bg-primary/5' : 'border-border hover:bg-accent/30'
       )}
       onClick={onToggle}
     >
@@ -361,7 +364,7 @@ function BillItemRow({
       <span
         className={cn(
           'text-sm font-semibold shrink-0',
-          selected ? 'text-primary' : 'text-muted-foreground',
+          selected ? 'text-primary' : 'text-muted-foreground'
         )}
       >
         ₹{(item.amount * (selected ? qty : 1)).toLocaleString()}
@@ -377,11 +380,9 @@ interface Selection {
 }
 
 function FrontDeskBilling() {
-  // Subscribe to staff profiles store to trigger re-renders on real-time changes
-  const doctors = useDoctors();
-
-  const { categories } = useBillingStore();
+  const { categories, registrationFee, consultationFee } = useBillingStore();
   const { searchPatients } = usePatients();
+  const queue = useNurseQueue((s) => s.queue);
 
   const [patientSearch, setPatientSearch] = useState('');
   const [selectedPatient, setSelectedPatient] = useState<
@@ -391,6 +392,7 @@ function FrontDeskBilling() {
   const [selectedCategoryId, setSelectedCategoryId] = useState('');
   const [selections, setSelections] = useState<Selection>({});
   const [paymentMethod, setPaymentMethod] = useState('Cash');
+  const [expandedCats, setExpandedCats] = useState<Record<string, boolean>>({});
   const [receipt, setReceipt] = useState<ReceiptData | null>(null);
 
   const searchResults = patientSearch.length >= 2 ? searchPatients(patientSearch) : [];
@@ -403,7 +405,7 @@ function FrontDeskBilling() {
 
   const total = selectedItems.reduce(
     (sum, item) => sum + item.amount * (selections[item.id]?.qty ?? 1),
-    0,
+    0
   );
 
   const toggleItem = (itemId: string) => {
@@ -435,7 +437,6 @@ function FrontDeskBilling() {
     const category = categories.find((c) => c.id === selectedCategoryId);
 
     setReceipt({
-      // eslint-disable-next-line react-hooks/purity
       billNo: `BILL-${Date.now().toString().slice(-8)}`,
       date: format(new Date(), 'dd MMM yyyy, hh:mm a'),
       patientName: selectedPatient.name,
@@ -454,16 +455,6 @@ function FrontDeskBilling() {
       patientPhone: selectedPatient.phone,
       patientEmail: selectedPatient.email,
     });
-
-    const user = useAuth.getState().user;
-    if (user && user.role !== 'admin') {
-      useAudit.getState().addLog({
-        user: user.name,
-        role: user.role,
-        action: 'Generated Bill',
-        target: `₹${total.toLocaleString()}`,
-      });
-    }
   };
 
   return (
@@ -599,7 +590,7 @@ function FrontDeskBilling() {
                     'flex w-full items-center gap-2 rounded-lg border px-3 py-2.5 text-left text-sm transition-all',
                     selectedCategoryId === cat.id
                       ? 'border-primary bg-primary/5 text-primary font-semibold'
-                      : 'border-border hover:border-primary/40 hover:bg-accent/30',
+                      : 'border-border hover:border-primary/40 hover:bg-accent/30'
                   )}
                 >
                   <IndianRupee className="h-3.5 w-3.5 shrink-0" />
@@ -622,7 +613,7 @@ function FrontDeskBilling() {
                     'rounded-lg border px-3 py-2 text-sm font-medium transition-all',
                     paymentMethod === m
                       ? 'border-primary bg-primary/5 text-primary'
-                      : 'border-border hover:border-primary/40 hover:bg-accent/30 text-muted-foreground',
+                      : 'border-border hover:border-primary/40 hover:bg-accent/30 text-muted-foreground'
                   )}
                 >
                   {m}

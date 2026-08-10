@@ -3,9 +3,6 @@ import { persist } from 'zustand/middleware';
 import type { Patient } from '../types';
 import { patients as mockPatients } from '../mock/data';
 
-import { useAuth } from './auth';
-import { useAudit } from './audit';
-
 interface PatientState {
   patients: Patient[];
   addPatient: (patient: Patient) => Patient;
@@ -21,17 +18,6 @@ export const usePatients = create<PatientState>()(
 
       addPatient: (patient) => {
         set((s) => ({ patients: [patient, ...s.patients] }));
-
-        const user = useAuth.getState().user;
-        if (user) {
-          useAudit.getState().addLog({
-            user: user.name,
-            role: user.role,
-            action: 'Registered patient',
-            target: patient.mrn,
-          });
-        }
-
         return patient;
       },
 
@@ -47,7 +33,7 @@ export const usePatients = create<PatientState>()(
           (p) =>
             p.name.toLowerCase().includes(q) ||
             p.mrn.toLowerCase().includes(q) ||
-            p.phone.replace(/\s/g, '').includes(q.replace(/\s/g, '')),
+            p.phone.replace(/\s/g, '').includes(q.replace(/\s/g, ''))
         );
       },
     }),
@@ -55,14 +41,6 @@ export const usePatients = create<PatientState>()(
       name: 'medicore-patients',
       // Don't persist mock seed — on first load use mock, then persist any newly added
       partialize: (s) => ({ patients: s.patients }),
-      onRehydrateStorage: () => () => {
-        if (typeof window === 'undefined') return;
-        window.addEventListener('storage', (e) => {
-          if (e.key === 'medicore-patients') {
-            usePatients.persist.rehydrate();
-          }
-        });
-      },
-    },
-  ),
+    }
+  )
 );

@@ -89,7 +89,7 @@ function AdminAudit() {
           formatDistanceToNow(new Date(String(getValue())), { addSuffix: true }),
       },
     ],
-    [],
+    []
   );
 
   return (

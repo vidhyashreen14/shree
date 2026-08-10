@@ -1,4 +1,5 @@
-export type Role = 'admin' | 'doctor' | 'frontdesk' | 'nurse' | 'pharmacy' | 'lab' | 'superadmin';
+
+export type Role = 'admin' | 'doctor' | 'frontdesk' | 'nurse' | 'pharmacy' | 'lab';
 
 export interface User {
   id: string;
@@ -8,15 +9,6 @@ export interface User {
   avatarUrl?: string;
   department?: string;
   phone?: string;
-  specialization?: string;
-  superSpecialization?: string;
-  qualification?: string;
-  experience?: string;
-  registrationNumber?: string;
-  registrationCouncil?: string;
-  registrationValidTill?: string;
-  languagesSpoken?: string;
-  biography?: string;
 }
 
 export interface Patient {
@@ -45,12 +37,7 @@ export interface Patient {
 }
 
 export type AppointmentStatus =
-  | 'scheduled'
-  | 'checked-in'
-  | 'in-consultation'
-  | 'completed'
-  | 'cancelled'
-  | 'no-show';
+  'scheduled' | 'checked-in' | 'in-consultation' | 'completed' | 'cancelled' | 'no-show';
 export type AppointmentType = 'consultation' | 'follow-up' | 'walk-in' | 'tele';
 
 export interface Appointment {
@@ -145,6 +132,7 @@ export interface Medicine {
   pricePerUnit: number;
   gst: number;
   batch: string;
+  ingredients?: string;
 }
 
 export interface Department {

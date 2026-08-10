@@ -50,7 +50,7 @@ export interface CommandSearchProps {
 
 const defaultGroups: CommandSearchGroup[] = [
   {
-    heading: "Suggestions",
+    heading: 'Suggestions',
     items: [
       { label: 'Dashboard', icon: LayoutDashboardIcon },
       { label: 'Analytics', icon: TrendingUpIcon },
@@ -60,7 +60,7 @@ const defaultGroups: CommandSearchGroup[] = [
     ],
   },
   {
-    heading: "Recent",
+    heading: 'Recent',
     items: [
       { label: 'Q2 Sales Report', icon: ClockIcon, timestamp: '2m ago' },
       { label: 'Sprint Planning', icon: ClockIcon, timestamp: '15m ago' },
@@ -69,7 +69,7 @@ const defaultGroups: CommandSearchGroup[] = [
     ],
   },
   {
-    heading: "Quick Links",
+    heading: 'Quick Links',
     items: [
       { label: 'Documentation', icon: BookOpenIcon },
       { label: 'Changelog', icon: ScrollIcon },
@@ -79,9 +79,9 @@ const defaultGroups: CommandSearchGroup[] = [
 ];
 
 const CommandSearchDemo = ({
-  buttonLabel = "Search files...",
-  placeholder = "Type a command or search...",
-  emptyMessage = "No results found.",
+  buttonLabel = 'Search files...',
+  placeholder = 'Type a command or search...',
+  emptyMessage = 'No results found.',
   showSeparators = true,
   groups = defaultGroups,
 }: CommandSearchProps) => {
@@ -122,7 +122,7 @@ const CommandSearchDemo = ({
                       onSelect={item.onSelect}
                     >
                       {item.icon && (
-                        <item.icon className={item.timestamp ? "text-muted-foreground" : ""} />
+                        <item.icon className={item.timestamp ? 'text-muted-foreground' : ''} />
                       )}
                       <span>{item.label}</span>
                       {item.timestamp && (

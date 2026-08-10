@@ -1,12 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120" fill="none">
   <!-- Stethoscope earpieces -->
-  <circle cx="45" cy="20" r="4.5" fill="currentColor"/>
-  <circle cx="61" cy="20" r="4.5" fill="currentColor"/>
+  <circle cx="68" cy="18" r="5" fill="currentColor"/>
+  <circle cx="88" cy="18" r="5" fill="currentColor"/>
 
-  <!-- Full stethoscope + ECG tube as one continuous path -->
+  <!-- Full stethoscope + ECG tube as one continuous animated path -->
+  <!-- Ear tubes + chest piece + ECG line + end ball -->
   <path
     id="logo-path"
-    d="M 45 20 C 33 20 28 45 53 65 L 53 73 C 53 90 31 90 28 102 C 25 115 53 115 63 100 C 70 85 75 75 88 75 L 103 75 C 106 75 109 70 112 75 C 114 77 116 77 118 75 L 121 75 L 126 40 L 131 110 L 136 60 L 141 75 L 180 75"
+    d="M68 23 Q68 40 55 50 Q55 80 78 82 Q78 88 88 88
+       L104 88 L110 68 L116 108 L122 58 L128 88 L144 88 L152 88"
     stroke="currentColor"
     stroke-width="5"
     stroke-linecap="round"
@@ -14,7 +16,7 @@
     fill="none"
   />
   <path
-    d="M 61 20 C 73 20 78 45 53 65"
+    d="M88 23 Q88 40 101 50 Q101 80 78 82"
     stroke="currentColor"
     stroke-width="5"
     stroke-linecap="round"
@@ -22,5 +24,5 @@
   />
 
   <!-- End chestpiece ball -->
-  <circle cx="187" cy="75" r="7.5" fill="currentColor"/>
+  <circle cx="161" cy="88" r="9" fill="currentColor"/>
 </svg>

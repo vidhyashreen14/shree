@@ -37,6 +37,6 @@ export const useTheme = create<ThemeState>()(
         set({ theme: t });
       },
     }),
-    { name: 'medicore-theme' },
-  ),
+    { name: 'medicore-theme' }
+  )
 );

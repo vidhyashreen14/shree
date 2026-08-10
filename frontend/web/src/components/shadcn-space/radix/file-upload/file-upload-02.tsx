@@ -73,12 +73,12 @@ const FileUpload = () => {
           clearInterval(interval);
           setFiles((prev) =>
             prev.map((f) =>
-              f.id === fileObj.id ? { ...f, progress: 100, status: 'completed' as const } : f,
-            ),
+              f.id === fileObj.id ? { ...f, progress: 100, status: 'completed' as const } : f
+            )
           );
         } else {
           setFiles((prev) =>
-            prev.map((f) => (f.id === fileObj.id ? { ...f, progress: currentProgress } : f)),
+            prev.map((f) => (f.id === fileObj.id ? { ...f, progress: currentProgress } : f))
           );
         }
       }, 400);
@@ -124,7 +124,7 @@ const FileUpload = () => {
               className={cn(
                 'relative group cursor-pointer overflow-hidden rounded-xl border-2 border-dashed transition-all duration-200',
                 'flex flex-col items-center justify-center p-8 gap-4 text-center',
-                isDragActive && 'border-primary bg-primary/5 shadow-inner',
+                isDragActive && 'border-primary bg-primary/5 shadow-inner'
               )}
             >
               <Input {...getInputProps()} />
@@ -162,7 +162,7 @@ const FileUpload = () => {
                     <div
                       className={cn(
                         'flex-1 min-w-0',
-                        fileObj.status === 'uploading' && 'space-y-1',
+                        fileObj.status === 'uploading' && 'space-y-1'
                       )}
                     >
                       <div className="flex flex-col gap-1">
@@ -183,7 +183,7 @@ const FileUpload = () => {
                               'flex items-center gap-1.5 font-medium leading-normal',
                               fileObj.status === 'completed'
                                 ? 'text-teal-400'
-                                : 'text-muted-foreground',
+                                : 'text-muted-foreground'
                             )}
                           >
                             {fileObj.status === 'uploading' && (

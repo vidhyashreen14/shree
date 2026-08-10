@@ -24,6 +24,6 @@ export const useHospitalSettings = create<HospitalSettings>()(
       licenseNumber: 'HOSP-MH-887421',
       updateSettings: (settings) => set((state) => ({ ...state, ...settings })),
     }),
-    { name: 'medicore-hospital-settings' },
-  ),
+    { name: 'medicore-hospital-settings' }
+  )
 );

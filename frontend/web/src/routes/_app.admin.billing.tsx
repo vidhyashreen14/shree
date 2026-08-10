@@ -129,7 +129,7 @@ function CategoryCard({ category }: { category: BillCategory }) {
               key={item.id}
               className={cn(
                 'flex items-center gap-3 rounded-lg border px-3 py-2.5 transition-all',
-                !item.enabled && 'opacity-50',
+                !item.enabled && 'opacity-50'
               )}
             >
               <Switch

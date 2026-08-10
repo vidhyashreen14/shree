@@ -1,6 +1,6 @@
-import { Icon } from "@iconify/react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Icon } from '@iconify/react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
 const StatisticsCard = () => {
   const EcommerceActions = [

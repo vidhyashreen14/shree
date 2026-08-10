@@ -169,7 +169,7 @@ function AdminRoles() {
                           'inline-grid h-7 w-7 place-items-center rounded-full',
                           row.roles[r.value]
                             ? 'bg-success/15 text-success'
-                            : 'bg-muted text-muted-foreground/50',
+                            : 'bg-muted text-muted-foreground/50'
                         )}
                       >
                         {row.roles[r.value] ? (

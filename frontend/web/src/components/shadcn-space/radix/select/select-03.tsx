@@ -43,6 +43,8 @@ const SelectStatusDemo = () => {
   const id = useId();
   const [value, setValue] = useState('In Progress');
 
+  const selectedStatus = statuses.find((s) => s.value === value);
+
   return (
     <div className="w-full max-w-xs space-y-2">
       <Label htmlFor={id}>Status</Label>

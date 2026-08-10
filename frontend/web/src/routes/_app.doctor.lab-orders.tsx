@@ -5,9 +5,10 @@ import { PageHeader } from '@/components/common/PageHeader';
 import { DataTable } from '@/components/common/DataTable';
 import { StatusChip } from '@/components/common/StatusChip';
 import { Button } from '@/components/ui/button';
-import { labOrders, patients } from '@/lib/mock/data';
+import { labOrders, patients, doctors } from '@/lib/mock/data';
 import type { LabOrder } from '@/lib/types';
 import { format } from 'date-fns';
+import { useAuth } from '@/lib/store/auth';
 import { FlaskConical, Download } from 'lucide-react';
 
 const toneFor: Record<LabOrder['status'], Parameters<typeof StatusChip>[0]['tone']> = {
@@ -17,14 +18,13 @@ const toneFor: Record<LabOrder['status'], Parameters<typeof StatusChip>[0]['tone
   completed: 'success',
 };
 
-import { useCurrentDoctorId } from '@/lib/store/doctors';
-
 export const Route = createFileRoute('/_app/doctor/lab-orders')({
   component: DoctorLabs,
 });
 
 function DoctorLabs() {
-  const doctorId = useCurrentDoctorId();
+  const user = useAuth((s) => s.user);
+  const doctorId = user?.role === 'doctor' ? user.id : doctors[0]!.id;
   const data = labOrders.filter((l) => l.doctorId === doctorId);
 
   const columns = useMemo<ColumnDef<LabOrder>[]>(
@@ -69,7 +69,7 @@ function DoctorLabs() {
           ) : null,
       },
     ],
-    [],
+    []
   );
 
   return (

@@ -1,38 +1,28 @@
-import { Bell, Moon, Search, Sun, RefreshCw } from 'lucide-react';
-import { useNavigate, useRouter } from '@tanstack/react-router';
+import { Bell, Menu, Moon, Search, Sun, LogOut, Settings, UserCog } from 'lucide-react';
+import { useNavigate } from '@tanstack/react-router';
 import { useAuth } from '@/lib/store/auth';
 import { useTheme } from '@/lib/store/theme';
 import { useNotifications } from '@/lib/store/notifications';
 import { useHospitalSettings } from '@/lib/store/hospitalSettings';
 import { useState } from 'react';
 import { CommandPalette } from './CommandPalette';
-import { toast } from 'sonner';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 export function Topbar({ onMenu }: { onMenu: () => void }) {
   const user = useAuth((s) => s.user);
+  const logout = useAuth((s) => s.logout);
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
-  const router = useRouter();
-  const unread = useNotifications(
-    (s) => s.notifications.filter((n: { read: boolean }) => !n.read).length,
-  );
+  const unread = useNotifications((s) => s.notifications.filter((n: any) => !n.read).length);
   const { logoUrl, name } = useHospitalSettings();
   const [openPalette, setOpenPalette] = useState(false);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-
-  const handleRefresh = async () => {
-    setIsRefreshing(true);
-    try {
-      await router.invalidate();
-      toast.success('Page refreshed successfully');
-    } catch {
-      toast.error('Failed to refresh page');
-    } finally {
-      setTimeout(() => {
-        setIsRefreshing(false);
-      }, 600);
-    }
-  };
 
   if (!user) return null;
 
@@ -40,42 +30,27 @@ export function Topbar({ onMenu }: { onMenu: () => void }) {
 
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-border bg-background/80 px-4 backdrop-blur-md sm:px-6">
-      <button type="button" className="menu-btn-reset" onClick={onMenu} aria-label="Open menu">
-        <div className="menu__background">
-          <div className="menu__icon">
-            <span />
-            <span />
-            <span />
-          </div>
-        </div>
+      <button
+        type="button"
+        className="rounded-md p-2 text-muted-foreground hover:bg-accent"
+        onClick={onMenu}
+        aria-label="Open menu"
+      >
+        <Menu className="h-5 w-5" />
       </button>
 
       {/* Logo + App Name */}
-      {user.role === 'superadmin' ? (
-        <div className="flex items-center gap-2 max-w-[200px]" title="MediCore Platform">
-          <span className="grid h-9 w-9 place-items-center rounded-xl overflow-hidden shadow-sm bg-primary/10 shrink-0">
-            <img src="/logo.png" alt="MediCore Logo" className="h-9 w-9 object-contain p-0.5" />
+      <div className="flex items-center gap-2 max-w-[200px]" title={name}>
+        <span className="grid h-9 w-9 place-items-center rounded-xl overflow-hidden shadow-sm bg-primary/10 shrink-0">
+          <img src={displayLogo} alt={`${name} Logo`} className="h-9 w-9 object-contain p-0.5" />
+        </span>
+        <div className="flex flex-col leading-tight hidden sm:flex min-w-0">
+          <span className="font-bold text-sm tracking-tight truncate">{name}</span>
+          <span className="text-[9px] uppercase tracking-widest text-muted-foreground truncate">
+            Hospital Suite
           </span>
-          <div className="flex flex-col leading-tight hidden sm:flex min-w-0">
-            <span className="font-bold text-sm tracking-tight">MediCore</span>
-            <span className="text-[9px] uppercase tracking-widest text-muted-foreground">
-              Super Admin
-            </span>
-          </div>
         </div>
-      ) : (
-        <div className="flex items-center gap-2 max-w-[200px]" title={name}>
-          <span className="grid h-9 w-9 place-items-center rounded-xl overflow-hidden shadow-sm bg-primary/10 shrink-0">
-            <img src={displayLogo} alt={`${name} Logo`} className="h-9 w-9 object-contain p-0.5" />
-          </span>
-          <div className="flex flex-col leading-tight hidden sm:flex min-w-0">
-            <span className="font-bold text-sm tracking-tight truncate">{name}</span>
-            <span className="text-[9px] uppercase tracking-widest text-muted-foreground truncate">
-              Hospital Suite
-            </span>
-          </div>
-        </div>
-      )}
+      </div>
 
       <div className="flex-1" />
 
@@ -99,16 +74,6 @@ export function Topbar({ onMenu }: { onMenu: () => void }) {
           aria-label="Search"
         >
           <Search className="h-5 w-5" />
-        </button>
-
-        <button
-          type="button"
-          onClick={handleRefresh}
-          className="rounded-md p-2 text-muted-foreground hover:bg-accent transition-colors"
-          aria-label="Refresh page"
-          title="Refresh page"
-        >
-          <RefreshCw className={`h-5 w-5 ${isRefreshing ? 'animate-spin' : ''}`} />
         </button>
 
         <button

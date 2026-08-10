@@ -5,7 +5,6 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { allowOnlyEmailChars, emailSchema } from '@/lib/validations';
 
 export const Route = createFileRoute('/forgot-password')({
   component: ForgotPage,
@@ -34,9 +33,6 @@ function ForgotPage() {
           className="mt-6 space-y-4"
           onSubmit={(e) => {
             e.preventDefault();
-            if (!emailSchema.safeParse(email).success) {
-              return toast.error('Enter a valid email address.');
-            }
             toast.success(`Verification code sent to ${email}`);
             navigate({ to: '/otp', search: { email } });
           }}
@@ -48,7 +44,7 @@ function ForgotPage() {
               type="email"
               required
               value={email}
-              onChange={(e) => setEmail(allowOnlyEmailChars(e.target.value))}
+              onChange={(e) => setEmail(e.target.value)}
               className="mt-1.5"
               placeholder="you@medicore.io"
             />

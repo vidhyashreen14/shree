@@ -34,47 +34,47 @@ const typeConfig: Record<NotificationType, { icon: React.ReactNode; color: strin
 const initialNotifications = [
   {
     id: 1,
-    avatar: "https://images.shadcnspace.com/assets/profiles/ben.webp",
-    initials: "BT",
-    name: "Ben Thompson",
-    action: "liked your post",
-    preview: "Building a design system with shadcn/ui...",
-    time: "2m ago",
+    avatar: 'https://images.shadcnspace.com/assets/profiles/ben.webp',
+    initials: 'BT',
+    name: 'Ben Thompson',
+    action: 'liked your post',
+    preview: 'Building a design system with shadcn/ui...',
+    time: '2m ago',
     unread: true,
-    type: "like" as NotificationType,
+    type: 'like' as NotificationType,
   },
   {
     id: 2,
-    avatar: "https://images.shadcnspace.com/assets/profiles/jessica.webp",
-    initials: "PN",
-    name: "Priya Nair",
-    action: "started following you",
+    avatar: 'https://images.shadcnspace.com/assets/profiles/jessica.webp',
+    initials: 'PN',
+    name: 'Priya Nair',
+    action: 'started following you',
     preview: null,
-    time: "1h ago",
+    time: '1h ago',
     unread: true,
-    type: "follow" as NotificationType,
+    type: 'follow' as NotificationType,
   },
   {
     id: 3,
-    avatar: "https://images.shadcnspace.com/assets/profiles/albert.webp",
-    initials: "DP",
-    name: "Daniel Park",
-    action: "commented on your post",
+    avatar: 'https://images.shadcnspace.com/assets/profiles/albert.webp',
+    initials: 'DP',
+    name: 'Daniel Park',
+    action: 'commented on your post',
     preview: '"Great work on the new design!"',
-    time: "3h ago",
+    time: '3h ago',
     unread: false,
-    type: "comment" as NotificationType,
+    type: 'comment' as NotificationType,
   },
   {
     id: 4,
-    avatar: "https://images.shadcnspace.com/assets/profiles/linda.webp",
-    initials: "LM",
-    name: "Linda Moore",
-    action: "mentioned you in a thread",
-    preview: "Hey @you, check out this component...",
-    time: "1d ago",
+    avatar: 'https://images.shadcnspace.com/assets/profiles/linda.webp',
+    initials: 'LM',
+    name: 'Linda Moore',
+    action: 'mentioned you in a thread',
+    preview: 'Hey @you, check out this component...',
+    time: '1d ago',
     unread: false,
-    type: "mention" as NotificationType,
+    type: 'mention' as NotificationType,
   },
 ];
 
@@ -83,8 +83,8 @@ const NotificationItem = ({ n }: { n: (typeof initialNotifications)[number] }) =
   return (
     <div
       className={cn(
-        "flex gap-3 px-4 py-3 hover:bg-muted/50 transition-colors cursor-pointer",
-        n.unread && "bg-muted dark:bg-muted/30"
+        'flex gap-3 px-4 py-3 hover:bg-muted/50 transition-colors cursor-pointer',
+        n.unread && 'bg-muted dark:bg-muted/30'
       )}
     >
       <div className="relative shrink-0 h-fit">
@@ -94,7 +94,7 @@ const NotificationItem = ({ n }: { n: (typeof initialNotifications)[number] }) =
         </Avatar>
         <span
           className={cn(
-            "absolute -bottom-0.5 -right-0.5 h-4 w-4 rounded-full flex items-center justify-center text-white",
+            'absolute -bottom-0.5 -right-0.5 h-4 w-4 rounded-full flex items-center justify-center text-white',
             config.color
           )}
         >

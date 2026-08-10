@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { AuditLog } from '../types';
+import { auditLogs as initialLogs } from '../mock/data';
 
 interface AuditState {
   logs: AuditLog[];
@@ -11,7 +12,7 @@ interface AuditState {
 export const useAudit = create<AuditState>()(
   persist(
     (set) => ({
-      logs: [],
+      logs: initialLogs,
 
       addLog: (data) => {
         const newLog: AuditLog = {
@@ -26,7 +27,7 @@ export const useAudit = create<AuditState>()(
       clearLogs: () => set({ logs: [] }),
     }),
     {
-      name: 'medicore-audit-logs-v2',
-    },
-  ),
+      name: 'medicore-audit-logs',
+    }
+  )
 );

@@ -47,13 +47,13 @@ const TransactionToastContent = () => {
           <div
             className={cn(
               'relative flex size-11 items-center justify-center rounded-full shadow-xs',
-              status === 'pending' ? 'bg-amber-300/20' : 'bg-teal-400/20',
+              status === 'pending' ? 'bg-amber-300/20' : 'bg-teal-400/20'
             )}
           >
             <Wallet
               className={cn(
                 'size-5 transition-colors duration-500',
-                status === 'pending' ? 'text-amber-400' : 'text-teal-400',
+                status === 'pending' ? 'text-amber-400' : 'text-teal-400'
               )}
             />
 
@@ -61,7 +61,7 @@ const TransactionToastContent = () => {
             <div
               className={cn(
                 'absolute -bottom-1 -right-1 flex size-4.5 items-center justify-center rounded-full shadow-sm transition-colors duration-500',
-                status === 'pending' ? 'bg-amber-300/80' : 'bg-teal-400/80',
+                status === 'pending' ? 'bg-amber-300/80' : 'bg-teal-400/80'
               )}
             >
               {status === 'pending' ? (

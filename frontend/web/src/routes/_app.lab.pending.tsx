@@ -30,7 +30,7 @@ function LabPending() {
       tab === 'all'
         ? labOrders.filter((l) => l.status !== 'completed')
         : labOrders.filter((l) => l.status === tab),
-    [tab],
+    [tab]
   );
 
   const columns = useMemo<ColumnDef<LabOrder>[]>(
@@ -78,7 +78,7 @@ function LabPending() {
         ),
       },
     ],
-    [],
+    []
   );
 
   return (

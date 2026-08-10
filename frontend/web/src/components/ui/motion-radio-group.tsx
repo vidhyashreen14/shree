@@ -19,7 +19,7 @@ function RadioGroup({ className, ...props }: React.ComponentProps<typeof BaseRad
 
 function RadioGroupItem({
   className,
-  transition = { type: "spring", stiffness: 200, damping: 16 },
+  transition = { type: 'spring', stiffness: 200, damping: 16 },
   ...props
 }: RadioGroupItemProps) {
   return (
@@ -28,7 +28,7 @@ function RadioGroupItem({
         data-slot="radio-group-item"
         className={cn(
           'border-input text-primary focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 aspect-square size-5 shrink-0 rounded-full border shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50',
-          className,
+          className
         )}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}

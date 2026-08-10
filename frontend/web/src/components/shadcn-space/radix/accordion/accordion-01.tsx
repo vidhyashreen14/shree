@@ -78,7 +78,7 @@ const AccordionDemo = () => (
                   className={cn(
                     'p-2.5 rounded-xl flex items-center justify-center',
                     item.bgColor,
-                    item.textColor,
+                    item.textColor
                   )}
                 >
                   <Icon className="h-5 w-5" />

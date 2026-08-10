@@ -3,18 +3,16 @@ import { useMemo } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
 import { PageHeader } from '@/components/common/PageHeader';
 import { DataTable } from '@/components/common/DataTable';
+import { doctors } from '@/lib/mock/data';
 import type { Doctor } from '@/lib/types';
 import { StatusChip } from '@/components/common/StatusChip';
 import { Star } from 'lucide-react';
-import { useDoctors } from '@/lib/store/doctors';
 
 export const Route = createFileRoute('/_app/admin/doctors')({
   component: AdminDoctors,
 });
 
 function AdminDoctors() {
-  const doctors = useDoctors();
-
   const columns = useMemo<ColumnDef<Doctor>[]>(
     () => [
       {
@@ -54,7 +52,7 @@ function AdminDoctors() {
           ),
       },
     ],
-    [],
+    []
   );
 
   return (

@@ -135,7 +135,7 @@ function MonitorModal({
             <span
               className={cn(
                 'grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br text-white',
-                role.color,
+                role.color
               )}
             >
               <Icon className="h-4 w-4" />
@@ -203,7 +203,7 @@ function MonitorDashboardsPage() {
         {ALL_MONITOR_ROLES.map((role) => {
           const Icon = role.icon;
           const staffCount = accounts.filter(
-            (a) => a.role === role.value && a.status === 'active',
+            (a) => a.role === role.value && a.status === 'active'
           ).length;
           return (
             <div
@@ -218,7 +218,7 @@ function MonitorDashboardsPage() {
                   <span
                     className={cn(
                       'grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br text-white shadow-sm',
-                      role.color,
+                      role.color
                     )}
                   >
                     <Icon className="h-5 w-5" />

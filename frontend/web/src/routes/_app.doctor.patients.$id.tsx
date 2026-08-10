@@ -1,19 +1,19 @@
 import { createFileRoute, Link, notFound, useNavigate } from '@tanstack/react-router';
+import { PageHeader } from '@/components/common/PageHeader';
 import { StatusChip } from '@/components/common/StatusChip';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { usePatients } from '@/lib/store/patients';
 import { useNurseQueue } from '@/lib/store/nurseQueue';
 import { useClinicalStore } from '@/lib/store/clinical';
 import { useAuth } from '@/lib/store/auth';
 import { useHospitalSettings } from '@/lib/store/hospitalSettings';
-import { useCurrentDoctorId } from '@/lib/store/doctors';
-import { useStaffProfiles, type StaffProfile } from '@/lib/store/staffProfiles';
-import { doctors, appointments, vitals } from '@/lib/mock/data';
+import { doctors, vitals, appointments } from '@/lib/mock/data';
 import { format } from 'date-fns';
-import { useState, useRef, useMemo } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { jsPDF } from 'jspdf';
 import {
@@ -26,6 +26,7 @@ import {
   FlaskConical,
   ClipboardPlus,
   HeartPulse,
+  FileText,
   Activity,
   Calendar,
   Printer,
@@ -34,11 +35,12 @@ import {
   Trash2,
   X,
   CheckCircle2,
+  Send,
   MessageSquare,
   Heart,
 } from 'lucide-react';
 import { toast } from 'sonner';
-import type { Prescription, LabOrder, NurseVitals, User } from '@/lib/types';
+import type { Prescription, LabOrder, NurseVitals } from '@/lib/types';
 
 export const Route = createFileRoute('/_app/doctor/patients/$id')({
   loader: ({ params }): { patient: import('@/lib/types').Patient } => {
@@ -66,61 +68,6 @@ export const doctorCredentials: Record<string, { qualification: string; kmc: str
   'u-doc-6': { qualification: 'MD, DVD (Dermatology)', kmc: 'KMC-67890' },
   'u-doc-7': { qualification: 'MBBS, MD (Emergency)', kmc: 'KMC-78901' },
 };
-
-export function getDoctorDetails(
-  docId: string,
-  loggedInUser: User | null,
-  staffProfiles: StaffProfile[],
-): { name: string; specialization: string; qualification: string; kmcNo: string } {
-  // 1. If it's the logged-in user
-  if (
-    loggedInUser &&
-    (loggedInUser.id === docId || loggedInUser.name === docId) &&
-    loggedInUser.role === 'doctor'
-  ) {
-    return {
-      name: loggedInUser.name.startsWith('Dr.') ? loggedInUser.name : `Dr. ${loggedInUser.name}`,
-      specialization: loggedInUser.specialization || loggedInUser.department || 'General Physician',
-      qualification: loggedInUser.qualification || 'MBBS, MD',
-      kmcNo: loggedInUser.registrationNumber || 'KMC-99999',
-    };
-  }
-
-  // 2. Check staff profiles store
-  const profile = staffProfiles.find(
-    (p) => p.id === docId || p.staffId === docId || `${p.firstName} ${p.lastName}` === docId,
-  );
-  if (profile) {
-    return {
-      name: `${profile.firstName} ${profile.lastName}`.startsWith('Dr.')
-        ? `${profile.firstName} ${profile.lastName}`
-        : `Dr. ${profile.firstName} ${profile.lastName}`,
-      specialization: profile.specialization || profile.department || 'General Physician',
-      qualification: profile.qualification || 'MBBS, MD',
-      kmcNo: profile.registrationNumber || 'KMC-99999',
-    };
-  }
-
-  // 3. Check mock doctors
-  const mockDoc = doctors.find((d) => d.id === docId || d.name === docId);
-  if (mockDoc) {
-    const creds = doctorCredentials[mockDoc.id] || { qualification: 'MBBS, MD', kmc: 'KMC-99999' };
-    return {
-      name: mockDoc.name.startsWith('Dr.') ? mockDoc.name : `Dr. ${mockDoc.name}`,
-      specialization: mockDoc.specialization,
-      qualification: creds.qualification,
-      kmcNo: creds.kmc,
-    };
-  }
-
-  // Fallback
-  return {
-    name: docId.startsWith('Dr.') ? docId : `Dr. ${docId}`,
-    specialization: 'General Physician',
-    qualification: 'MBBS, MD',
-    kmcNo: 'KMC-99999',
-  };
-}
 
 // ─── Prescription Print Pad Modal ─────────────────────────────────────────────
 
@@ -186,7 +133,7 @@ export function PrescriptionPrintModal({
             th { border-bottom: 2px solid #e2e8f0; color: #0d9488; font-size: 11px; font-weight: 700; text-transform: uppercase; padding: 8px 6px; text-align: left; }
             td { padding: 8px 6px; border-bottom: 1px solid #f1f5f9; font-size: 12px; }
             .follow-up-bar { background: #fffbeb; border: 1px solid #fef3c7; border-radius: 6px; padding: 10px; margin-top: 16px; font-size: 12px; }
-            .footer { margin-top: 48px; display: flex; justify-content: space-between; align-items: flex-end; padding-top: 16px; font-size: 11px; color: #666; }
+            .footer { margin-top: 48px; display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px dashed #e2e8f0; padding-top: 16px; font-size: 11px; color: #666; }
             .signature { text-align: right; }
             .sig-line { width: 150px; border-bottom: 1px solid #94a3b8; margin-bottom: 4px; }
           </style>
@@ -359,7 +306,7 @@ export function PrescriptionPrintModal({
       doc.text(
         `📅 Follow-up: Please consult again on or before ${data.followUp}`,
         25,
-        currentY + 6.5,
+        currentY + 6.5
       );
     }
 
@@ -410,7 +357,7 @@ export function PrescriptionPrintModal({
           .map((m, i) => `${i + 1}. ${m.name} (${m.dose}) - ${m.frequency} for ${m.duration}`)
           .join('\n');
         const msg = encodeURIComponent(
-          `*${name} — Rx Prescription*\n\nDoctor: ${data.doctorName}\nPatient: ${data.patientName} (${data.uhid})\nDiagnosis: ${data.diagnosis}\n\n*Medicines Prescribed:*\n${medsText}\n\n${data.followUp ? `*Follow-up Date:* ${data.followUp}\n` : ''}\nThank you for choosing ${name}! (Prescription PDF downloaded to your device)`,
+          `*${name} — Rx Prescription*\n\nDoctor: ${data.doctorName}\nPatient: ${data.patientName} (${data.uhid})\nDiagnosis: ${data.diagnosis}\n\n*Medicines Prescribed:*\n${medsText}\n\n${data.followUp ? `*Follow-up Date:* ${data.followUp}\n` : ''}\nThank you for choosing ${name}! (Prescription PDF downloaded to your device)`
         );
         window.open(`https://wa.me/${phoneNum}?text=${msg}`, '_blank');
         toast.success('Prescription PDF Downloaded! WhatsApp chat opened to send notification.', {
@@ -419,17 +366,17 @@ export function PrescriptionPrintModal({
       } else if (method === 'email') {
         const subject = encodeURIComponent(`Prescription PDF — ${data.rxNo} — ${data.patientName}`);
         const body = encodeURIComponent(
-          `Dear ${data.patientName},\n\nYour prescription PDF has been downloaded to your device. Please find it attached.\n\nDoctor: ${data.doctorName} (${data.specialization})\nDate: ${data.date}\nDiagnosis: ${data.diagnosis}\n\n${name}`,
+          `Dear ${data.patientName},\n\nYour prescription PDF has been downloaded to your device. Please find it attached.\n\nDoctor: ${data.doctorName} (${data.specialization})\nDate: ${data.date}\nDiagnosis: ${data.diagnosis}\n\n${name}`
         );
         window.location.href = `mailto:${data.patientEmail}?subject=${subject}&body=${body}`;
         toast.success(
           'Prescription PDF Downloaded! Email client opened. Please attach the downloaded PDF file.',
-          { duration: 6000 },
+          { duration: 6000 }
         );
       } else if (method === 'sms') {
         toast.info(
           'Prescription PDF Downloaded! Please send/attach it to the patient via SMS gateway.',
-          { duration: 5000 },
+          { duration: 5000 }
         );
       }
     } catch (err) {
@@ -771,6 +718,7 @@ export function PrescriptionPrintModal({
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'flex-end',
+                borderTop: '1px dashed #e2e8f0',
                 paddingTop: 16,
                 fontSize: 11,
                 color: '#666',
@@ -807,7 +755,8 @@ function PatientProfile() {
   const markConsultStatus = useNurseQueue((s) => s.markConsultStatus);
   const { prescriptions, labOrders, addPrescription, addLabOrder } = useClinicalStore();
 
-  const doctorId = useCurrentDoctorId();
+  const doctorId = user?.role === 'doctor' ? user.id : doctors[0]!.id;
+  const currentDoctor = doctors.find((d) => d.id === doctorId);
 
   // Active nurse queue entry
   const activeConsult = queue.find(
@@ -815,7 +764,7 @@ function PatientProfile() {
       entry.patientId === patient.id &&
       entry.vitalsStatus === 'done' &&
       entry.consultStatus !== 'completed' &&
-      entry.consultStatus !== 'cancelled',
+      entry.consultStatus !== 'cancelled'
   );
 
   // Local consult panel toggle
@@ -835,11 +784,11 @@ function PatientProfile() {
   const myLabs = labOrders.filter((l) => l.patientId === patient.id);
 
   // Extract vitals list dynamically (mock + live)
-  const myVitals = useMemo(() => {
+  const [myVitals, setMyVitals] = useState<any[]>([]);
+
+  useEffect(() => {
     // Combine static mock vitals with live queue entries vitals
-    const mockV = vitals.filter(
-      (v: unknown) => (v as { patientId: string }).patientId === patient.id,
-    );
+    const mockV = vitals.filter((v: any) => v.patientId === patient.id);
     const liveV = queue
       .filter((e) => e.patientId === patient.id && e.vitalsStatus === 'done' && e.vitals)
       .map((e) => ({
@@ -856,12 +805,16 @@ function PatientProfile() {
         bloodSugar: Number(e.vitals!.sugar) || 100,
         notes: `Chief Complaint: ${e.vitals!.chiefComplaint}`,
       }));
-    return [...liveV, ...mockV];
+
+    setMyVitals([...liveV, ...mockV]);
   }, [queue, patient.id]);
 
-  const myAppts = appointments.filter(
-    (a: unknown) => (a as { patientId: string }).patientId === patient.id,
-  );
+  const myAppts = appointments.filter((a: any) => a.patientId === patient.id);
+
+  const credentials = doctorCredentials[doctorId] ?? {
+    qualification: 'MBBS, MD',
+    kmc: 'KMC-99999',
+  };
 
   const handleAddMedRow = () => {
     setMedsList((prev) => [
@@ -880,7 +833,7 @@ function PatientProfile() {
 
   const handleLabToggle = (test: string) => {
     setSelectedLabs((prev) =>
-      prev.includes(test) ? prev.filter((t) => t !== test) : [...prev, test],
+      prev.includes(test) ? prev.filter((t) => t !== test) : [...prev, test]
     );
   };
 
@@ -928,7 +881,6 @@ function PatientProfile() {
     }
 
     // Assemble print payload
-    const docDetails = getDoctorDetails(doctorId, user, useStaffProfiles.getState().profiles);
     setPrintData({
       rxNo: `RX-${Date.now().toString().slice(-6)}`,
       date: format(new Date(), 'dd MMM yyyy, hh:mm a'),
@@ -936,10 +888,10 @@ function PatientProfile() {
       uhid: patient.mrn,
       age: patient.age,
       gender: patient.gender,
-      doctorName: docDetails.name,
-      specialization: docDetails.specialization,
-      qualification: docDetails.qualification,
-      kmcNo: docDetails.kmcNo,
+      doctorName: currentDoctor?.name ?? 'Doctor',
+      specialization: currentDoctor?.specialization ?? 'General Physician',
+      qualification: credentials.qualification,
+      kmcNo: credentials.kmc,
       vitals: activeConsult?.vitals,
       diagnosis: diagnosis.trim(),
       medicines: filledMeds,
@@ -1162,7 +1114,7 @@ function PatientProfile() {
                           'flex items-center gap-2 rounded-md border px-2.5 py-1.5 text-left text-xs transition-all',
                           isChecked
                             ? 'border-primary bg-primary/5 text-primary font-semibold'
-                            : 'border-border hover:bg-accent/40 text-muted-foreground',
+                            : 'border-border hover:bg-accent/40 text-muted-foreground'
                         )}
                       >
                         {test}
@@ -1340,28 +1292,19 @@ function PatientProfile() {
           <div className="surface-elevated p-5">
             <h3 className="font-display font-semibold">Visit timeline</h3>
             <ol className="relative mt-6 border-l-2 border-border pl-6">
-              {myAppts.slice(0, 8).map((a: unknown) => {
-                const appt = a as {
-                  id: string;
-                  reason: string;
-                  type: string;
-                  date: string;
-                  docName?: string;
-                };
-                return (
-                  <li key={appt.id} className="mb-6 last:mb-0">
-                    <span className="absolute -left-[7px] mt-1.5 h-3 w-3 rounded-full bg-primary ring-4 ring-background" />
-                    <div className="flex flex-wrap items-center gap-2">
-                      <p className="text-sm font-semibold">{appt.reason}</p>
-                      <StatusChip tone="primary">{appt.type}</StatusChip>
-                    </div>
-                    <p className="mt-0.5 text-xs text-muted-foreground">
-                      <Calendar className="mr-1 inline h-3 w-3" />
-                      {format(new Date(appt.date), 'MMM d, yyyy · p')}
-                    </p>
-                  </li>
-                );
-              })}
+              {myAppts.slice(0, 8).map((a: any) => (
+                <li key={a.id} className="mb-6 last:mb-0">
+                  <span className="absolute -left-[7px] mt-1.5 h-3 w-3 rounded-full bg-primary ring-4 ring-background" />
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="text-sm font-semibold">{a.reason}</p>
+                    <StatusChip tone="primary">{a.type}</StatusChip>
+                  </div>
+                  <p className="mt-0.5 text-xs text-muted-foreground">
+                    <Calendar className="mr-1 inline h-3 w-3" />
+                    {format(new Date(a.date), 'MMM d, yyyy · p')}
+                  </p>
+                </li>
+              ))}
             </ol>
           </div>
         </TabsContent>
@@ -1388,11 +1331,11 @@ function PatientProfile() {
                       size="sm"
                       variant="outline"
                       onClick={() => {
-                        const docDetails = getDoctorDetails(
-                          r.doctorId,
-                          user,
-                          useStaffProfiles.getState().profiles,
-                        );
+                        const dr = doctors.find((d) => d.id === r.doctorId) || doctors[0];
+                        const creds = doctorCredentials[dr!.id] || {
+                          qualification: 'MBBS, MD',
+                          kmc: 'KMC-99999',
+                        };
                         setPrintData({
                           rxNo: `RX-${r.id.slice(-6)}`,
                           date: format(new Date(r.date), 'dd MMM yyyy, hh:mm a'),
@@ -1400,10 +1343,10 @@ function PatientProfile() {
                           uhid: patient.mrn,
                           age: patient.age,
                           gender: patient.gender,
-                          doctorName: docDetails.name,
-                          specialization: docDetails.specialization,
-                          qualification: docDetails.qualification,
-                          kmcNo: docDetails.kmcNo,
+                          doctorName: dr!.name,
+                          specialization: dr!.specialization,
+                          qualification: creds.qualification,
+                          kmcNo: creds.kmc,
                           diagnosis: r.diagnosis,
                           medicines: r.medicines,
                           labTests: [],

@@ -14,7 +14,7 @@ export function PageHeader({ title, description, actions, className, eyebrow }: 
     <div
       className={cn(
         'grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4 pb-6 sm:flex sm:flex-wrap sm:items-end sm:justify-between',
-        className,
+        className
       )}
     >
       <div className="min-w-0">
