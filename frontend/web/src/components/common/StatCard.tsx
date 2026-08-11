@@ -7,7 +7,7 @@ interface Props {
   label?: string;
   title?: string;
   value: string | number;
-  icon: ComponentType<{ className?: string }> | React.ReactNode;
+  icon: any;
   trend?: number; // % change
   hint?: string;
   description?: string;
@@ -43,7 +43,7 @@ export function StatCard({
     if (React.isValidElement(icon)) {
       return icon;
     }
-    const IconComponent = icon as ComponentType<{ className?: string }>;
+    const IconComponent = icon as ComponentType<any>;
     return <IconComponent className="h-5 w-5" />;
   };
 
@@ -61,9 +61,7 @@ export function StatCard({
                 <span
                   className={cn(
                     'inline-flex items-center gap-0.5 rounded-full px-1.5 py-0.5 font-semibold',
-                    trend >= 0
-                      ? 'bg-success/10 text-success'
-                      : 'bg-destructive/10 text-destructive',
+                    trend >= 0 ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'
                   )}
                 >
                   {trend >= 0 ? (

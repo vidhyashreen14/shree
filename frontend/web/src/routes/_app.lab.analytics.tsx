@@ -1,31 +1,22 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useState, useMemo } from "react";
-import { PageHeader } from "@/components/common/PageHeader";
-import { Button } from "@/components/ui/button";
+import { createFileRoute } from '@tanstack/react-router';
+import { useState, useMemo } from 'react';
+import { PageHeader } from '@/components/common/PageHeader';
+import { Button } from '@/components/ui/button';
 import {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   CalendarDays,
   ChevronDown,
   FileSpreadsheet,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   RefreshCw,
   TrendingUp,
   Users,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Building2,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Calendar,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   IndianRupee,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Activity,
   Flame,
-  RotateCcw,
-} from "lucide-react";
+} from 'lucide-react';
 import {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   LineChart,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Line,
   XAxis,
   YAxis,
@@ -35,29 +26,29 @@ import {
   Legend,
   AreaChart,
   Area,
-} from "recharts";
-import { toast } from "sonner";
+} from 'recharts';
+import { toast } from 'sonner';
 
-import { z } from "zod";
+import { z } from 'zod';
 
 const searchSchema = z.object({
-  tab: z.enum(["sales", "registrations"]).catch("sales"),
+  tab: z.enum(['sales', 'registrations']).catch('sales'),
 });
 
-export const Route = createFileRoute("/_app/lab/analytics")({
+export const Route = createFileRoute('/_app/lab/analytics')({
   validateSearch: (search) => searchSchema.parse(search),
   component: LabAnalytics,
 });
 
 // ─── Constants & Mock Data ───────────────────────────────────────────────────
-const BRANCHES = ["Select Branch", "Koramangala", "Indiranagar", "Whitefield", "Jayanagar"];
+const BRANCHES = ['Select Branch', 'Koramangala', 'Indiranagar', 'Whitefield', 'Jayanagar'];
 
 interface SalesItem {
   id: string;
   date: string;
   patientName: string;
   tests: string[];
-  paymentMode: "Cash" | "UPI" | "Card" | "NetBanking";
+  paymentMode: 'Cash' | 'UPI' | 'Card' | 'NetBanking';
   gross: number;
   discount: number;
   net: number;
@@ -66,31 +57,31 @@ interface SalesItem {
 const MOCK_SALES: Record<string, SalesItem[]> = {
   Koramangala: [
     {
-      id: "S-001",
-      date: "2026-07-11",
-      patientName: "Aarav Sharma",
-      tests: ["CBC", "Lipid Panel"],
-      paymentMode: "UPI",
+      id: 'S-001',
+      date: '2026-07-11',
+      patientName: 'Aarav Sharma',
+      tests: ['CBC', 'Lipid Panel'],
+      paymentMode: 'UPI',
       gross: 1800,
       discount: 100,
       net: 1700,
     },
     {
-      id: "S-002",
-      date: "2026-07-11",
-      patientName: "Arjun Mehta",
-      tests: ["Thyroid Profile"],
-      paymentMode: "Cash",
+      id: 'S-002',
+      date: '2026-07-11',
+      patientName: 'Arjun Mehta',
+      tests: ['Thyroid Profile'],
+      paymentMode: 'Cash',
       gross: 1200,
       discount: 50,
       net: 1150,
     },
     {
-      id: "S-003",
-      date: "2026-07-11",
-      patientName: "Liam Carter",
-      tests: ["Vitamin D", "B12"],
-      paymentMode: "Card",
+      id: 'S-003',
+      date: '2026-07-11',
+      patientName: 'Liam Carter',
+      tests: ['Vitamin D', 'B12'],
+      paymentMode: 'Card',
       gross: 2400,
       discount: 200,
       net: 2200,
@@ -98,21 +89,21 @@ const MOCK_SALES: Record<string, SalesItem[]> = {
   ],
   Indiranagar: [
     {
-      id: "S-004",
-      date: "2026-07-11",
-      patientName: "Saanvi Patel",
-      tests: ["HbA1c"],
-      paymentMode: "UPI",
+      id: 'S-004',
+      date: '2026-07-11',
+      patientName: 'Saanvi Patel',
+      tests: ['HbA1c'],
+      paymentMode: 'UPI',
       gross: 800,
       discount: 0,
       net: 800,
     },
     {
-      id: "S-005",
-      date: "2026-07-11",
-      patientName: "Apollo Hospital Group",
-      tests: ["HbA1c", "TSH", "Urine R/M"],
-      paymentMode: "NetBanking",
+      id: 'S-005',
+      date: '2026-07-11',
+      patientName: 'Apollo Hospital Group',
+      tests: ['HbA1c', 'TSH', 'Urine R/M'],
+      paymentMode: 'NetBanking',
       gross: 4200,
       discount: 420,
       net: 3780,
@@ -120,21 +111,21 @@ const MOCK_SALES: Record<string, SalesItem[]> = {
   ],
   Whitefield: [
     {
-      id: "S-006",
-      date: "2026-07-11",
-      patientName: "Diya Kapoor",
-      tests: ["Urinalysis"],
-      paymentMode: "Card",
+      id: 'S-006',
+      date: '2026-07-11',
+      patientName: 'Diya Kapoor',
+      tests: ['Urinalysis'],
+      paymentMode: 'Card',
       gross: 600,
       discount: 0,
       net: 600,
     },
     {
-      id: "S-007",
-      date: "2026-07-11",
-      patientName: "Manipal Group Partner",
-      tests: ["Lipid Panel", "CBC"],
-      paymentMode: "NetBanking",
+      id: 'S-007',
+      date: '2026-07-11',
+      patientName: 'Manipal Group Partner',
+      tests: ['Lipid Panel', 'CBC'],
+      paymentMode: 'NetBanking',
       gross: 3600,
       discount: 360,
       net: 3240,
@@ -142,11 +133,11 @@ const MOCK_SALES: Record<string, SalesItem[]> = {
   ],
   Jayanagar: [
     {
-      id: "S-008",
-      date: "2026-07-11",
-      patientName: "Kabir Joshi",
-      tests: ["CBC"],
-      paymentMode: "Cash",
+      id: 'S-008',
+      date: '2026-07-11',
+      patientName: 'Kabir Joshi',
+      tests: ['CBC'],
+      paymentMode: 'Cash',
       gross: 500,
       discount: 0,
       net: 500,
@@ -155,31 +146,31 @@ const MOCK_SALES: Record<string, SalesItem[]> = {
 };
 
 const MONTHLY_REGISTRATIONS = [
-  { month: "Jan", b2c: 180, b2b: 240, total: 420 },
-  { month: "Feb", b2c: 210, b2b: 290, total: 500 },
-  { month: "Mar", b2c: 290, b2b: 340, total: 630 },
-  { month: "Apr", b2c: 250, b2b: 310, total: 560 },
-  { month: "May", b2c: 320, b2b: 410, total: 730 },
-  { month: "Jun", b2c: 340, b2b: 450, total: 790 },
-  { month: "Jul", b2c: 390, b2b: 480, total: 870 },
+  { month: 'Jan', b2c: 180, b2b: 240, total: 420 },
+  { month: 'Feb', b2c: 210, b2b: 290, total: 500 },
+  { month: 'Mar', b2c: 290, b2b: 340, total: 630 },
+  { month: 'Apr', b2c: 250, b2b: 310, total: 560 },
+  { month: 'May', b2c: 320, b2b: 410, total: 730 },
+  { month: 'Jun', b2c: 340, b2b: 450, total: 790 },
+  { month: 'Jul', b2c: 390, b2b: 480, total: 870 },
 ];
 
 const PEAK_DAYS = [
-  { day: "Wednesday", avgPatients: 68, description: "Mid-week corporate checkup camps" },
-  { day: "Monday", avgPatients: 61, description: "Weekend backlog triage referrals" },
-  { day: "Friday", avgPatients: 54, description: "Routine health screening flow" },
+  { day: 'Wednesday', avgPatients: 68, description: 'Mid-week corporate checkup camps' },
+  { day: 'Monday', avgPatients: 61, description: 'Weekend backlog triage referrals' },
+  { day: 'Friday', avgPatients: 54, description: 'Routine health screening flow' },
 ];
 
 function LabAnalytics() {
   const { tab } = Route.useSearch();
 
   // Sales section states
-  const [salesBranch, setSalesBranch] = useState("Select Branch");
-  const [fromDate, setFromDate] = useState("2026-07-11");
-  const [toDate, setToDate] = useState("2026-07-11");
+  const [salesBranch, setSalesBranch] = useState('Select Branch');
+  const [fromDate, setFromDate] = useState('2026-07-11');
+  const [toDate, setToDate] = useState('2026-07-11');
 
   const salesData = useMemo(() => {
-    if (salesBranch === "Select Branch") {
+    if (salesBranch === 'Select Branch') {
       // Flatten all branches
       return Object.values(MOCK_SALES).flat();
     }
@@ -195,60 +186,18 @@ function LabAnalytics() {
 
   // Actions
   const handleClearSalesFilters = () => {
-    setSalesBranch("Select Branch");
-    setFromDate("2026-07-11");
-    setToDate("2026-07-11");
-    toast.success("Sales filters cleared");
+    setSalesBranch('Select Branch');
+    setFromDate('2026-07-11');
+    setToDate('2026-07-11');
+    toast.success('Sales filters cleared');
   };
 
-  const handleExportCSV = () => {
-    if (salesBranch === "Select Branch") {
-      toast.warning("Please select a specific branch to export its daily sales report");
+  const handleExportExcel = () => {
+    if (salesBranch === 'Select Branch') {
+      toast.warning('Please select a specific branch to export its daily sales report');
       return;
     }
-
-    const headers = [
-      "ID",
-      "Patient / Client",
-      "Diagnostics",
-      "Gateway Mode",
-      "Gross",
-      "Discount",
-      "Net Amount",
-    ];
-    const rows = salesData.map((item) => [
-      item.id,
-      item.patientName,
-      item.tests.join("; "),
-      item.paymentMode,
-      item.gross,
-      item.discount,
-      item.net,
-    ]);
-
-    const csvContent = [
-      headers.join(","),
-      ...rows.map((e) =>
-        e
-          .map(String)
-          .map((s) => `"${s.replace(/"/g, '""')}"`)
-          .join(",")
-      ),
-    ].join("\n");
-
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.setAttribute("href", url);
-    link.setAttribute(
-      "download",
-      `sales_report_${salesBranch.replace(/\s+/g, "_")}_${new Date().toISOString().split("T")[0]}.csv`
-    );
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    toast.success(`Exported daily sales report for ${salesBranch} to CSV`);
+    toast.success(`Exporting raw daily sales report for ${salesBranch} to Excel...`);
   };
 
   return (
@@ -258,14 +207,14 @@ function LabAnalytics() {
         eyebrow="Lab · Reports & Insights"
         title="Analytics Dashboard"
         description={
-          tab === "sales"
-            ? "Aggregated financial daily sales metrics by branch."
-            : "Laboratory traffic volume and corporate B2B vs direct B2C patient flow trend metrics."
+          tab === 'sales'
+            ? 'Aggregated financial daily sales metrics by branch.'
+            : 'Laboratory traffic volume and corporate B2B vs direct B2C patient flow trend metrics.'
         }
       />
 
       {/* ─── SECTION 1: Branch Daily Sales Report ─────────────────────── */}
-      {tab === "sales" && (
+      {tab === 'sales' && (
         <div className="surface-elevated p-5 space-y-4">
           <div>
             <h3 className="font-display font-semibold text-base">Branch Daily Sales Report</h3>
@@ -289,11 +238,11 @@ function LabAnalytics() {
                   id="sales-branch-select"
                   value={salesBranch}
                   onChange={(e) => setSalesBranch(e.target.value)}
-                  className="appearance-none rounded-lg border border-border bg-background px-3 py-2 text-xs text-primary font-medium outline-none pr-8 min-w-[150px] h-9"
+                  className="appearance-none rounded-lg border border-border bg-background px-3 py-2 text-xs text-foreground outline-none pr-8 min-w-[150px] h-9"
                 >
                   {BRANCHES.map((b) => (
                     <option key={b} value={b}>
-                      {b === "Select Branch" ? "All Branches" : b}
+                      {b === 'Select Branch' ? 'All Branches' : b}
                     </option>
                   ))}
                 </select>
@@ -310,12 +259,13 @@ function LabAnalytics() {
                 From Date
               </label>
               <div className="relative flex items-center rounded-lg border border-border bg-background px-3 h-9">
+                <CalendarDays className="h-3.5 w-3.5 text-muted-foreground shrink-0 mr-1.5" />
                 <input
                   id="sales-from-date"
                   type="date"
                   value={fromDate}
                   onChange={(e) => setFromDate(e.target.value)}
-                  className="bg-transparent text-xs text-primary font-medium outline-none w-28"
+                  className="bg-transparent text-xs text-foreground outline-none w-28"
                 />
               </div>
             </div>
@@ -329,12 +279,13 @@ function LabAnalytics() {
                 To Date
               </label>
               <div className="relative flex items-center rounded-lg border border-border bg-background px-3 h-9">
+                <CalendarDays className="h-3.5 w-3.5 text-muted-foreground shrink-0 mr-1.5" />
                 <input
                   id="sales-to-date"
                   type="date"
                   value={toDate}
                   onChange={(e) => setToDate(e.target.value)}
-                  className="bg-transparent text-xs text-primary font-medium outline-none w-28"
+                  className="bg-transparent text-xs text-foreground outline-none w-28"
                 />
               </div>
             </div>
@@ -343,12 +294,12 @@ function LabAnalytics() {
             <div className="flex items-center gap-2 pb-0.5 ml-auto">
               <Button
                 size="sm"
-                onClick={handleExportCSV}
+                onClick={handleExportExcel}
                 className="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white"
                 id="btn-sales-export"
               >
                 <FileSpreadsheet className="h-4 w-4" />
-                Export CSV
+                Excel
               </Button>
               <Button
                 size="sm"
@@ -357,7 +308,7 @@ function LabAnalytics() {
                 className="flex items-center gap-1.5"
                 id="btn-sales-clear"
               >
-                <RotateCcw className="h-3.5 w-3.5" />
+                <RefreshCw className="h-3.5 w-3.5" />
                 Clear
               </Button>
             </div>
@@ -367,25 +318,25 @@ function LabAnalytics() {
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             {[
               {
-                label: "Gross Billing",
-                value: `₹${salesSummary.gross.toLocaleString("en-IN")}`,
-                desc: "Calculated before discount reductions",
-                color: "text-primary",
-                bg: "bg-primary/5 border-primary/10",
+                label: 'Gross Billing',
+                value: `₹${salesSummary.gross.toLocaleString('en-IN')}`,
+                desc: 'Calculated before discount reductions',
+                color: 'text-primary',
+                bg: 'bg-primary/5 border-primary/10',
               },
               {
-                label: "Discount Deductible",
-                value: `₹${salesSummary.discount.toLocaleString("en-IN")}`,
-                desc: "Promotional & institutional offsets",
-                color: "text-rose-600 dark:text-rose-400",
-                bg: "bg-rose-50/50 dark:bg-rose-950/20 border-rose-100 dark:border-rose-900/30",
+                label: 'Discount Deductible',
+                value: `₹${salesSummary.discount.toLocaleString('en-IN')}`,
+                desc: 'Promotional & institutional offsets',
+                color: 'text-rose-600 dark:text-rose-400',
+                bg: 'bg-rose-50/50 dark:bg-rose-950/20 border-rose-100 dark:border-rose-900/30',
               },
               {
-                label: "Net Revenue Sales",
-                value: `₹${salesSummary.net.toLocaleString("en-IN")}`,
-                desc: "Final captured liquid cash flow yield",
-                color: "text-teal-600 dark:text-teal-400",
-                bg: "bg-teal-50/50 dark:bg-teal-950/20 border-teal-100 dark:border-teal-900/30",
+                label: 'Net Revenue Sales',
+                value: `₹${salesSummary.net.toLocaleString('en-IN')}`,
+                desc: 'Final captured liquid cash flow yield',
+                color: 'text-teal-600 dark:text-teal-400',
+                bg: 'bg-teal-50/50 dark:bg-teal-950/20 border-teal-100 dark:border-teal-900/30',
               },
             ].map((card) => (
               <div key={card.label} className={`rounded-xl border p-4 ${card.bg}`}>
@@ -434,17 +385,17 @@ function LabAnalytics() {
                     </td>
                     <td className="px-4 py-2.5 font-semibold text-sm">{item.patientName}</td>
                     <td className="px-4 py-2.5 text-xs text-muted-foreground">
-                      {item.tests.join(", ")}
+                      {item.tests.join(', ')}
                     </td>
                     <td className="px-4 py-2.5 text-xs">{item.paymentMode}</td>
                     <td className="px-4 py-2.5 text-right font-medium">
-                      ₹{item.gross.toLocaleString("en-IN")}
+                      ₹{item.gross.toLocaleString('en-IN')}
                     </td>
                     <td className="px-4 py-2.5 text-right text-xs text-rose-500">
-                      -₹{item.discount.toLocaleString("en-IN")}
+                      -₹{item.discount.toLocaleString('en-IN')}
                     </td>
                     <td className="px-4 py-2.5 text-right font-bold text-teal-600 dark:text-teal-400">
-                      ₹{item.net.toLocaleString("en-IN")}
+                      ₹{item.net.toLocaleString('en-IN')}
                     </td>
                   </tr>
                 ))}
@@ -465,7 +416,7 @@ function LabAnalytics() {
       )}
 
       {/* ─── SECTION 2: Registration Analytics ───────────────────────── */}
-      {tab === "registrations" && (
+      {tab === 'registrations' && (
         <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
           {/* Trend plot */}
           <div className="surface-elevated p-5 lg:col-span-2 space-y-4 flex flex-col justify-between">
@@ -512,8 +463,8 @@ function LabAnalytics() {
                   />
                   <Tooltip
                     contentStyle={{
-                      background: "var(--color-popover)",
-                      border: "1px solid var(--color-border)",
+                      background: 'var(--color-popover)',
+                      border: '1px solid var(--color-border)',
                       borderRadius: 10,
                       fontSize: 11,
                     }}

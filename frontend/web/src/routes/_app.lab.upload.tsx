@@ -1,47 +1,24 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { PageHeader } from "@/components/common/PageHeader";
-import { Button } from "@/components/ui/button";
-import { labOrders, patients, doctors, TEST_DATA, getTestRows, getInterpretation } from "@/lib/mock/data";
+import { createFileRoute } from '@tanstack/react-router';
+import { PageHeader } from '@/components/common/PageHeader';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import {
-  FileText,
-  FlaskConical,
-  CheckCircle2,
-  Clock,
-  Loader2,
-  XCircle,
-  ChevronLeft,
-  ChevronRight,
-  X,
-  Printer,
-  User,
-  Activity,
-  Beaker,
-  CalendarDays,
-  Stethoscope,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  ChevronDown,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  ChevronUp,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  Download,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  Trash2,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  Eye,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  RefreshCw,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  AlertCircle,
-} from "lucide-react";
-import { toast } from "sonner";
-import { useState} from "react";
-import { createPortal } from "react-dom";
-import { allowOnlyResultChars, sanitizeText } from "@/lib/validations";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { labOrders, patients, doctors, TEST_DATA, getTestRows, getInterpretation } from '@/lib/mock/data';
+import { UploadCloud } from 'lucide-react';
+import { toast } from 'sonner';
+import { useState } from 'react';
 
 export const Route = createFileRoute('/_app/lab/upload')({
   component: LabUpload,
 });
-
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function getDynamicInterpretation(
@@ -515,244 +492,72 @@ function ReportModal({
 // Main page
 // ─────────────────────────────────────────────────────────────────────────────
 function LabUpload() {
-  const [generating, setGenerating] = useState<string | null>(null);
-  const [generated, setGenerated] = useState<Set<string>>(new Set());
-  const [page, setPage] = useState(1);
-  const [reportOrder, setReportOrder] = useState<Order | null>(null);
-
-  const totalPages = Math.ceil(allOrders.length / PAGE_SIZE);
-  const pageOrders = allOrders.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-  const startEntry = (page - 1) * PAGE_SIZE + 1;
-  const endEntry = Math.min(page * PAGE_SIZE, allOrders.length);
-
-  /** Step 1 – show spinner 1.2 s, then open modal */
-  function handleGenerate(order: Order) {
-    setGenerating(order.id);
-    setTimeout(() => {
-      setGenerating(null);
-      setReportOrder(order);
-    }, 1200);
-  }
-
-  /** Step 2 – user clicks "Confirm & Save" inside the modal */
-  function handleConfirm() {
-    if (!reportOrder) return;
-    const patient = patients.find((p) => p.id === reportOrder.patientId);
-    setGenerated((prev) => new Set(prev).add(reportOrder.id));
-    setReportOrder(null);
-    toast.success(`Report saved for ${patient?.name ?? "patient"}`, {
-      description: `Lab order ${reportOrder.id} has been finalised and stored.`,
-    });
-  }
-
+  const [file, setFile] = useState<File | null>(null);
   return (
     <>
       <PageHeader
-        title="Generate Lab Report"
-        description="Review all lab orders. Generate reports for patients whose samples have been collected."
+        title="Upload lab report"
+        description="Attach a finalised report to a patient's lab order."
       />
 
-      {/* ── Table card ── */}
-      <div className="surface-elevated overflow-hidden rounded-2xl">
-        {/* header bar */}
-        <div className="flex items-center gap-2 border-b border-border bg-muted/40 px-5 py-3">
-          <FlaskConical className="h-4 w-4 text-primary" />
-          <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-            Patient Lab Orders
-          </span>
-          <span className="ml-auto rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary">
-            {allOrders.length} orders
-          </span>
-        </div>
-
-        {/* table */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-border bg-muted/20 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                <th className="px-5 py-3 text-left">Order ID</th>
-                <th className="px-5 py-3 text-left">Patient Name</th>
-                <th className="px-5 py-3 text-left">Samples / Tests</th>
-                <th className="px-5 py-3 text-left">Sample Status</th>
-                <th className="px-5 py-3 text-center">Generate Report</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {pageOrders.map((order) => {
-                const patient = patients.find((p) => p.id === order.patientId);
-                const isCollected = order.status === "sample-collected";
-                const isGenerating = generating === order.id;
-                const isDone = generated.has(order.id);
-
-                const initials = (patient?.name ?? "?")
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join("")
-                  .slice(0, 2)
-                  .toUpperCase();
-
-                const statusLabel =
-                  order.status === "sample-collected"
-                    ? "Collected"
-                    : order.status === "in-progress"
-                      ? "In Progress"
-                      : order.status === "completed"
-                        ? "Completed"
-                        : "Pending";
-
+      <form
+        className="surface-elevated grid grid-cols-1 gap-5 p-6 sm:grid-cols-2"
+        onSubmit={(e) => {
+          e.preventDefault();
+          toast.success('Report uploaded');
+        }}
+      >
+        <div>
+          <Label>Lab order</Label>
+          <Select defaultValue={labOrders[0]!.id}>
+            <SelectTrigger className="mt-1.5">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {labOrders.map((o) => {
+                const p = patients.find((x) => x.id === o.patientId);
                 return (
-                  <tr key={order.id} className="group transition-colors hover:bg-muted/30">
-                    {/* Order ID */}
-                    <td className="px-5 py-4">
-                      <span className="font-mono text-xs font-medium text-muted-foreground">
-                        {order.id}
-                      </span>
-                    </td>
-
-                    {/* Patient Name */}
-                    <td className="px-5 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
-                          {initials}
-                        </div>
-                        <div>
-                          <p className="font-semibold text-foreground">
-                            {patient?.name ?? "Unknown Patient"}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            MRN: {patient?.mrn ?? "—"}
-                          </p>
-                        </div>
-                      </div>
-                    </td>
-
-                    {/* Samples / Tests */}
-                    <td className="px-5 py-4">
-                      <div className="flex flex-wrap gap-1.5">
-                        {order.tests.map((test) => (
-                          <span
-                            key={test}
-                            className="inline-flex items-center rounded-md bg-secondary px-2 py-0.5 text-[11px] font-medium text-secondary-foreground ring-1 ring-inset ring-border"
-                          >
-                            {test}
-                          </span>
-                        ))}
-                      </div>
-                    </td>
-
-                    {/* Status */}
-                    <td className="px-5 py-4">
-                      {isCollected ? (
-                        <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-600 ring-1 ring-emerald-500/20">
-                          <CheckCircle2 className="h-3.5 w-3.5" /> {statusLabel}
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-3 py-1 text-xs font-semibold text-amber-600 ring-1 ring-amber-500/20">
-                          <Clock className="h-3.5 w-3.5" /> {statusLabel}
-                        </span>
-                      )}
-                    </td>
-
-                    {/* Generate Report */}
-                    <td className="px-5 py-4 text-center">
-                      {isDone ? (
-                        <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-500/10 px-3 py-1.5 text-xs font-semibold text-blue-600 ring-1 ring-blue-500/20">
-                          <FileText className="h-3.5 w-3.5" /> Generated
-                        </span>
-                      ) : isCollected ? (
-                        <Button
-                          size="sm"
-                          disabled={isGenerating}
-                          onClick={() => handleGenerate(order)}
-                          className="gap-1.5"
-                        >
-                          {isGenerating ? (
-                            <>
-                              <Loader2 className="h-3.5 w-3.5 animate-spin" /> Generating…
-                            </>
-                          ) : (
-                            <>
-                              <FileText className="h-3.5 w-3.5" /> Generate Report
-                            </>
-                          )}
-                        </Button>
-                      ) : (
-                        <Button
-                          size="sm"
-                          disabled
-                          variant="outline"
-                          className="cursor-not-allowed gap-1.5 opacity-40"
-                          title="Sample not yet collected"
-                        >
-                          <XCircle className="h-3.5 w-3.5" /> Not Available
-                        </Button>
-                      )}
-                    </td>
-                  </tr>
+                  <SelectItem key={o.id} value={o.id}>
+                    {o.id} · {p?.name} · {o.tests.join(', ')}
+                  </SelectItem>
                 );
               })}
-            </tbody>
-          </table>
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label>Report title</Label>
+          <Input className="mt-1.5" placeholder="e.g. Lipid panel — final" />
+        </div>
+        <div className="sm:col-span-2">
+          <Label>Findings & interpretation</Label>
+          <Textarea
+            className="mt-1.5"
+            rows={5}
+            placeholder="Cholesterol elevated. Recommend follow-up…"
+          />
         </div>
 
-        {/* Pagination footer */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border bg-muted/20 px-5 py-3">
-          <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
-            <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> Collected
-            </span>
-            <span className="flex items-center gap-1.5">
-              <Clock className="h-3.5 w-3.5 text-amber-500" /> Pending
-            </span>
-          </div>
-          <div className="flex items-center gap-3">
-            <span className="text-xs text-muted-foreground">
-              Showing {startEntry}–{endEntry} of {allOrders.length}
-            </span>
-            <div className="flex items-center gap-1">
-              <Button
-                size="sm"
-                variant="outline"
-                disabled={page === 1}
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                className="h-7 w-7 p-0"
-                aria-label="Previous page"
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((pg) => (
-                <button
-                  key={pg}
-                  onClick={() => setPage(pg)}
-                  className={`flex h-7 w-7 items-center justify-center rounded-md text-xs font-semibold transition-colors ${pg === page ? "bg-primary text-primary-foreground" : "hover:bg-muted text-muted-foreground"}`}
-                  aria-label={`Page ${pg}`}
-                >
-                  {pg}
-                </button>
-              ))}
-              <Button
-                size="sm"
-                variant="outline"
-                disabled={page === totalPages}
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                className="h-7 w-7 p-0"
-                aria-label="Next page"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
+        <label className="sm:col-span-2 flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-border bg-muted/30 p-10 text-center transition-colors hover:bg-muted/50">
+          <UploadCloud className="h-8 w-8 text-muted-foreground" />
+          <p className="mt-2 text-sm font-semibold">
+            {file?.name ?? 'Drop PDF or click to upload'}
+          </p>
+          <p className="text-xs text-muted-foreground">PDF · max 10MB</p>
+          <input
+            type="file"
+            accept="application/pdf"
+            className="hidden"
+            onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+          />
+        </label>
 
-      {/* ── Report Modal ── */}
-      {reportOrder && (
-        <ReportModal
-          order={reportOrder}
-          onConfirm={handleConfirm}
-          onClose={() => setReportOrder(null)}
-        />
-      )}
+        <div className="flex justify-end sm:col-span-2">
+          <Button type="submit">
+            <UploadCloud className="mr-2 h-4 w-4" /> Upload report
+          </Button>
+        </div>
+      </form>
     </>
   );
 }

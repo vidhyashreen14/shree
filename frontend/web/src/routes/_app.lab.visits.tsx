@@ -38,6 +38,7 @@ import {
 } from "@/lib/mock/data";
 import type { HomeVisit, VisitStatus } from "@/lib/mock/data";
 
+
 export const Route = createFileRoute("/_app/lab/visits")({
   component: LabVisits,
 });

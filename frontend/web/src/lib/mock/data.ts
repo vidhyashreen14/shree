@@ -3,20 +3,24 @@ import type {
   AuditLog,
   Department,
   Doctor,
-  HomeVisit,
   LabOrder,
   Medicine,
   Patient,
   Prescription,
-  VisitStatus,
   Vitals,
 } from '../types';
 export type { HomeVisit, VisitStatus } from '../types';
 import { useStaffProfiles, DEMO_STAFF, type StaffProfile } from '../store/staffProfiles';
 import { useDepartments } from '../store/departments';
 
+
 const today = new Date();
 const iso = (d: Date) => d.toISOString();
+const at = (h: number, m = 0) => {
+  const d = new Date(today);
+  d.setHours(h, m, 0, 0);
+  return iso(d);
+};
 const daysAgo = (n: number) => {
   const d = new Date(today);
   d.setDate(d.getDate() - n);
@@ -28,73 +32,108 @@ const monthsFromNow = (n: number) => {
   return iso(d);
 };
 
-export const departments: Department[] = [];
+export const departments: Department[] = [
+  { id: 'd-card', name: 'Cardiology', head: 'Dr. Vikram Shah', doctorCount: 6, patientsToday: 42 },
+  { id: 'd-neu', name: 'Neurology', head: 'Dr. Lin Park', doctorCount: 4, patientsToday: 28 },
+  { id: 'd-ped', name: 'Pediatrics', head: 'Dr. Sara Iqbal', doctorCount: 5, patientsToday: 51 },
+  {
+    id: 'd-ortho',
+    name: 'Orthopedics',
+    head: 'Dr. Marco Bellini',
+    doctorCount: 7,
+    patientsToday: 33,
+  },
+  { id: 'd-gyn', name: 'Gynecology', head: 'Dr. Hannah Cole', doctorCount: 5, patientsToday: 37 },
+  { id: 'd-derm', name: 'Dermatology', head: 'Dr. Aman Gill', doctorCount: 3, patientsToday: 22 },
+  { id: 'd-er', name: 'Emergency', head: 'Dr. Owen Reyes', doctorCount: 9, patientsToday: 64 },
+];
 
-export const doctors: Doctor[] = [];
-
-export const vitals: Vitals[] = [];
-
-export function mapProfileToDoctor(p: StaffProfile): Doctor {
-  return {
-    id: p.id,
-    name: `Dr. ${p.firstName} ${p.lastName}`,
-    specialization:
-      p.department === 'Cardiology'
-        ? 'Interventional Cardiologist'
-        : p.department === 'Neurology'
-          ? 'Neurologist'
-          : p.department === 'Pediatrics'
-            ? 'Pediatrician'
-            : p.department === 'Orthopedics'
-              ? 'Orthopedic Surgeon'
-              : p.department === 'Gynecology'
-                ? 'OB-GYN'
-                : p.department === 'Dermatology'
-                  ? 'Dermatologist'
-                  : p.department === 'Emergency'
-                    ? 'Emergency Physician'
-                    : 'General Physician',
-    department: p.department || 'Unassigned',
-    email: p.email,
-    phone: p.mobile,
-    experienceYears: 10,
-    fee: p.department === 'Emergency' ? 0 : 1000,
+export const doctors: Doctor[] = [
+  {
+    id: 'u-doc-1',
+    name: 'Dr. Vikram Shah',
+    specialization: 'Interventional Cardiologist',
+    department: 'Cardiology',
+    email: 'vikram@medicore.io',
+    phone: '+91 98200 11111',
+    experienceYears: 18,
+    fee: 1500,
+    rating: 4.9,
+    available: true,
+  },
+  {
+    id: 'u-doc-2',
+    name: 'Dr. Lin Park',
+    specialization: 'Neurologist',
+    department: 'Neurology',
+    email: 'lin@medicore.io',
+    phone: '+91 98200 22222',
+    experienceYears: 12,
+    fee: 1300,
+    rating: 4.7,
+    available: true,
+  },
+  {
+    id: 'u-doc-3',
+    name: 'Dr. Sara Iqbal',
+    specialization: 'Pediatrician',
+    department: 'Pediatrics',
+    email: 'sara@medicore.io',
+    phone: '+91 98200 33333',
+    experienceYears: 9,
+    fee: 900,
     rating: 4.8,
-    available: p.status === 'active',
-  };
-}
-
-function updateDoctorsAndDepartments() {
-  const profiles = useStaffProfiles.getState().profiles;
-  const docProfiles = (profiles && profiles.length > 0 ? profiles : DEMO_STAFF).filter(
-    (p) => p.role === 'doctor',
-  );
-  const mapped = docProfiles.map(mapProfileToDoctor);
-
-  doctors.length = 0;
-  doctors.push(...mapped);
-
-  const depts = useDepartments.getState().departments;
-  departments.length = 0;
-  departments.push(
-    ...depts.map((dept) => {
-      const count = doctors.filter((d) => d.department === dept.name).length;
-      return { ...dept, doctorCount: count };
-    }),
-  );
-}
-
-// Initial sync
-updateDoctorsAndDepartments();
-
-// Subscribe to store updates
-useStaffProfiles.subscribe(() => {
-  updateDoctorsAndDepartments();
-});
-
-useDepartments.subscribe(() => {
-  updateDoctorsAndDepartments();
-});
+    available: false,
+  },
+  {
+    id: 'u-doc-4',
+    name: 'Dr. Marco Bellini',
+    specialization: 'Orthopedic Surgeon',
+    department: 'Orthopedics',
+    email: 'marco@medicore.io',
+    phone: '+91 98200 44444',
+    experienceYears: 22,
+    fee: 1700,
+    rating: 4.6,
+    available: true,
+  },
+  {
+    id: 'u-doc-5',
+    name: 'Dr. Hannah Cole',
+    specialization: 'OB-GYN',
+    department: 'Gynecology',
+    email: 'hannah@medicore.io',
+    phone: '+91 98200 55555',
+    experienceYears: 14,
+    fee: 1200,
+    rating: 4.9,
+    available: true,
+  },
+  {
+    id: 'u-doc-6',
+    name: 'Dr. Aman Gill',
+    specialization: 'Dermatologist',
+    department: 'Dermatology',
+    email: 'aman@medicore.io',
+    phone: '+91 98200 66666',
+    experienceYears: 7,
+    fee: 800,
+    rating: 4.5,
+    available: true,
+  },
+  {
+    id: 'u-doc-7',
+    name: 'Dr. Owen Reyes',
+    specialization: 'Emergency Physician',
+    department: 'Emergency',
+    email: 'owen@medicore.io',
+    phone: '+91 98200 77777',
+    experienceYears: 11,
+    fee: 0,
+    rating: 4.8,
+    available: true,
+  },
+];
 
 const allergyPool = ['Penicillin', 'Peanuts', 'Latex', 'Sulfa', 'Aspirin', 'Shellfish', 'Dust'];
 const meds = [
@@ -155,7 +194,7 @@ export const patients: Patient[] = patientNames.map((name, i) => ({
   medications: i % 3 === 0 ? [] : [meds[i % meds.length]!],
   insurance: i % 2 === 0 ? { provider: 'Star Health', policyNo: `SH-${5000 + i}` } : undefined,
   registeredOn: daysAgo(i * 9 + 5),
-  assignedDoctorId: doctors[i % doctors.length]?.id || 'u-doc-1',
+  assignedDoctorId: doctors[i % doctors.length]!.id,
 }));
 
 const reasons = [
@@ -178,37 +217,43 @@ const statuses: Appointment['status'][] = [
   'no-show',
 ];
 
-export const appointments: Appointment[] = Array.from({ length: 36 }).map((_, i) => {
+export const appointments: Appointment[] = Array.from({ length: 48 }).map((_, i) => {
+  const hour = 9 + (i % 9);
+  const minute = (i % 4) * 15;
+  const dayOffset = (i % 5) - 2;
   const d = new Date(today);
-  const hour = 9 + (i % 8);
-  const minute = (i * 15) % 60;
+  d.setDate(d.getDate() + dayOffset);
   d.setHours(hour, minute, 0, 0);
-  d.setDate(d.getDate() - 2 + (i % 5));
-
   return {
     id: `a-${2000 + i}`,
     patientId: patients[i % patients.length]!.id,
-    doctorId: doctors[i % doctors.length]?.id || 'u-doc-1',
+    doctorId: doctors[i % doctors.length]!.id,
     date: iso(d),
-    durationMin: 15,
+    durationMin: 15 + (i % 3) * 15,
     reason: reasons[i % reasons.length]!,
     type: types[i % types.length]!,
-    status: statuses[i % statuses.length]!,
-    token: (i % 20) + 1,
-    notes: i % 4 === 0 ? 'Patient requested early morning slot.' : undefined,
+    status: dayOffset < 0 ? 'completed' : statuses[i % statuses.length]!,
+    token: (i % 30) + 1,
   };
 });
 
-export const vitalsRecords: Vitals[] = patients.slice(0, 15).map((p, i) => ({
-  id: `v-${p.id}`,
+export const todaysAppointments = (doctorId?: string) =>
+  appointments.filter((a) => {
+    const d = new Date(a.date);
+    const sameDay = d.toDateString() === today.toDateString();
+    return sameDay && (!doctorId || a.doctorId === doctorId);
+  });
+
+export const vitals: Vitals[] = patients.slice(0, 15).map((p, i) => ({
+  id: `v-${i}`,
   patientId: p.id,
   recordedAt: daysAgo(i),
-  bp: `${110 + (i % 30)}/${70 + (i % 20)}`,
-  pulse: 68 + (i % 25),
-  tempF: 98.4 + (i % 3) * 0.4,
-  weightKg: 55 + ((i * 3) % 40),
-  heightCm: 155 + (i % 30),
-  bmi: Number((22 + (i % 6) * 1.1).toFixed(1)),
+  bp: `${110 + (i % 30)}/${70 + (i % 15)}`,
+  pulse: 64 + (i % 30),
+  tempF: 97 + (i % 4),
+  weightKg: 55 + (i % 35),
+  heightCm: 150 + (i % 35),
+  bmi: +(20 + (i % 8) + Math.random()).toFixed(1),
   spo2: 95 + (i % 5),
   bloodSugar: 85 + (i % 60),
   notes: i % 3 === 0 ? 'Patient appears stable.' : undefined,
@@ -217,7 +262,7 @@ export const vitalsRecords: Vitals[] = patients.slice(0, 15).map((p, i) => ({
 export const prescriptions: Prescription[] = patients.slice(0, 12).map((p, i) => ({
   id: `rx-${3000 + i}`,
   patientId: p.id,
-  doctorId: p.assignedDoctorId || 'u-doc-1',
+  doctorId: p.assignedDoctorId!,
   date: daysAgo(i * 2 + 1),
   diagnosis: [
     'Hypertension',
@@ -243,7 +288,7 @@ export const prescriptions: Prescription[] = patients.slice(0, 12).map((p, i) =>
 export const labOrders: LabOrder[] = patients.slice(0, 10).map((p, i) => ({
   id: `lo-${4000 + i}`,
   patientId: p.id,
-  doctorId: p.assignedDoctorId || 'u-doc-1',
+  doctorId: p.assignedDoctorId!,
   tests: [['CBC', 'Lipid panel', 'HbA1c', 'TSH', 'Urinalysis'][i % 5]!],
   status: (['ordered', 'sample-collected', 'in-progress', 'completed'] as const)[i % 4]!,
   orderedOn: daysAgo(i),
@@ -269,6 +314,25 @@ const medNames = [
   'Losartan 50mg',
 ];
 
+const medIngredients: Record<string, string> = {
+  'Amoxicillin 500mg': 'Amoxicillin Trihydrate 500mg, Cellulose, Magnesium Stearate',
+  'Azithromycin 250mg': 'Azithromycin Dihydrate 250mg, Calcium Phosphate, Lactose',
+  'Atorvastatin 20mg': 'Atorvastatin Calcium 20mg, Carbonate, Microcrystalline Cellulose',
+  'Aspirin 75mg': 'Aspirin 75mg, Corn Starch, Hypromellose',
+  'Metformin 500mg': 'Metformin Hydrochloride 500mg, Povidone, Magnesium Stearate',
+  'Glimepiride 2mg': 'Glimepiride 2mg, Lactose Monohydrate, Sodium Starch Glycolate',
+  'Paracetamol 650mg': 'Paracetamol 650mg, Starch, Povidone, Potassium Sorbate',
+  'Ibuprofen 400mg': 'Ibuprofen 400mg, Colloidal Silicon Dioxide, Croscarmellose Sodium',
+  'Salbutamol Inhaler': 'Salbutamol Sulfate 100mcg/dose, HFA-134a Propellant',
+  'Budesonide 200mcg': 'Budesonide 200mcg, Lactose Monohydrate',
+  'Hydrocortisone 1% cream': 'Hydrocortisone 10mg/g, Cetostearyl Alcohol, Glycerol, Water',
+  'Cetirizine 10mg': 'Cetirizine Hydrochloride 10mg, Lactose, Starch',
+  'Omeprazole 20mg': 'Omeprazole 20mg, Glycolate, Mannitol, Sodium Lauryl Sulfate',
+  'Pantoprazole 40mg': 'Pantoprazole Sodium 40mg, Calcium Stearate, Mannitol',
+  'Amlodipine 5mg': 'Amlodipine Besylate 5mg, Microcrystalline Cellulose, Calcium Phosphate',
+  'Losartan 50mg': 'Losartan Potassium 50mg, Lactose Hydrate, Pregelatinized Starch',
+};
+
 export const medicines: Medicine[] = medNames.map((name, i) => ({
   id: `m-${5000 + i}`,
   name,
@@ -280,6 +344,7 @@ export const medicines: Medicine[] = medNames.map((name, i) => ({
   pricePerUnit: 4 + (i % 30),
   gst: [5, 12, 18][i % 3]!,
   batch: `B${2400 + i}`,
+  ingredients: medIngredients[name] ?? 'Active Pharmaceutical Ingredient, Excipients',
 }));
 
 export const auditLogs: AuditLog[] = Array.from({ length: 24 }).map((_, i) => ({
@@ -405,6 +470,7 @@ export function padTwo(n: number) {
 }
 
 // Report Configuration Mock Data & Types
+
 export interface ReportConfig {
   hospitalName: string;
   address: string;
@@ -754,7 +820,3 @@ export const allOrders: LabOrder[] = [
 ];
 
 export const allLabReportOrders = allOrders;
-
-
-
-

@@ -2,7 +2,6 @@ import { Outlet, createFileRoute, useNavigate, useRouterState } from '@tanstack/
 import { useEffect, useState } from 'react';
 import { AppShell } from '@/components/layout/AppShell';
 import { PharmacyAppShell } from '@/components/layout/PharmacyAppShell';
-import { SuperAdminAppShell } from '@/components/layout/SuperAdminAppShell';
 import { useAuth, splashState } from '@/lib/store/auth';
 import { canAccess, ROLE_HOME } from '@/lib/rbac';
 import { SplashScreen } from '@/components/common/SplashScreen';
@@ -49,21 +48,12 @@ function AppLayout() {
   }
 
   const isPharmacy = pathname.startsWith('/pharmacy');
-  const isSuperAdmin = user.role === 'superadmin';
 
   if (isPharmacy) {
     return (
       <PharmacyAppShell>
         <Outlet />
       </PharmacyAppShell>
-    );
-  }
-
-  if (isSuperAdmin) {
-    return (
-      <SuperAdminAppShell>
-        <Outlet />
-      </SuperAdminAppShell>
     );
   }
 

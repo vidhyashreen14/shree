@@ -32,7 +32,7 @@ function FdAppts() {
       {
         header: 'Doctor',
         accessorKey: 'doctorId',
-        cell: ({ getValue }) => [...doctors].find((d) => d.id === getValue())?.name,
+        cell: ({ getValue }) => doctors.find((d) => d.id === getValue())?.name,
       },
       { header: 'Reason', accessorKey: 'reason' },
       {
@@ -48,7 +48,7 @@ function FdAppts() {
         ),
       },
     ],
-    [],
+    []
   );
 
   return (

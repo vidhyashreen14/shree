@@ -46,7 +46,7 @@ export function CommandPalette({
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
 
-        {user && NAV[user.role] && (
+        {user && (
           <CommandGroup heading="Navigation">
             {NAV[user.role].map((n) => (
               <CommandItem key={n.to} onSelect={() => go(n.to)}>
@@ -78,7 +78,7 @@ export function CommandPalette({
         </CommandGroup>
 
         <CommandGroup heading="Medicines">
-          {medicines.slice(0, 5).map((m) => (
+          {medicines.slice(0, 5).map((m: any) => (
             <CommandItem key={m.id} onSelect={() => go('/pharmacy/inventory')}>
               <Pill className="mr-2 h-4 w-4" />
               {m.name}

@@ -20,7 +20,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 interface ServiceItem {
-  icon: React.ComponentType<{ className?: string }>;
+  icon: any;
   title: string;
   description: string;
   href: string;
@@ -114,7 +114,7 @@ export default function Navbar03() {
                   <ChevronDown
                     className={cn(
                       'size-4 transition-transform duration-200',
-                      isServicesOpen && 'rotate-180',
+                      isServicesOpen && 'rotate-180'
                     )}
                   />
                 </button>
@@ -247,7 +247,7 @@ export default function Navbar03() {
                   <ChevronDown
                     className={cn(
                       'size-4 transition-transform duration-200',
-                      isServicesOpen && 'rotate-180',
+                      isServicesOpen && 'rotate-180'
                     )}
                   />
                 </button>

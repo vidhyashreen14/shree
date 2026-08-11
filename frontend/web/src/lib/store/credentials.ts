@@ -61,7 +61,7 @@ export const useCredentials = create<CredentialState>()(
       resetPassword: (id, newPassword) =>
         set((s) => ({
           accounts: s.accounts.map((a) =>
-            a.id === id ? { ...a, passwordHash: btoa(newPassword) } : a,
+            a.id === id ? { ...a, passwordHash: btoa(newPassword) } : a
           ),
         })),
 
@@ -81,7 +81,7 @@ export const useCredentials = create<CredentialState>()(
           // update last login
           set((s) => ({
             accounts: s.accounts.map((a) =>
-              a.id === account.id ? { ...a, lastLogin: new Date().toISOString() } : a,
+              a.id === account.id ? { ...a, lastLogin: new Date().toISOString() } : a
             ),
           }));
           return account;
@@ -89,6 +89,6 @@ export const useCredentials = create<CredentialState>()(
         return null;
       },
     }),
-    { name: 'medicore-credentials' },
-  ),
+    { name: 'medicore-credentials' }
+  )
 );

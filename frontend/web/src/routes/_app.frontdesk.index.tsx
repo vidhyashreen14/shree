@@ -6,7 +6,6 @@ import { Users, CalendarDays, UserPlus, Hourglass, HeartPulse } from 'lucide-rea
 import { appointments, doctors } from '@/lib/mock/data';
 import { usePatients } from '@/lib/store/patients';
 import { useNurseQueue } from '@/lib/store/nurseQueue';
-import { useStaffProfiles } from '@/lib/store/staffProfiles';
 import { isToday, format, formatDistanceToNow } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -28,9 +27,6 @@ const vitalsStatusMap: Record<string, { label: string; color: string }> = {
 };
 
 function FrontDeskOverview() {
-  // Subscribe to staff profiles store to trigger re-renders on real-time changes
-  useStaffProfiles((s) => s.profiles);
-
   const today = appointments.filter((a) => isToday(new Date(a.date)));
   const waiting = today.filter((a) => a.status === 'checked-in').length;
   const inConsult = today.filter((a) => a.status === 'in-consultation').length;
@@ -132,7 +128,7 @@ function FrontDeskOverview() {
                   <span
                     className={cn(
                       'rounded-full px-2 py-0.5 text-[10px] font-semibold',
-                      vStatus.color,
+                      vStatus.color
                     )}
                   >
                     {vStatus.label}
@@ -152,7 +148,7 @@ function FrontDeskOverview() {
         <div className="surface-elevated p-5 lg:col-span-2">
           <h3 className="font-display font-semibold">Doctor availability</h3>
           <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
-            {[...doctors].map((d) => (
+            {doctors.map((d) => (
               <div
                 key={d.id}
                 className="flex items-center gap-3 rounded-xl border bg-background/60 px-3 py-2.5"
@@ -169,7 +165,7 @@ function FrontDeskOverview() {
                     'rounded-full px-2 py-0.5 text-xs font-semibold',
                     d.available
                       ? 'bg-emerald-500/10 text-emerald-600'
-                      : 'bg-muted text-muted-foreground',
+                      : 'bg-muted text-muted-foreground'
                   )}
                 >
                   {d.available ? 'Available' : 'Off'}

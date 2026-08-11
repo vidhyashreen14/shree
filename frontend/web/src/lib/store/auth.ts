@@ -1,16 +1,9 @@
 import { create } from 'zustand';
 import type { Role, User } from '../types';
+import { ROLES } from '../rbac';
 import { useCredentials } from './credentials';
-import { useAudit } from './audit';
 
 const DEMO_USERS: Record<Role, User> = {
-  superadmin: {
-    id: 'u-superadmin',
-    name: 'Super Admin',
-    email: 'superadmin@gmail.ai',
-    role: 'superadmin',
-    department: 'Global Management',
-  },
   admin: {
     id: 'u-admin',
     name: 'Dr. Anika Rao',
@@ -65,7 +58,7 @@ interface AuthState {
   updateProfile: (patch: Partial<User>) => void;
 }
 
-export const useAuth = create<AuthState>()((set, get) => ({
+export const useAuth = create<AuthState>()((set) => ({
   user: null,
   isAuthenticated: false,
   signIn: async (email, password, role) => {
@@ -82,16 +75,6 @@ export const useAuth = create<AuthState>()((set, get) => ({
         department: staffAccount.department,
       };
       set({ user, isAuthenticated: true });
-
-      if (user.role !== 'admin') {
-        useAudit.getState().addLog({
-          user: user.name,
-          role: user.role,
-          action: 'Logged in',
-          target: '—',
-        });
-      }
-
       return user;
     }
 
@@ -99,58 +82,16 @@ export const useAuth = create<AuthState>()((set, get) => ({
     const base = DEMO_USERS[role];
     const user: User = { ...base, email: email || base.email };
     set({ user, isAuthenticated: true });
-
-    if (user.role !== 'admin') {
-      useAudit.getState().addLog({
-        user: user.name,
-        role: user.role,
-        action: 'Logged in',
-        target: '—',
-      });
-    }
-
     return user;
   },
   login: async (email, role) => {
     const base = DEMO_USERS[role];
     const user: User = { ...base, email: email || base.email };
     set({ user, isAuthenticated: true });
-
-    if (user.role !== 'admin') {
-      useAudit.getState().addLog({
-        user: user.name,
-        role: user.role,
-        action: 'Logged in',
-        target: '—',
-      });
-    }
-
     return user;
   },
-  signOut: () => {
-    const user = get().user;
-    if (user && user.role !== 'admin') {
-      useAudit.getState().addLog({
-        user: user.name,
-        role: user.role,
-        action: 'Logged out',
-        target: '—',
-      });
-    }
-    set({ user: null, isAuthenticated: false });
-  },
-  logout: () => {
-    const user = get().user;
-    if (user && user.role !== 'admin') {
-      useAudit.getState().addLog({
-        user: user.name,
-        role: user.role,
-        action: 'Logged out',
-        target: '—',
-      });
-    }
-    set({ user: null, isAuthenticated: false });
-  },
+  signOut: () => set({ user: null, isAuthenticated: false }),
+  logout: () => set({ user: null, isAuthenticated: false }),
   updateProfile: (patch) => set((s) => (s.user ? { user: { ...s.user, ...patch } } : s)),
 }));
 

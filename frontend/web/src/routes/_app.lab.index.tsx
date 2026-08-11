@@ -13,6 +13,7 @@ import {
   labWeekWiseData,
   labMonthWiseData,
 } from "@/lib/mock/data";
+
 import {
   FilePlus2,
   FlaskConical,
@@ -20,6 +21,8 @@ import {
   IndianRupee,
   TrendingDown,
   Wallet,
+  CalendarDays,
+  ChevronDown,
   TrendingUp,
   Minus,
 } from 'lucide-react';
@@ -47,6 +50,7 @@ const BRANCH_OPTIONS = LAB_BRANCH_OPTIONS;
 
 // ─── Sample count trend data (day labels computed here, data from mock) ───────
 const dayLabels = Array.from({ length: 7 }, (_, i) => format(subDays(new Date(), 6 - i), "EEE d"));
+
 const dayWiseData = dayLabels.map((label, i) => ({
   label,
   samples: labDayWiseSamples[i]!,
@@ -69,6 +73,102 @@ function fmt(n: number) {
   return n.toLocaleString('en-IN');
 }
 
+// ─── Top Filter Bar ───────────────────────────────────────────────────────────
+function TopFilters({
+  dateFrom,
+  setDateFrom,
+  dateTo,
+  setDateTo,
+  sbu,
+  setSbu,
+  branch,
+  setBranch,
+}: {
+  dateFrom: string;
+  setDateFrom: (v: string) => void;
+  dateTo: string;
+  setDateTo: (v: string) => void;
+  sbu: string;
+  setSbu: (v: string) => void;
+  branch: string;
+  setBranch: (v: string) => void;
+}) {
+  return (
+    <div className="mb-6 flex flex-wrap items-center gap-2">
+      {/* Date Range */}
+      <div className="flex items-center gap-1.5 rounded-lg border border-border bg-background px-3 py-2 shadow-sm">
+        <CalendarDays className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+        <input
+          type="date"
+          value={dateFrom}
+          onChange={(e) => setDateFrom(e.target.value)}
+          className="w-28 bg-transparent text-xs outline-none text-foreground"
+          aria-label="From date"
+          id="lab-filter-from"
+        />
+        <span className="text-muted-foreground text-xs">–</span>
+        <input
+          type="date"
+          value={dateTo}
+          onChange={(e) => setDateTo(e.target.value)}
+          className="w-28 bg-transparent text-xs outline-none text-foreground"
+          aria-label="To date"
+          id="lab-filter-to"
+        />
+      </div>
+
+      {/* SBU */}
+      <div className="relative flex items-center gap-1.5 rounded-lg border border-border bg-background px-3 py-2 shadow-sm">
+        <select
+          value={sbu}
+          onChange={(e) => setSbu(e.target.value)}
+          className="bg-transparent text-xs text-foreground outline-none cursor-pointer pr-5 appearance-none"
+          aria-label="SBU filter"
+          id="lab-filter-sbu"
+        >
+          {SBU_OPTIONS.map((s) => (
+            <option key={s} value={s}>
+              {s}
+            </option>
+          ))}
+        </select>
+        <ChevronDown className="pointer-events-none absolute right-2 h-3 w-3 text-muted-foreground" />
+      </div>
+
+      {/* Branch */}
+      <div className="relative flex items-center gap-1.5 rounded-lg border border-border bg-background px-3 py-2 shadow-sm">
+        <select
+          value={branch}
+          onChange={(e) => setBranch(e.target.value)}
+          className="bg-transparent text-xs text-foreground outline-none cursor-pointer pr-5 appearance-none"
+          aria-label="Branch filter"
+          id="lab-filter-branch"
+        >
+          {BRANCH_OPTIONS.map((b) => (
+            <option key={b} value={b}>
+              {b}
+            </option>
+          ))}
+        </select>
+        <ChevronDown className="pointer-events-none absolute right-2 h-3 w-3 text-muted-foreground" />
+      </div>
+
+      <button
+        onClick={() => {
+          setDateFrom('');
+          setDateTo('');
+          setSbu(SBU_OPTIONS[0]!);
+          setBranch(BRANCH_OPTIONS[0]!);
+        }}
+        className="rounded-lg border border-border bg-background px-3 py-2 text-xs text-muted-foreground shadow-sm hover:bg-muted transition-colors"
+        id="lab-filter-clear"
+      >
+        Clear
+      </button>
+    </div>
+  );
+}
+
 // ─── KPI Card ─────────────────────────────────────────────────────────────────
 function KpiCard({
   label,
@@ -83,8 +183,8 @@ function KpiCard({
   value: string | number;
   sub?: React.ReactNode;
   icon: React.ElementType;
-  accent: string;
-  iconBg: string;
+  accent: string; // text colour class
+  iconBg: string; // icon container bg class
   valueSuffix?: string;
 }) {
   return (
@@ -209,6 +309,7 @@ function SampleAnalytics() {
               }}
               formatter={(v: number, name: string) => [v, name === 'samples' ? 'Samples' : 'Avg']}
             />
+            {/* Average baseline reference line */}
             <ReferenceLine
               y={avg}
               stroke="var(--color-warning)"
@@ -278,20 +379,39 @@ function PendingPipeline() {
 
 // ─── Main Component ────────────────────────────────────────────────────────────
 function LabOverview() {
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
+  const [sbu, setSbu] = useState(SBU_OPTIONS[0]!);
+  const [branch, setBranch] = useState(BRANCH_OPTIONS[0]!);
+
   return (
     <>
       <PageHeader
         eyebrow="Laboratory"
-        title="Investigations Control Room"
+        title="Investigations control room"
         description="Daily operational and financial snapshot across all branches."
         actions={
           <Link to="/lab/upload">
-            <Button>
-              <FilePlus2 className="mr-2 h-4 w-4" /> Upload report
+            <Button id="btn-upload-report">
+              <FilePlus2 className="mr-2 h-4 w-4" />
+              Upload report
             </Button>
           </Link>
         }
       />
+
+      {/* ── Top Filters ─────────────────────────────────────────────────── */}
+      <TopFilters
+        dateFrom={dateFrom}
+        setDateFrom={setDateFrom}
+        dateTo={dateTo}
+        setDateTo={setDateTo}
+        sbu={sbu}
+        setSbu={setSbu}
+        branch={branch}
+        setBranch={setBranch}
+      />
+
       {/* ── 6 KPI Cards ─────────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6">
         {/* 1. Samples Registered */}

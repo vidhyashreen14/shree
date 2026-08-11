@@ -3,19 +3,19 @@ import { useMemo } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
 import { PageHeader } from '@/components/common/PageHeader';
 import { DataTable } from '@/components/common/DataTable';
+import { patients, doctors } from '@/lib/mock/data';
+import type { Patient } from '@/lib/types';
+import { useAuth } from '@/lib/store/auth';
 import { StatusChip } from '@/components/common/StatusChip';
 import { ChevronRight } from 'lucide-react';
-import { usePatients } from '@/lib/store/patients';
-import { useCurrentDoctorId } from '@/lib/store/doctors';
-import type { Patient } from '@/lib/types';
 
 export const Route = createFileRoute('/_app/doctor/patients/')({
   component: DoctorPatients,
 });
 
 function DoctorPatients() {
-  const doctorId = useCurrentDoctorId();
-  const patients = usePatients((s) => s.patients);
+  const user = useAuth((s) => s.user);
+  const doctorId = user?.role === 'doctor' ? user.id : doctors[0]!.id;
   const data = patients.filter((p) => p.assignedDoctorId === doctorId);
 
   const columns = useMemo<ColumnDef<Patient>[]>(
@@ -78,7 +78,7 @@ function DoctorPatients() {
         ),
       },
     ],
-    [],
+    []
   );
 
   return (

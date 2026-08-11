@@ -2,15 +2,8 @@ import { createFileRoute, Link } from '@tanstack/react-router';
 import { PageHeader } from '@/components/common/PageHeader';
 import { StatCard } from '@/components/common/StatCard';
 import { AppointmentStatusChip } from '@/components/common/AppointmentStatusChip';
-import {
-  CalendarDays,
-  Users,
-  ClipboardCheck,
-  FlaskConical,
-  ArrowRight,
-  Printer,
-} from 'lucide-react';
-import { appointments } from '@/lib/mock/data';
+import { CalendarDays, Users, ClipboardCheck, FlaskConical, ArrowRight } from 'lucide-react';
+import { appointments, doctors } from '@/lib/mock/data';
 import { useAuth } from '@/lib/store/auth';
 import { useNurseQueue } from '@/lib/store/nurseQueue';
 import { usePatients } from '@/lib/store/patients';
@@ -26,16 +19,6 @@ import {
   Tooltip,
 } from 'recharts';
 import type { AppointmentStatus } from '@/lib/types';
-import { useCurrentDoctorId } from '@/lib/store/doctors';
-import { Button } from '@/components/ui/button';
-import {
-  PrescriptionPrintModal,
-  getDoctorDetails,
-  type PrescriptionPrintData,
-} from './_app.doctor.patients.$id';
-import { useStaffProfiles } from '@/lib/store/staffProfiles';
-import { useState } from 'react';
-import { toast } from 'sonner';
 
 export const Route = createFileRoute('/_app/doctor/')({
   component: DoctorOverview,
@@ -43,28 +26,22 @@ export const Route = createFileRoute('/_app/doctor/')({
 
 function DoctorOverview() {
   const user = useAuth((s) => s.user);
-  const staffProfiles = useStaffProfiles((s) => s.profiles);
-  const doctorId = useCurrentDoctorId();
+  const doctorId = user?.role === 'doctor' ? user.id : doctors[0]!.id;
   const patients = usePatients((s) => s.patients);
   const queue = useNurseQueue((s) => s.queue);
   const prescriptions = useClinicalStore((s) => s.prescriptions);
 
-  const [printData, setPrintData] = useState<PrescriptionPrintData | null>(null);
   // Load static mock appointments
   const myAppts = appointments.filter((a) => a.doctorId === doctorId);
   const todayMock = myAppts.filter((a) => isToday(new Date(a.date)));
 
-  // Load nurse queue entries for this doctor (either vitals pending, in-progress, or done)
-  const liveQueue = queue.filter((e) => e.doctorId === doctorId);
+  // Load nurse queue entries for this doctor that are ready for consultation
+  const liveQueue = queue.filter((e) => e.doctorId === doctorId && e.vitalsStatus === 'done');
 
-  // Map live queue entries — embed patient info so rows are never silently dropped
+  // Map live queue entries to appointments structure
   const liveRows = liveQueue.map((e) => ({
     id: e.id,
     patientId: e.patientId,
-    patientName: e.patientName,
-    patientAge: e.age,
-    patientGender: e.gender,
-    patientUhid: e.uhid,
     doctorId: e.doctorId,
     date: e.arrivedAt,
     durationMin: 15,
@@ -76,25 +53,11 @@ function DoctorOverview() {
     token: 100 + Number(e.id.slice(-3)) || 101,
     isLive: true,
     vitals: e.vitals,
-    vitalsStatus: e.vitalsStatus,
   }));
 
-  const combinedToday = [
-    ...todayMock.map((r) => ({
-      ...r,
-      isLive: false,
-      vitals: undefined,
-      patientName: undefined as string | undefined,
-      patientAge: undefined as number | undefined,
-      patientGender: undefined as string | undefined,
-      patientUhid: undefined as string | undefined,
-      vitalsStatus: undefined as string | undefined,
-    })),
-    ...liveRows,
-  ];
-
+  const combinedToday = [...todayMock, ...liveRows];
   const myPatients = patients.filter(
-    (p) => p.assignedDoctorId === doctorId || liveQueue.some((e) => e.patientId === p.id),
+    (p) => p.assignedDoctorId === doctorId || liveQueue.some((e) => e.patientId === p.id)
   );
   const myRx = prescriptions.filter((p) => p.doctorId === doctorId);
 
@@ -127,93 +90,8 @@ function DoctorOverview() {
         />
         <StatCard label="Pending lab results" value="4" icon={FlaskConical} tone="warning" />
       </div>
+
       <div className="mt-6 grid grid-cols-1 gap-4 xl:grid-cols-3">
-        {/* Recent Prescriptions Issued Section */}
-        <div className="surface-elevated p-5 xl:col-span-3 border-l-4 border-l-emerald-500">
-          <div className="mb-4 flex items-center justify-between">
-            <div>
-              <h3 className="font-display font-semibold text-emerald-600 dark:text-emerald-400">
-                Recent Prescriptions
-              </h3>
-              <p className="text-xs text-muted-foreground">
-                List of prescriptions you've recently issued
-              </p>
-            </div>
-            <Link
-              to="/doctor/prescriptions"
-              className="text-xs font-semibold text-primary hover:underline"
-            >
-              View all <ArrowRight className="ml-0.5 inline h-3 w-3" />
-            </Link>
-          </div>
-          <div className="divide-y divide-border">
-            {myRx.slice(0, 5).map((rx) => {
-              const p = patients.find((x) => x.id === rx.patientId);
-              const displayName = p ? p.name : 'Unknown Patient';
-              const displayUhid = p ? p.mrn : '—';
-              const docDetails = getDoctorDetails(rx.doctorId, user, staffProfiles);
-
-              return (
-                <div key={rx.id} className="flex items-center justify-between py-3">
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <p className="truncate text-sm font-semibold">{displayName}</p>
-                      <span className="text-[10px] bg-slate-100 dark:bg-slate-800 text-muted-foreground px-1.5 py-0.5 rounded font-mono">
-                        {displayUhid}
-                      </span>
-                    </div>
-                    <p className="truncate text-xs text-muted-foreground mt-0.5">
-                      Diagnosis: <span className="font-medium text-foreground">{rx.diagnosis}</span>{' '}
-                      · {rx.medicines.length} medicine(s)
-                    </p>
-                    <p className="text-[10px] text-muted-foreground mt-0.5">
-                      Issued: {format(new Date(rx.date), 'dd MMM yyyy, hh:mm a')}
-                    </p>
-                  </div>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="h-8 w-8 p-0"
-                    onClick={() => {
-                      if (!p) {
-                        toast.error('Patient details not found');
-                        return;
-                      }
-                      setPrintData({
-                        rxNo: `RX-${rx.id.slice(-6)}`,
-                        date: format(new Date(rx.date), 'dd MMM yyyy, hh:mm a'),
-                        patientName: p.name,
-                        uhid: p.mrn,
-                        age: p.age,
-                        gender: p.gender,
-                        doctorName: docDetails.name,
-                        specialization: docDetails.specialization,
-                        qualification: docDetails.qualification,
-                        kmcNo: docDetails.kmcNo,
-                        diagnosis: rx.diagnosis,
-                        medicines: rx.medicines,
-                        labTests: [],
-                        followUp: rx.advice.includes('Follow up: ')
-                          ? rx.advice.replace('Follow up: ', '').replace('.', '')
-                          : undefined,
-                        patientPhone: p.phone,
-                        patientEmail: p.email,
-                      });
-                    }}
-                  >
-                    <Printer className="h-4 w-4 text-muted-foreground hover:text-foreground" />
-                  </Button>
-                </div>
-              );
-            })}
-            {myRx.length === 0 && (
-              <p className="py-6 text-center text-sm text-muted-foreground">
-                No prescriptions issued yet.
-              </p>
-            )}
-          </div>
-        </div>
-
         <div className="surface-elevated p-5 xl:col-span-2">
           <div className="mb-4 flex items-center justify-between">
             <div>
@@ -226,11 +104,8 @@ function DoctorOverview() {
           </div>
           <div className="divide-y divide-border">
             {combinedToday.slice(0, 6).map((a) => {
-              // Try patients store first; fall back to embedded queue entry data
-              const storePatient = patients.find((x) => x.id === a.patientId);
-              const displayName = storePatient?.name ?? a.patientName ?? 'Unknown Patient';
-              const displayReason = a.reason;
-
+              const p = patients.find((x) => x.id === a.patientId);
+              if (!p) return null;
               return (
                 <div key={a.id} className="flex items-center gap-3 py-3">
                   <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary/10 text-xs font-bold text-primary">
@@ -238,29 +113,15 @@ function DoctorOverview() {
                   </span>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-1.5">
-                      <p className="truncate text-sm font-semibold">{displayName}</p>
-                      {a.isLive && (
-                        <>
-                          {a.vitalsStatus === 'pending' && (
-                            <span className="rounded-full bg-amber-500/10 px-1.5 py-0.5 text-[9px] font-semibold text-amber-600 dark:text-amber-400">
-                              Awaiting Vitals
-                            </span>
-                          )}
-                          {a.vitalsStatus === 'in-progress' && (
-                            <span className="rounded-full bg-blue-500/10 px-1.5 py-0.5 text-[9px] font-semibold text-blue-600 dark:text-blue-400">
-                              Triage
-                            </span>
-                          )}
-                          {a.vitalsStatus === 'done' && (
-                            <span className="rounded-full bg-emerald-500/10 px-1.5 py-0.5 text-[9px] font-semibold text-emerald-600 dark:text-emerald-400">
-                              Ready
-                            </span>
-                          )}
-                        </>
+                      <p className="truncate text-sm font-semibold">{p.name}</p>
+                      {'isLive' in a && (
+                        <span className="rounded-full bg-teal-500/10 px-1.5 py-0.5 text-[9px] font-semibold text-teal-600 dark:text-teal-400">
+                          Live
+                        </span>
                       )}
                     </div>
                     <p className="truncate text-xs text-muted-foreground">
-                      {displayReason} · {format(new Date(a.date), 'p')}
+                      {a.reason} · {format(new Date(a.date), 'p')}
                     </p>
                   </div>
                   <AppointmentStatusChip status={a.status} />
@@ -309,7 +170,6 @@ function DoctorOverview() {
           </div>
         </div>
       </div>
-      {printData && <PrescriptionPrintModal data={printData} onClose={() => setPrintData(null)} />}
     </>
   );
 }

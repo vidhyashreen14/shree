@@ -46,7 +46,7 @@ function Notifications() {
           <div key={n.id} className={cn('flex items-start gap-3 p-4', !n.read && 'bg-primary/4')}>
             <span
               className={cn(
-                'mt-1 grid h-9 w-9 shrink-0 place-items-center rounded-full bg-muted text-muted-foreground',
+                'mt-1 grid h-9 w-9 shrink-0 place-items-center rounded-full bg-muted text-muted-foreground'
               )}
             >
               <Bell className="h-4 w-4" />

@@ -6,6 +6,7 @@ import { DataTable } from '@/components/common/DataTable';
 import { StatusChip } from '@/components/common/StatusChip';
 import { Button } from '@/components/ui/button';
 import { UserPlus, MoreHorizontal, Mail } from 'lucide-react';
+import { doctors } from '@/lib/mock/data';
 import { ROLES } from '@/lib/rbac';
 import type { Role } from '@/lib/types';
 import {
@@ -27,9 +28,6 @@ import {
 } from '@/components/ui/select';
 import { toast } from 'sonner';
 
-import { useStaffProfiles } from '@/lib/store/staffProfiles';
-import { useDepartments } from '@/lib/store/departments';
-
 export const Route = createFileRoute('/_app/admin/users')({
   component: AdminUsers,
 });
@@ -43,24 +41,79 @@ interface RowUser {
   status: 'active' | 'invited' | 'suspended';
 }
 
+const seed: RowUser[] = [
+  ...doctors.map((d) => ({
+    id: d.id,
+    name: d.name,
+    email: d.email,
+    role: 'doctor' as Role,
+    department: d.department,
+    status: 'active' as const,
+  })),
+  {
+    id: 'u-fd1',
+    name: 'Priya Menon',
+    email: 'priya@medicore.io',
+    role: 'frontdesk',
+    department: 'Reception',
+    status: 'active',
+  },
+  {
+    id: 'u-fd2',
+    name: 'Karan Singh',
+    email: 'karan@medicore.io',
+    role: 'frontdesk',
+    department: 'Reception',
+    status: 'active',
+  },
+  {
+    id: 'u-rn1',
+    name: 'Sister Joan Lewis',
+    email: 'joan@medicore.io',
+    role: 'nurse',
+    department: 'OPD',
+    status: 'active',
+  },
+  {
+    id: 'u-rn2',
+    name: 'Sister Tara Wu',
+    email: 'tara@medicore.io',
+    role: 'nurse',
+    department: 'ICU',
+    status: 'invited',
+  },
+  {
+    id: 'u-rx1',
+    name: 'Rahul Verma',
+    email: 'rahul@medicore.io',
+    role: 'pharmacy',
+    department: 'Pharmacy',
+    status: 'active',
+  },
+  {
+    id: 'u-lab1',
+    name: 'Mei Chen',
+    email: 'mei@medicore.io',
+    role: 'lab',
+    department: 'Pathology',
+    status: 'active',
+  },
+  {
+    id: 'u-lab2',
+    name: 'Diego Alvarez',
+    email: 'diego@medicore.io',
+    role: 'lab',
+    department: 'Radiology',
+    status: 'suspended',
+  },
+];
+
 const statusTone = { active: 'success', invited: 'info', suspended: 'danger' } as const;
 
 function AdminUsers() {
-  const { profiles, addProfile } = useStaffProfiles();
-  const deptsList = useDepartments((s) => s.departments);
+  const [rows, setRows] = useState<RowUser[]>(seed);
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ name: '', email: '', role: 'doctor' as Role, department: '' });
-
-  const rows = useMemo<RowUser[]>(() => {
-    return profiles.map((p) => ({
-      id: p.id,
-      name: `${p.firstName} ${p.lastName}`,
-      email: p.email,
-      role: p.role,
-      department: p.department || 'Unassigned',
-      status: p.status === 'active' ? ('active' as const) : ('suspended' as const),
-    }));
-  }, [profiles]);
 
   const columns = useMemo<ColumnDef<RowUser>[]>(
     () => [
@@ -110,7 +163,7 @@ function AdminUsers() {
         ),
       },
     ],
-    [],
+    []
   );
 
   return (
@@ -171,22 +224,12 @@ function AdminUsers() {
                   </div>
                   <div>
                     <Label htmlFor="d">Department</Label>
-                    <Select
+                    <Input
+                      id="d"
                       value={form.department}
-                      onValueChange={(v) => setForm({ ...form, department: v })}
-                    >
-                      <SelectTrigger id="d" className="mt-1.5">
-                        <SelectValue placeholder="Select dept…" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="none">None / General</SelectItem>
-                        {deptsList.map((d) => (
-                          <SelectItem key={d.id} value={d.name}>
-                            {d.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                      onChange={(e) => setForm({ ...form, department: e.target.value })}
+                      className="mt-1.5"
+                    />
                   </div>
                 </div>
               </div>
@@ -200,27 +243,7 @@ function AdminUsers() {
                       toast.error('Name and email required');
                       return;
                     }
-                    const parts = form.name.trim().split(' ');
-                    const firstName = parts[0] || 'Staff';
-                    const lastName = parts.slice(1).join(' ') || 'Member';
-                    addProfile({
-                      firstName,
-                      lastName,
-                      email: form.email,
-                      role: form.role,
-                      department:
-                        form.department && form.department !== 'none' ? form.department : undefined,
-                      gender: 'male',
-                      dateOfBirth: '1990-01-01',
-                      mobile: '+91 99999 99999',
-                      address: 'Hospital Premises',
-                      city: 'Mumbai',
-                      state: 'Maharashtra',
-                      country: 'India',
-                      pinCode: '400001',
-                      emergencyContactPerson: 'HR Manager',
-                      emergencyContactNumber: '+91 99999 99999',
-                    });
+                    setRows([{ id: `u-${Date.now()}`, ...form, status: 'invited' }, ...rows]);
                     toast.success(`Invitation sent to ${form.email}`);
                     setOpen(false);
                     setForm({ name: '', email: '', role: 'doctor', department: '' });

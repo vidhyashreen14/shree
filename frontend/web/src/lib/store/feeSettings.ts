@@ -18,6 +18,6 @@ export const useFeeSettings = create<FeeSettings>()(
       setConsultationFee: (fee) => set({ consultationFee: fee }),
       setFees: (reg, consult) => set({ registrationFee: reg, consultationFee: consult }),
     }),
-    { name: 'medicore-fee-settings' },
-  ),
+    { name: 'medicore-fee-settings' }
+  )
 );

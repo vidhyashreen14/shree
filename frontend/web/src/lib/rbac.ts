@@ -1,7 +1,6 @@
 import type { Role } from './types';
 
 export const ROLES: { value: Role; label: string; description: string }[] = [
-  { value: 'superadmin', label: 'Super Admin', description: 'Global platform management' },
   { value: 'admin', label: 'Administrator', description: 'Full hospital access' },
   { value: 'doctor', label: 'Doctor', description: 'Patient care & prescriptions' },
   { value: 'frontdesk', label: 'Front Desk', description: 'Registration & appointments' },
@@ -11,8 +10,7 @@ export const ROLES: { value: Role; label: string; description: string }[] = [
 ];
 
 export const ROLE_HOME: Record<Role, string> = {
-  superadmin: '/superadmin/hospitals',
-  admin: '/admin/settings',
+  admin: '/admin',
   doctor: '/doctor',
   frontdesk: '/frontdesk',
   nurse: '/nurse',
@@ -22,14 +20,12 @@ export const ROLE_HOME: Record<Role, string> = {
 
 /** Route prefix → roles that may access it. */
 export const ROUTE_ACCESS: { prefix: string; roles: Role[] }[] = [
-  { prefix: '/superadmin', roles: ['superadmin'] },
   { prefix: '/admin', roles: ['admin'] },
   { prefix: '/doctor', roles: ['doctor', 'admin'] },
   { prefix: '/frontdesk', roles: ['frontdesk', 'admin'] },
   { prefix: '/nurse', roles: ['nurse', 'admin'] },
   { prefix: '/pharmacy', roles: ['pharmacy', 'admin'] },
   { prefix: '/lab', roles: ['lab', 'admin'] },
-  { prefix: '/profile', roles: ['doctor'] },
 ];
 
 export function canAccess(role: Role, pathname: string): boolean {

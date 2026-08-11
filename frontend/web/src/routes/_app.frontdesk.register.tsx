@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import React, { useState, useMemo, useRef } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import { PageHeader } from '@/components/common/PageHeader';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,17 +13,11 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
-import {
-  cn,
-  sanitizeLettersOnly,
-  sanitizePhone,
-  sanitizeAlphanumericId,
-} from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import { usePatients } from '@/lib/store/patients';
 import { useBillingStore } from '@/lib/store/billing';
 import { useNurseQueue } from '@/lib/store/nurseQueue';
 import { useHospitalSettings } from '@/lib/store/hospitalSettings';
-import { useStaffProfiles } from '@/lib/store/staffProfiles';
 import { doctors, departments } from '@/lib/mock/data';
 import type { Patient } from '@/lib/types';
 import {
@@ -61,7 +55,7 @@ export const Route = createFileRoute('/_app/frontdesk/register')({
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function generateUHID(): string {
-  return `PAT-${String(Math.floor(Math.random() * 999) + 1).padStart(3, '0')}`;
+  return `UHID-${100000 + Math.floor(Math.random() * 899999)}`;
 }
 
 function generateReceiptNo(): string {
@@ -94,7 +88,7 @@ function StepIndicator({ current }: { current: number }) {
                   ? 'border-primary bg-primary text-primary-foreground'
                   : i === current
                     ? 'border-primary bg-primary/10 text-primary shadow-md shadow-primary/20'
-                    : 'border-border bg-background text-muted-foreground',
+                    : 'border-border bg-background text-muted-foreground'
               )}
             >
               {i < current ? <CheckCircle2 className="h-4 w-4" /> : i + 1}
@@ -102,7 +96,7 @@ function StepIndicator({ current }: { current: number }) {
             <span
               className={cn(
                 'mt-1.5 w-20 text-center text-[10px] font-medium leading-tight',
-                i === current ? 'text-primary' : 'text-muted-foreground',
+                i === current ? 'text-primary' : 'text-muted-foreground'
               )}
             >
               {label}
@@ -112,7 +106,7 @@ function StepIndicator({ current }: { current: number }) {
             <div
               className={cn(
                 'mx-1 mb-5 h-0.5 w-12 transition-all duration-300',
-                i < current ? 'bg-primary' : 'bg-border',
+                i < current ? 'bg-primary' : 'bg-border'
               )}
             />
           )}
@@ -167,7 +161,7 @@ function StepLookup({
               'flex flex-col items-start gap-2 rounded-2xl border-2 p-5 text-left transition-all',
               mode === id
                 ? 'border-primary bg-primary/5 ring-1 ring-primary/30'
-                : 'border-border bg-background hover:border-primary/40 hover:bg-accent/30',
+                : 'border-border bg-background hover:border-primary/40 hover:bg-accent/30'
             )}
           >
             <span
@@ -175,7 +169,7 @@ function StepLookup({
                 'grid h-10 w-10 place-items-center rounded-xl',
                 mode === id
                   ? 'bg-primary text-primary-foreground'
-                  : 'bg-muted text-muted-foreground',
+                  : 'bg-muted text-muted-foreground'
               )}
             >
               <Icon className="h-5 w-5" />
@@ -323,7 +317,7 @@ function StepRegistration({
             <Input
               id="reg-name"
               value={form.name}
-              onChange={(e) => update('name', sanitizeLettersOnly(e.target.value))}
+              onChange={(e) => update('name', e.target.value)}
               placeholder="e.g. Aarav Sharma"
             />
           </Field>
@@ -377,11 +371,9 @@ function StepRegistration({
           <Field label="Mobile Number *">
             <Input
               id="reg-mobile"
-              type="tel"
               value={form.mobile}
-              onChange={(e) => update('mobile', sanitizePhone(e.target.value))}
-              placeholder="98765 43210"
-              maxLength={15}
+              onChange={(e) => update('mobile', e.target.value)}
+              placeholder="+91 98765 43210"
             />
           </Field>
           <Field label="Email (optional)">
@@ -418,18 +410,16 @@ function StepRegistration({
             <Input
               id="reg-emname"
               value={form.emergencyName}
-              onChange={(e) => update('emergencyName', sanitizeLettersOnly(e.target.value))}
+              onChange={(e) => update('emergencyName', e.target.value)}
               placeholder="Guardian / Relative name"
             />
           </Field>
           <Field label="Phone Number *">
             <Input
               id="reg-emphone"
-              type="tel"
               value={form.emergencyPhone}
-              onChange={(e) => update('emergencyPhone', sanitizePhone(e.target.value))}
-              placeholder="98765 43210"
-              maxLength={15}
+              onChange={(e) => update('emergencyPhone', e.target.value)}
+              placeholder="+91 …"
             />
           </Field>
           <Field label="Relationship">
@@ -515,7 +505,7 @@ function StepRegistration({
             <Input
               id="reg-ins-policy"
               value={form.policyNumber}
-              onChange={(e) => update('policyNumber', sanitizeAlphanumericId(e.target.value))}
+              onChange={(e) => update('policyNumber', e.target.value)}
               placeholder="e.g. SH-100245"
             />
           </Field>
@@ -551,10 +541,9 @@ function StepDoctorSelection({
   selectedDoctorId: string;
   setSelectedDoctorId: (v: string) => void;
 }) {
-  const deptDoctors = [...doctors].filter(
+  const deptDoctors = doctors.filter(
     (d) =>
-      !selectedDeptId ||
-      d.department === departments.find((dep) => dep.id === selectedDeptId)?.name,
+      !selectedDeptId || d.department === departments.find((dep) => dep.id === selectedDeptId)?.name
   );
 
   return (
@@ -578,7 +567,7 @@ function StepDoctorSelection({
                 'flex flex-col items-start gap-1 rounded-xl border-2 p-4 text-left transition-all',
                 selectedDeptId === dept.id
                   ? 'border-primary bg-primary/5 ring-1 ring-primary/30'
-                  : 'border-border hover:border-primary/40 hover:bg-accent/30',
+                  : 'border-border hover:border-primary/40 hover:bg-accent/30'
               )}
             >
               <p className="text-sm font-semibold leading-tight">{dept.name}</p>
@@ -612,7 +601,7 @@ function StepDoctorSelection({
                 onClick={() => setSelectedDoctorId(doc.id)}
                 className={cn(
                   'flex w-full items-center gap-4 py-4 text-left transition-all rounded-xl px-2',
-                  selectedDoctorId === doc.id ? 'bg-primary/5' : 'hover:bg-accent/30',
+                  selectedDoctorId === doc.id ? 'bg-primary/5' : 'hover:bg-accent/30'
                 )}
               >
                 <span
@@ -620,7 +609,7 @@ function StepDoctorSelection({
                     'grid h-11 w-11 shrink-0 place-items-center rounded-full border-2 text-sm font-bold transition-all',
                     selectedDoctorId === doc.id
                       ? 'border-primary bg-primary text-primary-foreground'
-                      : 'border-border bg-muted text-muted-foreground',
+                      : 'border-border bg-muted text-muted-foreground'
                   )}
                 >
                   {doc.name.split(' ').slice(-1)[0]?.[0]}
@@ -636,7 +625,7 @@ function StepDoctorSelection({
                       'text-[10px] font-semibold rounded-full px-2 py-0.5',
                       doc.available
                         ? 'bg-emerald-500/10 text-emerald-600'
-                        : 'bg-muted text-muted-foreground',
+                        : 'bg-muted text-muted-foreground'
                     )}
                   >
                     {doc.available ? 'Available' : 'Busy'}
@@ -706,7 +695,7 @@ function ConsultationBillModal({
 }) {
   const printRef = useRef<HTMLDivElement>(null);
   const billDate = format(new Date(), 'dd MMM yyyy, hh:mm a');
-  const { logoUrl, name, phone, address } = useHospitalSettings();
+  const { logoUrl, name, phone, email, address } = useHospitalSettings();
 
   const handlePrint = () => {
     const content = printRef.current?.innerHTML ?? '';
@@ -749,7 +738,7 @@ function ConsultationBillModal({
   const handleWhatsApp = () => {
     const phoneNum = patientPhone.replace(/\D/g, '');
     const msg = encodeURIComponent(
-      `*${name} — Consultation Bill*\nBill No: ${billNo}\nPatient: ${patientName} (${uhid})\nDate: ${billDate}\nDoctor: ${doctorName}\nTotal Paid: ₹${total}\nPayment: ${paymentMethod}\n\n"Payment received. Please proceed to the vitals desk."\n\nThank you for choosing ${name}!`,
+      `*${name} — Consultation Bill*\nBill No: ${billNo}\nPatient: ${patientName} (${uhid})\nDate: ${billDate}\nDoctor: ${doctorName}\nTotal Paid: ₹${total}\nPayment: ${paymentMethod}\n\n"Payment received. Please proceed to the vitals desk."\n\nThank you for choosing ${name}!`
     );
     window.open(`https://wa.me/${phoneNum}?text=${msg}`, '_blank');
   };
@@ -757,7 +746,7 @@ function ConsultationBillModal({
   const handleEmail = () => {
     const subject = encodeURIComponent(`${name} — Consultation Bill ${billNo}`);
     const body = encodeURIComponent(
-      `Dear ${patientName},\n\nYour Consultation Bill (No: ${billNo}) dated ${billDate} for ₹${total} has been received (${paymentMethod}).\n\nPlease proceed to the vitals desk.\n\n${name}\n${phone}`,
+      `Dear ${patientName},\n\nYour Consultation Bill (No: ${billNo}) dated ${billDate} for ₹${total} has been received (${paymentMethod}).\n\nPlease proceed to the vitals desk.\n\n${name}\n${phone}`
     );
     window.location.href = `mailto:${patientEmail}?subject=${subject}&body=${body}`;
   };
@@ -1219,7 +1208,7 @@ function StepPayment({
           <span
             className={cn(
               'ml-auto rounded-full px-2.5 py-1 text-xs font-semibold',
-              isNewPatient ? 'bg-blue-500/10 text-blue-600' : 'bg-emerald-500/10 text-emerald-600',
+              isNewPatient ? 'bg-blue-500/10 text-blue-600' : 'bg-emerald-500/10 text-emerald-600'
             )}
           >
             {isNewPatient ? 'New Patient' : 'Returning Patient'}
@@ -1276,13 +1265,13 @@ function StepPayment({
                 'flex items-center gap-3 rounded-xl border-2 px-4 py-3.5 text-left transition-all',
                 paymentMethod === id
                   ? 'border-primary bg-primary/5 ring-1 ring-primary/30'
-                  : 'border-border hover:border-primary/40 hover:bg-accent/30',
+                  : 'border-border hover:border-primary/40 hover:bg-accent/30'
               )}
             >
               <Icon
                 className={cn(
                   'h-5 w-5',
-                  paymentMethod === id ? 'text-primary' : 'text-muted-foreground',
+                  paymentMethod === id ? 'text-primary' : 'text-muted-foreground'
                 )}
               />
               <span
@@ -1401,9 +1390,6 @@ function Field({
 // ─── Main Wizard ──────────────────────────────────────────────────────────────
 
 function RegisterPatient() {
-  // Subscribe to staff profiles store to trigger re-renders on real-time changes
-  useStaffProfiles((s) => s.profiles);
-
   const addPatient = usePatients((s) => s.addPatient);
 
   const [step, setStep] = useState(0);

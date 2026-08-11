@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useState, useMemo } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
 import { PageHeader } from '@/components/common/PageHeader';
@@ -30,10 +30,10 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { toast } from 'sonner';
-import { allowOnlyAlphabets, allowOnlyEmailChars, passwordSchema } from '@/lib/validations';
 import {
   KeyRound,
   UserPlus,
+  Monitor,
   Eye,
   EyeOff,
   MoreHorizontal,
@@ -47,10 +47,14 @@ import {
   Pill,
   FlaskConical,
   Shield,
+  ArrowRight,
+  X,
+  ExternalLink,
 } from 'lucide-react';
 import { useCredentials, type StaffAccount } from '@/lib/store/credentials';
 import { useAuth } from '@/lib/store/auth';
 import { useAudit } from '@/lib/store/audit';
+import { ROLE_HOME } from '@/lib/rbac';
 import type { Role } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { departments } from '@/lib/mock/data';
@@ -108,6 +112,77 @@ const STAFF_ROLES: {
     icon: FlaskConical,
     color: 'bg-violet-500/10 text-violet-600 border-violet-200',
     description: 'Test orders & reports',
+  },
+];
+
+const ALL_MONITOR_ROLES: {
+  value: Role;
+  label: string;
+  icon: typeof Shield;
+  color: string;
+  path: string;
+  description: string;
+  stats: { label: string; value: string }[];
+}[] = [
+  {
+    value: 'frontdesk',
+    label: 'Front Desk',
+    icon: Users,
+    color: 'from-blue-500 to-blue-700',
+    path: '/frontdesk',
+    description: 'Patient registration, appointments & queue management',
+    stats: [
+      { label: "Today's check-ins", value: '47' },
+      { label: 'Queue', value: '12' },
+    ],
+  },
+  {
+    value: 'doctor',
+    label: 'Doctor',
+    icon: Stethoscope,
+    color: 'from-emerald-500 to-emerald-700',
+    path: '/doctor',
+    description: 'Patient consultations, prescriptions & lab orders',
+    stats: [
+      { label: 'In queue', value: '8' },
+      { label: 'Completed', value: '23' },
+    ],
+  },
+  {
+    value: 'nurse',
+    label: 'Nurse',
+    icon: HeartPulse,
+    color: 'from-pink-500 to-pink-700',
+    path: '/nurse',
+    description: 'Vitals recording, patient observations & triage',
+    stats: [
+      { label: 'Vitals recorded', value: '31' },
+      { label: 'Pending', value: '5' },
+    ],
+  },
+  {
+    value: 'pharmacy',
+    label: 'Pharmacy',
+    icon: Pill,
+    color: 'from-amber-500 to-amber-700',
+    path: '/pharmacy',
+    description: 'Medicine dispensing, inventory & billing',
+    stats: [
+      { label: 'Orders today', value: '64' },
+      { label: 'Low stock', value: '3' },
+    ],
+  },
+  {
+    value: 'lab',
+    label: 'Laboratory',
+    icon: FlaskConical,
+    color: 'from-violet-500 to-violet-700',
+    path: '/lab',
+    description: 'Lab tests, reports upload & pending work',
+    stats: [
+      { label: 'Pending tests', value: '14' },
+      { label: 'Completed', value: '36' },
+    ],
   },
 ];
 
@@ -219,13 +294,13 @@ function CreateAccountModal({ open, onClose }: CreateModalProps) {
                     'flex flex-col items-center gap-1.5 rounded-xl border p-2.5 text-center transition-all text-xs font-medium',
                     active
                       ? 'border-primary bg-primary/5 ring-1 ring-primary/40 text-primary'
-                      : 'border-border bg-background hover:border-primary/40 hover:bg-accent/40 text-muted-foreground',
+                      : 'border-border bg-background hover:border-primary/40 hover:bg-accent/40 text-muted-foreground'
                   )}
                 >
                   <span
                     className={cn(
                       'grid h-7 w-7 place-items-center rounded-lg',
-                      active ? 'bg-primary text-primary-foreground' : 'bg-muted',
+                      active ? 'bg-primary text-primary-foreground' : 'bg-muted'
                     )}
                   >
                     <Icon className="h-3.5 w-3.5" />
@@ -255,13 +330,13 @@ function CreateAccountModal({ open, onClose }: CreateModalProps) {
             </div>
             {form.role === 'doctor' && (
               <div>
-                <Label>Department</Label>
+                <Label htmlFor="ac-dept">Department</Label>
                 <Select
                   value={form.department}
-                  onValueChange={(d) => setForm({ ...form, department: d })}
+                  onValueChange={(val) => setForm({ ...form, department: val })}
                 >
-                  <SelectTrigger className="mt-1.5">
-                    <SelectValue placeholder="Select" />
+                  <SelectTrigger id="ac-dept" className="mt-1.5 bg-background">
+                    <SelectValue placeholder="Select Department" />
                   </SelectTrigger>
                   <SelectContent>
                     {departments.map((d) => (
@@ -283,7 +358,7 @@ function CreateAccountModal({ open, onClose }: CreateModalProps) {
               type="email"
               placeholder="staff@hospital.io"
               value={form.email}
-              onChange={(e) => setForm({ ...form, email: allowOnlyEmailChars(e.target.value) })}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
               className="mt-1.5"
             />
           </div>
@@ -297,7 +372,7 @@ function CreateAccountModal({ open, onClose }: CreateModalProps) {
                 type={showPwd ? 'text' : 'password'}
                 placeholder="Min 6 characters"
                 value={form.password}
-                onChange={(e) => setForm({ ...form, password: allowOnlyAlphabets(e.target.value) })}
+                onChange={(e) => setForm({ ...form, password: e.target.value })}
               />
               <button
                 type="button"
@@ -315,7 +390,7 @@ function CreateAccountModal({ open, onClose }: CreateModalProps) {
                       key={n}
                       className={cn(
                         'h-1 flex-1 rounded-full transition-all',
-                        n <= strength.score ? strength.color : 'bg-muted',
+                        n <= strength.score ? strength.color : 'bg-muted'
                       )}
                     />
                   ))}
@@ -323,7 +398,7 @@ function CreateAccountModal({ open, onClose }: CreateModalProps) {
                 <span
                   className={cn(
                     'text-xs font-medium',
-                    strength.score >= 3 ? 'text-emerald-600' : 'text-amber-600',
+                    strength.score >= 3 ? 'text-emerald-600' : 'text-amber-600'
                   )}
                 >
                   {strength.label}
@@ -343,7 +418,7 @@ function CreateAccountModal({ open, onClose }: CreateModalProps) {
                 value={form.confirm}
                 onChange={(e) => setForm({ ...form, confirm: e.target.value })}
                 className={cn(
-                  form.confirm && form.confirm !== form.password ? 'border-destructive' : '',
+                  form.confirm && form.confirm !== form.password ? 'border-destructive' : ''
                 )}
               />
               <button
@@ -391,16 +466,8 @@ function ResetPasswordModal({
   const strength = getPasswordStrength(pwd);
   const valid = pwd.length >= 6 && pwd === confirm;
 
-  const handleSave = () => {
-    if (!account) return;
-    if (!passwordSchema.safeParse(pwd).success) {
-      toast.error("Password should contain only alphabets.");
-      return;
-    }
-    if (pwd !== confirm) {
-      toast.error("Passwords do not match");
-      return;
-    }
+  const handle = () => {
+    if (!valid || !account) return;
     resetPassword(account.id, pwd);
     addLog({
       user: adminUser?.name || 'System Admin',
@@ -447,7 +514,7 @@ function ResetPasswordModal({
                       key={n}
                       className={cn(
                         'h-1 flex-1 rounded-full',
-                        n <= strength.score ? strength.color : 'bg-muted',
+                        n <= strength.score ? strength.color : 'bg-muted'
                       )}
                     />
                   ))}
@@ -474,7 +541,7 @@ function ResetPasswordModal({
           <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
-          <Button onClick={handleSave} disabled={!valid}>
+          <Button onClick={handle} disabled={!valid}>
             <RefreshCw className="mr-2 h-4 w-4" />
             Reset Password
           </Button>
@@ -507,7 +574,7 @@ function StaffAccountsTab({ onCreateClick }: { onCreateClick: () => void }) {
               <span
                 className={cn(
                   'grid h-9 w-9 place-items-center rounded-full border text-sm font-semibold',
-                  roleInfo?.color ?? 'bg-muted text-muted-foreground',
+                  roleInfo?.color ?? 'bg-muted text-muted-foreground'
                 )}
               >
                 {r.name
@@ -621,7 +688,7 @@ function StaffAccountsTab({ onCreateClick }: { onCreateClick: () => void }) {
         },
       },
     ],
-    [suspendAccount, reactivateAccount, addLog, adminUser?.name, adminUser?.role],
+    [suspendAccount, reactivateAccount]
   );
 
   return (

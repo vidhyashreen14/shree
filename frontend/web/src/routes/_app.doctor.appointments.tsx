@@ -4,23 +4,23 @@ import type { ColumnDef } from '@tanstack/react-table';
 import { PageHeader } from '@/components/common/PageHeader';
 import { DataTable } from '@/components/common/DataTable';
 import { AppointmentStatusChip } from '@/components/common/AppointmentStatusChip';
-import { appointments, patients } from '@/lib/mock/data';
+import { appointments, patients, doctors } from '@/lib/mock/data';
 import type { Appointment } from '@/lib/types';
 import { format } from 'date-fns';
+import { useAuth } from '@/lib/store/auth';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-
-import { useCurrentDoctorId } from '@/lib/store/doctors';
 
 export const Route = createFileRoute('/_app/doctor/appointments')({
   component: DoctorAppts,
 });
 
 function DoctorAppts() {
-  const doctorId = useCurrentDoctorId();
+  const user = useAuth((s) => s.user);
+  const doctorId = user?.role === 'doctor' ? user.id : doctors[0]!.id;
   const all = appointments.filter((a) => a.doctorId === doctorId);
   const [tab, setTab] = useState<'upcoming' | 'completed' | 'cancelled'>('upcoming');
 
-  const [now] = useState(() => Date.now());
+  const now = Date.now();
   const data = useMemo(() => {
     if (tab === 'completed') return all.filter((a) => a.status === 'completed');
     if (tab === 'cancelled') return all.filter((a) => a.status === 'cancelled');
@@ -28,7 +28,7 @@ function DoctorAppts() {
       (a) =>
         new Date(a.date).getTime() >= now - 1000 * 60 * 60 * 24 &&
         a.status !== 'completed' &&
-        a.status !== 'cancelled',
+        a.status !== 'cancelled'
     );
   }, [tab, all, now]);
 
@@ -73,7 +73,7 @@ function DoctorAppts() {
         ),
       },
     ],
-    [],
+    []
   );
 
   return (

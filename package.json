@@ -1,4 +1,11 @@
 {
+  "name": "vistahealth-pro",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix frontend/web run dev",
+    "build": "npm --prefix frontend/web run build",
+    "typecheck": "npm --prefix frontend/web run typecheck"
+  },
   "devDependencies": {
     "@types/react": "^19.2.17"
   }

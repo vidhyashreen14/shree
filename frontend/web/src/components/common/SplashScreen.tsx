@@ -97,7 +97,7 @@ export function SplashScreen({ onDone }: SplashScreenProps) {
         /* Earpieces fade in first */
         .animate-fade-in-delayed {
           opacity: 0;
-          animation: sp-fade 0.4s ease 0.3s forwards;
+          animation: sp-fade 0.4s ease 0.2s forwards;
         }
 
         /* Primary stethoscope tube and ECG line draw sequentially */

@@ -18,8 +18,8 @@ const FloatingLabel = () => {
       <div className="flex items-end gap-3 pb-1">
         <UserRound
           className={cn(
-            "size-4 shrink-0 transition-colors duration-300 mb-1",
-            focused ? "text-primary" : "text-muted-foreground"
+            'size-4 shrink-0 transition-colors duration-300 mb-1',
+            focused ? 'text-primary' : 'text-muted-foreground'
           )}
         />
         <div className="relative flex-1">
@@ -36,7 +36,7 @@ const FloatingLabel = () => {
             htmlFor={id}
             className={cn(
               'pointer-events-none absolute left-0 cursor-text transition-all duration-300 ease-in-out',
-              isFloated ? 'top-0.5 text-xs text-primary' : 'top-5 text-sm text-muted-foreground',
+              isFloated ? 'top-0.5 text-xs text-primary' : 'top-5 text-sm text-muted-foreground'
             )}
           >
             Full name
@@ -52,7 +52,7 @@ const FloatingLabel = () => {
           initial={false}
           animate={{ scaleX: focused ? 1 : 0, opacity: focused ? 1 : 0 }}
           transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
-          style={{ transformOrigin: "center" }}
+          style={{ transformOrigin: 'center' }}
         />
       </div>
     </div>

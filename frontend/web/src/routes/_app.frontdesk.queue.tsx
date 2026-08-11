@@ -48,7 +48,7 @@ function FdQueue() {
                   size="sm"
                   onClick={() => {
                     setRows((r) =>
-                      r.map((x) => (x.id === a.id ? { ...x, status: 'checked-in' } : x)),
+                      r.map((x) => (x.id === a.id ? { ...x, status: 'checked-in' } : x))
                     );
                     toast.success(`${p.name} checked in`);
                   }}

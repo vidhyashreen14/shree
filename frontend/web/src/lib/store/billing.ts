@@ -142,79 +142,55 @@ const defaultCategories: BillCategory[] = [
     label: 'OT / Surgery Bill',
     items: [
       { id: 'ot-surgeon', name: 'Surgeon Fees', amount: 15000, enabled: true },
-      { id: 'ot-anesthesia', name: 'Anesthesia Charges', amount: 5000, enabled: true },
-      { id: 'ot-theatre', name: 'Operation Theatre Charges', amount: 8000, enabled: true },
-      { id: 'ot-consumable', name: 'Surgical Consumables', amount: 3000, enabled: true },
-      { id: 'ot-recovery', name: 'Recovery Room Charges', amount: 1500, enabled: true },
+      { id: 'ot-asst', name: 'Assistant Surgeon Fees', amount: 5000, enabled: true },
+      { id: 'ot-charges', name: 'OT Charges', amount: 8000, enabled: true },
+      { id: 'ot-anesthesia', name: 'Anesthesia Charges', amount: 6000, enabled: true },
+      { id: 'ot-consumables', name: 'OT Consumables', amount: 3000, enabled: true },
     ],
   },
   {
     id: 'icu',
-    label: 'ICU / CCU Bill',
+    label: 'ICU Bill',
     items: [
-      { id: 'icu-bed', name: 'ICU Bed Charges (per day)', amount: 5000, enabled: true },
-      { id: 'icu-ventilator', name: 'Ventilator Charges (per day)', amount: 3000, enabled: true },
-      { id: 'icu-monitor', name: 'Multipara Monitor (per day)', amount: 1000, enabled: true },
-      { id: 'icu-doctor', name: 'Intensivist Visit (per day)', amount: 1500, enabled: true },
-      { id: 'icu-nursing', name: 'Special ICU Nursing (per day)', amount: 1000, enabled: true },
+      { id: 'icu-bed', name: 'ICU Bed Charges (per day)', amount: 8000, enabled: true },
+      { id: 'icu-ventilator', name: 'Ventilator Charges', amount: 3000, enabled: true },
+      { id: 'icu-cardiac', name: 'Cardiac Monitoring', amount: 1500, enabled: true },
+      { id: 'icu-oxygen', name: 'Oxygen Support', amount: 500, enabled: true },
+      { id: 'icu-nursing', name: 'ICU Nursing Charges', amount: 2000, enabled: true },
     ],
   },
   {
-    id: 'dental',
-    label: 'Dental Bill',
+    id: 'inpatient',
+    label: 'Inpatient Interim Bill',
     items: [
-      { id: 'den-consult', name: 'Dental Consultation', amount: 300, enabled: true },
-      { id: 'den-scaling', name: 'Scaling & Polishing', amount: 1000, enabled: true },
-      { id: 'den-filling', name: 'Tooth Filling (per tooth)', amount: 800, enabled: true },
-      { id: 'den-rct', name: 'Root Canal Treatment (RCT)', amount: 3500, enabled: true },
-      { id: 'den-extract', name: 'Tooth Extraction', amount: 700, enabled: true },
-      { id: 'den-crown', name: 'Dental Crown', amount: 4000, enabled: true },
-      { id: 'den-xray', name: 'Dental X-Ray (IOPA)', amount: 200, enabled: true },
+      { id: 'ip-room', name: 'Room Charges', amount: 1500, enabled: true },
+      { id: 'ip-medicines', name: 'Medicines', amount: 0, enabled: true },
+      { id: 'ip-lab', name: 'Lab Tests', amount: 0, enabled: true },
+      { id: 'ip-radiology', name: 'Radiology', amount: 0, enabled: true },
+      { id: 'ip-procedures', name: 'Procedures', amount: 0, enabled: true },
+      { id: 'ip-nursing', name: 'Nursing Charges', amount: 500, enabled: true },
     ],
   },
   {
-    id: 'ophthalmology',
-    label: 'Ophthalmology (Eye) Bill',
+    id: 'discharge',
+    label: 'Final Discharge Bill',
     items: [
-      { id: 'eye-consult', name: 'Eye Examination / Consultation', amount: 400, enabled: true },
-      { id: 'eye-refract', name: 'Refraction & Vision Testing', amount: 200, enabled: true },
-      { id: 'eye-cataract', name: 'Cataract Surgery Package', amount: 20000, enabled: true },
-      { id: 'eye-fundus', name: 'Fundus Examination', amount: 500, enabled: true },
-      { id: 'eye-tonometry', name: 'Tonometry (IOP check)', amount: 300, enabled: true },
-      { id: 'eye-oct', name: 'OCT Scan (Eye)', amount: 1500, enabled: true },
-    ],
-  },
-  {
-    id: 'ent',
-    label: 'ENT Bill',
-    items: [
-      { id: 'ent-consult', name: 'ENT Consultation', amount: 400, enabled: true },
-      { id: 'ent-audio', name: 'Pure Tone Audiometry (PTA)', amount: 600, enabled: true },
-      { id: 'ent-endo', name: 'Diagnostic Nasal Endoscopy', amount: 1200, enabled: true },
-      { id: 'ent-earclean', name: 'Ear Syringing / Wax Removal', amount: 300, enabled: true },
-      { id: 'ent-laryngo', name: 'Indirect Laryngoscopy', amount: 500, enabled: true },
-    ],
-  },
-  {
-    id: 'dermatology',
-    label: 'Dermatology / Skin Bill',
-    items: [
-      { id: 'der-consult', name: 'Skin Consultation', amount: 500, enabled: true },
-      { id: 'der-cautery', name: 'Electrocautery / Wart Removal', amount: 1000, enabled: true },
-      { id: 'der-peel', name: 'Chemical Peel Session', amount: 1500, enabled: true },
-      { id: 'der-biopsy', name: 'Skin Biopsy', amount: 1200, enabled: true },
-      { id: 'der-laser', name: 'Laser Treatment Session', amount: 2500, enabled: true },
+      { id: 'dis-admission', name: 'Admission Charges', amount: 1000, enabled: true },
+      { id: 'dis-consult', name: 'Consultation Fees', amount: 500, enabled: true },
+      { id: 'dis-room', name: 'Room Charges', amount: 1500, enabled: true },
+      { id: 'dis-lab', name: 'Lab Bills', amount: 0, enabled: true },
+      { id: 'dis-pharmacy', name: 'Pharmacy Bills', amount: 0, enabled: true },
+      { id: 'dis-surgery', name: 'Surgery/OT', amount: 0, enabled: true },
+      { id: 'dis-misc', name: 'Miscellaneous', amount: 0, enabled: true },
     ],
   },
   {
     id: 'insurance',
-    label: 'TPA / Insurance Bill',
+    label: 'Insurance / Cashless Bill',
     items: [
-      { id: 'ins-claim', name: 'Insurance Claim Processing Fee', amount: 500, enabled: true },
-      { id: 'ins-copay', name: 'Co-Payment Amount', amount: 0, enabled: true },
-      { id: 'ins-deduct', name: 'Deductible Amount', amount: 0, enabled: true },
-      { id: 'ins-nonmed', name: 'Non-Medical Expenses', amount: 0, enabled: true },
-      { id: 'ins-approved', name: 'TPA Pre-Auth Approved Amount', amount: 0, enabled: true },
+      { id: 'ins-hospital', name: 'Hospital Charges', amount: 0, enabled: true },
+      { id: 'ins-approved', name: 'Insurance Approved Amount', amount: 0, enabled: true },
+      { id: 'ins-copay', name: 'Co-payment', amount: 0, enabled: true },
       { id: 'ins-payable', name: 'Patient Payable Amount', amount: 0, enabled: true },
     ],
   },
@@ -271,7 +247,7 @@ export const useBillingStore = create<BillingState>()(
               : {
                   ...cat,
                   items: cat.items.map((item) => (item.id !== itemId ? item : { ...item, amount })),
-                },
+                }
           ),
         })),
 
@@ -283,9 +259,9 @@ export const useBillingStore = create<BillingState>()(
               : {
                   ...cat,
                   items: cat.items.map((item) =>
-                    item.id !== itemId ? item : { ...item, enabled },
+                    item.id !== itemId ? item : { ...item, enabled }
                   ),
-                },
+                }
           ),
         })),
 
@@ -297,7 +273,7 @@ export const useBillingStore = create<BillingState>()(
               : {
                   ...cat,
                   items: [...cat.items, item],
-                },
+                }
           ),
         })),
 
@@ -309,13 +285,13 @@ export const useBillingStore = create<BillingState>()(
               : {
                   ...cat,
                   items: cat.items.filter((item) => item.id !== itemId),
-                },
+                }
           ),
         })),
 
       resetToDefaults: () =>
         set({ categories: defaultCategories, registrationFee: 100, consultationFee: 500 }),
     }),
-    { name: 'medicore-billing-config' },
-  ),
+    { name: 'medicore-billing-config' }
+  )
 );

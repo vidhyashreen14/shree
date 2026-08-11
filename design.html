@@ -1,0 +1,2739 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pharmacy Billing Dashboard</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            padding: 20px;
+        }
+
+        #root {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .inventory-combo {
+            background: white !important;
+            color: #1a5276 !important;
+            border: 2px solid #2e86c1 !important;
+            padding: 8px 16px !important;
+            font-size: 14px !important;
+            border-radius: 30px !important;
+            outline: none !important;
+            cursor: pointer !important;
+            min-width: 240px !important;
+            font-weight: 500;
+            box-shadow: 0 2px 8px rgba(46, 134, 193, 0.15);
+            transition: all 0.2s;
+        }
+
+        .inventory-combo:hover {
+            border-color: #1a5276 !important;
+            box-shadow: 0 4px 12px rgba(26, 82, 118, 0.25);
+        }
+
+        .inventory-combo:focus {
+            border-color: #1a5276 !important;
+            box-shadow: 0 0 0 3px rgba(46, 134, 193, 0.3);
+        }
+
+        .inventory-combo option {
+            padding: 10px 12px;
+            font-size: 14px;
+            background: white;
+            color: #1a5276;
+        }
+
+        .dropdown-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: #1a5276;
+            font-size: 15px;
+            margin-right: 5px;
+        }
+
+        .inventory-wrapper {
+            background: #ebf5fb;
+            padding: 12px 30px;
+            border-bottom: 2px solid #a9cce3;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px 20px;
+        }
+
+        /* Billing Styles */
+        .billing-container {
+            padding: 10px 0;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .billing-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+            border: 1px solid #e9ecef;
+        }
+
+        .billing-header {
+            background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+            padding: 20px 30px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .billing-header .logo-section h2 {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .billing-header .logo-section span {
+            font-size: 13px;
+            opacity: 0.8;
+            display: block;
+            font-weight: 400;
+        }
+
+        .billing-header .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .billing-header .header-actions .notification-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+        .billing-header .header-actions .profile-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .billing-body {
+            padding: 24px 30px;
+        }
+
+        .billing-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a5276;
+            margin-bottom: 6px;
+        }
+
+        .billing-subtitle {
+            color: #6c757d;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px 20px;
+            border: 1px solid #e9ecef;
+            margin-bottom: 20px;
+        }
+
+        .info-grid .field-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-grid .field-group label {
+            font-weight: 600;
+            color: #1a5276;
+            font-size: 12px;
+            margin-bottom: 3px;
+            letter-spacing: 0.3px;
+        }
+
+        .info-grid .field-group label .required {
+            color: #dc3545;
+            margin-left: 2px;
+        }
+
+        .info-grid .field-group input {
+            padding: 6px 10px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 13px;
+            outline: none;
+            transition: all 0.25s ease;
+            background: white;
+        }
+
+        .info-grid .field-group input:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+        }
+
+        .patient-info-bar {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            border: 1px solid #e9ecef;
+            margin-bottom: 20px;
+        }
+
+        .patient-info-bar .patient-name {
+            font-weight: 700;
+            font-size: 16px;
+            color: #1a5276;
+        }
+
+        .patient-info-bar .patient-id {
+            color: #6c757d;
+            font-size: 13px;
+        }
+
+        .patient-info-bar .patient-id span {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .items-table th {
+            background: #f8f9fa;
+            color: #2c3e50;
+            padding: 10px 14px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #dee2e6;
+            font-size: 13px;
+        }
+
+        .items-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid #e9ecef;
+            vertical-align: middle;
+        }
+
+        .items-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .items-table .item-name {
+            font-weight: 600;
+            color: #1a5276;
+        }
+
+        .items-table .item-gst {
+            color: #28a745;
+            font-weight: 600;
+        }
+
+        .items-table .item-total {
+            font-weight: 700;
+            color: #1a5276;
+        }
+
+        .items-table .action-cell {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .items-table .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 4px 6px;
+            transition: all 0.2s;
+            color: #495057;
+        }
+
+        .items-table .action-btn:hover {
+            transform: scale(1.15);
+            color: #0d6efd;
+        }
+
+        .items-table .action-btn.delete:hover {
+            color: #dc3545;
+        }
+
+        .items-table .action-btn.save-btn {
+            color: #28a745;
+            font-size: 16px;
+        }
+
+        .items-table .action-btn.save-btn:hover {
+            color: #1e7e34;
+        }
+
+        .items-table .action-btn.cancel-btn {
+            color: #6c757d;
+            font-size: 16px;
+        }
+
+        .items-table .action-btn.cancel-btn:hover {
+            color: #343a40;
+        }
+
+        .add-item-btn {
+            background: transparent;
+            border: 2px dashed #dee2e6;
+            border-radius: 10px;
+            padding: 12px 20px;
+            width: 100%;
+            text-align: center;
+            color: #6c757d;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 20px;
+        }
+
+        .add-item-btn:hover {
+            border-color: #0d6efd;
+            color: #0d6efd;
+            background: #f8f9ff;
+        }
+
+        .billing-summary {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid #e9ecef;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .billing-summary .summary-item {
+            text-align: right;
+        }
+
+        .billing-summary .summary-item .label {
+            font-size: 12px;
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        .billing-summary .summary-item .value {
+            font-size: 16px;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .billing-summary .summary-item .value.total {
+            font-size: 20px;
+            color: #0d6efd;
+        }
+
+        .generate-btn {
+            background: linear-gradient(135deg, #0d6efd, #0a58ca);
+            color: white;
+            border: none;
+            padding: 12px 40px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+            display: block;
+            margin: 0 auto;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(13, 110, 253, 0.4);
+        }
+
+        .billing-footer {
+            padding: 16px 30px;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            background: #fafafa;
+        }
+
+        .billing-footer .pharmacy-name {
+            font-weight: 600;
+            color: #1a5276;
+            font-size: 14px;
+        }
+
+        .billing-footer .pharmacy-name span {
+            font-weight: 400;
+            color: #6c757d;
+        }
+
+        .billing-footer .footer-meta {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        .billing-footer .footer-meta .search-box {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 4px 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .billing-footer .footer-meta .search-box input {
+            border: none;
+            outline: none;
+            padding: 4px 0;
+            font-size: 12px;
+            width: 120px;
+        }
+
+        .billing-footer .footer-meta .time-date {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .purchase-container {
+            padding: 10px 0;
+        }
+
+        .purchase-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 18px 24px;
+            border-radius: 12px;
+            border: 1px solid #d4e6f1;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+        }
+
+        .purchase-header h2 {
+            color: #1a5276;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .purchase-header h2::before {
+            content: "🛒";
+            font-size: 26px;
+        }
+
+        .purchase-fields {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .purchase-fields .field-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: white;
+            padding: 4px 12px 4px 10px;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+            transition: all 0.25s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        .purchase-fields .field-wrapper:hover {
+            border-color: #2e86c1;
+            box-shadow: 0 2px 8px rgba(46, 134, 193, 0.12);
+        }
+
+        .purchase-fields .field-wrapper:focus-within {
+            border-color: #2e86c1;
+            box-shadow: 0 0 0 3px rgba(46, 134, 193, 0.2);
+        }
+
+        .purchase-fields .field-wrapper label {
+            font-weight: 700;
+            color: #1a5276;
+            font-size: 12px;
+            white-space: nowrap;
+            letter-spacing: 0.3px;
+        }
+
+        .purchase-fields .field-wrapper label .required {
+            color: #dc3545;
+            margin-left: 1px;
+        }
+
+        .purchase-fields .field-wrapper input,
+        .purchase-fields .field-wrapper select {
+            border: none;
+            padding: 5px 4px;
+            font-size: 13px;
+            background: transparent;
+            outline: none;
+            color: #2c3e50;
+            font-weight: 500;
+            width: 150px;
+        }
+
+        .purchase-medicine-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px 16px;
+            align-items: center;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 14px 20px;
+            border-radius: 12px;
+            margin: 15px 0;
+            border: 1px solid #d4e6f1;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .purchase-medicine-row .field-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: white;
+            padding: 3px 10px 3px 8px;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+            transition: all 0.25s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        .purchase-medicine-row .field-group:hover {
+            border-color: #2e86c1;
+            box-shadow: 0 2px 8px rgba(46, 134, 193, 0.12);
+            transform: translateY(-1px);
+        }
+
+        .purchase-medicine-row .field-group:focus-within {
+            border-color: #2e86c1;
+            box-shadow: 0 0 0 3px rgba(46, 134, 193, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .purchase-medicine-row .field-group label {
+            font-weight: 700;
+            color: #1a5276;
+            font-size: 11px;
+            white-space: nowrap;
+            letter-spacing: 0.3px;
+        }
+
+        .purchase-medicine-row .field-group input {
+            border: none;
+            padding: 5px 4px;
+            font-size: 12px;
+            background: transparent;
+            outline: none;
+            width: 70px;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+        .purchase-medicine-row .field-group input::placeholder {
+            color: #adb5bd;
+            font-size: 10px;
+            font-weight: 400;
+        }
+
+        .purchase-medicine-row .field-group .medium-input {
+            width: 120px;
+        }
+
+        .purchase-medicine-row .field-group .small-input {
+            width: 60px;
+        }
+
+        .purchase-medicine-row .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-left: 8px;
+        }
+
+        .purchase-medicine-row .add-btn {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 7px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 13px;
+            height: 34px;
+            transition: all 0.25s ease;
+            box-shadow: 0 3px 8px rgba(40, 167, 69, 0.3);
+            letter-spacing: 0.5px;
+        }
+
+        .purchase-medicine-row .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(40, 167, 69, 0.4);
+        }
+
+        .purchase-medicine-row .clear-btn {
+            background: linear-gradient(135deg, #dc3545, #e74c3c);
+            color: white;
+            border: none;
+            padding: 7px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 13px;
+            height: 34px;
+            transition: all 0.25s ease;
+            box-shadow: 0 3px 8px rgba(220, 53, 69, 0.3);
+            letter-spacing: 0.5px;
+        }
+
+        .purchase-medicine-row .clear-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(220, 53, 69, 0.4);
+        }
+
+        .purchase-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+
+        .purchase-table th {
+            background: #1a5276;
+            color: white;
+            padding: 6px 4px;
+            text-align: left;
+            font-weight: 600;
+            white-space: nowrap;
+            font-size: 11px;
+        }
+
+        .purchase-table td {
+            padding: 6px 4px;
+            border-bottom: 1px solid #dee2e6;
+            vertical-align: middle;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .purchase-table tr:hover {
+            background: #f1f9ff;
+        }
+
+        .edit-delete-btn {
+            background: #2e86c1;
+            color: white;
+            border: none;
+            padding: 2px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 11px;
+            margin-right: 3px;
+        }
+
+        .edit-delete-btn.del {
+            background: #dc3545;
+        }
+
+        .edit-delete-btn.edit-mode {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 25px;
+            padding: 15px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 12px;
+            border: 1px solid #d4e6f1;
+        }
+
+        .action-btn {
+            padding: 10px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .action-btn.save {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+        }
+
+        .action-btn.print {
+            background: linear-gradient(135deg, #17a2b8, #0dcaf0);
+            color: white;
+        }
+
+        .action-btn.download {
+            background: linear-gradient(135deg, #6f42c1, #8b5cf6);
+            color: white;
+        }
+
+        .action-btn.cancel {
+            background: linear-gradient(135deg, #dc3545, #e74c3c);
+            color: white;
+        }
+
+        .no-data {
+            text-align: center;
+            color: #6c757d;
+            padding: 20px;
+            font-style: italic;
+        }
+
+        .invoice-container {
+            padding: 10px 0;
+        }
+
+        .add-medicine-btn {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 8px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 700;
+            transition: all 0.25s ease;
+            box-shadow: 0 3px 10px rgba(40, 167, 69, 0.3);
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .add-medicine-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+        }
+
+        .add-medicine-btn:active {
+            transform: translateY(0px);
+        }
+
+        .add-medicine-btn::before {
+            content: "➕ ";
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: 1px solid #c3e6cb;
+            margin: 15px 0;
+            text-align: center;
+            font-weight: 600;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Fix for nav tabs */
+        .nav-tabs {
+            display: flex;
+            gap: 8px;
+            background: white;
+            padding: 8px 20px;
+            border-radius: 12px 12px 0 0;
+            border-bottom: 2px solid #e9ecef;
+            flex-wrap: wrap;
+        }
+
+        .nav-tab {
+            padding: 10px 22px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            color: #6c757d;
+            border-radius: 8px 8px 0 0;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-tab:hover {
+            background: #f8f9fa;
+            color: #1a5276;
+        }
+
+        .nav-tab.active {
+            background: #0d6efd;
+            color: white;
+            box-shadow: 0 2px 8px rgba(13, 110, 253, 0.3);
+        }
+
+        .tab-content {
+            background: white;
+            padding: 20px;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+        }
+
+        /* Reports Styles */
+        .reports-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .report-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+
+        .report-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-color: #0d6efd;
+        }
+
+        .report-card .report-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .report-card h4 {
+            color: #1a5276;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .report-card p {
+            font-size: 13px;
+            color: #6c757d;
+            margin-bottom: 12px;
+        }
+
+        .report-card .btn-group {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .report-card .btn-report {
+            background: linear-gradient(135deg, #0d6efd, #0a58ca);
+            color: white;
+            border: none;
+            padding: 6px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.25s ease;
+            flex: 1;
+        }
+
+        .report-card .btn-report:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+        }
+
+        .report-card .btn-report:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .report-card .btn-upload {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 6px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.25s ease;
+            flex: 1;
+        }
+
+        .report-card .btn-upload:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+        }
+
+        .report-card .upload-status {
+            display: block;
+            margin-top: 8px;
+            font-size: 12px;
+            color: #155724;
+            background: #d4edda;
+            padding: 4px 10px;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .report-card .upload-status.uploading {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .report-card .upload-status.no-file {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Reports categories */
+        .report-category {
+            margin-top: 30px;
+        }
+
+        .report-category h3 {
+            color: #1a5276;
+            font-size: 20px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .report-category h3 .badge {
+            background: #0d6efd;
+            color: white;
+            font-size: 12px;
+            padding: 2px 10px;
+            border-radius: 20px;
+            margin-left: 10px;
+        }
+
+        /* File input hidden */
+        .file-input-hidden {
+            display: none;
+        }
+
+        /* Modal for viewing uploaded file */
+        .report-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .report-modal-content {
+            background: white;
+            border-radius: 12px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .report-modal-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8f9fa;
+        }
+
+        .report-modal-header h3 {
+            color: #1a5276;
+            font-size: 18px;
+        }
+
+        .report-modal-header .close-modal {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #6c757d;
+            transition: color 0.2s;
+        }
+
+        .report-modal-header .close-modal:hover {
+            color: #dc3545;
+        }
+
+        .report-modal-body {
+            padding: 20px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .report-modal-body .file-preview {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #e9ecef;
+        }
+
+        .report-modal-body .file-preview .file-icon {
+            font-size: 64px;
+            margin-bottom: 10px;
+        }
+
+        .report-modal-body .file-preview .file-info {
+            margin-top: 10px;
+        }
+
+        .report-modal-body .file-preview .file-info .file-name {
+            font-weight: 600;
+            color: #1a5276;
+        }
+
+        .report-modal-body .file-preview .file-info .file-details {
+            color: #6c757d;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        .report-modal-body .file-content {
+            margin-top: 15px;
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 13px;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .report-modal-body .file-content .placeholder-text {
+            color: #6c757d;
+            text-align: center;
+            padding: 30px;
+        }
+
+        .report-modal-footer {
+            padding: 15px 20px;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            background: #f8f9fa;
+        }
+
+        .report-modal-footer .btn-download {
+            background: linear-gradient(135deg, #6f42c1, #8b5cf6);
+            color: white;
+            border: none;
+            padding: 8px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.25s ease;
+        }
+
+        .report-modal-footer .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(111, 66, 193, 0.3);
+        }
+
+        .report-modal-footer .btn-close-modal {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.25s ease;
+        }
+
+        .report-modal-footer .btn-close-modal:hover {
+            background: #5a6268;
+        }
+
+        /* Edit mode styles for invoices */
+        .editing-row {
+            background: #fff3cd !important;
+        }
+
+        .editing-row td {
+            border-bottom: 2px solid #ffc107 !important;
+        }
+
+        .invoice-edit-input {
+            padding: 4px 6px;
+            border: 2px solid #ffc107;
+            border-radius: 4px;
+            font-size: 12px;
+            width: 100%;
+            background: white;
+        }
+
+        .invoice-edit-input:focus {
+            outline: none;
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+        }
+
+        .btn-save-edit {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 3px 12px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 11px;
+            margin-right: 3px;
+        }
+
+        .btn-save-edit:hover {
+            background: #1e7e34;
+        }
+
+        .btn-cancel-edit {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 3px 12px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 11px;
+            margin-right: 3px;
+        }
+
+        .btn-cancel-edit:hover {
+            background: #5a6268;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useRef } = React;
+
+        const PharmacyBilling = () => {
+            const [activeTab, setActiveTab] = useState('billings');
+            const [selectedInventory, setSelectedInventory] = useState('');
+
+            // Billing state
+            const [billingItems, setBillingItems] = useState([
+                { id: 1, item: 'Budesonide 200mcg', qty: 1, price: 13, gst: '5', total: 13.65 }
+            ]);
+
+            // Patient and Billing fields
+            const [patientName, setPatientName] = useState('');
+            const [invoiceNumber, setInvoiceNumber] = useState('');
+            const [billingDate, setBillingDate] = useState('');
+
+            // Edit mode state
+            const [editingItemId, setEditingItemId] = useState(null);
+
+            const [purchaseData, setPurchaseData] = useState({
+                stockistName: '',
+                orderDate: '',
+                medicine: '',
+                unitsPerStrip: '',
+                noOfStrips: ''
+            });
+            const [purchaseList, setPurchaseList] = useState([]);
+            const [purchaseEditingId, setPurchaseEditingId] = useState(null);
+            const [showSuccess, setShowSuccess] = useState(false);
+
+            const [formData, setFormData] = useState({
+                patientName: '',
+                medicineName: '',
+                medicationName: '',
+                quantity: '',
+                unit: '',
+                amount: '',
+                total: '',
+                search: '',
+                filter: '',
+                sort: '',
+                date: '',
+                dateRange: '',
+                dateRange1: '',
+                dateRange2: '',
+                month1: '', year1: '',
+                month2: '', year2: '',
+                month3: '', year3: '',
+                month4: '', year4: ''
+            });
+
+            const [invoiceNumberState, setInvoiceNumberState] = useState('');
+            const [selectedStockist, setSelectedStockist] = useState('');
+            const [invoiceDateState, setInvoiceDateState] = useState('');
+
+            const [medicineFields, setMedicineFields] = useState({
+                medicine: '',
+                batch: '',
+                batchExpiry: '',
+                unitsPerStrip: '',
+                noOfStrips: '',
+                freeStrips: '',
+                gstTotal: '',
+                mrpPerStrip: '',
+                discount: '',
+                hsnCode: '',
+                rackNo: '',
+                boxNo: '',
+                netPrice: ''
+            });
+            const [medicineList, setMedicineList] = useState([]);
+            const [editingMedicineId, setEditingMedicineId] = useState(null);
+            const [editFormData, setEditFormData] = useState({});
+
+            const stockistOptions = [
+                '-- Select Pharmacy Stockist --',
+                'Apollo Pharmacy',
+                'MedPlus Health Services',
+                'Pharma Distributors India',
+                'MediCare Suppliers Pvt Ltd',
+                'HealthPlus Stockists',
+                'City Pharmacy Distributors',
+                'National Medical Suppliers',
+                'Regional Pharma Stockists',
+                'Global Health Distributors',
+                'LifeCare Pharmaceuticals',
+                'Wellness Medical Suppliers',
+                'Prime Health Distributors',
+                'Shree Pharmacy Stockists',
+                'Sai Medical Agencies',
+                'Raj Pharma Distributors',
+                'Om Health Care',
+                'Gayatri Medical Suppliers',
+                'Aditya Pharmacy Stockists'
+            ];
+
+            const handleChange = (e) => {
+                const { name, value } = e.target;
+                setFormData(prev => ({ ...prev, [name]: value }));
+            };
+
+            const handlePurchaseChange = (e) => {
+                const { name, value } = e.target;
+                setPurchaseData(prev => ({ ...prev, [name]: value }));
+            };
+
+            const handleAddPurchase = () => {
+                if (!purchaseData.medicine || !purchaseData.unitsPerStrip || !purchaseData.noOfStrips) {
+                    alert('⚠️ Please fill in Medicine, Units/Strip, and No. of Strips fields!');
+                    return;
+                }
+
+                if (purchaseEditingId) {
+                    setPurchaseList(prev => prev.map(item =>
+                        item.id === purchaseEditingId
+                            ? { ...item, medicine: purchaseData.medicine, unitsPerStrip: purchaseData.unitsPerStrip, noOfStrips: purchaseData.noOfStrips }
+                            : item
+                    ));
+                    setPurchaseEditingId(null);
+                    alert('✅ Item Updated Successfully!');
+                } else {
+                    const newItem = {
+                        id: Date.now(),
+                        medicine: purchaseData.medicine,
+                        unitsPerStrip: purchaseData.unitsPerStrip,
+                        noOfStrips: purchaseData.noOfStrips
+                    };
+                    setPurchaseList(prev => [...prev, newItem]);
+                    alert('✅ Item Added Successfully!');
+                }
+
+                setShowSuccess(false);
+                setPurchaseData({
+                    stockistName: purchaseData.stockistName,
+                    orderDate: purchaseData.orderDate,
+                    medicine: '',
+                    unitsPerStrip: '',
+                    noOfStrips: ''
+                });
+            };
+
+            const handleClearPurchase = () => {
+                setPurchaseData({
+                    stockistName: purchaseData.stockistName,
+                    orderDate: purchaseData.orderDate,
+                    medicine: '',
+                    unitsPerStrip: '',
+                    noOfStrips: ''
+                });
+                setPurchaseEditingId(null);
+            };
+
+            const handleEditPurchase = (id) => {
+                const itemToEdit = purchaseList.find(item => item.id === id);
+                if (itemToEdit) {
+                    setPurchaseData({
+                        stockistName: purchaseData.stockistName,
+                        orderDate: purchaseData.orderDate,
+                        medicine: itemToEdit.medicine,
+                        unitsPerStrip: itemToEdit.unitsPerStrip,
+                        noOfStrips: itemToEdit.noOfStrips
+                    });
+                    setPurchaseEditingId(id);
+                    document.querySelector('.purchase-medicine-row')?.scrollIntoView({ behavior: 'smooth' });
+                }
+            };
+
+            const handleDeletePurchase = (id) => {
+                if (window.confirm('⚠️ Are you sure you want to delete this item?')) {
+                    setPurchaseList(prev => {
+                        const newList = prev.filter(item => item.id !== id);
+                        return newList;
+                    });
+                    if (purchaseEditingId === id) {
+                        setPurchaseEditingId(null);
+                        setPurchaseData({
+                            stockistName: purchaseData.stockistName,
+                            orderDate: purchaseData.orderDate,
+                            medicine: '',
+                            unitsPerStrip: '',
+                            noOfStrips: ''
+                        });
+                    }
+                    setShowSuccess(false);
+                    alert('🗑️ Item Deleted Successfully!');
+                }
+            };
+
+            const handleSaveOrder = () => {
+                if (purchaseList.length === 0) {
+                    alert('⚠️ Please add at least one medicine to the order!');
+                    return;
+                }
+                if (!purchaseData.stockistName) {
+                    alert('⚠️ Please select a Stockist Name!');
+                    return;
+                }
+                if (!purchaseData.orderDate) {
+                    alert('⚠️ Please select an Order Date!');
+                    return;
+                }
+
+                setShowSuccess(true);
+                console.log('Purchase Order Saved:', {
+                    stockist: purchaseData.stockistName,
+                    date: purchaseData.orderDate,
+                    items: purchaseList
+                });
+
+                setTimeout(() => {
+                    setShowSuccess(false);
+                }, 5000);
+            };
+
+            const handlePrint = () => {
+                if (purchaseList.length === 0) {
+                    alert('⚠️ No items to print! Please add medicines to the order.');
+                    return;
+                }
+                alert('🖨️ Printing Purchase Order...\n\n' +
+                    'Order Details:\n' +
+                    'Stockist: ' + purchaseData.stockistName + '\n' +
+                    'Date: ' + purchaseData.orderDate + '\n' +
+                    'Items: ' + purchaseList.length + ' medicines\n' +
+                    'Total Units: ' + purchaseList.reduce((sum, item) => sum + (parseInt(item.unitsPerStrip) * parseInt(item.noOfStrips) || 0), 0));
+
+                window.print();
+            };
+
+            const handleDownload = () => {
+                if (purchaseList.length === 0) {
+                    alert('⚠️ No items to download! Please add medicines to the order.');
+                    return;
+                }
+
+                let csvContent = "Purchase Order Report\n";
+                csvContent += "Stockist Name," + purchaseData.stockistName + "\n";
+                csvContent += "Order Date," + purchaseData.orderDate + "\n\n";
+                csvContent += "Medicine,Units/Strip,No. Of Strips,Total Units\n";
+
+                purchaseList.forEach(item => {
+                    const totalUnits = parseInt(item.unitsPerStrip) * parseInt(item.noOfStrips) || 0;
+                    csvContent += `${item.medicine},${item.unitsPerStrip},${item.noOfStrips},${totalUnits}\n`;
+                });
+
+                const blob = new Blob([csvContent], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `Purchase_Order_${purchaseData.stockistName || 'Order'}_${new Date().toISOString().split('T')[0]}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+
+                alert('📥 Purchase Order downloaded successfully as CSV!');
+            };
+
+            const handleCancelOrder = () => {
+                if (purchaseList.length === 0 && !purchaseData.medicine) {
+                    alert('ℹ️ No data to cancel.');
+                    return;
+                }
+
+                if (window.confirm('⚠️ Are you sure you want to cancel this order? All data will be lost.')) {
+                    setPurchaseList([]);
+                    setPurchaseData({
+                        stockistName: '',
+                        orderDate: '',
+                        medicine: '',
+                        unitsPerStrip: '',
+                        noOfStrips: ''
+                    });
+                    setPurchaseEditingId(null);
+                    setShowSuccess(false);
+                    alert('✅ Order Cancelled Successfully!');
+                }
+            };
+
+            // Billing handlers
+            const handleAddBillingItem = () => {
+                const newItem = {
+                    id: Date.now(),
+                    item: '',
+                    qty: 1,
+                    price: 0,
+                    gst: '5',
+                    total: 0
+                };
+                setBillingItems(prev => [...prev, newItem]);
+            };
+
+            const handleUpdateBillingItem = (id, field, value) => {
+                setBillingItems(prev => prev.map(item => {
+                    if (item.id === id) {
+                        const updated = { ...item, [field]: value };
+                        if (field === 'qty' || field === 'price') {
+                            const qty = field === 'qty' ? parseFloat(value) || 0 : item.qty;
+                            const price = field === 'price' ? parseFloat(value) || 0 : item.price;
+                            const gstRate = parseFloat(item.gst) || 0;
+                            updated.total = parseFloat((qty * price * (1 + gstRate / 100)).toFixed(2));
+                        }
+                        if (field === 'gst') {
+                            const gstRate = parseFloat(value) || 0;
+                            updated.total = parseFloat((item.qty * item.price * (1 + gstRate / 100)).toFixed(2));
+                        }
+                        return updated;
+                    }
+                    return item;
+                }));
+            };
+
+            const handleDeleteBillingItem = (id) => {
+                if (window.confirm('Are you sure you want to delete this item?')) {
+                    setBillingItems(prev => prev.filter(item => item.id !== id));
+                    if (editingItemId === id) {
+                        setEditingItemId(null);
+                    }
+                }
+            };
+
+            const handleEditBillingItem = (id) => {
+                setEditingItemId(id);
+                const row = document.querySelector(`[data-item-id="${id}"]`);
+                if (row) {
+                    row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            };
+
+            const handleSaveEditBillingItem = (id) => {
+                setEditingItemId(null);
+                alert('✅ Item updated successfully!');
+            };
+
+            const handleCancelEditBillingItem = () => {
+                setEditingItemId(null);
+            };
+
+            const handleGenerateInvoice = () => {
+                if (!patientName) {
+                    alert('⚠️ Please enter Patient Name!');
+                    return;
+                }
+                if (!invoiceNumber) {
+                    alert('⚠️ Please enter Invoice Number!');
+                    return;
+                }
+                if (billingItems.length === 0 || billingItems.every(item => !item.item)) {
+                    alert('⚠️ Please add at least one medicine item!');
+                    return;
+                }
+
+                const subtotal = billingItems.reduce((sum, item) => sum + (item.price * item.qty), 0);
+                const gstTotal = billingItems.reduce((sum, item) => sum + (item.total - (item.price * item.qty)), 0);
+                const grandTotal = billingItems.reduce((sum, item) => sum + item.total, 0);
+
+                alert(`✅ Invoice Generated Successfully!\n\n` +
+                    `Invoice #: ${invoiceNumber}\n` +
+                    `Billing Date: ${billingDate || 'Today'}\n` +
+                    `Patient: ${patientName}\n\n` +
+                    `Subtotal: ₹${subtotal.toFixed(2)}\n` +
+                    `GST: ₹${gstTotal.toFixed(2)}\n` +
+                    `Total: ₹${grandTotal.toFixed(2)}`);
+            };
+
+            // Invoice handlers
+            const handleMedicineFieldChange = (e) => {
+                const { name, value } = e.target;
+                setMedicineFields(prev => ({ ...prev, [name]: value }));
+            };
+
+            const handleAddInvoiceMedicine = () => {
+                if (!medicineFields.medicine || !medicineFields.batch || !medicineFields.batchExpiry) {
+                    alert('Please fill in Medicine, Batch, and Expiry fields!');
+                    return;
+                }
+
+                const newMedicine = {
+                    id: Date.now(),
+                    ...medicineFields
+                };
+
+                setMedicineList(prev => [...prev, newMedicine]);
+                alert('Medicine Added Successfully!');
+
+                setMedicineFields({
+                    medicine: '',
+                    batch: '',
+                    batchExpiry: '',
+                    unitsPerStrip: '',
+                    noOfStrips: '',
+                    freeStrips: '',
+                    gstTotal: '',
+                    mrpPerStrip: '',
+                    discount: '',
+                    hsnCode: '',
+                    rackNo: '',
+                    boxNo: '',
+                    netPrice: ''
+                });
+            };
+
+            const handleClearFields = () => {
+                setMedicineFields({
+                    medicine: '',
+                    batch: '',
+                    batchExpiry: '',
+                    unitsPerStrip: '',
+                    noOfStrips: '',
+                    freeStrips: '',
+                    gstTotal: '',
+                    mrpPerStrip: '',
+                    discount: '',
+                    hsnCode: '',
+                    rackNo: '',
+                    boxNo: '',
+                    netPrice: ''
+                });
+            };
+
+            const handleDeleteInvoiceMedicine = (id) => {
+                if (window.confirm('Are you sure you want to delete this medicine?')) {
+                    setMedicineList(prev => prev.filter(item => item.id !== id));
+                    if (editingMedicineId === id) {
+                        setEditingMedicineId(null);
+                        setEditFormData({});
+                    }
+                }
+            };
+
+            const handleEditInvoiceMedicine = (id) => {
+                const itemToEdit = medicineList.find(item => item.id === id);
+                if (itemToEdit) {
+                    setEditingMedicineId(id);
+                    setEditFormData({ ...itemToEdit });
+                }
+            };
+
+            const handleSaveEditInvoiceMedicine = () => {
+                if (!editFormData.medicine || !editFormData.batch || !editFormData.batchExpiry) {
+                    alert('Please fill in Medicine, Batch, and Expiry fields!');
+                    return;
+                }
+
+                setMedicineList(prev => prev.map(item =>
+                    item.id === editingMedicineId ? { ...editFormData, id: item.id } : item
+                ));
+                setEditingMedicineId(null);
+                setEditFormData({});
+                alert('✅ Medicine updated successfully!');
+            };
+
+            const handleCancelEditInvoiceMedicine = () => {
+                setEditingMedicineId(null);
+                setEditFormData({});
+            };
+
+            const handleInvoiceNumberStateChange = (e) => {
+                setInvoiceNumberState(e.target.value);
+            };
+
+            const handleStockistChange = (e) => {
+                setSelectedStockist(e.target.value);
+            };
+
+            const handleInvoiceDateStateChange = (e) => {
+                setInvoiceDateState(e.target.value);
+            };
+
+            const handleSave = () => {
+                alert('Record Saved Successfully!');
+                console.log('Form Data:', formData);
+            };
+
+            const handleCancel = () => {
+                setFormData({
+                    patientName: '', medicineName: '', medicationName: '',
+                    quantity: '', unit: '', amount: '', total: '',
+                    search: '', filter: '', sort: '',
+                    date: '', dateRange: '', dateRange1: '', dateRange2: '',
+                    month1: '', year1: '', month2: '', year2: '',
+                    month3: '', year3: '', month4: '', year4: ''
+                });
+            };
+
+            const handleTabClick = (tabId) => {
+                setActiveTab(tabId);
+            };
+
+            const handleInventoryChange = (e) => {
+                const val = e.target.value;
+                setSelectedInventory(val);
+                const selectedOption = e.target.options[e.target.selectedIndex];
+                const label = selectedOption ? selectedOption.text : '';
+                alert(`Selected: ${label}`);
+            };
+
+            const navItems = [
+                { id: 'billings', label: 'Billings', icon: '📋' },
+                { id: 'inventory', label: 'Inventory', icon: '📦' },
+                { id: 'invoices', label: 'Invoices', icon: '📄' },
+                { id: 'purchase', label: 'Purchase Order', icon: '🛒' },
+                { id: 'reports', label: 'Reports', icon: '📊' }
+            ];
+
+            const inventoryOptions = [
+                { id: 'opening-stocks', label: 'Opening Stocks' },
+                { id: 'view-inventory', label: 'View Inventory' },
+                { id: 'view-inventory-details', label: 'View Inventory Details' },
+                { id: 'medicine-master', label: 'Medicine Master List' },
+                { id: 'manufacture-master', label: 'Manufacture Master List' }
+            ];
+
+            const showInventoryCombo = activeTab === 'inventory';
+
+            const renderInvoices = () => (
+                <div className="invoice-container">
+                    <div className="purchase-header">
+                        <h2>Add Invoice</h2>
+                        <div className="purchase-fields">
+                            <div className="field-wrapper">
+                                <label>Invoice # <span className="required">*</span></label>
+                                <input
+                                    type="text"
+                                    value={invoiceNumberState}
+                                    onChange={handleInvoiceNumberStateChange}
+                                    placeholder="Enter invoice number"
+                                />
+                            </div>
+                            <div className="field-wrapper">
+                                <label>Pharmacy Stockist <span className="required">*</span></label>
+                                <select
+                                    value={selectedStockist}
+                                    onChange={handleStockistChange}
+                                    className="stockist-combo"
+                                >
+                                    {stockistOptions.map((option, index) => (
+                                        <option key={index} value={option}>
+                                            {option}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="field-wrapper">
+                                <label>Date <span className="required">*</span></label>
+                                <input
+                                    type="date"
+                                    value={invoiceDateState}
+                                    onChange={handleInvoiceDateStateChange}
+                                />
+                            </div>
+                            <button className="add-medicine-btn" onClick={() => document.querySelector('.add-medicine-row')?.scrollIntoView({ behavior: 'smooth' })}>
+                                Add New Medicine
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="purchase-medicine-row add-medicine-row">
+                        <div className="field-group">
+                            <label>Medicine <span className="required">*</span></label>
+                            <input type="text" name="medicine" value={medicineFields.medicine} onChange={handleMedicineFieldChange} placeholder="Medicine" className="medium-input" />
+                        </div>
+                        <div className="field-group">
+                            <label>Batch <span className="required">*</span></label>
+                            <input type="text" name="batch" value={medicineFields.batch} onChange={handleMedicineFieldChange} placeholder="Batch" className="small-input" />
+                        </div>
+                        <div className="field-group">
+                            <label>Expiry <span className="required">*</span></label>
+                            <input type="text" name="batchExpiry" value={medicineFields.batchExpiry} onChange={handleMedicineFieldChange} placeholder="Expiry" className="small-input" />
+                        </div>
+                        <div className="separator" style={{ width: '1px', height: '28px', background: '#dee2e6', margin: '0 2px' }}></div>
+                        <div className="field-group">
+                            <label>Units/Strip</label>
+                            <input type="text" name="unitsPerStrip" value={medicineFields.unitsPerStrip} onChange={handleMedicineFieldChange} placeholder="Units" className="small-input" />
+                        </div>
+                        <div className="field-group">
+                            <label>No.of Strips</label>
+                            <input type="text" name="noOfStrips" value={medicineFields.noOfStrips} onChange={handleMedicineFieldChange} placeholder="Strips" className="small-input" />
+                        </div>
+                        <div className="field-group">
+                            <label>Free Strips</label>
+                            <input type="text" name="freeStrips" value={medicineFields.freeStrips} onChange={handleMedicineFieldChange} placeholder="Free" className="small-input" />
+                        </div>
+                        <div className="separator" style={{ width: '1px', height: '28px', background: '#dee2e6', margin: '0 2px' }}></div>
+                        <div className="field-group">
+                            <label>GST Total %</label>
+                            <input type="text" name="gstTotal" value={medicineFields.gstTotal} onChange={handleMedicineFieldChange} placeholder="GST %" className="small-input" />
+                        </div>
+                        <div className="field-group">
+                            <label>MRP/Strip</label>
+                            <input type="text" name="mrpPerStrip" value={medicineFields.mrpPerStrip} onChange={handleMedicineFieldChange} placeholder="MRP" className="small-input" />
+                        </div>
+                        <div className="field-group">
+                            <label>Discount %</label>
+                            <input type="text" name="discount" value={medicineFields.discount} onChange={handleMedicineFieldChange} placeholder="Disc %" className="small-input" />
+                        </div>
+                        <div className="separator" style={{ width: '1px', height: '28px', background: '#dee2e6', margin: '0 2px' }}></div>
+                        <div className="field-group">
+                            <label>HSN Code</label>
+                            <input type="text" name="hsnCode" value={medicineFields.hsnCode} onChange={handleMedicineFieldChange} placeholder="HSN" className="small-input" />
+                        </div>
+                        <div className="field-group">
+                            <label>Rack No</label>
+                            <input type="text" name="rackNo" value={medicineFields.rackNo} onChange={handleMedicineFieldChange} placeholder="Rack" className="small-input" />
+                        </div>
+                        <div className="field-group">
+                            <label>Box No</label>
+                            <input type="text" name="boxNo" value={medicineFields.boxNo} onChange={handleMedicineFieldChange} placeholder="Box" className="small-input" />
+                        </div>
+                        <div className="field-group">
+                            <label>Net Price</label>
+                            <input type="text" name="netPrice" value={medicineFields.netPrice} onChange={handleMedicineFieldChange} placeholder="Price" className="small-input" />
+                        </div>
+                        <div className="btn-group">
+                            <button className="add-btn" onClick={handleAddInvoiceMedicine}>➕ Add</button>
+                            <button className="clear-btn" onClick={handleClearFields}>✖ Clear</button>
+                        </div>
+                    </div>
+
+                    <table className="purchase-table">
+                        <thead>
+                            <tr>
+                                <th>Medicine</th>
+                                <th>Batch</th>
+                                <th>Expiry</th>
+                                <th>GST %</th>
+                                <th>Units/Strip</th>
+                                <th>Total Units</th>
+                                <th>MRP/Strip</th>
+                                <th>Discount</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {medicineList.length === 0 ? (
+                                <tr>
+                                    <td colSpan="9" className="no-data">No medicines added yet. Add medicines using the form above.</td>
+                                </tr>
+                            ) : (
+                                medicineList.map((item) => (
+                                    <tr key={item.id} className={editingMedicineId === item.id ? 'editing-row' : ''}>
+                                        {editingMedicineId === item.id ? (
+                                            <>
+                                                <td>
+                                                    <input
+                                                        type="text"
+                                                        className="invoice-edit-input"
+                                                        value={editFormData.medicine || ''}
+                                                        onChange={(e) => setEditFormData({ ...editFormData, medicine: e.target.value })}
+                                                        placeholder="Medicine"
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <input
+                                                        type="text"
+                                                        className="invoice-edit-input"
+                                                        value={editFormData.batch || ''}
+                                                        onChange={(e) => setEditFormData({ ...editFormData, batch: e.target.value })}
+                                                        placeholder="Batch"
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <input
+                                                        type="text"
+                                                        className="invoice-edit-input"
+                                                        value={editFormData.batchExpiry || ''}
+                                                        onChange={(e) => setEditFormData({ ...editFormData, batchExpiry: e.target.value })}
+                                                        placeholder="Expiry"
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <input
+                                                        type="text"
+                                                        className="invoice-edit-input"
+                                                        value={editFormData.gstTotal || ''}
+                                                        onChange={(e) => setEditFormData({ ...editFormData, gstTotal: e.target.value })}
+                                                        placeholder="GST %"
+                                                        style={{ width: '60px' }}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <input
+                                                        type="text"
+                                                        className="invoice-edit-input"
+                                                        value={editFormData.unitsPerStrip || ''}
+                                                        onChange={(e) => setEditFormData({ ...editFormData, unitsPerStrip: e.target.value })}
+                                                        placeholder="Units"
+                                                        style={{ width: '60px' }}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <input
+                                                        type="text"
+                                                        className="invoice-edit-input"
+                                                        value={editFormData.noOfStrips || ''}
+                                                        onChange={(e) => setEditFormData({ ...editFormData, noOfStrips: e.target.value })}
+                                                        placeholder="Strips"
+                                                        style={{ width: '60px' }}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <input
+                                                        type="text"
+                                                        className="invoice-edit-input"
+                                                        value={editFormData.mrpPerStrip || ''}
+                                                        onChange={(e) => setEditFormData({ ...editFormData, mrpPerStrip: e.target.value })}
+                                                        placeholder="MRP"
+                                                        style={{ width: '70px' }}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <input
+                                                        type="text"
+                                                        className="invoice-edit-input"
+                                                        value={editFormData.discount || ''}
+                                                        onChange={(e) => setEditFormData({ ...editFormData, discount: e.target.value })}
+                                                        placeholder="Disc %"
+                                                        style={{ width: '60px' }}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <button className="btn-save-edit" onClick={handleSaveEditInvoiceMedicine}>💾 Save</button>
+                                                    <button className="btn-cancel-edit" onClick={handleCancelEditInvoiceMedicine}>✖ Cancel</button>
+                                                </td>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <td><strong>{item.medicine}</strong></td>
+                                                <td>{item.batch}</td>
+                                                <td>{item.batchExpiry}</td>
+                                                <td>{item.gstTotal || '-'}</td>
+                                                <td>{item.unitsPerStrip || '-'}</td>
+                                                <td>{item.noOfStrips || '-'}</td>
+                                                <td>{item.mrpPerStrip || '-'}</td>
+                                                <td>{item.discount || '-'}</td>
+                                                <td>
+                                                    <button className="edit-delete-btn" onClick={() => handleEditInvoiceMedicine(item.id)}>✏️ Edit</button>
+                                                    <button className="edit-delete-btn del" onClick={() => handleDeleteInvoiceMedicine(item.id)}>🗑️ Delete</button>
+                                                </td>
+                                            </>
+                                        )}
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+
+                    <button className="action-btn save" style={{ margin: '20px auto', display: 'block' }} onClick={() => alert(`Invoice ${invoiceNumberState || 'without number'} Saved Successfully!`)}>
+                        💾 Save Invoice
+                    </button>
+                </div>
+            );
+
+            const renderPurchaseOrder = () => (
+                <div className="purchase-container">
+                    <div className="purchase-header">
+                        <h2>Create Purchase Order</h2>
+                        <div className="purchase-fields">
+                            <div className="field-wrapper">
+                                <label>Stockist Name <span className="required">*</span></label>
+                                <select
+                                    name="stockistName"
+                                    value={purchaseData.stockistName}
+                                    onChange={handlePurchaseChange}
+                                >
+                                    <option value="">Select</option>
+                                    <option value="Main Stockist">Main Stockist</option>
+                                    <option value="Secondary Stockist">Secondary Stockist</option>
+                                    <option value="Warehouse">Warehouse</option>
+                                </select>
+                            </div>
+
+                            <div className="field-wrapper">
+                                <label>Order Date <span className="required">*</span></label>
+                                <input
+                                    type="date"
+                                    name="orderDate"
+                                    value={purchaseData.orderDate}
+                                    onChange={handlePurchaseChange}
+                                />
+                            </div>
+
+                            <button className="add-medicine-btn" onClick={() => document.querySelector('.purchase-medicine-row')?.scrollIntoView({ behavior: 'smooth' })}>
+                                Add New Medicine
+                            </button>
+                        </div>
+                    </div>
+
+                    {showSuccess && (
+                        <div className="success-message">
+                            ✅ Purchase Order Saved Successfully! Stockist: {purchaseData.stockistName} | Items: {purchaseList.length}
+                        </div>
+                    )}
+
+                    {purchaseEditingId && (
+                        <div style={{
+                            background: '#fff3cd',
+                            padding: '10px 20px',
+                            borderRadius: '8px',
+                            border: '1px solid #ffc107',
+                            margin: '10px 0',
+                            textAlign: 'center',
+                            fontWeight: '600',
+                            color: '#856404'
+                        }}>
+                            ✏️ Editing item: {purchaseList.find(item => item.id === purchaseEditingId)?.medicine || ''}
+                        </div>
+                    )}
+
+                    <div className="purchase-medicine-row">
+                        <div className="field-group">
+                            <label>Medicine <span className="required">*</span></label>
+                            <input
+                                type="text"
+                                name="medicine"
+                                value={purchaseData.medicine}
+                                onChange={handlePurchaseChange}
+                                placeholder="Medicine"
+                                className="medium-input"
+                            />
+                        </div>
+
+                        <div className="field-group">
+                            <label>Units/Strip <span className="required">*</span></label>
+                            <input
+                                type="number"
+                                name="unitsPerStrip"
+                                value={purchaseData.unitsPerStrip}
+                                onChange={handlePurchaseChange}
+                                placeholder="0"
+                                className="small-input"
+                            />
+                        </div>
+
+                        <div className="field-group">
+                            <label>No. Of Strips <span className="required">*</span></label>
+                            <input
+                                type="number"
+                                name="noOfStrips"
+                                value={purchaseData.noOfStrips}
+                                onChange={handlePurchaseChange}
+                                placeholder="0"
+                                className="small-input"
+                            />
+                        </div>
+
+                        <div className="btn-group">
+                            <button className="add-btn" onClick={handleAddPurchase}>
+                                {purchaseEditingId ? '💾 Update' : '➕ Add'}
+                            </button>
+                            <button className="clear-btn" onClick={handleClearPurchase}>
+                                {purchaseEditingId ? '✖ Cancel' : '✖ Clear'}
+                            </button>
+                        </div>
+                    </div>
+
+                    <table className="purchase-table">
+                        <thead>
+                            <tr>
+                                <th>Medicine</th>
+                                <th>Units/Strip</th>
+                                <th>No. Of Strips</th>
+                                <th>Total Units</th>
+                                <th>Edit/Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {purchaseList.length === 0 ? (
+                                <tr>
+                                    <td colSpan="5" className="no-data">No items added yet. Add medicines using the form above.</td>
+                                </tr>
+                            ) : (
+                                purchaseList.map((item) => (
+                                    <tr key={item.id} style={purchaseEditingId === item.id ? { background: '#fff3cd' } : {}}>
+                                        <td><strong>{item.medicine}</strong></td>
+                                        <td>{item.unitsPerStrip}</td>
+                                        <td>{item.noOfStrips}</td>
+                                        <td>{parseInt(item.unitsPerStrip) * parseInt(item.noOfStrips) || 0}</td>
+                                        <td>
+                                            <button
+                                                className="edit-delete-btn edit-mode"
+                                                onClick={() => handleEditPurchase(item.id)}
+                                            >
+                                                ✏️ Edit
+                                            </button>
+                                            <button
+                                                className="edit-delete-btn del"
+                                                onClick={() => handleDeletePurchase(item.id)}
+                                            >
+                                                🗑️ Delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+
+                    {purchaseList.length > 0 && (
+                        <div style={{
+                            marginTop: '15px',
+                            padding: '12px 20px',
+                            background: '#e8f4fd',
+                            borderRadius: '8px',
+                            border: '1px solid #b8d4e8',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            flexWrap: 'wrap',
+                            gap: '10px'
+                        }}>
+                            <span><strong>Total Items:</strong> {purchaseList.length}</span>
+                            <span><strong>Total Units:</strong> {purchaseList.reduce((sum, item) => sum + (parseInt(item.unitsPerStrip) * parseInt(item.noOfStrips) || 0), 0)}</span>
+                            <span><strong>Stockist:</strong> {purchaseData.stockistName || 'Not selected'}</span>
+                            <span><strong>Order Date:</strong> {purchaseData.orderDate || 'Not selected'}</span>
+                        </div>
+                    )}
+
+                    <div className="action-buttons">
+                        <button className="action-btn save" onClick={handleSaveOrder}>💾 Save Order</button>
+                        <button className="action-btn print" onClick={handlePrint}>🖨️ Print</button>
+                        <button className="action-btn download" onClick={handleDownload}>📥 Download</button>
+                        <button className="action-btn cancel" onClick={handleCancelOrder}>❌ Cancel</button>
+                    </div>
+                </div>
+            );
+
+            // Billing Tab with proper inline editing
+            const renderBillings = () => {
+                const subtotal = billingItems.reduce((sum, item) => sum + (item.price * item.qty), 0);
+                const gstTotal = billingItems.reduce((sum, item) => sum + (item.total - (item.price * item.qty)), 0);
+                const grandTotal = billingItems.reduce((sum, item) => sum + item.total, 0);
+                const totalItems = billingItems.filter(item => item.item && item.item.trim() !== '').length;
+
+                return (
+                    <div className="billing-container">
+                        <div className="billing-card">
+                            {/* Header */}
+                            <div className="billing-header">
+                                <div className="logo-section">
+                                    <h2>MediCore</h2>
+                                    <span>HOSPITAL SUITE</span>
+                                </div>
+                                <div className="header-actions">
+                                    <div className="notification-badge">🔔 3</div>
+                                    <div className="profile-icon">👤</div>
+                                </div>
+                            </div>
+
+                            {/* Body */}
+                            <div className="billing-body">
+                                <div className="billing-title">Billing</div>
+                                <div className="billing-subtitle">Generate a GST invoice for dispensed medicines.</div>
+
+                                {/* Patient & Billing Info */}
+                                <div className="info-grid">
+                                    <div className="field-group">
+                                        <label>Patient Name <span className="required">*</span></label>
+                                        <input
+                                            type="text"
+                                            value={patientName}
+                                            onChange={(e) => setPatientName(e.target.value)}
+                                            placeholder="Enter patient name"
+                                        />
+                                    </div>
+                                    <div className="field-group">
+                                        <label>Invoice # <span className="required">*</span></label>
+                                        <input
+                                            type="text"
+                                            value={invoiceNumber}
+                                            onChange={(e) => setInvoiceNumber(e.target.value)}
+                                            placeholder="INV-001"
+                                        />
+                                    </div>
+                                    <div className="field-group">
+                                        <label>Billing Date</label>
+                                        <input
+                                            type="date"
+                                            value={billingDate}
+                                            onChange={(e) => setBillingDate(e.target.value)}
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Patient Summary Bar */}
+                                <div className="patient-info-bar">
+                                    <div>
+                                        <span className="patient-name">👤 {patientName || 'No patient selected'}</span>
+                                    </div>
+                                    <div style={{ display: 'flex', gap: '15px', alignItems: 'center', fontSize: '13px', color: '#6c757d' }}>
+                                        <span>📄 {invoiceNumber || 'No invoice'}</span>
+                                        <span>📅 {billingDate || 'No date'}</span>
+                                    </div>
+                                </div>
+
+                                {/* Items Table */}
+                                <table className="items-table">
+                                    <thead>
+                                        <tr>
+                                            <th>ITEM</th>
+                                            <th>QTY</th>
+                                            <th>PRICE</th>
+                                            <th>GST</th>
+                                            <th>TOTAL</th>
+                                            <th style={{ width: '80px' }}>ACTION</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {billingItems.map((item) => (
+                                            <tr key={item.id} data-item-id={item.id}>
+                                                <td>
+                                                    <input
+                                                        type="text"
+                                                        value={item.item}
+                                                        onChange={(e) => handleUpdateBillingItem(item.id, 'item', e.target.value)}
+                                                        style={{
+                                                            width: '100%',
+                                                            padding: '4px 8px',
+                                                            border: editingItemId === item.id ? '2px solid #ffc107' : '1px solid #dee2e6',
+                                                            borderRadius: '4px',
+                                                            fontSize: '13px',
+                                                            backgroundColor: editingItemId === item.id ? '#fff3cd' : 'white'
+                                                        }}
+                                                        placeholder="Medicine name"
+                                                        readOnly={editingItemId !== item.id}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <input
+                                                        type="number"
+                                                        value={item.qty}
+                                                        onChange={(e) => handleUpdateBillingItem(item.id, 'qty', e.target.value)}
+                                                        style={{
+                                                            width: '50px',
+                                                            padding: '4px 6px',
+                                                            border: editingItemId === item.id ? '2px solid #ffc107' : '1px solid #dee2e6',
+                                                            borderRadius: '4px',
+                                                            backgroundColor: editingItemId === item.id ? '#fff3cd' : 'white'
+                                                        }}
+                                                        min="0"
+                                                        readOnly={editingItemId !== item.id}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <input
+                                                        type="number"
+                                                        value={item.price}
+                                                        onChange={(e) => handleUpdateBillingItem(item.id, 'price', e.target.value)}
+                                                        style={{
+                                                            width: '60px',
+                                                            padding: '4px 6px',
+                                                            border: editingItemId === item.id ? '2px solid #ffc107' : '1px solid #dee2e6',
+                                                            borderRadius: '4px',
+                                                            backgroundColor: editingItemId === item.id ? '#fff3cd' : 'white'
+                                                        }}
+                                                        min="0"
+                                                        step="0.01"
+                                                        readOnly={editingItemId !== item.id}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <input
+                                                        type="text"
+                                                        value={item.gst}
+                                                        onChange={(e) => handleUpdateBillingItem(item.id, 'gst', e.target.value)}
+                                                        style={{
+                                                            width: '50px',
+                                                            padding: '4px 6px',
+                                                            border: editingItemId === item.id ? '2px solid #ffc107' : '1px solid #dee2e6',
+                                                            borderRadius: '4px',
+                                                            backgroundColor: editingItemId === item.id ? '#fff3cd' : 'white'
+                                                        }}
+                                                        placeholder="5"
+                                                        readOnly={editingItemId !== item.id}
+                                                    />
+                                                </td>
+                                                <td className="item-total">₹{item.total.toFixed(2)}</td>
+                                                <td>
+                                                    <div className="action-cell">
+                                                        {editingItemId === item.id ? (
+                                                            <>
+                                                                <button
+                                                                    className="action-btn save-btn"
+                                                                    onClick={() => handleSaveEditBillingItem(item.id)}
+                                                                    title="Save"
+                                                                >
+                                                                    💾
+                                                                </button>
+                                                                <button
+                                                                    className="action-btn cancel-btn"
+                                                                    onClick={handleCancelEditBillingItem}
+                                                                    title="Cancel"
+                                                                >
+                                                                    ✖
+                                                                </button>
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <button
+                                                                    className="action-btn"
+                                                                    onClick={() => handleEditBillingItem(item.id)}
+                                                                    title="Edit item"
+                                                                >
+                                                                    ✏️
+                                                                </button>
+                                                                <button
+                                                                    className="action-btn delete"
+                                                                    onClick={() => handleDeleteBillingItem(item.id)}
+                                                                    title="Delete item"
+                                                                >
+                                                                    🗑️
+                                                                </button>
+                                                            </>
+                                                        )}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+
+                                {/* Add Item Button */}
+                                <button className="add-item-btn" onClick={handleAddBillingItem}>
+                                    ➕ Add item
+                                </button>
+
+                                {/* Summary */}
+                                <div className="billing-summary">
+                                    <div className="summary-item">
+                                        <div className="label">Items</div>
+                                        <div className="value">{totalItems}</div>
+                                    </div>
+                                    <div className="summary-item">
+                                        <div className="label">Subtotal</div>
+                                        <div className="value">₹{subtotal.toFixed(2)}</div>
+                                    </div>
+                                    <div className="summary-item">
+                                        <div className="label">GST</div>
+                                        <div className="value">₹{gstTotal.toFixed(2)}</div>
+                                    </div>
+                                    <div className="summary-item">
+                                        <div className="label">Total</div>
+                                        <div className="value total">₹{grandTotal.toFixed(2)}</div>
+                                    </div>
+                                </div>
+
+                                {/* Generate Invoice Button */}
+                                <button className="generate-btn" onClick={handleGenerateInvoice}>
+                                    📄 Generate invoice
+                                </button>
+                            </div>
+
+                            {/* Footer */}
+                            <div className="billing-footer">
+                                <div className="pharmacy-name">
+                                    RV <span>Rahul Verma • Pharmacy</span>
+                                </div>
+                                <div className="footer-meta">
+                                    <div className="search-box">
+                                        <span>🔍</span>
+                                        <input type="text" placeholder="Type here to search" />
+                                    </div>
+                                    <div className="time-date">
+                                        <span>ENG</span>
+                                        <span>11:24 AM</span>
+                                        <span>01-07-2026</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            };
+
+            // Reports Component with working Report and Upload buttons
+            const Reports = () => {
+                const [selectedReport, setSelectedReport] = useState(null);
+                const [uploadingReports, setUploadingReports] = useState({});
+                const [uploadedFiles, setUploadedFiles] = useState({});
+                const [viewingFile, setViewingFile] = useState(null);
+                const fileInputRefs = useRef({});
+
+                const reportCategories = {
+                    sales: {
+                        title: '📊 Sales & Revenue Reports',
+                        reports: [
+                            { id: 'sales-tax-report', name: 'Sales Tax Report', icon: '📈', desc: 'View sales tax and GST data' },
+                            { id: 'monthly-billing', name: 'Monthly Billing Report', icon: '📅', desc: 'Monthly billing summary' },
+                            { id: 'sale-item-wise', name: 'Sale Item Wise Report', icon: '📋', desc: 'Sales analysis by item' },
+                            { id: 'date-wise-margin', name: 'Date Wise Margin Report', icon: '💰', desc: 'Profit margins by date' }
+                        ]
+                    },
+                    inventory: {
+                        title: '📦 Inventory & Stock Reports',
+                        reports: [
+                            { id: 'inventory-report', name: 'Inventory Report', icon: '📦', desc: 'Current stock status' },
+                            { id: 'product-margin', name: 'Product Margin Report', icon: '📊', desc: 'Margin analysis by product' },
+                            { id: 'moving-nonmoving', name: 'Moving & Non-Moving Medicines', icon: '🔄', desc: 'Stock movement analysis' },
+                            { id: 'schedule-drug', name: 'Schedule Drug Report', icon: '💊', desc: 'Schedule H/H1 drug list' }
+                        ]
+                    },
+                    modifications: {
+                        title: '📝 Modification & Deletion Reports',
+                        reports: [
+                            { id: 'orders-deleted', name: 'Orders Deleted Report', icon: '🗑️', desc: 'Deleted order history' },
+                            { id: 'invoices-modified', name: 'Invoices Modified Report', icon: '✏️', desc: 'Invoice modification history' },
+                            { id: 'bill-modified', name: 'Bill Modified Report', icon: '📝', desc: 'Bill modification tracking' },
+                            { id: 'medicine-returns', name: 'Medicine Returns Report', icon: '↩️', desc: 'Returned medicines log' }
+                        ]
+                    }
+                };
+
+                const handleReport = (reportId, reportName) => {
+                    const fileData = uploadedFiles[reportId];
+                    if (fileData) {
+                        setViewingFile({
+                            reportId: reportId,
+                            reportName: reportName,
+                            fileData: fileData
+                        });
+                    } else {
+                        setSelectedReport(reportId);
+                        alert(`📊 Viewing ${reportName}...\n\nNo file uploaded yet. Please upload a file first using the Upload button.`);
+                    }
+                };
+
+                const handleUploadClick = (reportId) => {
+                    if (fileInputRefs.current[reportId]) {
+                        fileInputRefs.current[reportId].click();
+                    }
+                };
+
+                const handleFileUpload = (reportId, reportName, event) => {
+                    const file = event.target.files[0];
+                    if (!file) return;
+
+                    const validTypes = ['text/csv', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/pdf'];
+                    if (!validTypes.includes(file.type) && !file.name.match(/\.(csv|xls|xlsx|pdf)$/i)) {
+                        alert('⚠️ Please upload a valid file (CSV, Excel, or PDF)');
+                        return;
+                    }
+
+                    if (file.size > 10 * 1024 * 1024) {
+                        alert('⚠️ File size exceeds 10MB limit');
+                        return;
+                    }
+
+                    setUploadingReports(prev => ({ ...prev, [reportId]: true }));
+
+                    let progress = 0;
+                    const interval = setInterval(() => {
+                        progress += 10;
+                        if (progress >= 100) {
+                            clearInterval(interval);
+                            setUploadingReports(prev => ({ ...prev, [reportId]: false }));
+                            setUploadedFiles(prev => ({
+                                ...prev,
+                                [reportId]: {
+                                    name: file.name,
+                                    size: (file.size / 1024).toFixed(2) + ' KB',
+                                    type: file.type || file.name.split('.').pop(),
+                                    content: `File: ${file.name}\nSize: ${(file.size / 1024).toFixed(2)} KB\nType: ${file.type || 'Unknown'}\n\nThis is a preview of the uploaded file.`,
+                                    file: file
+                                }
+                            }));
+                            alert(`✅ ${file.name} uploaded successfully for ${reportName}!`);
+                            event.target.value = '';
+                        }
+                    }, 200);
+                };
+
+                const getUploadStatus = (reportId) => {
+                    if (uploadingReports[reportId]) {
+                        return <span className="upload-status uploading">⏳ Uploading...</span>;
+                    }
+                    if (uploadedFiles[reportId]) {
+                        return <span className="upload-status">✅ Uploaded: {uploadedFiles[reportId].name}</span>;
+                    }
+                    return null;
+                };
+
+                const closeViewer = () => {
+                    setViewingFile(null);
+                };
+
+                const downloadFile = () => {
+                    if (viewingFile && viewingFile.fileData && viewingFile.fileData.file) {
+                        const file = viewingFile.fileData.file;
+                        const url = URL.createObjectURL(file);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = file.name;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                    }
+                };
+
+                return (
+                    <div className="billing-container">
+                        <div className="billing-card">
+                            <div className="billing-header" style={{ background: 'linear-gradient(135deg, #1a5276 0%, #2e86c1 100%)' }}>
+                                <div className="logo-section">
+                                    <h2>📊 Reports Dashboard</h2>
+                                    <span>Comprehensive pharmacy reporting suite</span>
+                                </div>
+                                <div className="header-actions">
+                                    <span className="notification-badge">📋 12 Reports</span>
+                                </div>
+                            </div>
+
+                            <div className="billing-body">
+                                <div className="billing-title">Generate Reports</div>
+                                <div className="billing-subtitle">Select a report category and generate detailed analytics</div>
+
+                                {/* Sales Reports */}
+                                <div className="report-category">
+                                    <h3>{reportCategories.sales.title} <span className="badge">{reportCategories.sales.reports.length}</span></h3>
+                                    <div className="reports-grid">
+                                        {reportCategories.sales.reports.map(report => (
+                                            <div key={report.id} className="report-card">
+                                                <div className="report-icon">{report.icon}</div>
+                                                <h4>{report.name}</h4>
+                                                <p>{report.desc}</p>
+                                                <div className="btn-group">
+                                                    <button
+                                                        className="btn-report"
+                                                        onClick={() => handleReport(report.id, report.name)}
+                                                        disabled={!uploadedFiles[report.id]}
+                                                    >
+                                                        📊 Report
+                                                    </button>
+                                                    <button className="btn-upload" onClick={() => handleUploadClick(report.id)}>
+                                                        📤 Upload
+                                                    </button>
+                                                </div>
+                                                <input
+                                                    type="file"
+                                                    ref={el => fileInputRefs.current[report.id] = el}
+                                                    className="file-input-hidden"
+                                                    accept=".csv,.xls,.xlsx,.pdf"
+                                                    onChange={(e) => handleFileUpload(report.id, report.name, e)}
+                                                />
+                                                {getUploadStatus(report.id)}
+                                                {!uploadedFiles[report.id] && !uploadingReports[report.id] && (
+                                                    <span className="upload-status no-file">⚠️ No file uploaded</span>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Inventory Reports */}
+                                <div className="report-category">
+                                    <h3>{reportCategories.inventory.title} <span className="badge">{reportCategories.inventory.reports.length}</span></h3>
+                                    <div className="reports-grid">
+                                        {reportCategories.inventory.reports.map(report => (
+                                            <div key={report.id} className="report-card">
+                                                <div className="report-icon">{report.icon}</div>
+                                                <h4>{report.name}</h4>
+                                                <p>{report.desc}</p>
+                                                <div className="btn-group">
+                                                    <button
+                                                        className="btn-report"
+                                                        onClick={() => handleReport(report.id, report.name)}
+                                                        disabled={!uploadedFiles[report.id]}
+                                                    >
+                                                        📊 Report
+                                                    </button>
+                                                    <button className="btn-upload" onClick={() => handleUploadClick(report.id)}>
+                                                        📤 Upload
+                                                    </button>
+                                                </div>
+                                                <input
+                                                    type="file"
+                                                    ref={el => fileInputRefs.current[report.id] = el}
+                                                    className="file-input-hidden"
+                                                    accept=".csv,.xls,.xlsx,.pdf"
+                                                    onChange={(e) => handleFileUpload(report.id, report.name, e)}
+                                                />
+                                                {getUploadStatus(report.id)}
+                                                {!uploadedFiles[report.id] && !uploadingReports[report.id] && (
+                                                    <span className="upload-status no-file">⚠️ No file uploaded</span>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Modification Reports */}
+                                <div className="report-category">
+                                    <h3>{reportCategories.modifications.title} <span className="badge">{reportCategories.modifications.reports.length}</span></h3>
+                                    <div className="reports-grid">
+                                        {reportCategories.modifications.reports.map(report => (
+                                            <div key={report.id} className="report-card">
+                                                <div className="report-icon">{report.icon}</div>
+                                                <h4>{report.name}</h4>
+                                                <p>{report.desc}</p>
+                                                <div className="btn-group">
+                                                    <button
+                                                        className="btn-report"
+                                                        onClick={() => handleReport(report.id, report.name)}
+                                                        disabled={!uploadedFiles[report.id]}
+                                                    >
+                                                        📊 Report
+                                                    </button>
+                                                    <button className="btn-upload" onClick={() => handleUploadClick(report.id)}>
+                                                        📤 Upload
+                                                    </button>
+                                                </div>
+                                                <input
+                                                    type="file"
+                                                    ref={el => fileInputRefs.current[report.id] = el}
+                                                    className="file-input-hidden"
+                                                    accept=".csv,.xls,.xlsx,.pdf"
+                                                    onChange={(e) => handleFileUpload(report.id, report.name, e)}
+                                                />
+                                                {getUploadStatus(report.id)}
+                                                {!uploadedFiles[report.id] && !uploadingReports[report.id] && (
+                                                    <span className="upload-status no-file">⚠️ No file uploaded</span>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {selectedReport && (
+                                    <div style={{ marginTop: '20px', padding: '15px', background: '#e8f4fd', borderRadius: '8px', border: '1px solid #b8d4e8' }}>
+                                        <strong>📋 Currently viewing:</strong> {selectedReport}
+                                        <button
+                                            style={{ marginLeft: '15px', padding: '4px 15px', background: '#dc3545', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                                            onClick={() => setSelectedReport(null)}
+                                        >
+                                            Clear
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Report Viewer Modal */}
+                        {viewingFile && (
+                            <div className="report-modal" onClick={(e) => {
+                                if (e.target === e.currentTarget) closeViewer();
+                            }}>
+                                <div className="report-modal-content">
+                                    <div className="report-modal-header">
+                                        <h3>📄 {viewingFile.reportName}</h3>
+                                        <button className="close-modal" onClick={closeViewer}>×</button>
+                                    </div>
+                                    <div className="report-modal-body">
+                                        <div className="file-preview">
+                                            <div className="file-icon">📄</div>
+                                            <div className="file-info">
+                                                <div className="file-name">{viewingFile.fileData.name}</div>
+                                                <div className="file-details">
+                                                    Size: {viewingFile.fileData.size} | Type: {viewingFile.fileData.type}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="file-content">
+                                            {viewingFile.fileData.content || 'No content available'}
+                                        </div>
+                                    </div>
+                                    <div className="report-modal-footer">
+                                        <button className="btn-download" onClick={downloadFile}>
+                                            📥 Download
+                                        </button>
+                                        <button className="btn-close-modal" onClick={closeViewer}>
+                                            Close
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                );
+            };
+
+            return (
+                <div>
+                    <div className="nav-tabs">
+                        {navItems.map((item) => (
+                            <button
+                                key={item.id}
+                                className={`nav-tab ${activeTab === item.id ? 'active' : ''}`}
+                                onClick={() => handleTabClick(item.id)}
+                            >
+                                {item.icon} {item.label}
+                            </button>
+                        ))}
+                    </div>
+
+                    {showInventoryCombo && (
+                        <div className="inventory-wrapper">
+                            <span className="dropdown-label">📦 Select Inventory:</span>
+                            <select
+                                className="inventory-combo"
+                                value={selectedInventory}
+                                onChange={handleInventoryChange}
+                            >
+                                <option value="">-- Choose an option --</option>
+                                {inventoryOptions.map((option) => (
+                                    <option key={option.id} value={option.id}>
+                                        {option.label}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
+
+                    <div className="tab-content">
+                        {activeTab === 'billings' && renderBillings()}
+                        {activeTab === 'inventory' && (
+                            <div className="inventory-content">
+                                <h3>📦 Inventory Management</h3>
+                                <p>Select an option from the dropdown above to view inventory details.</p>
+                                {selectedInventory && (
+                                    <div style={{ marginTop: '20px', padding: '20px', background: '#f8f9fa', borderRadius: '8px' }}>
+                                        <h4>Showing: {inventoryOptions.find(opt => opt.id === selectedInventory)?.label || selectedInventory}</h4>
+                                        <p style={{ color: '#6c757d', marginTop: '10px' }}>
+                                            Inventory data for {selectedInventory} will be displayed here.
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                        {activeTab === 'invoices' && renderInvoices()}
+                        {activeTab === 'purchase' && renderPurchaseOrder()}
+                        {activeTab === 'reports' && <Reports />}
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<PharmacyBilling />);
+    </script>
+</body>
+
+</html>
