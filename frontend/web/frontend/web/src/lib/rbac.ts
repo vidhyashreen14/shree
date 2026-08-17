@@ -1,6 +1,7 @@
 import type { Role } from './types';
 
 export const ROLES: { value: Role; label: string; description: string }[] = [
+  { value: 'superadmin', label: 'Super Admin', description: 'System super administrator' },
   { value: 'admin', label: 'Administrator', description: 'Full hospital access' },
   { value: 'doctor', label: 'Doctor', description: 'Patient care & prescriptions' },
   { value: 'frontdesk', label: 'Front Desk', description: 'Registration & appointments' },
@@ -10,6 +11,7 @@ export const ROLES: { value: Role; label: string; description: string }[] = [
 ];
 
 export const ROLE_HOME: Record<Role, string> = {
+  superadmin: '/admin',
   admin: '/admin',
   doctor: '/doctor',
   frontdesk: '/frontdesk',

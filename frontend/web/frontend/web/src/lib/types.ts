@@ -1,5 +1,5 @@
 
-export type Role = 'admin' | 'doctor' | 'frontdesk' | 'nurse' | 'pharmacy' | 'lab';
+export type Role = 'admin' | 'doctor' | 'frontdesk' | 'nurse' | 'pharmacy' | 'lab' | 'superadmin';
 
 export interface User {
   id: string;
@@ -133,6 +133,7 @@ export interface Medicine {
   gst: number;
   batch: string;
   ingredients?: string;
+  createdAt?: string;
 }
 
 export interface Department {

@@ -6,13 +6,14 @@ import { EmptyState } from '@/components/common/EmptyState';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { medicines as seedMedicines } from '@/lib/mock/data';
 import type { Medicine } from '@/lib/types';
+import { usePharmacyStore } from '@/lib/store/pharmacy';
 import {
   Plus,
   Pencil,
   Factory,
   PackageMinus,
+  Trash,
   Search,
   Loader2,
   Download,
@@ -54,32 +55,52 @@ interface Manufacturer {
   address: string;
 }
 
+const MANUFACTURERS_STORAGE_KEY = 'hms.pharmacy.manufacturers.v1';
+const MEDICINES_STORAGE_KEY = 'hms.pharmacy.medicines.v1';
+
+const loadStoredManufacturers = (): Manufacturer[] => {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = window.localStorage.getItem(MANUFACTURERS_STORAGE_KEY);
+    if (!raw) return [];
+    return JSON.parse(raw);
+  } catch {
+    return [];
+  }
+};
+
+const loadStoredMedicines = (): Medicine[] => {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = window.localStorage.getItem(MEDICINES_STORAGE_KEY);
+    if (!raw) return [];
+    return JSON.parse(raw);
+  } catch {
+    return [];
+  }
+};
+
 function ManufactureMaster() {
-  const [manufacturers, setManufacturers] = useState<Manufacturer[]>(() => {
-    const unique = Array.from(new Set(seedMedicines.map((m) => m.manufacturer)));
-    const mocks: Record<string, { phone: string; address: string; email: string }> = {
-      Cipla: { phone: '9876543210', address: 'Mumbai, Maharashtra', email: 'contact@cipla.com' },
-      "Dr. Reddy's": {
-        phone: '8765432109',
-        address: 'Hyderabad, Telangana',
-        email: 'info@drreddys.com',
-      },
-      GSK: { phone: '8990990000', address: 'London, United Kingdom', email: 'gsk.support@gsk.com' },
-      Pfizer: {
-        phone: '2127332323',
-        address: 'New York, USA',
-        email: 'corporate.affairs@pfizer.com',
-      },
-    };
-    return unique
-      .map((name) => ({
-        name,
-        phone: mocks[name]?.phone ?? '9999988888',
-        address: mocks[name]?.address ?? 'Industrial Area, Phase 1',
-        email: mocks[name]?.email ?? `contact@${name.toLowerCase().replace(/[^a-z0-9]/g, '')}.com`,
-      }))
-      .sort((a, b) => a.name.localeCompare(b.name));
-  });
+  const medicinesList = usePharmacyStore((s) => s.inventory);
+  const setMedicinesList = usePharmacyStore((s) => s.setInventory);
+  const addInventoryItem = usePharmacyStore((s) => s.addInventoryItem);
+  const [manufacturers, setManufacturers] = useState<Manufacturer[]>(() => loadStoredManufacturers());
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(MANUFACTURERS_STORAGE_KEY, JSON.stringify(manufacturers));
+    } catch (e) {
+      console.error('Failed to save manufacturers to localStorage', e);
+    }
+  }, [manufacturers]);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(MEDICINES_STORAGE_KEY, JSON.stringify(medicinesList));
+    } catch (e) {
+      console.error('Failed to save medicines to localStorage', e);
+    }
+  }, [medicinesList]);
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingMfg, setEditingMfg] = useState<Manufacturer | null>(null);
@@ -92,18 +113,17 @@ function ManufactureMaster() {
   const [addMedicine, setAddMedicine] = useState(false);
   const [medName, setMedName] = useState('');
   const [medCategory, setMedCategory] = useState('Analgesic');
-  const [medIngredients, setMedIngredients] = useState('');
-  const [medPrice, setMedPrice] = useState('10');
-  const [medGst, setMedGst] = useState('12');
-  const [medMinStock, setMedMinStock] = useState('20');
-  const [medStock, setMedStock] = useState('100');
-  const [medBatch, setMedBatch] = useState('');
-  const [medExpiry, setMedExpiry] = useState('');
 
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [viewingMfgMedicines, setViewingMfgMedicines] = useState<string | null>(null);
   const [isPopupLoading, setIsPopupLoading] = useState(false);
+
+  // States for adding medicine inside viewing modal
+  const [isAddingMedInModal, setIsAddingMedInModal] = useState(false);
+  const [popupMedicines, setPopupMedicines] = useState<Array<{ name: string; category: string }>>([
+    { name: '', category: 'Analgesic' },
+  ]);
 
   useEffect(() => {
     if (viewingMfgMedicines) {
@@ -112,6 +132,9 @@ function ManufactureMaster() {
         setIsPopupLoading(false);
       }, 1500);
       return () => clearTimeout(timer);
+    } else {
+      setIsAddingMedInModal(false);
+      setPopupMedicines([{ name: '', category: 'Analgesic' }]);
     }
   }, [viewingMfgMedicines]);
 
@@ -142,25 +165,24 @@ function ManufactureMaster() {
     setMfgPhone(limited);
   };
 
+  const [formErrors, setFormErrors] = useState<{
+    name?: string;
+    phone?: string;
+    email?: string;
+    address?: string;
+  }>({});
+
   const handleOpenAdd = () => {
     setEditingMfg(null);
     setMfgName('');
     setMfgPhone('');
     setMfgEmail('');
     setMfgAddress('');
+    setFormErrors({});
 
     setAddMedicine(false);
     setMedName('');
     setMedCategory('Analgesic');
-    setMedIngredients('');
-    setMedPrice('10');
-    setMedGst('12');
-    setMedMinStock('20');
-    setMedStock('100');
-    setMedBatch(`B${2400 + seedMedicines.length}`);
-    const nextYear = new Date();
-    nextYear.setFullYear(nextYear.getFullYear() + 1);
-    setMedExpiry(nextYear.toISOString().split('T')[0] || '');
 
     setIsDialogOpen(true);
   };
@@ -171,7 +193,39 @@ function ManufactureMaster() {
     setMfgPhone(mfg.phone);
     setMfgEmail(mfg.email);
     setMfgAddress(mfg.address);
+    setFormErrors({});
     setIsDialogOpen(true);
+  };
+
+  const validateManufacturerForm = (): boolean => {
+    const errs: { name?: string; phone?: string; email?: string; address?: string } = {};
+    const name = mfgName.trim();
+    const phone = mfgPhone.trim();
+    const email = mfgEmail.trim();
+    const address = mfgAddress.trim();
+
+    if (!name) {
+      errs.name = 'Manufacturer name is required.';
+    }
+
+    if (!phone) {
+      errs.phone = 'Phone number is required.';
+    } else if (!/^\d{10}$/.test(phone)) {
+      errs.phone = 'Enter a valid 10-digit phone number.';
+    }
+
+    if (!email) {
+      errs.email = 'Email address is required.';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errs.email = 'Enter a valid email address.';
+    }
+
+    if (!address) {
+      errs.address = 'Address is required.';
+    }
+
+    setFormErrors(errs);
+    return Object.keys(errs).length === 0;
   };
 
   const handleSaveManufacturer = () => {
@@ -180,40 +234,14 @@ function ManufactureMaster() {
     const email = mfgEmail.trim();
     const address = mfgAddress.trim();
 
-    if (!name) {
-      toast.error('Please enter a manufacturer name');
-      return;
-    }
-
-    // Validate phone number if provided
-    if (phone && !validatePhoneNumber(phone)) {
-      toast.error('Phone number must be exactly 10 digits');
+    if (!validateManufacturerForm()) {
+      toast.error('Please complete all required manufacturer fields correctly.', { duration: 4000 });
       return;
     }
 
     if (!editingMfg && addMedicine) {
       if (!medName.trim()) {
-        toast.error('Please enter a medicine name');
-        return;
-      }
-      if (isNaN(parseFloat(medPrice)) || parseFloat(medPrice) < 0) {
-        toast.error('Please enter a valid price');
-        return;
-      }
-      if (isNaN(parseInt(medMinStock)) || parseInt(medMinStock) < 0) {
-        toast.error('Please enter a valid low-stock threshold');
-        return;
-      }
-      if (isNaN(parseInt(medStock)) || parseInt(medStock) < 0) {
-        toast.error('Please enter a valid stock count');
-        return;
-      }
-      if (!medBatch.trim()) {
-        toast.error('Please enter a batch code');
-        return;
-      }
-      if (!medExpiry.trim()) {
-        toast.error('Please select an expiry date');
+        toast.error('Please enter a medicine name', { duration: 4000 });
         return;
       }
     }
@@ -244,22 +272,33 @@ function ManufactureMaster() {
         const newMfg: Manufacturer = { name, phone, email, address };
         setManufacturers((prev) => [...prev, newMfg].sort((a, b) => a.name.localeCompare(b.name)));
 
-        if (addMedicine) {
-          const newMed: Medicine = {
-            id: `m-${5000 + seedMedicines.length + (Date.now() % 1000)}`,
-            name: medName.trim(),
-            category: medCategory,
-            manufacturer: name,
-            pricePerUnit: parseFloat(medPrice),
-            gst: parseInt(medGst),
-            minStock: parseInt(medMinStock),
-            stock: parseInt(medStock),
-            batch: medBatch.trim(),
-            expiry: medExpiry,
-            ingredients: medIngredients.trim() || 'Active Pharmaceutical Ingredient, Excipients',
-          };
-          seedMedicines.push(newMed);
-          toast.success(`Added medicine "${medName.trim()}" under "${name}"`);
+        if (addMedicine && medName.trim()) {
+          const existingNames = new Set(
+            medicinesList
+              .filter((m) => m.manufacturer.toLowerCase() === name.toLowerCase())
+              .map((m) => m.name.toLowerCase().trim())
+          );
+
+          if (!existingNames.has(medName.trim().toLowerCase())) {
+            const nextYear = new Date();
+            nextYear.setFullYear(nextYear.getFullYear() + 1);
+            const newMed: Medicine = {
+              id: `m-${5000 + medicinesList.length + (Date.now() % 1000)}`,
+              name: medName.trim(),
+              category: medCategory,
+              manufacturer: name,
+              pricePerUnit: 10,
+              gst: 12,
+              minStock: 20,
+              stock: 100,
+              batch: `B${2400 + medicinesList.length}`,
+              expiry: nextYear.toISOString().split('T')[0] || '',
+              ingredients: 'Active Pharmaceutical Ingredient, Excipients',
+            };
+
+            addInventoryItem(newMed);
+            toast.success(`Added medicine "${medName.trim()}" under "${name}"`);
+          }
         }
         toast.success(`Added "${name}" to manufacturers`);
       }
@@ -268,8 +307,53 @@ function ManufactureMaster() {
     }, 500);
   };
 
+  const handleAddMedicineFromModal = () => {
+    const validMeds = popupMedicines.filter((m) => m.name.trim().length > 0);
+    if (validMeds.length === 0 || !viewingMfgMedicines) {
+      toast.error('Please enter at least one medicine name');
+      return;
+    }
+
+    const existingNames = new Set(
+      medicinesList
+        .filter((m) => m.manufacturer === viewingMfgMedicines)
+        .map((m) => m.name.toLowerCase().trim())
+    );
+
+    const newMedsToCreate = validMeds.filter(
+      (m) => !existingNames.has(m.name.trim().toLowerCase())
+    );
+
+    if (newMedsToCreate.length === 0) {
+      toast.error('Medicine with this name already exists under this manufacturer');
+      return;
+    }
+
+    const nextYear = new Date();
+    nextYear.setFullYear(nextYear.getFullYear() + 1);
+
+    const createdMeds: Medicine[] = newMedsToCreate.map((m, idx) => ({
+      id: `m-${5000 + medicinesList.length + idx + (Date.now() % 1000)}`,
+      name: m.name.trim(),
+      category: m.category,
+      manufacturer: viewingMfgMedicines,
+      pricePerUnit: 10,
+      gst: 12,
+      minStock: 20,
+      stock: 100,
+      batch: `B${2400 + medicinesList.length + idx}`,
+      expiry: nextYear.toISOString().split('T')[0] || '',
+      ingredients: 'Active Pharmaceutical Ingredient, Excipients',
+    }));
+
+    createdMeds.forEach((m) => addInventoryItem(m));
+    toast.success(`Added ${createdMeds.length} medicine(s) under "${viewingMfgMedicines}"`);
+    setPopupMedicines([{ name: '', category: 'Analgesic' }]);
+    setIsAddingMedInModal(false);
+  };
+
   const handleDeleteManufacturer = (name: string) => {
-    const medCount = seedMedicines.filter((m) => m.manufacturer === name).length;
+    const medCount = medicinesList.filter((m) => m.manufacturer === name).length;
 
     let confirmMsg = `Are you sure you want to delete manufacturer "${name}"?`;
     if (medCount > 0) {
@@ -282,14 +366,9 @@ function ManufactureMaster() {
         setManufacturers((prev) => prev.filter((m) => m.name !== name));
 
         if (medCount > 0) {
-          const initialLength = seedMedicines.length;
-          for (let i = seedMedicines.length - 1; i >= 0; i--) {
-            if (seedMedicines[i]!.manufacturer === name) {
-              seedMedicines.splice(i, 1);
-            }
-          }
+          setMedicinesList(medicinesList.filter((m) => m.manufacturer !== name));
           toast.success(
-            `Removed "${name}" and cascade deleted ${initialLength - seedMedicines.length} medicine(s)`
+            `Removed "${name}" and cascade deleted ${medCount} medicine(s)`
           );
         } else {
           toast.success(`Removed "${name}" from manufacturers`);
@@ -316,7 +395,9 @@ function ManufactureMaster() {
   const currentItems = filteredManufacturers.slice(startIndex, endIndex);
 
   const getMedicineCount = (manufacturer: string) => {
-    return seedMedicines.filter((m) => m.manufacturer === manufacturer).length;
+    const mList = medicinesList.filter((m) => m.manufacturer === manufacturer);
+    const uniqueNames = new Set(mList.map((m) => m.name.toLowerCase().trim()));
+    return uniqueNames.size;
   };
 
   const goToPage = (page: number) => {
@@ -413,7 +494,7 @@ function ManufactureMaster() {
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground font-medium">Total Medicines</p>
-                  <p className="text-2xl font-bold text-primary">{seedMedicines.length}</p>
+                  <p className="text-2xl font-bold text-primary">{medicinesList.length}</p>
                 </div>
               </div>
             </div>
@@ -428,7 +509,7 @@ function ManufactureMaster() {
                   </p>
                   <p className="text-2xl font-bold text-primary">
                     {manufacturers.length > 0
-                      ? (seedMedicines.length / manufacturers.length).toFixed(1)
+                      ? (medicinesList.length / manufacturers.length).toFixed(1)
                       : '0'}
                   </p>
                 </div>
@@ -517,7 +598,7 @@ function ManufactureMaster() {
                               title="Delete manufacturer"
                               disabled={isLoading}
                             >
-                              <PackageMinus className="h-3.5 w-3.5" />
+                              <Trash className="h-3.5 w-3.5" />
                             </Button>
                           </div>
                         </td>
@@ -598,7 +679,7 @@ function ManufactureMaster() {
 
         <div className="p-4 border-t border-border bg-muted/20 flex items-center justify-between">
           <p className="text-xs text-muted-foreground">
-            {manufacturers.length} manufacturer(s) · {seedMedicines.length} medicine(s)
+            {manufacturers.length} manufacturer(s) · {medicinesList.length} medicine(s)
           </p>
           <div className="flex gap-2">
             {searchQuery && (
@@ -633,12 +714,7 @@ function ManufactureMaster() {
 
       {/* Dialog modal for Add/Edit */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent
-          className={cn(
-            'sm:max-w-[480px] transition-all duration-300',
-            !editingMfg && addMedicine && 'sm:max-w-[800px]'
-          )}
-        >
+        <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
             <DialogTitle>{editingMfg ? 'Edit Manufacturer' : 'Add New Manufacturer'}</DialogTitle>
             <DialogDescription>
@@ -648,98 +724,120 @@ function ManufactureMaster() {
             </DialogDescription>
           </DialogHeader>
 
-          <div className={cn('grid gap-4 py-4', !editingMfg && addMedicine && 'grid-cols-2')}>
-            <div className="space-y-4">
-              <h4 className="text-xs font-bold uppercase tracking-widest text-emerald-600">
-                Manufacturer Details
-              </h4>
+          <div className="space-y-4 py-4">
+            <h4 className="text-xs font-bold uppercase tracking-widest text-emerald-600">
+              Manufacturer Details
+            </h4>
 
-              <div className="grid gap-2">
-                <Label htmlFor="mfg-name" className="text-sm font-semibold">
-                  Manufacturer Name <span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id="mfg-name"
-                  value={mfgName}
-                  onChange={(e) => setMfgName(e.target.value)}
-                  placeholder="e.g. Cipla, Pfizer"
-                  disabled={isLoading}
-                />
-              </div>
-
-              <div className="grid gap-2">
-                <Label htmlFor="mfg-phone" className="text-sm font-semibold">
-                  Phone Number{' '}
-                  <span className="text-muted-foreground text-xs">(10 digits only)</span>
-                </Label>
-                <Input
-                  id="mfg-phone"
-                  value={mfgPhone}
-                  onChange={handlePhoneChange}
-                  placeholder="e.g. 9876543210"
-                  disabled={isLoading}
-                  maxLength={10}
-                  className="font-mono"
-                />
-                {mfgPhone && mfgPhone.length < 10 && (
-                  <p className="text-xs text-destructive">Phone number must be exactly 10 digits</p>
-                )}
-              </div>
-
-              <div className="grid gap-2">
-                <Label htmlFor="mfg-email" className="text-sm font-semibold">
-                  Email Address
-                </Label>
-                <Input
-                  id="mfg-email"
-                  type="email"
-                  value={mfgEmail}
-                  onChange={(e) => setMfgEmail(e.target.value)}
-                  placeholder="e.g. contact@cipla.com"
-                  disabled={isLoading}
-                />
-              </div>
-
-              <div className="grid gap-2">
-                <Label htmlFor="mfg-address" className="text-sm font-semibold">
-                  Address
-                </Label>
-                <Input
-                  id="mfg-address"
-                  value={mfgAddress}
-                  onChange={(e) => setMfgAddress(e.target.value)}
-                  placeholder="e.g. Mumbai, Maharashtra"
-                  disabled={isLoading}
-                />
-              </div>
-
-              {!editingMfg && (
-                <div className="flex items-center gap-2 pt-2 border-t border-border">
-                  <input
-                    id="add-medicine-checkbox"
-                    type="checkbox"
-                    checked={addMedicine}
-                    onChange={(e) => setAddMedicine(e.target.checked)}
-                    className="h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500 accent-emerald-600"
-                    disabled={isLoading}
-                  />
-                  <Label
-                    htmlFor="add-medicine-checkbox"
-                    className="text-sm font-semibold select-none cursor-pointer"
-                  >
-                    Add a medicine for this manufacturer
-                  </Label>
-                </div>
+            <div className="grid gap-1.5">
+              <Label htmlFor="mfg-name" className="text-sm font-semibold">
+                Manufacturer Name <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="mfg-name"
+                value={mfgName}
+                onChange={(e) => {
+                  setMfgName(e.target.value);
+                  setFormErrors((prev) => ({ ...prev, name: undefined }));
+                }}
+                placeholder="e.g. Cipla, Pfizer"
+                disabled={isLoading}
+              />
+              {formErrors.name && (
+                <p className="text-xs text-destructive mt-0.5">{formErrors.name}</p>
               )}
             </div>
 
+            <div className="grid gap-1.5">
+              <Label htmlFor="mfg-phone" className="text-sm font-semibold">
+                Phone Number <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="mfg-phone"
+                value={mfgPhone}
+                onChange={(e) => {
+                  handlePhoneChange(e);
+                  setFormErrors((prev) => ({ ...prev, phone: undefined }));
+                }}
+                placeholder="e.g. 9876543210 (10 digits)"
+                disabled={isLoading}
+                maxLength={10}
+                className="font-mono"
+              />
+              {formErrors.phone ? (
+                <p className="text-xs text-destructive mt-0.5">{formErrors.phone}</p>
+              ) : (
+                mfgPhone && mfgPhone.length < 10 && (
+                  <p className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">Phone number must be exactly 10 digits</p>
+                )
+              )}
+            </div>
+
+            <div className="grid gap-1.5">
+              <Label htmlFor="mfg-email" className="text-sm font-semibold">
+                Email Address <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="mfg-email"
+                type="email"
+                value={mfgEmail}
+                onChange={(e) => {
+                  setMfgEmail(e.target.value);
+                  setFormErrors((prev) => ({ ...prev, email: undefined }));
+                }}
+                placeholder="e.g. contact@cipla.com"
+                disabled={isLoading}
+              />
+              {formErrors.email && (
+                <p className="text-xs text-destructive mt-0.5">{formErrors.email}</p>
+              )}
+            </div>
+
+            <div className="grid gap-1.5">
+              <Label htmlFor="mfg-address" className="text-sm font-semibold">
+                Address <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="mfg-address"
+                value={mfgAddress}
+                onChange={(e) => {
+                  setMfgAddress(e.target.value);
+                  setFormErrors((prev) => ({ ...prev, address: undefined }));
+                }}
+                placeholder="e.g. Mumbai, Maharashtra"
+                disabled={isLoading}
+              />
+              {formErrors.address && (
+                <p className="text-xs text-destructive mt-0.5">{formErrors.address}</p>
+              )}
+            </div>
+
+            {!editingMfg && (
+              <div className="flex items-center gap-2 pt-2 border-t border-border">
+                <input
+                  id="add-medicine-checkbox"
+                  type="checkbox"
+                  checked={addMedicine}
+                  onChange={(e) => setAddMedicine(e.target.checked)}
+                  className="h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500 accent-emerald-600 cursor-pointer"
+                  disabled={isLoading}
+                />
+                <Label
+                  htmlFor="add-medicine-checkbox"
+                  className="text-sm font-semibold select-none cursor-pointer"
+                >
+                  Add a medicine for this manufacturer
+                </Label>
+              </div>
+            )}
+
             {!editingMfg && addMedicine && (
-              <div className="space-y-4 border-l border-border pl-6">
+              <div className="space-y-4 pt-3 border-t border-border">
                 <h4 className="text-xs font-bold uppercase tracking-widest text-emerald-600">
                   Associated Medicine Details
                 </h4>
 
-                <div className="grid gap-2">
+                <div className="grid gap-1.5">
                   <Label htmlFor="med-name" className="text-sm font-semibold">
                     Medicine Name <span className="text-destructive">*</span>
                   </Label>
@@ -752,121 +850,23 @@ function ManufactureMaster() {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="grid gap-2">
-                    <Label htmlFor="med-category" className="text-sm font-semibold">
-                      Category <span className="text-destructive">*</span>
-                    </Label>
-                    <select
-                      id="med-category"
-                      value={medCategory}
-                      onChange={(e) => setMedCategory(e.target.value)}
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                      disabled={isLoading}
-                    >
-                      {DEFAULT_CATEGORIES.map((cat) => (
-                        <option key={cat} value={cat}>
-                          {cat}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="grid gap-2">
-                    <Label htmlFor="med-ingredients" className="text-sm font-semibold">
-                      Ingredients
-                    </Label>
-                    <Input
-                      id="med-ingredients"
-                      value={medIngredients}
-                      onChange={(e) => setMedIngredients(e.target.value)}
-                      placeholder="e.g. Active Ingredient"
-                      disabled={isLoading}
-                    />
-                  </div>
-
-                  <div className="grid gap-2">
-                    <Label htmlFor="med-price" className="text-sm font-semibold">
-                      Price (INR) <span className="text-destructive">*</span>
-                    </Label>
-                    <Input
-                      id="med-price"
-                      type="number"
-                      step="0.01"
-                      value={medPrice}
-                      onChange={(e) => setMedPrice(e.target.value)}
-                      placeholder="e.g. 15.50"
-                      disabled={isLoading}
-                    />
-                  </div>
-
-                  <div className="grid gap-2">
-                    <Label htmlFor="med-gst" className="text-sm font-semibold">
-                      GST Rate % <span className="text-destructive">*</span>
-                    </Label>
-                    <select
-                      id="med-gst"
-                      value={medGst}
-                      onChange={(e) => setMedGst(e.target.value)}
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                      disabled={isLoading}
-                    >
-                      <option value="5">5%</option>
-                      <option value="12">12%</option>
-                      <option value="18">18%</option>
-                    </select>
-                  </div>
-
-                  <div className="grid gap-2">
-                    <Label htmlFor="med-minstock" className="text-sm font-semibold">
-                      Min Stock <span className="text-destructive">*</span>
-                    </Label>
-                    <Input
-                      id="med-minstock"
-                      type="number"
-                      value={medMinStock}
-                      onChange={(e) => setMedMinStock(e.target.value)}
-                      disabled={isLoading}
-                    />
-                  </div>
-
-                  <div className="grid gap-2">
-                    <Label htmlFor="med-stock" className="text-sm font-semibold">
-                      Initial Stock <span className="text-destructive">*</span>
-                    </Label>
-                    <Input
-                      id="med-stock"
-                      type="number"
-                      value={medStock}
-                      onChange={(e) => setMedStock(e.target.value)}
-                      disabled={isLoading}
-                    />
-                  </div>
-
-                  <div className="grid gap-2">
-                    <Label htmlFor="med-batch" className="text-sm font-semibold">
-                      Batch Code <span className="text-destructive">*</span>
-                    </Label>
-                    <Input
-                      id="med-batch"
-                      value={medBatch}
-                      onChange={(e) => setMedBatch(e.target.value)}
-                      disabled={isLoading}
-                    />
-                  </div>
-
-                  <div className="grid gap-2">
-                    <Label htmlFor="med-expiry" className="text-sm font-semibold">
-                      Expiry Date <span className="text-destructive">*</span>
-                    </Label>
-                    <Input
-                      id="med-expiry"
-                      type="date"
-                      value={medExpiry}
-                      onChange={(e) => setMedExpiry(e.target.value)}
-                      disabled={isLoading}
-                    />
-                  </div>
+                <div className="grid gap-1.5">
+                  <Label htmlFor="med-category" className="text-sm font-semibold">
+                    Category <span className="text-destructive">*</span>
+                  </Label>
+                  <select
+                    id="med-category"
+                    value={medCategory}
+                    onChange={(e) => setMedCategory(e.target.value)}
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    disabled={isLoading}
+                  >
+                    {DEFAULT_CATEGORIES.map((cat) => (
+                      <option key={cat} value={cat}>
+                        {cat}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
             )}
@@ -893,7 +893,13 @@ function ManufactureMaster() {
       {/* Dialog modal for viewing medicines list */}
       <Dialog
         open={viewingMfgMedicines !== null}
-        onOpenChange={(open) => !open && setViewingMfgMedicines(null)}
+        onOpenChange={(open) => {
+          if (!open) {
+            setViewingMfgMedicines(null);
+            setIsAddingMedInModal(false);
+            setPopupMedicines([{ name: '', category: 'Analgesic' }]);
+          }
+        }}
       >
         <DialogContent className="sm:max-w-[640px]">
           <DialogHeader>
@@ -903,10 +909,118 @@ function ManufactureMaster() {
             </DialogDescription>
           </DialogHeader>
 
-          <div className="py-4">
+          <div className="py-4 space-y-4">
+            {isAddingMedInModal && (
+              <div className="space-y-4 rounded-xl border border-emerald-500/20 bg-emerald-50/40 dark:bg-emerald-950/20 p-4 transition-all duration-200">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-bold uppercase tracking-widest text-emerald-600">
+                    Add Medicines for {viewingMfgMedicines}
+                  </h4>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 text-xs text-muted-foreground hover:text-foreground"
+                    onClick={() => {
+                      setIsAddingMedInModal(false);
+                      setPopupMedicines([{ name: '', category: 'Analgesic' }]);
+                    }}
+                  >
+                    Back to List
+                  </Button>
+                </div>
+
+                <div className="space-y-3 max-h-[220px] overflow-y-auto pr-1">
+                  {popupMedicines.map((med, index) => (
+                    <div
+                      key={index}
+                      className="p-3 rounded-lg border border-border bg-background relative space-y-2.5"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-semibold text-muted-foreground">
+                          Medicine #{index + 1}
+                        </span>
+                        {popupMedicines.length > 1 && (
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="h-6 w-6 text-destructive hover:bg-destructive/10"
+                            onClick={() =>
+                              setPopupMedicines((prev) => prev.filter((_, idx) => idx !== index))
+                            }
+                          >
+                            <Trash className="h-3 w-3" />
+                          </Button>
+                        )}
+                      </div>
+
+                      <div className="grid gap-1.5">
+                        <Label
+                          htmlFor={`popup-med-name-${index}`}
+                          className="text-xs font-semibold"
+                        >
+                          Medicine Name <span className="text-destructive">*</span>
+                        </Label>
+                        <Input
+                          id={`popup-med-name-${index}`}
+                          value={med.name}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setPopupMedicines((prev) =>
+                              prev.map((item, idx) => (idx === index ? { ...item, name: val } : item))
+                            );
+                          }}
+                          placeholder="e.g. Paracetamol 650mg"
+                          autoFocus={index === 0}
+                        />
+                      </div>
+
+                      <div className="grid gap-1.5">
+                        <Label htmlFor={`popup-med-cat-${index}`} className="text-xs font-semibold">
+                          Category <span className="text-destructive">*</span>
+                        </Label>
+                        <select
+                          id={`popup-med-cat-${index}`}
+                          value={med.category}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setPopupMedicines((prev) =>
+                              prev.map((item, idx) => (idx === index ? { ...item, category: val } : item))
+                            );
+                          }}
+                          className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-xs ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                          {DEFAULT_CATEGORIES.map((cat) => (
+                            <option key={cat} value={cat}>
+                              {cat}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="w-full text-xs text-emerald-600 border-emerald-600/30 hover:bg-emerald-50 dark:hover:bg-emerald-950/40"
+                  onClick={() =>
+                    setPopupMedicines((prev) => [
+                      ...prev,
+                      { name: '', category: 'Analgesic' },
+                    ])
+                  }
+                >
+                  <Plus className="mr-1.5 h-3.5 w-3.5" /> Add Another Medicine Row
+                </Button>
+              </div>
+            )}
+
             {viewingMfgMedicines && (
               <div className="overflow-x-auto rounded-lg border border-border max-h-[45vh] overflow-y-auto">
-                {seedMedicines.filter((m) => m.manufacturer === viewingMfgMedicines).length ===
+                {medicinesList.filter((m) => m.manufacturer === viewingMfgMedicines).length ===
                 0 ? (
                   <div className="px-4 py-8 text-center text-sm text-muted-foreground">
                     No medicines found for this manufacturer.
@@ -931,8 +1045,15 @@ function ManufactureMaster() {
                               </td>
                             </tr>
                           ))
-                        : seedMedicines
+                        : medicinesList
                             .filter((m) => m.manufacturer === viewingMfgMedicines)
+                            .filter(
+                              (med, index, self) =>
+                                index ===
+                                self.findIndex(
+                                  (t) => t.name.toLowerCase().trim() === med.name.toLowerCase().trim()
+                                )
+                            )
                             .map((med) => (
                               <tr key={med.id} className="hover:bg-muted/10 transition-colors">
                                 <td className="px-4 py-3 font-semibold text-foreground">
@@ -953,7 +1074,42 @@ function ManufactureMaster() {
           </div>
 
           <DialogFooter>
-            <Button onClick={() => setViewingMfgMedicines(null)}>Close</Button>
+            {isAddingMedInModal ? (
+              <>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setIsAddingMedInModal(false);
+                    setPopupMedicines([{ name: '', category: 'Analgesic' }]);
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleAddMedicineFromModal}
+                  disabled={popupMedicines.filter((m) => m.name.trim()).length === 0}
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                >
+                  Save Medicine(s)
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  variant="default"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                  onClick={() => {
+                    setIsAddingMedInModal(true);
+                    setPopupMedicines([{ name: '', category: 'Analgesic' }]);
+                  }}
+                >
+                  <Plus className="mr-1.5 h-4 w-4" /> Add Medicine
+                </Button>
+                <Button variant="outline" onClick={() => setViewingMfgMedicines(null)}>
+                  Close
+                </Button>
+              </>
+            )}
           </DialogFooter>
         </DialogContent>
       </Dialog>

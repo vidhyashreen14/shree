@@ -38,6 +38,7 @@ const weekWiseData = [
   { label: 'Wk 26', sales: 372, avg: 320 },
   { label: 'Wk 27', sales: 360, avg: 320 },
 ];
+
 const monthWiseData = [
   { label: 'Jan', sales: 1240, avg: 1400 },
   { label: 'Feb', sales: 1110, avg: 1400 },

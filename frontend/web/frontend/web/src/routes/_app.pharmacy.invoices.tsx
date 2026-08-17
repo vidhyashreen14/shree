@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { PageHeader } from '@/components/common/PageHeader';
+import { EmptyState } from '@/components/common/EmptyState';
 import { StatusChip } from '@/components/common/StatusChip';
 import { Button } from '@/components/ui/button';
+import { usePharmacyStore } from '@/lib/store/pharmacy';
 import {
   FilePlus,
   Plus,
@@ -16,6 +18,7 @@ import {
   ChevronUp,
   Pill,
   PackageOpen,
+  History,
 } from 'lucide-react';
 import { patients } from '@/lib/mock/data';
 import { useState, ChangeEvent } from 'react';
@@ -28,6 +31,7 @@ export const Route = createFileRoute('/_app/pharmacy/invoices')({
 export interface InvoiceMedicineItem {
   id: number;
   medicine: string;
+  category: string;
   batch: string;
   batchExpiry: string;
   unitsPerStrip: string;
@@ -57,6 +61,8 @@ export interface SavedInvoice {
   patientMRN?: string;
 }
 
+const initialInvoices: SavedInvoice[] = [];
+
 const stockistSuggestions = [
   'MedPlus Distributors',
   'Apollo Wholesale',
@@ -68,17 +74,24 @@ const stockistSuggestions = [
 const tone = { paid: 'success', pending: 'warning', refunded: 'danger' } as const;
 
 function PharmacyInvoices() {
+  const [showHistory, setShowHistory] = useState(false);
   const [showAddInvoice, setShowAddInvoice] = useState(false);
   const [showMedicineForm, setShowMedicineForm] = useState(false);
+  const [invoiceCounter, setInvoiceCounter] = useState(1);
   const [invoiceNumber, setInvoiceNumber] = useState('');
   const [selectedStockist, setSelectedStockist] = useState('');
   const [invoiceDate, setInvoiceDate] = useState('');
-  const [savedInvoices, setSavedInvoices] = useState<SavedInvoice[]>([]);
+  const savedInvoices = usePharmacyStore((s) => s.invoices);
+  const addStoreInvoice = usePharmacyStore((s) => s.addInvoice);
+  const deleteStoreInvoice = usePharmacyStore((s) => s.deleteInvoice);
+  const syncItemToInventory = usePharmacyStore((s) => s.syncItemToInventory);
+
   const [showStockistSuggestions, setShowStockistSuggestions] = useState(false);
 
   // Medicine fields
   const [medicineFields, setMedicineFields] = useState({
     medicine: '',
+    category: '',
     batch: '',
     batchExpiry: '',
     unitsPerStrip: '',
@@ -122,19 +135,21 @@ function PharmacyInvoices() {
       parseInt(medicineFields.unitsPerStrip) * parseInt(medicineFields.noOfStrips) || 0;
     const netPrice = parseFloat(medicineFields.netPrice) || 0;
 
-    setMedicineList((prev) => [
-      ...prev,
-      {
-        id: Date.now(),
-        ...medicineFields,
-        totalUnits,
-        netPrice,
-      },
-    ]);
+    const newItem: InvoiceMedicineItem = {
+      id: Date.now(),
+      ...medicineFields,
+      category: medicineFields.category.trim() || 'General',
+      totalUnits,
+      netPrice,
+    };
+
+    setMedicineList((prev) => [...prev, newItem]);
+    syncItemToInventory(newItem, selectedStockist || 'Invoice Entry');
 
     toast.success('Medicine added successfully!');
     setMedicineFields({
       medicine: '',
+      category: '',
       batch: '',
       batchExpiry: '',
       unitsPerStrip: '',
@@ -204,6 +219,7 @@ function PharmacyInvoices() {
   const handleClearFields = () => {
     setMedicineFields({
       medicine: '',
+      category: '',
       batch: '',
       batchExpiry: '',
       unitsPerStrip: '',
@@ -220,20 +236,20 @@ function PharmacyInvoices() {
   };
 
   const handleSaveInvoice = () => {
-    if (!invoiceNumber) {
-      toast.warning('Please enter Invoice Number!');
+    if (!invoiceNumber || !invoiceNumber.trim()) {
+      toast.error('Please enter Invoice Number!', { duration: 4000 });
       return;
     }
-    if (!selectedStockist || selectedStockist.trim() === '') {
-      toast.warning('Please enter a Pharmacy Stockist!');
+    if (!selectedStockist || !selectedStockist.trim()) {
+      toast.error('Please select or enter a Pharmacy Stockist!', { duration: 4000 });
       return;
     }
     if (!invoiceDate) {
-      toast.warning('Please select a Date!');
+      toast.error('Please select an Invoice Date!', { duration: 4000 });
       return;
     }
     if (medicineList.length === 0) {
-      toast.warning('Please add at least one medicine!');
+      toast.error('Please add at least one medicine to the invoice!', { duration: 4000 });
       return;
     }
 
@@ -242,9 +258,10 @@ function PharmacyInvoices() {
     const totalGST = medicineList.reduce((sum, item) => sum + (parseFloat(item.gstTotal) || 0), 0);
     const grandTotal = totalAmount + totalGST;
 
+    const autoInvoiceNumber = `INV-${String(invoiceCounter).padStart(3, '0')}`;
     const newInvoice: SavedInvoice = {
       id: `INV-${9000 + savedInvoices.length}`,
-      invoiceNumber: invoiceNumber,
+      invoiceNumber: autoInvoiceNumber,
       stockist: selectedStockist,
       date: invoiceDate,
       items: [...medicineList],
@@ -256,9 +273,10 @@ function PharmacyInvoices() {
       patientMRN: `MRN-${10000 + savedInvoices.length}`,
     };
 
-    setSavedInvoices((prev) => [newInvoice, ...prev]);
-    toast.success('Invoice saved successfully!', {
-      description: `Invoice #${invoiceNumber} · Grand Total ₹${grandTotal.toFixed(2)}`,
+    addStoreInvoice(newInvoice);
+    setInvoiceCounter((prev) => prev + 1);
+    toast.success('Invoice saved successfully & updated Stock Inventory!', {
+      description: `Invoice #${autoInvoiceNumber} · Grand Total ₹${grandTotal.toFixed(2)}`,
     });
 
     // Reset form
@@ -266,18 +284,19 @@ function PharmacyInvoices() {
     setSelectedStockist('');
     setInvoiceDate('');
     setMedicineList([]);
+    setShowHistory(true);
   };
 
   const handlePrintInvoice = () => {
     if (medicineList.length === 0) {
-      toast.error('No items to print. Add at least one medicine first.');
+      toast.error('No items to print. Add at least one medicine first.', { duration: 4000 });
       return;
     }
 
     // Generate the print content
     const printWindow = window.open('', '_blank', 'width=1200,height=800');
     if (!printWindow) {
-      toast.error('Please allow popups to print.');
+      toast.error('Please allow popups to print.', { duration: 4000 });
       return;
     }
 
@@ -595,6 +614,7 @@ function PharmacyInvoices() {
       // Reset form when opening
       setMedicineFields({
         medicine: '',
+        category: '',
         batch: '',
         batchExpiry: '',
         unitsPerStrip: '',
@@ -612,10 +632,101 @@ function PharmacyInvoices() {
   };
 
   return (
-    <>
-      {/* Add Invoice Form - Displayed directly on the page */}
-      <div className="surface-elevated overflow-hidden mt-2">
-        <div className="p-6 border-b border-border bg-gradient-to-r from-primary/5 to-primary/10">
+    <div className="flex flex-col gap-6">
+      <PageHeader
+        title={showHistory ? 'Invoice History' : 'Invoices'}
+        description={
+          showHistory
+            ? 'View and inspect all saved pharmaceutical purchase invoices.'
+            : 'Create and register a new pharmaceutical invoice.'
+        }
+        actions={
+          !showHistory ? (
+            <Button onClick={() => setShowHistory(true)}>
+              <History className="mr-2 h-4 w-4" /> View History
+            </Button>
+          ) : undefined
+        }
+      />
+
+      {showHistory ? (
+        <div className="surface-elevated overflow-hidden rounded-2xl border border-border p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold flex items-center gap-2 text-foreground">
+              <FilePlus className="h-5 w-5 text-primary" /> Saved Invoices ({savedInvoices.length})
+            </h3>
+            <Button onClick={() => setShowHistory(false)} size="sm">
+              <Plus className="mr-1.5 h-4 w-4" /> Add Invoice
+            </Button>
+          </div>
+
+          {savedInvoices.length === 0 ? (
+            <EmptyState
+              icon={PackageOpen}
+              title="No Saved Invoices"
+              description="You have not saved any invoices yet. Click 'Add Invoice' to create one."
+            />
+          ) : (
+            <div className="overflow-x-auto rounded-xl border border-border">
+              <table className="w-full text-sm">
+                <thead className="bg-muted/50">
+                  <tr>
+                    <th className="px-4 py-3 text-left font-semibold text-muted-foreground">Invoice #</th>
+                    <th className="px-4 py-3 text-left font-semibold text-muted-foreground">Stockist</th>
+                    <th className="px-4 py-3 text-left font-semibold text-muted-foreground">Date</th>
+                    <th className="px-4 py-3 text-center font-semibold text-muted-foreground">Items</th>
+                    <th className="px-4 py-3 text-right font-semibold text-muted-foreground">Grand Total</th>
+                    <th className="px-4 py-3 text-center font-semibold text-muted-foreground">Status</th>
+                    <th className="px-4 py-3 text-right font-semibold text-muted-foreground">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {savedInvoices.map((inv) => (
+                    <tr key={inv.id} className="hover:bg-muted/30 transition-colors">
+                      <td className="px-4 py-3 font-semibold text-primary">{inv.invoiceNumber}</td>
+                      <td className="px-4 py-3 font-medium">{inv.stockist}</td>
+                      <td className="px-4 py-3 text-muted-foreground">{inv.date}</td>
+                      <td className="px-4 py-3 text-center">{inv.items.length} {inv.items.length === 1 ? 'item' : 'items'}</td>
+                      <td className="px-4 py-3 text-right font-bold text-foreground">₹{inv.grandTotal.toFixed(2)}</td>
+                      <td className="px-4 py-3 text-center">
+                        <StatusChip tone={tone[inv.status]}>{inv.status}</StatusChip>
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <div className="flex items-center justify-end gap-1.5">
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            className="h-8 w-8 hover:bg-primary/10 hover:text-primary"
+                            onClick={() => handleViewInvoice(inv)}
+                            title="View Invoice"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            className="h-8 w-8 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                            onClick={() => {
+                              deleteStoreInvoice(inv.id);
+                              toast.success(`Removed Invoice #${inv.invoiceNumber}`);
+                            }}
+                            title="Delete Invoice"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      ) : (
+        /* Add Invoice Form - Displayed directly on the page */
+        <div className="surface-elevated overflow-hidden">
+          <div className="p-6 border-b border-border bg-gradient-to-r from-primary/5 to-primary/10">
           <h3 className="text-lg font-semibold flex items-center gap-2 text-primary">
             <FilePlus className="h-5 w-5" /> Add Invoice
           </h3>
@@ -747,6 +858,19 @@ function PharmacyInvoices() {
                     value={medicineFields.medicine}
                     onChange={handleMedicineFieldChange}
                     placeholder="Enter medicine"
+                    className="w-full px-3 py-2 bg-background text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-foreground/85 mb-1">
+                    Category <span className="text-destructive">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="category"
+                    value={medicineFields.category}
+                    onChange={handleMedicineFieldChange}
+                    placeholder="Category (e.g. Tablets)"
                     className="w-full px-3 py-2 bg-background text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all text-sm"
                   />
                 </div>
@@ -939,6 +1063,9 @@ function PharmacyInvoices() {
                   <th className="px-4 py-3 text-left font-semibold text-muted-foreground">
                     Medicine
                   </th>
+                  <th className="px-4 py-3 text-left font-semibold text-muted-foreground">
+                    Category
+                  </th>
                   <th className="px-4 py-3 text-left font-semibold text-muted-foreground">Batch</th>
                   <th className="px-4 py-3 text-left font-semibold text-muted-foreground">
                     Expiry
@@ -987,6 +1114,15 @@ function PharmacyInvoices() {
                               type="text"
                               name="medicine"
                               value={editFormData.medicine || ''}
+                              onChange={handleEditFormChange}
+                              className="w-full px-2 py-1 bg-background text-foreground border border-warning rounded focus:ring-2 focus:ring-primary text-sm"
+                            />
+                          </td>
+                          <td className="px-4 py-2">
+                            <input
+                              type="text"
+                              name="category"
+                              value={editFormData.category || ''}
                               onChange={handleEditFormChange}
                               className="w-full px-2 py-1 bg-background text-foreground border border-warning rounded focus:ring-2 focus:ring-primary text-sm"
                             />
@@ -1075,6 +1211,7 @@ function PharmacyInvoices() {
                         // View Mode
                         <>
                           <td className="px-4 py-3 font-medium">{item.medicine}</td>
+                          <td className="px-4 py-3 text-muted-foreground">{item.category || 'General'}</td>
                           <td className="px-4 py-3">{item.batch}</td>
                           <td className="px-4 py-3">{item.batchExpiry}</td>
                           <td className="px-4 py-3">{item.gstTotal || 0}%</td>
@@ -1130,6 +1267,7 @@ function PharmacyInvoices() {
           </div>
         </div>
       </div>
+      )}
 
       {/* View Invoice Modal */}
       {viewInvoice && (
@@ -1228,7 +1366,7 @@ function PharmacyInvoices() {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }
 

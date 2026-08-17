@@ -74,24 +74,24 @@ function PharmacyOrders() {
   const [addedItems, setAddedItems] = useState<AddedItem[]>([]);
 
   const handleAddItem = () => {
-    if (!stockist) {
-      toast.error("Please select a stockist.");
+    if (!stockist || !stockist.trim()) {
+      toast.error("Please select or enter a valid stockist.", { duration: 4000 });
       return;
     }
     if (!orderDate) {
-      toast.error("Please select an order date.");
+      toast.error("Please select an order date.", { duration: 4000 });
       return;
     }
     if (!selectedMed) {
-      toast.error("Please select a medicine.");
+      toast.error("Please select a medicine.", { duration: 4000 });
       return;
     }
     if (!unitsPerStrip || unitsPerStrip <= 0) {
-      toast.error("Please enter a valid Units/Strip.");
+      toast.error("Please enter a valid Units/Strip.", { duration: 4000 });
       return;
     }
     if (!noOfStrips || noOfStrips <= 0) {
-      toast.error("Please enter a valid number of strips.");
+      toast.error("Please enter a valid number of strips.", { duration: 4000 });
       return;
     }
 
@@ -136,16 +136,16 @@ function PharmacyOrders() {
   };
 
   const handleSaveOrder = () => {
-    if (!stockist) {
-      toast.error('Please select a stockist.');
+    if (!stockist || !stockist.trim()) {
+      toast.error("Please select or enter a valid stockist.", { duration: 4000 });
       return;
     }
     if (!orderDate) {
-      toast.error("Please select an order date.");
+      toast.error("Please select an order date.", { duration: 4000 });
       return;
     }
     if (addedItems.length === 0) {
-      toast.error("Please add at least one medicine to the purchase order.");
+      toast.error("Please add at least one medicine to the purchase order.", { duration: 4000 });
       return;
     }
 

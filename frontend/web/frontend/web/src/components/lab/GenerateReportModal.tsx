@@ -1,160 +1,27 @@
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { PageHeader } from "@/components/common/PageHeader";
 import { Button } from "@/components/ui/button";
-import { labOrders, patients, doctors } from "@/lib/mock/data";
+import { labOrders, patients, doctors, allOrders, getTestRows, TEST_DATA } from "@/lib/mock/data";
 import {
   FileText,
-  FlaskConical,
   CheckCircle2,
-  Clock,
-  Loader2,
-  XCircle,
-  ChevronLeft,
-  ChevronRight,
   X,
   Printer,
   User,
   Activity,
-  Beaker,
   CalendarDays,
   Stethoscope,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ChevronDown,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  ChevronUp,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  Download,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  Trash2,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  Eye,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  RefreshCw,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  AlertCircle,
-  Plus,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useState } from "react";
-import { createPortal } from "react-dom";
 import { allowOnlyResultChars, sanitizeText } from "@/lib/validations";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { PatientNameInput, MobileInput } from "@/components/common/ValidatedInputs";
 
-
-
-// ── Deterministic test results per test name ──────────────────────────────────
-const TEST_DATA: Record<
-  string,
-  { parameter: string; result: string; unit: string; reference: string; flag?: "H" | "L" }[]
-> = {
-  "CBC (Complete Blood Count)": [
-    { parameter: "Haemoglobin", result: "11.8", unit: "g/dL", reference: "12.0 – 17.5", flag: "L" },
-    { parameter: "WBC", result: "7200", unit: "cells/µL", reference: "4000 – 11000" },
-    { parameter: "Platelets", result: "210000", unit: "cells/µL", reference: "150000 – 400000" },
-    { parameter: "RBC", result: "4.6", unit: "million/µL", reference: "4.5 – 5.9" },
-    { parameter: "MCV", result: "82", unit: "fL", reference: "80 – 100" },
-    { parameter: "MCH", result: "28", unit: "pg", reference: "27 – 33" },
-    { parameter: "Neutrophils", result: "65", unit: "%", reference: "40 – 70" },
-    { parameter: "Lymphocytes", result: "28", unit: "%", reference: "20 – 40" },
-    { parameter: "ESR", result: "22", unit: "mm/hr", reference: "< 20", flag: "H" },
-  ],
-  "Lipid Panel": [
-    { parameter: "Total Cholesterol", result: "214", unit: "mg/dL", reference: "< 200", flag: "H" },
-    { parameter: "LDL Cholesterol", result: "138", unit: "mg/dL", reference: "< 100", flag: "H" },
-    { parameter: "HDL Cholesterol", result: "42", unit: "mg/dL", reference: "> 40" },
-    { parameter: "Triglycerides", result: "168", unit: "mg/dL", reference: "< 150", flag: "H" },
-    { parameter: "VLDL", result: "33", unit: "mg/dL", reference: "< 30", flag: "H" },
-    { parameter: "Non-HDL", result: "172", unit: "mg/dL", reference: "< 130", flag: "H" },
-  ],
-  HbA1c: [
-    { parameter: "HbA1c", result: "7.4", unit: "%", reference: "4.0 – 5.6", flag: "H" },
-    {
-      parameter: "Mean Blood Glucose",
-      result: "166",
-      unit: "mg/dL",
-      reference: "70 – 100",
-      flag: "H",
-    },
-  ],
-  TSH: [
-    { parameter: "TSH", result: "4.8", unit: "mIU/L", reference: "0.4 – 4.0", flag: "H" },
-    { parameter: "T3 (Total)", result: "1.1", unit: "nmol/L", reference: "0.9 – 2.5" },
-    { parameter: "T4 (Total)", result: "88", unit: "nmol/L", reference: "70 – 150" },
-  ],
-  Urinalysis: [
-    { parameter: "Colour", result: "Yellow", unit: "—", reference: "Yellow" },
-    { parameter: "Clarity", result: "Clear", unit: "—", reference: "Clear" },
-    { parameter: "pH", result: "6.2", unit: "—", reference: "4.5 – 8.5" },
-    { parameter: "Protein", result: "Trace", unit: "—", reference: "Negative", flag: "H" },
-    { parameter: "Glucose", result: "Nil", unit: "—", reference: "Negative" },
-    { parameter: "Ketones", result: "Nil", unit: "—", reference: "Negative" },
-    { parameter: "RBCs", result: "2-4", unit: "/HPF", reference: "0 – 2", flag: "H" },
-  ],
-  "Thyroid Profile": [],
-  "Vitamin D": [],
-  "Vitamin B12": [],
-  LFT: [],
-  KFT: [],
-  "Urine R/M": [],
-};
-
-// Fallback for tests not in the dict above
-function getTestRows(testName: string) {
-  return (
-    TEST_DATA[testName] ?? [
-      { parameter: testName, result: "Within normal limits", unit: "—", reference: "—" },
-    ]
-  );
-}
-
-// ── All orders (mix of collected + pending for demo) ─────────────────────────
-const allOrders = [
-  ...labOrders,
-  {
-    id: "lo-9001",
-    patientId: patients[0]?.id ?? "",
-    doctorId: "u-doc-1",
-    tests: ["CBC (Complete Blood Count)", "Lipid Panel"],
-    status: "sample-collected" as const,
-    orderedOn: new Date().toISOString(),
-  },
-  {
-    id: "lo-9002",
-    patientId: patients[2]?.id ?? "",
-    doctorId: "u-doc-4",
-    tests: ["HbA1c", "Urinalysis"],
-    status: "sample-collected" as const,
-    orderedOn: new Date().toISOString(),
-  },
-  {
-    id: "lo-9003",
-    patientId: patients[4]?.id ?? "",
-    doctorId: "u-doc-2",
-    tests: ["TSH", "CBC (Complete Blood Count)"],
-    status: "sample-collected" as const,
-    orderedOn: new Date().toISOString(),
-  },
-  {
-    id: "lo-9004",
-    patientId: patients[6]?.id ?? "",
-    doctorId: "u-doc-5",
-    tests: ["Lipid Panel"],
-    status: "ordered" as const,
-    orderedOn: new Date().toISOString(),
-  },
-  {
-    id: "lo-9005",
-    patientId: patients[8]?.id ?? "",
-    doctorId: "u-doc-3",
-    tests: ["HbA1c"],
-    status: "in-progress" as const,
-    orderedOn: new Date().toISOString(),
-  },
-];
-
 const PAGE_SIZE = 7;
+
+
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 type Order = (typeof allOrders)[number];

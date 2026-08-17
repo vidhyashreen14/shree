@@ -4,6 +4,13 @@ import { ROLES } from '../rbac';
 import { useCredentials } from './credentials';
 
 const DEMO_USERS: Record<Role, User> = {
+  superadmin: {
+    id: 'u-superadmin',
+    name: 'Super Administrator',
+    email: 'superadmin@medicore.io',
+    role: 'superadmin',
+    department: 'Administration',
+  },
   admin: {
     id: 'u-admin',
     name: 'Dr. Anika Rao',

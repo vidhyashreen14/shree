@@ -19,9 +19,10 @@ import {
   User,
   Activity,
   Phone,
+  RotateCcw,
   UserCheck,
 } from 'lucide-react';
-import { labOrders, patients, doctors, SUPER_ADMIN_CONFIG } from '@/lib/mock/data';
+import { labOrders, patients, doctors, SUPER_ADMIN_CONFIG, getTestRows, TEST_DATA } from '@/lib/mock/data';
 import { getSuperAdminReportConfig } from '@/lib/services/superAdmin';
 import { GenerateReportModal } from '@/components/lab/GenerateReportModal';
 import { format } from 'date-fns';

@@ -21,7 +21,6 @@ import {
   User,
   CheckCircle2,
   XCircle,
-  FileText,
   ShieldAlert,
   Trash,
 } from 'lucide-react';
@@ -51,86 +50,36 @@ interface Stockist {
   status: 'Active' | 'Inactive';
 }
 
-interface SimulatedOrder {
-  id: string;
-  itemsCount: number;
-  totalAmount: number;
-  status: 'draft' | 'placed' | 'shipped' | 'received';
-  date: string;
-}
+const STOCKISTS_STORAGE_KEY = 'hms.pharmacy.stockists.v1';
 
-const INITIAL_STOCKISTS: Stockist[] = [
-  {
-    id: 'st-1',
-    name: 'MedPlus Distributors',
-    contactPerson: 'Rajesh Kumar',
-    phone: '+91 98765 43221',
-    email: 'rajesh@medplus.com',
-    address: 'Industrial Area Phase 2, Hyderabad, Telangana',
-    gstin: '36AAAAM8976C1Z3',
-    status: 'Active',
-  },
-  {
-    id: 'st-2',
-    name: 'Apollo Wholesale',
-    contactPerson: 'Amit Patel',
-    phone: '+91 87654 32110',
-    email: 'wholesale@apollo.com',
-    address: 'Greams Road, Chennai, Tamil Nadu',
-    gstin: '33AAACA1234D1Z2',
-    status: 'Active',
-  },
-  {
-    id: 'st-3',
-    name: 'PharmEasy Bulk',
-    contactPerson: 'Shalini Gupta',
-    phone: '+91 76543 21098',
-    email: 'bulk@pharmeasy.in',
-    address: 'LBS Marg, Kurla West, Mumbai, Maharashtra',
-    gstin: '27AAACP5678B2Z4',
-    status: 'Active',
-  },
-  {
-    id: 'st-4',
-    name: 'Wellness Stockists',
-    contactPerson: 'Vikram Singh',
-    phone: '+91 99887 76655',
-    email: 'orders@wellness.co.in',
-    address: 'Okhla Phase 3, Delhi NCR',
-    gstin: '07AAACW9988A1Z5',
-    status: 'Active',
-  },
-  {
-    id: 'st-5',
-    name: 'HealthPlus Stockists',
-    contactPerson: 'Neha Sharma',
-    phone: '+91 91234 56789',
-    email: 'neha@healthplus.com',
-    address: 'Whitefield, Bengaluru, Karnataka',
-    gstin: '29AAACH4321E3Z1',
-    status: 'Active',
-  },
-  {
-    id: 'st-6',
-    name: 'Regional Pharma Stockists',
-    contactPerson: 'K. R. Rao',
-    phone: '+91 94400 12345',
-    email: 'regional@pharma.org',
-    address: 'Kadavanthra, Kochi, Kerala',
-    gstin: '32AAACR2468F1Z9',
-    status: 'Inactive',
-  },
-];
+const loadStoredStockists = (): Stockist[] => {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = window.localStorage.getItem(STOCKISTS_STORAGE_KEY);
+    if (!raw) return [];
+    return JSON.parse(raw);
+  } catch {
+    return [];
+  }
+};
 
 function StockistMaster() {
-  const [stockists, setStockists] = useState<Stockist[]>(INITIAL_STOCKISTS);
+  const [stockists, setStockists] = useState<Stockist[]>(() => loadStoredStockists());
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(STOCKISTS_STORAGE_KEY, JSON.stringify(stockists));
+    } catch (e) {
+      console.error('Failed to save stockists to localStorage', e);
+    }
+  }, [stockists]);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<'All' | 'Active' | 'Inactive'>('All');
   const [isLoading, setIsLoading] = useState(false);
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
 
   // Dialog form states
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -143,45 +92,16 @@ function StockistMaster() {
   const [formGstin, setFormGstin] = useState('');
   const [formStatus, setFormStatus] = useState<'Active' | 'Inactive'>('Active');
 
-  // Associated orders view states
-  const [viewingStockistOrders, setViewingStockistOrders] = useState<Stockist | null>(null);
-  const [simulatedOrders, setSimulatedOrders] = useState<SimulatedOrder[]>([]);
-  const [isOrdersLoading, setIsOrdersLoading] = useState(false);
 
-  useEffect(() => {
-    if (viewingStockistOrders) {
-      setIsOrdersLoading(true);
-      const timer = setTimeout(() => {
-        // Generate simulated orders for demonstration
-        const orders: SimulatedOrder[] = [
-          {
-            id: `PO-${1000 + Math.floor(Math.random() * 9000)}`,
-            itemsCount: 8 + Math.floor(Math.random() * 15),
-            totalAmount: 15000 + Math.floor(Math.random() * 35000),
-            status: 'received',
-            date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]!,
-          },
-          {
-            id: `PO-${1000 + Math.floor(Math.random() * 9000)}`,
-            itemsCount: 5 + Math.floor(Math.random() * 10),
-            totalAmount: 8000 + Math.floor(Math.random() * 12000),
-            status: 'shipped',
-            date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]!,
-          },
-          {
-            id: `PO-${1000 + Math.floor(Math.random() * 9000)}`,
-            itemsCount: 15 + Math.floor(Math.random() * 20),
-            totalAmount: 45000 + Math.floor(Math.random() * 60000),
-            status: 'placed',
-            date: new Date().toISOString().split('T')[0]!,
-          },
-        ];
-        setSimulatedOrders(orders);
-        setIsOrdersLoading(false);
-      }, 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [viewingStockistOrders]);
+
+  const [stockistErrors, setStockistErrors] = useState<{
+    name?: string;
+    contactPerson?: string;
+    phone?: string;
+    email?: string;
+    address?: string;
+    gstin?: string;
+  }>({});
 
   const handleOpenAdd = () => {
     setEditingStockist(null);
@@ -192,6 +112,7 @@ function StockistMaster() {
     setFormAddress('');
     setFormGstin('');
     setFormStatus('Active');
+    setStockistErrors({});
     setIsFormOpen(true);
   };
 
@@ -205,6 +126,7 @@ function StockistMaster() {
     setFormAddress(stockist.address);
     setFormGstin(stockist.gstin);
     setFormStatus(stockist.status);
+    setStockistErrors({});
     setIsFormOpen(true);
   };
 
@@ -212,6 +134,43 @@ function StockistMaster() {
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const digitsOnly = e.target.value.replace(/\D/g, '').slice(0, 10);
     setFormPhone(digitsOnly);
+    setStockistErrors((prev) => ({ ...prev, phone: undefined }));
+  };
+
+  const validateStockistForm = (): boolean => {
+    const errs: { name?: string; contactPerson?: string; phone?: string; email?: string; address?: string; gstin?: string } = {};
+    const name = formName.trim();
+    const contactPerson = formContactPerson.trim();
+    const phone = formPhone.trim();
+    const email = formEmail.trim();
+    const address = formAddress.trim();
+    const gstin = formGstin.trim();
+
+    if (!name) {
+      errs.name = 'Stockist name is required.';
+    }
+    if (!contactPerson) {
+      errs.contactPerson = 'Contact person is required.';
+    }
+    if (!phone) {
+      errs.phone = 'Phone number is required.';
+    } else if (phone.length !== 10) {
+      errs.phone = 'Enter a valid 10-digit phone number.';
+    }
+    if (!email) {
+      errs.email = 'Email address is required.';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errs.email = 'Enter a valid email address.';
+    }
+    if (!address) {
+      errs.address = 'Address is required.';
+    }
+    if (!gstin) {
+      errs.gstin = 'GSTIN / License number is required.';
+    }
+
+    setStockistErrors(errs);
+    return Object.keys(errs).length === 0;
   };
 
   const handleSaveStockist = () => {
@@ -222,20 +181,8 @@ function StockistMaster() {
     const address = formAddress.trim();
     const gstin = formGstin.trim().toUpperCase();
 
-    if (!name) {
-      toast.error('Please enter a stockist name');
-      return;
-    }
-    if (!contactPerson) {
-      toast.error('Please enter a contact person');
-      return;
-    }
-    if (!phone) {
-      toast.error('Please enter a phone number');
-      return;
-    }
-    if (phone.length !== 10) {
-      toast.error('Phone number must be exactly 10 digits');
+    if (!validateStockistForm()) {
+      toast.error('Please complete all required stockist fields correctly.', { duration: 4000 });
       return;
     }
 
@@ -383,25 +330,10 @@ function StockistMaster() {
         </div>
 
         <div className="p-6">
-          {/* Stats Dashboard */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-            <div className="bg-primary/5 rounded-xl p-4 border border-primary/20">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-primary/10 rounded-lg">
-                  <Building2 className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground font-medium">Total Suppliers</p>
-                  <p className="text-2xl font-bold text-primary">{stockists.length}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
           <div className="flex items-center justify-between mb-4">
             <h4 className="text-sm font-semibold text-muted-foreground">Stockist Directory</h4>
-            <span className="text-xs text-muted-foreground">
-              Showing {totalItems > 0 ? startIndex + 1 : 0}–{endIndex} of {totalItems}
+            <span className="text-xs text-muted-foreground font-medium">
+              {stockists.length} supplier(s) registered
             </span>
           </div>
 
@@ -427,8 +359,6 @@ function StockistMaster() {
                     <th className="px-6 py-3">Phone / Email</th>
                     <th className="px-6 py-3">Address</th>
                     <th className="px-6 py-3">GSTIN</th>
-
-                    <th className="px-6 py-3 text-center">Orders</th>
                     <th className="px-6 py-3 text-right">Actions</th>
                   </tr>
                 </thead>
@@ -458,17 +388,7 @@ function StockistMaster() {
                         {st.gstin || 'N/A'}
                       </td>
 
-                      <td className="px-6 py-4 text-center">
-                        <button
-                          type="button"
-                          onClick={() => setViewingStockistOrders(st)}
-                          className="inline-flex items-center justify-center gap-1 bg-primary/10 hover:bg-primary/20 text-primary transition-colors px-2 py-1 rounded text-xs font-semibold mx-auto"
-                          title="View recent orders"
-                        >
-                          <FileText className="h-3 w-3" />
-                          <span>View</span>
-                        </button>
-                      </td>
+
                       <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end gap-1">
                           <Button
@@ -505,10 +425,6 @@ function StockistMaster() {
             <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
               <div className="flex items-center gap-3 text-xs text-muted-foreground">
                 <span>
-                  Page {currentPage} of {totalPages || 1}
-                </span>
-                <span>·</span>
-                <span>
                   Showing {startIndex + 1}–{endIndex} of {totalItems}
                 </span>
                 <select
@@ -524,15 +440,6 @@ function StockistMaster() {
                 </select>
               </div>
               <div className="flex gap-1">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-7 w-7 hover:bg-primary/10 hover:text-primary"
-                  onClick={() => goToPage(1)}
-                  disabled={currentPage === 1}
-                >
-                  <ChevronsLeft className="h-3.5 w-3.5" />
-                </Button>
                 <Button
                   variant="outline"
                   size="icon"
@@ -554,22 +461,12 @@ function StockistMaster() {
                 >
                   <ChevronRight className="h-3.5 w-3.5" />
                 </Button>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-7 w-7 hover:bg-primary/10 hover:text-primary"
-                  onClick={() => goToPage(totalPages)}
-                  disabled={currentPage === totalPages || totalPages === 0}
-                >
-                  <ChevronsRight className="h-3.5 w-3.5" />
-                </Button>
               </div>
             </div>
           )}
         </div>
 
-        <div className="p-4 border-t border-border bg-muted/20 flex items-center justify-between">
-          <p className="text-xs text-muted-foreground">{stockists.length} supplier(s) registered</p>
+        <div className="p-4 border-t border-border bg-muted/20 flex items-center justify-end">
           <div className="flex gap-2">
             {searchQuery && (
               <Button
@@ -614,90 +511,123 @@ function StockistMaster() {
           </DialogHeader>
 
           <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
+            <div className="grid gap-1.5">
               <Label htmlFor="st-name" className="text-sm font-semibold">
                 Stockist Name <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="st-name"
                 value={formName}
-                onChange={(e) => setFormName(e.target.value)}
+                onChange={(e) => {
+                  setFormName(e.target.value);
+                  setStockistErrors((prev) => ({ ...prev, name: undefined }));
+                }}
                 placeholder="e.g. MedPlus Distributors"
                 disabled={isLoading}
               />
+              {stockistErrors.name && (
+                <p className="text-xs text-destructive mt-0.5">{stockistErrors.name}</p>
+              )}
             </div>
 
-            <div className="grid gap-2">
+            <div className="grid gap-1.5">
               <Label htmlFor="st-contact" className="text-sm font-semibold">
                 Contact Person <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="st-contact"
                 value={formContactPerson}
-                onChange={(e) => setFormContactPerson(e.target.value)}
+                onChange={(e) => {
+                  setFormContactPerson(e.target.value);
+                  setStockistErrors((prev) => ({ ...prev, contactPerson: undefined }));
+                }}
                 placeholder="e.g. Rajesh Kumar"
                 disabled={isLoading}
               />
+              {stockistErrors.contactPerson && (
+                <p className="text-xs text-destructive mt-0.5">{stockistErrors.contactPerson}</p>
+              )}
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              <div className="grid gap-2">
+              <div className="grid gap-1.5">
                 <Label htmlFor="st-phone" className="text-sm font-semibold">
-                  Phone Number <span className="text-destructive">*</span>{' '}
-                  <span className="text-muted-foreground text-xs">(10 digits only)</span>
+                  Phone Number <span className="text-destructive">*</span>
                 </Label>
                 <Input
                   id="st-phone"
                   value={formPhone}
                   onChange={handlePhoneChange}
-                  placeholder="e.g. 9876543210"
+                  placeholder="e.g. 9876543210 (10 digits)"
                   disabled={isLoading}
                   maxLength={10}
                   className="font-mono"
                 />
-                {formPhone.length > 0 && formPhone.length < 10 && (
-                  <p className="text-xs text-destructive">Phone number must be exactly 10 digits</p>
+                {stockistErrors.phone ? (
+                  <p className="text-xs text-destructive mt-0.5">{stockistErrors.phone}</p>
+                ) : (
+                  formPhone.length > 0 && formPhone.length < 10 && (
+                    <p className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">Phone number must be 10 digits</p>
+                  )
                 )}
               </div>
-              <div className="grid gap-2">
+              <div className="grid gap-1.5">
                 <Label htmlFor="st-email" className="text-sm font-semibold">
-                  Email Address
+                  Email Address <span className="text-destructive">*</span>
                 </Label>
                 <Input
                   id="st-email"
                   type="email"
                   value={formEmail}
-                  onChange={(e) => setFormEmail(e.target.value)}
+                  onChange={(e) => {
+                    setFormEmail(e.target.value);
+                    setStockistErrors((prev) => ({ ...prev, email: undefined }));
+                  }}
                   placeholder="e.g. contact@domain.com"
                   disabled={isLoading}
                 />
+                {stockistErrors.email && (
+                  <p className="text-xs text-destructive mt-0.5">{stockistErrors.email}</p>
+                )}
               </div>
             </div>
 
-            <div className="grid gap-2">
+            <div className="grid gap-1.5">
               <Label htmlFor="st-gstin" className="text-sm font-semibold">
-                GSTIN (Optional)
+                GSTIN / License No. <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="st-gstin"
                 value={formGstin}
-                onChange={(e) => setFormGstin(e.target.value)}
+                onChange={(e) => {
+                  setFormGstin(e.target.value);
+                  setStockistErrors((prev) => ({ ...prev, gstin: undefined }));
+                }}
                 placeholder="e.g. 36AAAAM8976C1Z3"
                 disabled={isLoading}
               />
+              {stockistErrors.gstin && (
+                <p className="text-xs text-destructive mt-0.5">{stockistErrors.gstin}</p>
+              )}
             </div>
 
-            <div className="grid gap-2">
+            <div className="grid gap-1.5">
               <Label htmlFor="st-address" className="text-sm font-semibold">
-                Address
+                Address <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="st-address"
                 value={formAddress}
-                onChange={(e) => setFormAddress(e.target.value)}
+                onChange={(e) => {
+                  setFormAddress(e.target.value);
+                  setStockistErrors((prev) => ({ ...prev, address: undefined }));
+                }}
                 placeholder="e.g. Industrial Area Phase 2, Hyderabad"
                 disabled={isLoading}
               />
+              {stockistErrors.address && (
+                <p className="text-xs text-destructive mt-0.5">{stockistErrors.address}</p>
+              )}
             </div>
           </div>
 
@@ -707,12 +637,7 @@ function StockistMaster() {
             </Button>
             <Button
               onClick={handleSaveStockist}
-              disabled={
-                isLoading ||
-                !formName.trim() ||
-                !formContactPerson.trim() ||
-                formPhone.length !== 10
-              }
+              disabled={isLoading}
               variant="default"
               className="text-white"
             >
@@ -722,90 +647,7 @@ function StockistMaster() {
         </DialogContent>
       </Dialog>
 
-      {/* Dialog modal for viewing associated orders */}
-      <Dialog
-        open={viewingStockistOrders !== null}
-        onOpenChange={(open) => !open && setViewingStockistOrders(null)}
-      >
-        <DialogContent className="sm:max-w-[560px]">
-          <DialogHeader>
-            <DialogTitle>Orders with {viewingStockistOrders?.name}</DialogTitle>
-            <DialogDescription>Recent purchase orders issued to this stockist.</DialogDescription>
-          </DialogHeader>
 
-          <div className="py-4">
-            {viewingStockistOrders && (
-              <div className="overflow-x-auto rounded-lg border border-border max-h-[40vh] overflow-y-auto">
-                {isOrdersLoading ? (
-                  <div className="p-6 space-y-4">
-                    {Array.from({ length: 3 }).map((_, index) => (
-                      <div key={index} className="space-y-2 animate-pulse">
-                        <Skeleton className="h-5 w-1/3 bg-muted-foreground/15 rounded" />
-                        <Skeleton className="h-4 w-full bg-muted-foreground/15 rounded" />
-                      </div>
-                    ))}
-                  </div>
-                ) : simulatedOrders.length === 0 ? (
-                  <div className="px-4 py-8 text-center text-sm text-muted-foreground">
-                    No recent orders found for this supplier.
-                  </div>
-                ) : (
-                  <table className="w-full border-collapse text-left text-sm text-muted-foreground">
-                    <thead className="bg-muted/40 text-xs font-semibold uppercase tracking-wider text-muted-foreground border-b border-border">
-                      <tr>
-                        <th className="px-4 py-2.5">Order ID</th>
-                        <th className="px-4 py-2.5 text-center">Items</th>
-                        <th className="px-4 py-2.5 text-right">Total (INR)</th>
-                        <th className="px-4 py-2.5 text-center">Status</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-border">
-                      {simulatedOrders.map((ord) => (
-                        <tr key={ord.id} className="hover:bg-muted/10 transition-colors">
-                          <td className="px-4 py-3 font-semibold text-foreground">
-                            <div className="flex flex-col">
-                              <span>{ord.id}</span>
-                              <span className="text-[10px] text-muted-foreground font-normal">
-                                {ord.date}
-                              </span>
-                            </div>
-                          </td>
-                          <td className="px-4 py-3 text-center text-foreground/80">
-                            {ord.itemsCount}
-                          </td>
-                          <td className="px-4 py-3 text-right font-medium text-foreground">
-                            ₹{ord.totalAmount.toLocaleString('en-IN')}
-                          </td>
-                          <td className="px-4 py-3 text-center">
-                            <span
-                              className={cn(
-                                'inline-flex px-2 py-0.5 rounded text-[10px] font-semibold border uppercase',
-                                ord.status === 'received'
-                                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                                  : ord.status === 'shipped'
-                                    ? 'bg-amber-50 text-amber-700 border-amber-200'
-                                    : ord.status === 'placed'
-                                      ? 'bg-blue-50 text-blue-700 border-blue-200'
-                                      : 'bg-slate-50 text-slate-700 border-slate-200'
-                              )}
-                            >
-                              {ord.status}
-                            </span>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                )}
-              </div>
-            )}
-          </div>
-
-          <DialogFooter>
-            <Button onClick={() => setViewingStockistOrders(null)}>Close</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
